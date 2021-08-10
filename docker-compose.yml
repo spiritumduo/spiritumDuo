@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/London
+  web:
+    build: .
+    volumes:
+      - ./core:/src/core
+      - ./web:/src/web
+      - ./nginx:/etc/nginx/sites-available
+    environment:
+      - TZ=Europe/London
+    command: python /src/core/startUp.py
+    #command: tail -F anything
+    ports:
+      - "8080:8080"
+      - "80:80"
+    depends_on:
+      - db
+    env_file: .env
