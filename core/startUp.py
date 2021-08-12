@@ -6,17 +6,21 @@ sys.path += [os.path.abspath('/src/libraries')]
 
 from commonFunctions import singleInstance, logAndError, tee
 from datetime import datetime
-import pexpect 
-#from pexpect import popen_spawn
+from exchange import sendEmail
 from inspect import currentframe as CF # help with logging
 from inspect import getframeinfo as GFI # help with logging
+import pexpect 
 import threading
 import time as t
 
 
 
+#  production,  development, basic
+runMode = os.getenv('runMode')
+#runMode = 'basic'
+
 # Make sure only one instance of this program is running
-single , fp = singleInstance()
+single, fp = singleInstance()
 if not single:
     sys.exit(1)
 
@@ -27,13 +31,15 @@ directory = os.path.dirname(os.path.realpath(__file__))
 
 
 # Error and log handling
+sendEmailError = False
 exitFlag = [0]
 errMode = 'pf' # p = print to screen, f = print to file,  e = end program
-errorFileAddress = f'{ directory }/startUp.err'
-outputlog = open(errorFileAddress, "a")
-sys.stderr = tee(sys.stderr, outputlog)
-logFileAddress = f'{ directory }/startUp.log'
 logMode = 'pf' # p = print to screen, f = print to file, u = restart program on code update
+errorFileAddress = f'{ directory }/startUp.err'
+logFileAddress = f'{ directory }/startUp.log'
+outputlog = open(errorFileAddress, "a")
+sys.stderr = tee(sys.stderr, outputlog, sendEmailError, os.getenv('DJANGO_SUPERUSER_EMAIL'), os.getenv('DJANGO_SUPERUSER_USERNAME'))
+
 
 
 # Use 1st given argument as log mode, 2nd as error mode
@@ -54,14 +60,11 @@ class mainThreadClass(threading.Thread):
 		PIDMessage = 'Start up program started: %s'%os.getpid()
 		msg.log(PIDMessage)
 		mainThread()
-		msg.log('Thread: main exited')
+		msg.log('Thread: main complete')
 
 
 
 def mainThread():
-    #  production,  development, basic
-    runMode = os.getenv('runMode')
-    #runMode = 'basic'
     manageLocation = '/src/web/'
     msg.log(f'Docker start up mode: { runMode }')
 
@@ -82,11 +85,8 @@ def mainThread():
         commands.append('python /src/web/manage.py runserver 0.0.0.0:8080')
 
     for c in commands:
-        childUpdate = pexpect.spawn(c, timeout = None)
-        msg.log(childUpdate.read())
-
-    #for x in commands:
-    #    os.system(x)
+        childUpdate = pexpect.run(c)
+        msg.log(childUpdate)
 
     return
 
@@ -107,6 +107,8 @@ def loopThread():
     while exitFlag[0] == 0:
         t.sleep(10)
 
+    sendEmail('Dr Mark Bailey', ['mark.bailey5@nhs.net'], 'Dr Mark A Bailey', 'Spiritum Duo App exited', 'SpiritumDuo App exited')
+
 
 if __name__ == '__main__':
     # Create new threads
@@ -115,3 +117,5 @@ if __name__ == '__main__':
     # Start new Threads
     threadMain.start()
     threadLoop.start()
+
+

@@ -4,6 +4,7 @@ RUN mkdir -p /src/web
 RUN mkdir -p /src/core
 WORKDIR /src
 COPY core/requirements.txt /src/
+RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN apt-get -y update
 RUN apt-get -y install uwsgi nginx tzdata vim

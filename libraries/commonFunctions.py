@@ -2,8 +2,10 @@
 
 import sys
 import os
+sys.path += [os.path.abspath('/src/libraries')]
 
 from datetime import datetime
+from exchange import sendEmail
 import fcntl
 import select
 import threading
@@ -13,7 +15,7 @@ import time as t
 
 # Check if another instance of the program is running, if so, then stop second.
 def singleInstance():
-    pid_file = 'program2.pid'
+    pid_file = 'program.lock'
     fp = open(pid_file, 'w')
     try:
         fcntl.lockf(fp, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -26,25 +28,41 @@ def singleInstance():
 
 # To handle errors raised by python interpreter
 class tee:
-    def __init__(self, _fd1, _fd2):
-        self.fd1 = _fd1
-        self.fd2 = _fd2
-
-    def __del__(self):
-        if self.fd1 != sys.stdout and self.fd1 != sys.stderr :
-            self.fd1.close()
-        if self.fd2 != sys.stdout and self.fd2 != sys.stderr :
-            self.fd2.close()
-
-    def write(self, text):
-        self.fd1.write('%s: ' %t.strftime("%d/%m/%y %H:%M"))
-        self.fd2.write('%s: ' %t.strftime("%d/%m/%y %H:%M"))
-        self.fd1.write(text)
-        self.fd2.write(text)
-
-    def flush(self):
-        self.fd1.flush()
-        self.fd2.flush()
+	def __init__(self, _fd1, _fd2, sendEmailErr = False, toEmail = None, toName = None):
+		self.fd1 = _fd1
+		self.fd2 = _fd2
+		self.errCounter = 0
+		self.sendEmailErr = sendEmailErr
+		self.toEmail = toEmail
+		self.toName = toName
+		self.message = ''
+		
+	def __del__(self):
+		if self.fd1 != sys.stdout and self.fd1 != sys.stderr :
+			self.fd1.close()
+		if self.fd2 != sys.stdout and self.fd2 != sys.stderr :
+			self.fd2.close()
+			
+	def write(self, text):
+		if self.errCounter == 0:
+			self.fd1.write('%s: ' %t.strftime("%d/%m/%y %H:%M"))
+			self.fd2.write('%s: ' %t.strftime("%d/%m/%y %H:%M"))
+			if self.sendEmailErr:
+				sendEmail(
+					[self.toEmail], 
+					'Spiritum Duo App', 
+					'Spiritum Duo App exited due to an error', 
+					f'Spiritum Duo App exited due to an error\n { text }'
+				)
+			self.errCounter = 1
+		self.fd1.write(text)
+		self.fd2.write(text)
+		self.message += f'{ text }'
+		
+	def flush(self):
+		self.fd1.flush()
+		self.fd2.flush()
+		
 
 
 # To handle log and errors raised by programmer

@@ -94,3 +94,172 @@ NameError: name 'asdfasdf' is not defined
 12/08/21 15:57:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
 12/08/21 15:57:     12/08/21 15:57: lock.acquire()12/08/21 15:57: 
 12/08/21 15:57: KeyboardInterrupt12/08/21 15:57: : 12/08/21 15:57: 12/08/21 15:57: 
+12/08/21 16:03: Exception ignored in: 12/08/21 16:03: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:03: 
+12/08/21 16:03: Traceback (most recent call last):
+12/08/21 16:03:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:03:     12/08/21 16:03: lock.acquire()12/08/21 16:03: 
+12/08/21 16:03: KeyboardInterrupt12/08/21 16:03: : 12/08/21 16:03: 12/08/21 16:03: 
+12/08/21 16:09: Exception ignored in: 12/08/21 16:09: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:09: 
+12/08/21 16:09: Traceback (most recent call last):
+12/08/21 16:09:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:09:     12/08/21 16:09: lock.acquire()12/08/21 16:09: 
+12/08/21 16:09: KeyboardInterrupt12/08/21 16:09: : 12/08/21 16:09: 12/08/21 16:09: 
+12/08/21 16:12: Exception in thread 12/08/21 16:12: Thread-112/08/21 16:12: :
+12/08/21 16:12: Traceback (most recent call last):
+12/08/21 16:12:   File "/usr/local/lib/python3.9/threading.py", line 973, in _bootstrap_inner
+12/08/21 16:12:     12/08/21 16:12: self.run()12/08/21 16:12: 
+12/08/21 16:12:   File "/src/core/startUp.py", line 56, in run
+12/08/21 16:12:     12/08/21 16:12: mainThread()12/08/21 16:12: 
+12/08/21 16:12:   File "/src/core/startUp.py", line 86, in mainThread
+12/08/21 16:12:     12/08/21 16:12: msg.log(childUpdate.read())12/08/21 16:12: 
+12/08/21 16:12:   File "/usr/local/lib/python3.9/site-packages/pexpect/spawnbase.py", line 444, in read
+12/08/21 16:12:     12/08/21 16:12: self.expect(self.delimiter)12/08/21 16:12: 
+12/08/21 16:12:   File "/usr/local/lib/python3.9/site-packages/pexpect/spawnbase.py", line 343, in expect
+12/08/21 16:12:     12/08/21 16:12: return self.expect_list(compiled_pattern_list,12/08/21 16:12: 
+12/08/21 16:12:   File "/usr/local/lib/python3.9/site-packages/pexpect/spawnbase.py", line 372, in expect_list
+12/08/21 16:12:     12/08/21 16:12: return exp.expect_loop(timeout)12/08/21 16:12: 
+12/08/21 16:12:   File "/usr/local/lib/python3.9/site-packages/pexpect/expect.py", line 181, in expect_loop
+12/08/21 16:12:     12/08/21 16:12: return self.timeout(e)12/08/21 16:12: 
+12/08/21 16:12:   File "/usr/local/lib/python3.9/site-packages/pexpect/expect.py", line 144, in timeout
+12/08/21 16:12:     12/08/21 16:12: raise exc12/08/21 16:12: 
+12/08/21 16:12: pexpect.exceptions12/08/21 16:12: .12/08/21 16:12: TIMEOUT12/08/21 16:12: : 12/08/21 16:12: Timeout exceeded.
+<pexpect.pty_spawn.spawn object at 0x7f804baae1c0>
+command: /usr/local/bin/uwsgi
+args: ['/usr/local/bin/uwsgi', '--emperor', '/etc/uwsgi/vassals']
+buffer (last 100 chars): b'ned\r\nThu Aug 12 16:12:03 2021 - [emperor] vassal spiritumDuo_uwsgi.ini is ready to accept requests\r\n'
+before (last 100 chars): b'ned\r\nThu Aug 12 16:12:03 2021 - [emperor] vassal spiritumDuo_uwsgi.ini is ready to accept requests\r\n'
+after: <class 'pexpect.exceptions.TIMEOUT'>
+match: None
+match_index: None
+exitstatus: None
+flag_eof: False
+pid: 58
+child_fd: 7
+closed: False
+timeout: 10
+delimiter: <class 'pexpect.exceptions.EOF'>
+logfile: None
+logfile_read: None
+logfile_send: None
+maxread: 2000
+ignorecase: False
+searchwindowsize: None
+delaybeforesend: 0.05
+delayafterclose: 0.1
+delayafterterminate: 0.1
+searcher: searcher_re:
+    0: EOF12/08/21 16:12: 
+12/08/21 16:14: Exception ignored in: 12/08/21 16:14: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:14: 
+12/08/21 16:14: Traceback (most recent call last):
+12/08/21 16:14:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:14:     12/08/21 16:14: lock.acquire()12/08/21 16:14: 
+12/08/21 16:14: KeyboardInterrupt12/08/21 16:14: : 12/08/21 16:14: 12/08/21 16:14: 
+12/08/21 16:18: Exception in thread 12/08/21 16:18: Thread-112/08/21 16:18: :
+12/08/21 16:18: Traceback (most recent call last):
+12/08/21 16:18:   File "/usr/local/lib/python3.9/threading.py", line 973, in _bootstrap_inner
+12/08/21 16:18:     12/08/21 16:18: self.run()12/08/21 16:18: 
+12/08/21 16:18:   File "/src/core/startUp.py", line 56, in run
+12/08/21 16:18:     12/08/21 16:18: mainThread()12/08/21 16:18: 
+12/08/21 16:18:   File "/src/core/startUp.py", line 86, in mainThread
+12/08/21 16:18:     12/08/21 16:18: msg.log(childUpdate.read())12/08/21 16:18: 
+12/08/21 16:18: AttributeError12/08/21 16:18: : 12/08/21 16:18: 'bytes' object has no attribute 'read'12/08/21 16:18: 
+12/08/21 16:19: Exception ignored in: 12/08/21 16:19: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:19: 
+12/08/21 16:19: Traceback (most recent call last):
+12/08/21 16:19:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:19:     12/08/21 16:19: lock.acquire()12/08/21 16:19: 
+12/08/21 16:19: KeyboardInterrupt12/08/21 16:19: : 12/08/21 16:19: 12/08/21 16:19: 
+12/08/21 16:23: Exception ignored in: 12/08/21 16:23: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:23: 
+12/08/21 16:23: Traceback (most recent call last):
+12/08/21 16:23:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:23:     12/08/21 16:23: lock.acquire()12/08/21 16:23: 
+12/08/21 16:23: KeyboardInterrupt12/08/21 16:23: : 12/08/21 16:23: 12/08/21 16:23: 
+12/08/21 16:47: Exception ignored in: 12/08/21 16:47: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:47: 
+12/08/21 16:47: Traceback (most recent call last):
+12/08/21 16:47:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:47:     12/08/21 16:47: lock.acquire()12/08/21 16:47: 
+12/08/21 16:47: KeyboardInterrupt12/08/21 16:47: : 12/08/21 16:47: 12/08/21 16:47: 
+12/08/21 16:51: Exception ignored in: 12/08/21 16:51: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 16:51: 
+12/08/21 16:51: Traceback (most recent call last):
+12/08/21 16:51:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 16:51:     12/08/21 16:51: lock.acquire()12/08/21 16:51: 
+12/08/21 16:51: KeyboardInterrupt12/08/21 16:51: : 12/08/21 16:51: 12/08/21 16:51: 
+12/08/21 16:55: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 16:56: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 16:57: 12/08/21 16:57: 12/08/21 16:58: 12/08/21 16:58: 12/08/21 16:59: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:02: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:02: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:03: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:04: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:05: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:05: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:05: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:07: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:12: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:14: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:16: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:18: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 17:21: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
