@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import os
-import time as t
 import logging
 from datetime import datetime
 import logAndError # my own library to handle errors
@@ -9,9 +8,6 @@ import sys
 
 # Determine where main program files are stored
 directory = os.path.dirname(os.path.realpath(__file__))
-
-now = datetime.now()
-current_time = now.strftime("%d/%m/%y - %H:%M:%S")
 
 # Error and log handling
 errMode = 'pf' # p = print to screen, f = print to file,  e = end program
@@ -28,30 +24,24 @@ manageLocation = '/src/web/'
 
 msg.log(f'Docker start up mode: { runMode }')
 
-if runMode == 'initialise':
-    commands = {
-        'makemigrations' : f'python { manageLocation }manage.py makemigrations',
-        'migrate' : f'python { manageLocation }manage.py migrate',
-        'superuser' : f'python { manageLocation }manage.py createsuperuser --noinput'
-        #'uploadData' : f'python { manageLocation }manage.py loaddata GHNHSFT_initialData.json',
-    }
+commands = [
+    'ln -s /etc/nginx/sites-available/spiritumDuo.conf /etc/nginx/sites-enabled/'
+    #'ln -s /src/web/spiritumDuo_uwsgi.ini /etc/uwsgi/vassals/'
+]
 
+if runMode == 'initialise':
+    commands.append(f'python { manageLocation }manage.py makemigrations')
+    commands.append(f'python { manageLocation }manage.py migrate')
+    commands.append(f'python { manageLocation }manage.py createsuperuser --noinput')
+    #commands.append(f'python { manageLocation }manage.py loaddata GHNHSFT_initialData.json')
 elif runMode == 'production':
-    commands = [
-        'ln -s /etc/nginx/sites-available/spiritumDuo.conf /etc/nginx/sites-enabled/',
-        'ln -s /src/web/spiritumDuo_uwsgi.ini /etc/uwsgi/vassals/',
-        '/etc/init.d/nginx restart',
-        'uwsgi --emperor /etc/uwsgi/vassals --uid www-data --gid www-data'
-    ]
+    commands.append('/etc/init.d/nginx restart')
+    commands.append('uwsgi --emperor /etc/uwsgi/vassals')
 elif runMode == 'development':
-    commands = [
-        'python /src/web/manage.py runserver 0.0.0.0:8080'
-    ]
-# Run blank mode
+    commands.append('python /src/web/manage.py runserver 0.0.0.0:8080')
+# Run 'blank' mode
 else:
-    commands = [
-        'tail -F anything'
-    ]
+    commands.append('tail -F anything')
 
 for x in commands:
     os.system(x)
