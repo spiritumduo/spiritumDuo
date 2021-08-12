@@ -15,12 +15,13 @@ services:
     volumes:
       - ./core:/src/core
       - ./web:/src/web
+      - ./libraries:/src/libraries
       - ./nginx:/etc/nginx/sites-available
       - ./uwsgi/vassals:/etc/uwsgi/vassals
     environment:
       - TZ=Europe/London
-    command: python /src/core/startUp.py
-    #command: tail -F anything
+    #command: python /src/core/startUp.py
+    command: tail -F anything
     ports:
       - "8080:8080"
       - "80:80"

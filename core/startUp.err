@@ -1,0 +1,96 @@
+12/08/21 15:06: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 106, in <module>
+    t.sleep(10)
+KeyboardInterrupt
+12/08/21 15:07: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 75, in <module>
+    sdfsdf = dfsdfsdf
+NameError: name 'dfsdfsdf' is not defined
+12/08/21 15:09: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 74, in <module>
+    msg.error('Boolean to str error', GFI(CF()).lineno, None, 'pfe', exitFlag)
+NameError: name 'GFI' is not defined
+12/08/21 15:09: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 76, in <module>
+    msg.error('Boolean to str error', GFI(CF()).lineno, None, 'pfe', exitFlag)
+  File "/src/libraries/logAndError.py", line 76, in error
+    message = '%s: %s, line %s' %(timeSterrModeamp, message, lineNumber)
+NameError: name 'timeSterrModeamp' is not defined
+12/08/21 15:10: Boolean to str error, line 76 - Ending Program...
+12/08/21 15:10: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 78, in <module>
+    sdfsdf = dfsdfsdf
+NameError: name 'dfsdfsdf' is not defined
+12/08/21 15:14: Test error, line 76 - Ending Program...
+12/08/21 15:17: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 76, in <module>
+    msg.error('Test error', GFI(CF()).lineno, None, 'pfe', exitFlag)
+TypeError: error() takes from 2 to 5 positional arguments but 6 were given
+12/08/21 15:18: Test error, line 76 - Ending Program...
+12/08/21 15:18: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 115, in <module>
+    t.sleep(10)
+KeyboardInterrupt
+12/08/21 15:20: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 77, in <module>
+    asdfasdf =asdfasdf
+NameError: name 'asdfasdf' is not defined
+12/08/21 15:23: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 73, in <module>
+    msg = logAndError.logAndError(errorFileAddress, logFileAddress, errMode, logMode)
+AttributeError: type object 'logAndError' has no attribute 'logAndError'
+12/08/21 15:24: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 76, in <module>
+    asdfasdf = asdfasdf
+NameError: name 'asdfasdf' is not defined
+12/08/21 15:30: Traceback (most recent call last):
+12/08/21 15:30:   File "/src/core/startUp.py", line 52, in <module>
+12/08/21 15:30:     12/08/21 15:30: asdfasdf = asdfasdf12/08/21 15:30: 
+12/08/21 15:30: NameError12/08/21 15:30: : 12/08/21 15:30: name 'asdfasdf' is not defined12/08/21 15:30: 
+12/08/21 15:31: Traceback (most recent call last):
+12/08/21 15:31:   File "/src/core/startUp.py", line 52, in <module>
+12/08/21 15:31:     12/08/21 15:31: asdfasdf = asdfasdf12/08/21 15:31: 
+12/08/21 15:31: NameError12/08/21 15:31: : 12/08/21 15:31: name 'asdfasdf' is not defined12/08/21 15:31: 
+12/08/21 15:33: Traceback (most recent call last):
+12/08/21 15:33:   File "/src/core/startUp.py", line 75, in <module>
+12/08/21 15:33:     12/08/21 15:33: t.sleep(10)12/08/21 15:33: 
+12/08/21 15:33: KeyboardInterrupt12/08/21 15:33: 12/08/21 15:33: 
+12/08/21 15:44: Traceback (most recent call last):
+12/08/21 15:44:   File "/src/core/startUp.py", line 75, in <module>
+12/08/21 15:44:     12/08/21 15:44: commands.append(f'python { manageLocation }manage.py createsuperuser --noinput')12/08/21 15:44: 
+12/08/21 15:44: KeyboardInterrupt12/08/21 15:44: 12/08/21 15:44: 
+12/08/21 15:48: Exception ignored in: 12/08/21 15:48: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:48: 
+12/08/21 15:48: Traceback (most recent call last):
+12/08/21 15:48:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:48:     12/08/21 15:48: lock.acquire()12/08/21 15:48: 
+12/08/21 15:48: KeyboardInterrupt12/08/21 15:48: : 12/08/21 15:48: 12/08/21 15:48: 
+12/08/21 15:48: Exception ignored in: 12/08/21 15:48: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:48: 
+12/08/21 15:48: Traceback (most recent call last):
+12/08/21 15:48:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:48:     12/08/21 15:48: lock.acquire()12/08/21 15:48: 
+12/08/21 15:48: KeyboardInterrupt12/08/21 15:48: : 12/08/21 15:48: 12/08/21 15:48: 
+12/08/21 15:49: Exception ignored in: 12/08/21 15:49: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:49: 
+12/08/21 15:49: Traceback (most recent call last):
+12/08/21 15:49:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:49:     12/08/21 15:49: lock.acquire()12/08/21 15:49: 
+12/08/21 15:49: KeyboardInterrupt12/08/21 15:49: : 12/08/21 15:49: 12/08/21 15:49: 
+12/08/21 15:56: Exception ignored in: 12/08/21 15:56: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:56: 
+12/08/21 15:56: Traceback (most recent call last):
+12/08/21 15:56:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:56:     12/08/21 15:56: lock.acquire()12/08/21 15:56: 
+12/08/21 15:56: KeyboardInterrupt12/08/21 15:56: : 12/08/21 15:56: 12/08/21 15:56: 
+12/08/21 15:56: Exception ignored in: 12/08/21 15:56: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:56: 
+12/08/21 15:56: Traceback (most recent call last):
+12/08/21 15:56:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:56:     12/08/21 15:56: lock.acquire()12/08/21 15:56: 
+12/08/21 15:56: KeyboardInterrupt12/08/21 15:56: : 12/08/21 15:56: 12/08/21 15:56: 
+12/08/21 15:57: Exception ignored in: 12/08/21 15:57: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:57: 
+12/08/21 15:57: Traceback (most recent call last):
+12/08/21 15:57:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:57:     12/08/21 15:57: lock.acquire()12/08/21 15:57: 
+12/08/21 15:57: KeyboardInterrupt12/08/21 15:57: : 12/08/21 15:57: 12/08/21 15:57: 
+12/08/21 15:57: Exception ignored in: 12/08/21 15:57: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>12/08/21 15:57: 
+12/08/21 15:57: Traceback (most recent call last):
+12/08/21 15:57:   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+12/08/21 15:57:     12/08/21 15:57: lock.acquire()12/08/21 15:57: 
+12/08/21 15:57: KeyboardInterrupt12/08/21 15:57: : 12/08/21 15:57: 12/08/21 15:57: 

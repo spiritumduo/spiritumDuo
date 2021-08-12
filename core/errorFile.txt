@@ -1,0 +1,4 @@
+12/08/21 14:11: Traceback (most recent call last):
+  File "/src/core/startUp.py", line 105, in <module>
+    t.sleep(10)
+KeyboardInterrupt
