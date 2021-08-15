@@ -17,7 +17,7 @@ import time as t
 
 #  production,  development, basic
 runMode = os.getenv('runMode')
-#runMode = 'basic'
+runMode = 'production'
 
 # Make sure only one instance of this program is running
 single, fp = singleInstance()
@@ -107,7 +107,7 @@ def loopThread():
     while exitFlag[0] == 0:
         t.sleep(10)
 
-    sendEmail('Dr Mark Bailey', ['mark.bailey5@nhs.net'], 'Dr Mark A Bailey', 'Spiritum Duo App exited', 'SpiritumDuo App exited')
+    #sendEmail('Dr Mark Bailey', ['mark.bailey5@nhs.net'], 'Dr Mark A Bailey', 'Spiritum Duo App exited', 'SpiritumDuo App exited')
 
 
 if __name__ == '__main__':

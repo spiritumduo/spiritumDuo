@@ -27,6 +27,17 @@ python manage.py check --deploy
 '''
 
 
+certbot for main ubuntu:
+> apt-get install snapd
+> snap install --classic certbot
+> ln -s /snap/bin/certbot /usr/bin/certbot
+...
+
+> chmod +x init-letsencrypt.sh
+
+> ./init-letsencrypt.sh
+
+
 Good videos
 Full Django djProduction
 - https://www.youtube.com/watch?v=ZpR1W-NWnp4
@@ -35,4 +46,7 @@ Full Django djProduction
 
 Useful links:
 https://www.digitalocean.com/community/tutorials/how-to-point-to-digitalocean-nameservers-from-common-domain-registrars
+
 https://www.digitalocean.com/community/tutorials/how-to-use-visual-studio-code-for-remote-development-via-the-remote-ssh-plugin
+YAML validator:
+https://codebeautify.org/yaml-validator

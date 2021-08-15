@@ -263,3 +263,13 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
     lock.acquire()
 KeyboardInterrupt: 
+12/08/21 21:37: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 
+12/08/21 21:38: Exception ignored in: <module 'threading' from '/usr/local/lib/python3.9/threading.py'>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 

@@ -16,26 +16,17 @@ import os
 
 SECRET_KEY = os.getenv('djSECRET_KEY')
 runMode = os.getenv('runMode')
-runMode = 'production'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(os.getenv('djALLOWED_HOSTS'))
 
+ALLOWED_HOSTS = os.getenv('djALLOWED_HOSTS').split(' ')
 
 if runMode == 'production':
     DEBUG = False
-    ALLOWED_HOSTS = [
-        os.getenv('djALLOWED_HOST1'),
-        os.getenv('djALLOWED_HOST2'),
-        os.getenv('djALLOWED_HOST3'),
-    ]
 else:
     DEBUG = True
-    ALLOWED_HOSTS = [
-        os.getenv('djALLOWED_HOST1'),
-        os.getenv('djALLOWED_HOST2'),
-        os.getenv('djALLOWED_HOST3'),
-    ]
 
 
 # Application definition
@@ -47,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'testApp',
+    'webApp',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
