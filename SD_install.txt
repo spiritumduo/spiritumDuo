@@ -50,3 +50,10 @@ https://www.digitalocean.com/community/tutorials/how-to-point-to-digitalocean-na
 https://www.digitalocean.com/community/tutorials/how-to-use-visual-studio-code-for-remote-development-via-the-remote-ssh-plugin
 YAML validator:
 https://codebeautify.org/yaml-validator
+
+
+React steps:
+Get version numbers:
+> apt list --installed
+Install webpacks
+> npm i -D webpack webpack-cli

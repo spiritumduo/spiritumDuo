@@ -17,7 +17,7 @@ import time as t
 
 #  production,  development, basic
 runMode = os.getenv('runMode')
-runMode = 'production'
+#runMode = 'production'
 
 # Make sure only one instance of this program is running
 single, fp = singleInstance()
@@ -27,7 +27,6 @@ if not single:
 
 # Determine where main program files are stored
 directory = os.path.dirname(os.path.realpath(__file__))
-
 
 
 # Error and log handling

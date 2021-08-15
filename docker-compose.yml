@@ -21,8 +21,8 @@ services:
       - /root/SpiritumDuoDocker/socket:/socket
     environment:
       - TZ=Europe/London
-    #command: python /src/core/startUp.py
-    command: tail -F anything 
+    command: python /src/core/startUp.py
+    #command: tail -F anything 
     ports:
       - "8080:8080"
       - "80:80"

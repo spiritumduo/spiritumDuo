@@ -19,7 +19,6 @@ runMode = os.getenv('runMode')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(os.getenv('djALLOWED_HOSTS'))
 
 ALLOWED_HOSTS = os.getenv('djALLOWED_HOSTS').split(' ')
 
@@ -27,6 +26,7 @@ if runMode == 'production':
     DEBUG = False
 else:
     DEBUG = True
+
 
 
 # Application definition
