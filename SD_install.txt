@@ -57,3 +57,11 @@ Get version numbers:
 > apt list --installed
 Install webpacks
 > npm i -D webpack webpack-cli
+# Babel related stuff
+# remove errors about old core js
+> npm cache clean --force
+> npm i -D @babel/core babel-loader @babel/preset-env @babel/preset-react babel-plugin-transform-class-properties
+# Install react
+> npm i react react-dom prop-types
+
+> npm run dev &

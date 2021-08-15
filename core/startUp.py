@@ -77,7 +77,7 @@ def mainThread():
         commands.append(f'python { manageLocation }manage.py migrate')
         commands.append(f'python { manageLocation }manage.py createsuperuser --noinput')
         #commands.append(f'python { manageLocation }manage.py loaddata GHNHSFT_initialData.json')
-    elif runMode == 'production':
+    elif runMode == 'production' or runMode == 'productionWithDebug':
         commands.append('/etc/init.d/nginx restart')
         commands.append('uwsgi --emperor /etc/uwsgi/vassals')
     elif runMode == 'development':

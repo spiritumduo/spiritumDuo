@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'testApp',
     'webApp',
     'rest_framework',
+    'frontend',
 ]
 
 MIDDLEWARE = [
