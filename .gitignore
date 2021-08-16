@@ -5,6 +5,7 @@ data/certbot
 .vscode
 .python-version
 requests
+testEnv
 # spiritumDuoApp/migrations
 
 # Django #
