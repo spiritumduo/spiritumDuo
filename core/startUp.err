@@ -273,3 +273,33 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.9/threading.py", line 1448, in _shutdown
     lock.acquire()
 KeyboardInterrupt: 
+15/08/21 21:23: Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 973, in _bootstrap_inner
+    self.run()
+  File "/src/core/startUp.py", line 61, in run
+    mainThread()
+  File "/src/core/startUp.py", line 87, in mainThread
+    childUpdate = pexpect.run(c)
+  File "/usr/local/lib/python3.9/site-packages/pexpect/run.py", line 99, in run
+    child = spawn(command, timeout=timeout, maxread=2000, logfile=logfile,
+  File "/usr/local/lib/python3.9/site-packages/pexpect/pty_spawn.py", line 205, in __init__
+    self._spawn(command, args, preexec_fn, dimensions)
+  File "/usr/local/lib/python3.9/site-packages/pexpect/pty_spawn.py", line 276, in _spawn
+    raise ExceptionPexpect('The command was not found or was not ' +
+pexpect.exceptions.ExceptionPexpect: The command was not found or was not executable: /etc/init.d/nginx.
+15/08/21 21:33: Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/threading.py", line 973, in _bootstrap_inner
+    self.run()
+  File "/src/core/startUp.py", line 61, in run
+    mainThread()
+  File "/src/core/startUp.py", line 87, in mainThread
+    childUpdate = pexpect.run(c)
+  File "/usr/local/lib/python3.9/site-packages/pexpect/run.py", line 99, in run
+    child = spawn(command, timeout=timeout, maxread=2000, logfile=logfile,
+  File "/usr/local/lib/python3.9/site-packages/pexpect/pty_spawn.py", line 205, in __init__
+    self._spawn(command, args, preexec_fn, dimensions)
+  File "/usr/local/lib/python3.9/site-packages/pexpect/pty_spawn.py", line 276, in _spawn
+    raise ExceptionPexpect('The command was not found or was not ' +
+pexpect.exceptions.ExceptionPexpect: The command was not found or was not executable: /etc/init.d/nginx.

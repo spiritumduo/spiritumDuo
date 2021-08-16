@@ -10,8 +10,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - TZ=Europe/London
-  web:
-    build: .
+  backend:
+    build: 
+      context: .
+      dockerfile: ./dockerfiles/backend/Dockerfile
     volumes:
       - ./core:/src/core
       - ./web:/src/web
