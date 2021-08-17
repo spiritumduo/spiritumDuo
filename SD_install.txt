@@ -65,3 +65,8 @@ Install webpacks
 > npm i react react-dom prop-types
 
 > npm run dev &
+
+
+
+TO do
+- potentially create non-root users in all containers

@@ -50,8 +50,10 @@ services:
     env_file: .env
     environment:
       - MYSQL_DATABASE=wordpress
+    security_opt:
+    - seccomp:unconfined
     volumes:
-      - sd_mysql_data:/var/lib/mysql
+      - sd_mysql_data:/var/lib/mysql # Fixes some bind errors that were happening with mySQL
     command: '--default-authentication-plugin=mysql_native_password'
     networks:
       - app-network
