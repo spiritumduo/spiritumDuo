@@ -1,34 +1,85 @@
 version: "3.9"
 
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
+
+  postgres:
+    container_name: sd_postgres
+    image: postgres # need version number
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - TZ=Europe/London
+    volumes:
+      - sd_postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
   backend:
+    depends_on:
+      - postgres
+    container_name: sd_backend
     build: 
       context: .
       dockerfile: ./dockerfiles/backend/Dockerfile
+    env_file: .env
+    environment:
+      - TZ=Europe/London
     volumes:
       - ./core:/src/core
       - ./web:/src/web
       - ./libraries:/src/libraries
       - ./nginx:/etc/nginx/sites-available
       - ./uwsgi/vassals:/etc/uwsgi/vassals
-      - /root/SpiritumDuoDocker/socket:/socket
-    environment:
-      - TZ=Europe/London
-    command: python /src/core/startUp.py
-    #command: tail -F anything 
+      - ./socket:/socket
+      - sd_wordpress:/var/www/html
     ports:
       - "8080:8080"
       - "80:80"
       - "443:443"
-    depends_on:
-      - db
+    networks:
+      - app-network
+    command: python /src/core/startUp.py
+    #command: tail -F anything 
+
+  mysql:
+    container_name: sd_mysql
+    image: mysql:8.0
+    restart: unless-stopped
     env_file: .env
+    environment:
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - sd_mysql_data:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - app-network
+
+  wordpress:
+    depends_on:
+      - mysql
+      - backend
+    container_name: wordpress
+    image: wordpress:5.1.1-fpm-alpine
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - WORDPRESS_DB_HOST=mysql:3306
+      - WORDPRESS_DB_USER=$MYSQL_USER
+      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - sd_wordpress:/var/www/html
+    networks:
+      - app-network
+
+volumes:
+  sd_postgres_data:
+  sd_wordpress:
+  sd_mysql_data:
+
+networks:
+  app-network:
+    driver: bridge 
+ 

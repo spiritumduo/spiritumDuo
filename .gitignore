@@ -1,5 +1,4 @@
-data/db
-data/certbot
+data
 .DS_Store
 *.sh
 .vscode
