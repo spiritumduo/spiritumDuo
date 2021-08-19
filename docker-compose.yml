@@ -63,7 +63,7 @@ services:
       - mysql
       - backend
     container_name: wordpress
-    image: wordpress:5.1.1-fpm-alpine
+    image: wordpress:5.8.0-fpm-alpine
     restart: unless-stopped
     env_file: .env
     environment:
