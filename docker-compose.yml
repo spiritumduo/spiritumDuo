@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-
   postgres:
     container_name: sd_postgres
     image: postgres # need version number
@@ -20,16 +19,15 @@ services:
     depends_on:
       - postgres
     container_name: sd_backend
-    build: 
+    build:
       context: .
       dockerfile: ./dockerfiles/backend/Dockerfile
     env_file: .env
     environment:
       - TZ=Europe/London
     volumes:
-      - ./core:/src/core
-      - ./web:/src/web
-      - ./libraries:/src/libraries
+      - ./backend:/src
+      - ./log:/log
       - ./nginx:/etc/nginx/sites-available
       - ./uwsgi/vassals:/etc/uwsgi/vassals
       - ./socket:/socket
@@ -41,7 +39,7 @@ services:
     networks:
       - app-network
     command: python /src/core/startUp.py
-    #command: tail -F anything 
+    #command: tail -F anything
 
   mysql:
     container_name: sd_mysql
@@ -51,10 +49,10 @@ services:
     environment:
       - MYSQL_DATABASE=wordpress
     security_opt:
-    - seccomp:unconfined
+      - seccomp:unconfined
     volumes:
       - sd_mysql_data:/var/lib/mysql # Fixes some bind errors that were happening with mySQL
-    command: '--default-authentication-plugin=mysql_native_password'
+    command: "--default-authentication-plugin=mysql_native_password"
     networks:
       - app-network
 
@@ -62,7 +60,7 @@ services:
     depends_on:
       - mysql
       - backend
-    container_name: wordpress
+    container_name: sd_wordpress
     image: wordpress:5.8.0-fpm-alpine
     restart: unless-stopped
     env_file: .env
@@ -76,6 +74,18 @@ services:
     networks:
       - app-network
 
+  frontend:
+    container_name: sd_frontend
+    build:
+      context: .
+      dockerfile: ./dockerfiles/frontend/Dockerfile
+    #restart: unless-stopped
+    volumes:
+      - ./frontend:/src/frontend
+    networks:
+      - app-network
+    command: tail -F anything
+
 volumes:
   sd_postgres_data:
   sd_wordpress:
@@ -83,5 +93,4 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge 
- 
+    driver: bridge

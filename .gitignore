@@ -5,10 +5,11 @@ data
 .python-version
 requests
 testEnv
+log
 # spiritumDuoApp/migrations
 
 #Node.js etc
-web/node_modules
+node_modules
 
 # Django #
 *.log
