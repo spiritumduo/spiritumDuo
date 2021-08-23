@@ -82,6 +82,8 @@ services:
     #restart: unless-stopped
     volumes:
       - ./frontend:/src/frontend
+      - ./backend/media:/src/media
+      - ./backend/static:/src/static
     networks:
       - app-network
     command: tail -F anything
