@@ -70,3 +70,9 @@ Install webpacks
 
 TO do
 - potentially create non-root users in all containers
+
+
+Initialising docker:
+- Initialise django apps with postgres
+- Install node dependecies
+- Initialise certbot with init-letsencrypt.sh

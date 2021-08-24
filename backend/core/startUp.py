@@ -78,10 +78,12 @@ def mainThread():
         commands.append(f'python { manageLocation }manage.py createsuperuser --noinput')
         #commands.append(f'python { manageLocation }manage.py loaddata GHNHSFT_initialData.json')
     elif runMode == 'production' or runMode == 'productionWithDebug':
-        commands.append('/etc/init.d/nginx restart')
+        #commands.append('/etc/init.d/nginx restart')
         commands.append('uwsgi --emperor /etc/uwsgi/vassals')
     elif runMode == 'nginx':
         commands.append('/etc/init.d/nginx restart')
+    elif runMode == 'uwsgi':
+        commands.append('uwsgi --emperor /etc/uwsgi/vassals')
     elif runMode == 'development':
         commands.append('python /src/web/manage.py runserver 0.0.0.0:8080')
 

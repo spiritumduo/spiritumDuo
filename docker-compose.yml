@@ -28,14 +28,14 @@ services:
     volumes:
       - ./backend:/src
       - ./log:/log
+      - ./media:/media
       - ./nginx:/etc/nginx/sites-available
-      - ./uwsgi/vassals:/etc/uwsgi/vassals
       - ./socket:/socket
+      - ./static:/static
+      - ./uwsgi/vassals:/etc/uwsgi/vassals
       - sd_wordpress:/var/www/html
     ports:
       - "8080:8080"
-      - "80:80"
-      - "443:443"
     networks:
       - app-network
     command: python /src/core/startUp.py
@@ -82,11 +82,38 @@ services:
     #restart: unless-stopped
     volumes:
       - ./frontend:/src/frontend
-      - ./backend/media:/src/media
-      - ./backend/static:/src/static
+      - ./media:/media
+      - ./static:/static
     networks:
       - app-network
     command: tail -F anything
+    #command: npm run devExp
+
+  nginx:
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    volumes:
+      - ./media:/media
+      - ./nginxCertbot/nginx:/etc/nginx/conf.d
+      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
+      - ./nginxCertbot/data/certbot/www:/var/www/certbot
+      - ./socket:/socket
+      - ./static:/static
+      - sd_wordpress:/var/www/html
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - app-network
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
+      - ./nginxCertbot/data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
   sd_postgres_data:
