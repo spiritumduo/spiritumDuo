@@ -79,6 +79,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/frontend/Dockerfile
+    env_file: .env
     #restart: unless-stopped
     volumes:
       - ./frontend:/src/frontend
@@ -90,6 +91,7 @@ services:
     #command: npm run devExp
 
   nginx:
+    container_name: sd_nginx
     image: nginx:1.15-alpine
     restart: unless-stopped
     volumes:
@@ -108,6 +110,7 @@ services:
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   certbot:
+    container_name: sd_certbot
     image: certbot/certbot
     restart: unless-stopped
     volumes:

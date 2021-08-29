@@ -4,21 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "devWP": "webpack --mode development ./src/index.js --output-path ../static/frontend",
-    "buildWP": "webpack --mode production ./src/index.js --output-path ../static/frontend",
+    "devWP": "webpack --mode development --watch ./src/index.js --output-path /static/frontend",
+    "buildWP": "webpack --mode production ./src/index.js --output-path /static/frontend",
     "startExp": "node server",
-    "devExp": "nodemon server"
+    "devExp": "nodemon server",
+    "dev": "webpack --mode development --watch ./src/index.js --output-path /static/frontend & node server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.3",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.4",
+    "redux": "^4.1.1",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.3.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

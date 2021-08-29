@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 
 
-SECRET_KEY = os.getenv('djSECRET_KEY')
+SECRET_KEY = os.getenv('django_secretKey')
 runMode = os.getenv('runMode')
 #runMode = 'production'
 
@@ -10,7 +10,7 @@ runMode = os.getenv('runMode')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ALLOWED_HOSTS = os.getenv('djALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = os.getenv('django_allowedHosts').split(' ')
 
 if runMode == 'production':
     DEBUG = False
@@ -43,6 +43,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'djangoProject.urls'
+
 
 TEMPLATES = [
     {

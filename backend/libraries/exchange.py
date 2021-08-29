@@ -54,9 +54,9 @@ Many thanks\n\n
 def sendEmail(toEmail, fromWho, subject, body, fileName = None):
     #print('Creating and sending email...')
 
-    credentials = Credentials(os.getenv('djEmailAddress'), os.getenv('djEmailPassword'))
-    config = Configuration(server=os.getenv('djServer'), credentials=credentials)
-    accountA = Account(os.getenv('djEmailSharedSpiritumDuo'), config=config, autodiscover=False, access_type=DELEGATE)
+    credentials = Credentials(os.getenv('superuser_EmailAddress'), os.getenv('superuser_emailPassword'))
+    config = Configuration(server=os.getenv('emailServer'), credentials=credentials)
+    accountA = Account(os.getenv('emailFolder'), config=config, autodiscover=False, access_type=DELEGATE)
 
     m = Message(
         account = accountA,

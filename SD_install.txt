@@ -70,6 +70,8 @@ Install webpacks
 
 TO do
 - potentially create non-root users in all containers
+- ? Cleaner handling of https://spiritumDuo.com (that is non-www https) in nginx config
+- ? remove handlebar/middleware express-handlebars etc from frontend
 
 
 Initialising docker:
