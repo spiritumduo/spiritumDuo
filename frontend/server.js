@@ -12,7 +12,6 @@ app.get(`${appPath}/`, (req, res) => {
 });
 
 // The 404 Route (ALWAYS Keep this as the last route)
-// TODO #5 need 500 error too @Cotswoldsmaker
 app.get("*", function (req, res) {
   res.sendFile(path.join(staticFolder, "frontend", "404.html"));
 });
