@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   react-ts-example:
-    container_name: react-ts-example
-    image: react-ts-example
+    container_name: sd-frontend
+    image: sd-frontend
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -16,8 +16,8 @@ services:
     command: ["yarn", "start"]
 
   react-ts-sb-example:
-    container_name: react-ts-sb-example
-    image: react-ts-sb-example
+    container_name: sd-frontend-sb
+    image: sd-frontend-sb
     build:
       context: .
       dockerfile: ./Dockerfile

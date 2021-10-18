@@ -1,3 +1,3 @@
 FROM node:latest
-WORKDIR /app/my-app
+WORKDIR /app
 CMD ["yarn", "start"]

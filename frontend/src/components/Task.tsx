@@ -5,7 +5,7 @@ export interface TaskProps {
         id: number;
         title: string;
         state: string;
-        updatedAt: Date;
+        updatedAt?: Date;
     };
     onArchiveTask: (id: number) => void;
     onPinTask: (id: number) => void;
