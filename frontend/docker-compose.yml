@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  react-ts-example:
+  sd-frontend:
     container_name: sd-frontend
     image: sd-frontend
     build:
@@ -15,7 +15,7 @@ services:
       - 3000:3000
     command: ["yarn", "start"]
 
-  react-ts-sb-example:
+  sd-frontend-sb:
     container_name: sd-frontend-sb
     image: sd-frontend-sb
     build:
