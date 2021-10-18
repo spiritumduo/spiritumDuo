@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  react-ts-example:
+    container_name: react-ts-example
+    image: react-ts-example
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+    command: ["yarn", "start"]
+
+  react-ts-sb-example:
+    container_name: react-ts-sb-example
+    image: react-ts-sb-example
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./:/app
+    ports:
+      - 6006:6006
+    command: ["yarn", "storybook"]    
