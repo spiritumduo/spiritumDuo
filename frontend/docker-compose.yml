@@ -10,7 +10,9 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - ./:/app
+      - ./.storybook:/app/.storybook
+      - ./public:/app/public
+      - ./src:/app/src
     ports:
       - 3000:3000
     command: ["yarn", "start"]
@@ -24,7 +26,9 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - ./:/app
+      - ./.storybook:/app/.storybook
+      - ./public:/app/public
+      - ./src:/app/src
     ports:
       - 6006:6006
     command: ["yarn", "storybook"]    
