@@ -87,8 +87,8 @@ services:
       - ./static:/static
     networks:
       - app-network
-    command: tail -F anything
-    #command: npm run devExp
+    # command: npm run devExp
+    command: nodejs /src/frontend/server.js
 
   nginx:
     container_name: sd_nginx
