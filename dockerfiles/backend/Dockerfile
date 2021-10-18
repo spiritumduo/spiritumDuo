@@ -8,10 +8,8 @@ RUN python -m pip install --upgrade pip && pip install -r requirements.txt
 
 # Other packages
 RUN apt-get -y update && apt-get -y install \
-nginx=1.14.2-2+deb10u4 \
-tzdata=2021a-0+deb10u1 \
-uwsgi=2.0.18-1 \
-vim=2:8.1.0875-5 \
+nginx=1.18.0-6.1 \
+uwsgi=2.0.19.1-7.1 \
 && rm -rf /var/lib/apt/lists/*
 
 # Working directory
