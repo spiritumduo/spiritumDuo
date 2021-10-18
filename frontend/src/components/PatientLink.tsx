@@ -14,11 +14,11 @@ interface PatientLinkProps {
 }
 
 /**
- * Primary UI component for user interaction
+ * Link to individual Patient 
  */
 const PatientLink = ({ patientId, name }: PatientLinkProps) => {
   return (
-    <Link to={ `/patient/${patientId}` }>{ patientId }, { name }</Link>
+    <Link className="patient-link" to={ `/patient/${patientId}` }>{ patientId }, { name }</Link>
   );
 };
 

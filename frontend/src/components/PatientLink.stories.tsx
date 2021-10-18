@@ -1,4 +1,3 @@
-import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PatientLink  from './PatientLink';
 import StoryRouter from 'storybook-react-router';
