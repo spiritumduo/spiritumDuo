@@ -1,0 +1,4 @@
+#!/bin/bash
+# Run this from the root of the frontend directory!
+docker build -t sd-frontend .
+docker run --rm -it -v ${PWD}:/app sd-frontend yarn install
