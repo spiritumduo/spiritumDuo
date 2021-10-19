@@ -1,6 +1,6 @@
 import React from 'react';
 import './homepage.css'
-import { Header } from '../stories/Header'
+import { Header } from '../components/Header'
 import PatientList, { PatientListDataFn } from '../components/PatientList'
 import { LogoutLink } from '../components/Link';
 import User from '../types/Users'
