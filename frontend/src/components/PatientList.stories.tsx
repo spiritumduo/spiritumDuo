@@ -1,5 +1,5 @@
-import { ComponentStory, Story, ComponentMeta } from '@storybook/react';
-import PatientList, { PatientListProps, PatientListUpdateFn }  from './PatientList';
+import { ComponentStory, ComponentMeta } from '@storybook/react';
+import PatientList, { PatientListProps, PatientListDataFn }  from './PatientList';
 import StoryRouter from 'storybook-react-router';
 import Patient from '../types/Patient';
 
@@ -30,7 +30,7 @@ for (let i = 0; i < 50; ++i) {
     patientArray.push(newPatient);
 }
 
-const updateFn = function (offset: number, limit: number): PatientListUpdateFn {
+const updateFn = function (offset: number, limit: number): PatientListDataFn {
     const data: Patient[] = patientArray.slice(offset, limit);
     return { data: data, totalCount: patientArray.length};
 }

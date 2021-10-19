@@ -4,6 +4,10 @@ import { PatientLink } from "./Link";
 import Patient from "../types/Patient";
 import ReactPaginate from 'react-paginate';
 
+export interface PatientListDataFn {
+  (offset: number, limit: number): { data: Patient[], totalCount: number }
+}
+
 export interface PatientListProps {
   /**
    * Number of Patients per page
@@ -16,7 +20,7 @@ export interface PatientListProps {
   /**
    * Function to update patient data
    */
-  updateData: (offset: number, limit: number) => { data: Patient[], totalCount: number };
+  updateData: PatientListDataFn;
 }
 
 /**
