@@ -5,7 +5,7 @@ import Patient from "../types/Patient";
 import ReactPaginate from 'react-paginate';
 
 export interface PatientListDataFn {
-  (offset: number, limit: number): { data: Patient[], totalCount: number }
+  
 }
 
 export interface PatientListProps {
@@ -20,7 +20,7 @@ export interface PatientListProps {
   /**
    * Function to update patient data
    */
-  updateData: PatientListDataFn;
+  updateData: (offset: number, limit: number) => { data: Patient[], totalCount: number };
 }
 
 /**
@@ -49,9 +49,9 @@ class PatientList extends React.Component {
     }
   }
 
-  handlePageClick = (e) => {
-    const offset = e.selected * this.props.pageLimit;
-    const limit = (e.selected + 1) * this.props.pageLimit;
+  handlePageClick = ( item: { selected: number }) => {
+    const offset = item.selected * this.props.pageLimit;
+    const limit = (item.selected + 1) * this.props.pageLimit;
     const response = this.props.updateData(offset, limit);
     const pageCount = Math.ceil(response.totalCount / this.props.pageLimit);
 
