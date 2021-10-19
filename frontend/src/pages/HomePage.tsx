@@ -27,24 +27,27 @@ const HomePage = (props: HomePageProps) => {
             pathwayOnItemSelect={props.pathwayOptionsCallback}
             searchOnSubmit={props.searchCallback}
           />
-          <div className="d-flex p-2 justify-content-centre">
-            <div>
-              <h3>Patients Needing Triage:</h3>
-              <PatientList 
-                updateData={props.triageData}
-                pageLimit={props.patientsPerPage}
-                totalCount={props.triagePatients.length}
-              />
-            </div>
-            <div>
-              <h3>Clinic Patients:</h3>
-              <PatientList 
-                updateData={props.clinicData}
-                pageLimit={props.patientsPerPage}
-                totalCount={props.clinicPatients.length}
-              />
+          <div className="container text-center">
+            <div className="row mt-1">
+              <div className="col">
+                <h4>Patients Needing Triage</h4>
+                <PatientList 
+                  updateData={props.triageData}
+                  pageLimit={props.patientsPerPage}
+                  totalCount={props.triagePatients.length}
+                />
+              </div>
+              <div className="col">
+                <h4>Clinic Patients</h4>
+                <PatientList 
+                  updateData={props.clinicData}
+                  pageLimit={props.patientsPerPage}
+                  totalCount={props.clinicPatients.length}
+                />
+              </div>
             </div>
           </div>
+          <LogoutLink name="John Doe"/>
       </div>
   );
 };

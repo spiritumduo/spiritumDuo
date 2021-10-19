@@ -77,8 +77,8 @@ class PatientList extends React.Component {
 
   render() {
     return (
-      <div className="patient-list">
-        <ul className="patient-list">
+      <div className="">
+        <ul className="patient-list px-0">
           {
             this.state.data.map( p => (
               <li key={p.patientId}> <PatientLink patientId={p.patientId} name={p.name} /> </li>
@@ -95,7 +95,7 @@ class PatientList extends React.Component {
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
             onPageChange={this.handlePageClick}
-            containerClassName={'pagination'}
+            containerClassName={'pagination justify-content-center'}
             activeClassName={'active'}
             pageClassName={'page-item'}
             previousClassName={'page-item'}
