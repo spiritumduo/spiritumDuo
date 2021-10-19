@@ -10,7 +10,7 @@ export default {
     decorators: [ StoryRouter() ]
 } as Meta<typeof HomePage>
 
-const Template: Story<typeof HomePage> = (args: HomePageProps) => <HomePage {...args} />;
+const Template: Story<HomePageProps> = (args: HomePageProps) => <HomePage {...args} />;
 
 // Dummy data for display
 const patientArray: Patient[] = [];
@@ -27,22 +27,23 @@ for (let i = 0; i < 50; ++i) {
     patientArray.push(newPatient);
 }
 
-const dataCallback = function (offset: number, limit: number): PatientListDataFn {
+const dataCallback = (offset: number, limit: number) => {
     const data: Patient[] = patientArray.slice(offset, limit);
     return { data: data, totalCount: patientArray.length};
 }
 
-const searchCallback = (e) => {
+const searchCallback = (e: React.FormEvent<EventTarget>) => {
     console.log(e);
 }
 
-const pathwayCallback = (e) => {
-    console.log(e);
+const pathwayCallback = (name: string) => {
+    console.log(name);
 }
 
 export const Default = Template.bind({});
 Default.args = {
     user: {
+        userId: "MRN123467",
         name: "John Smith"
     },
     pathwayOptions: ["Lung cancer", "Bronchieactasis"],

@@ -4,9 +4,20 @@ import { PatientLink } from "./Link";
 import Patient from "../types/Patient";
 import ReactPaginate from 'react-paginate';
 
-export interface PatientListDataFn {
-  
-}
+/**
+ * PatientListDataFn
+ * 
+ * Used to feed data to the Patient list.
+ * 
+ * @param {number} offset The offset to start from
+ * @param {number} limit  How much to return from offset
+ * @returns data:       The requested data
+ *          totalCount: How many patients are in the collection
+ */
+export type PatientListDataFn = (offset: number, limit: number) => { 
+  data: Patient[],
+  totalCount: number;
+};
 
 export interface PatientListProps {
   /**
@@ -20,7 +31,7 @@ export interface PatientListProps {
   /**
    * Function to update patient data
    */
-  updateData: (offset: number, limit: number) => { data: Patient[], totalCount: number };
+  updateData: PatientListDataFn;
 }
 
 /**
