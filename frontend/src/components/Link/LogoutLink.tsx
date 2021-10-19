@@ -13,7 +13,7 @@ interface LogoutLinkProps {
  */
 const LogoutLink = ({ name }: LogoutLinkProps) => {
   return (
-    <div className="logout-link">Logged in: { name }. <Link to="/logout">Logout</Link></div>
+    <div className="position-absolute bottom-0 end-0 m-2">Logged in: { name }, <Link to="/logout">Logout</Link></div>
   );
 };
 
