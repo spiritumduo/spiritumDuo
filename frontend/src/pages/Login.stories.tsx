@@ -5,7 +5,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { LoginPage } from './Login';
 
 export default {
-  title: 'Login Page',
+  title: 'Pages/Login',
   component: LoginPage,
   decorators: [ StoryRouter() ],
 } as ComponentMeta<typeof LoginPage>;
