@@ -2,14 +2,14 @@ import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { Page } from './Page';
+import { LoginPage } from './Login';
 
 export default {
-  title: 'Example/Page',
-  component: Page,
+  title: 'Login Page',
+  component: LoginPage,
   decorators: [ StoryRouter() ],
-} as ComponentMeta<typeof Page>;
+} as ComponentMeta<typeof LoginPage>;
 
-const Template: ComponentStory<typeof Page> = (args) => <Page {...args} />;
+const Template: ComponentStory<typeof LoginPage> = (args) => <LoginPage {...args} />;
 
 export const Standard = Template.bind({});
