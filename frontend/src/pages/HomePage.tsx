@@ -1,7 +1,7 @@
 import React from 'react';
 import './homepage.css'
 import { Header } from '../components/Header'
-import PatientList, { PatientListDataFn } from '../components/PatientList'
+import PatientList, { PatientListDataFn, PatientListProps } from '../components/PatientList'
 import { LogoutLink } from '../components/Link';
 import Patient from '../types/Patient';
 import User from '../types/Users'
@@ -9,7 +9,7 @@ import User from '../types/Users'
 export interface HomePageProps {
   user: User;
   pathwayOptions: string[];
-  pathwayOptionsCallback: () => void;
+  pathwayOptionsCallback: (name: string) => void;
   triagePatients: Patient[];
   triageData: PatientListDataFn;
   clinicPatients: Patient[];
