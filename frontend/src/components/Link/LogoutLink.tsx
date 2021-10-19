@@ -1,4 +1,4 @@
-import './patientlink.css';
+import './logoutlink.css';
 import { Link } from "react-router-dom";
 
 interface LogoutLinkProps {
