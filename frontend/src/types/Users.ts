@@ -1,3 +1,4 @@
-export interface DoctorUser {
-    name: string
+export default interface User {
+    name: string;
+    userId: string;
 }
