@@ -9,9 +9,20 @@ export default {
   component: PatientInfoLonghand,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
-    options: { 
-      name:"Options",
-      type:{name:"array", required:true}
+    hospitalIdentifier: { 
+      name:"Hospital identifier",
+      type:{name:"string", required:true},
+      description:"Patient's hospital identifier (MRNxxxxxxx)"
+    },
+    name: { 
+      name:"Patient name",
+      type:{name:"string", required:true},
+      description:"Patient's full name"
+    },
+    dateOfBirth: { 
+      name:"Date of birth",
+      type:{name:"string", required:true},
+      description:"This is the patient's bate of birth (formatted dd/mm/yyyy)"
     },
   },
 } as ComponentMeta<typeof PatientInfoLonghand>;
