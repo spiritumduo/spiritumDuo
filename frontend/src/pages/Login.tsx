@@ -28,8 +28,9 @@ export const LoginPage = ({ }: LoginPageProps) => (
 								<input type="password" className="form-control" placeholder="********" />
 								</div>
 							</div>
-
-							<button type="submit" className="btn btn-outline-secondary w-50 float-end">Login</button>
+							
+							<button type="submit" className="btn btn-outline-secondary w-25 float-end ms-1">Login</button>
+							<button type="submit" className="btn btn-outline-secondary w-25 float-end">Register</button>
 						</div>
 					</div>
 				</div>
