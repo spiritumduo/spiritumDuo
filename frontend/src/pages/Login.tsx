@@ -9,7 +9,7 @@ export const LoginPage = ({ }: LoginPageProps) => (
 		<section className="vh-100">
 			<div className="container py-5 h-100">
 				<div className="row d-flex justify-content-center align-items-center h-100">
-					<div className="card shadow-2-strong">
+					<div className="card shadow-2-strong col-12 col-md-8 col-lg-6 col-xl-5">
 						<div className="card-body p-5">
 							<div className="form-group mb-2">
 								<label>Please enter credentials below to access Spiritum Duo</label>
