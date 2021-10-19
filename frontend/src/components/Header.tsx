@@ -14,7 +14,7 @@ export const Header = ({user}: HeaderProps) => {
 	return(
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			<div className="container-fluid">
-				<form className="d-flex" onSubmit={e=>{e.preventDefault(); history.push("/patient/"+e.target[0].value);}}>
+				<form className="d-flex" onSubmit={e=>{e.preventDefault(); history.push("/patient/"+(e.target as any)[0].value);}}> {/* TODO: replace this with a more robust solution */}
 					<input className="form-control me-2" type="search" name="hospitalNumberSearch" placeholder="Hospital number" aria-label="Hospital number" />
 				</form>
 				

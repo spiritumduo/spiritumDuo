@@ -25,7 +25,7 @@ export const PathwaySelector = (
 		currentOption = "Default"
 }: PathwaySelectorProps) => {
 	let itemList=options.map((item,index)=>{
-		return <Link className="dropdown-item" to={"/page/"}>Refer</Link>;
+		return <Link className="dropdown-item" to={"/page/"+item}>Refer</Link>;
 	})
 	
 	return(
