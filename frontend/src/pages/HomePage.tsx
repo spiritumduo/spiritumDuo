@@ -5,6 +5,7 @@ import PatientList, { PatientListDataFn, PatientListProps } from '../components/
 import { LogoutLink } from '../components/Link';
 import Patient from '../types/Patient';
 import User from '../types/Users'
+import Footer from '../components/Footer';
 
 export interface HomePageProps {
   user: User;
@@ -47,7 +48,7 @@ const HomePage = (props: HomePageProps) => {
               </div>
             </div>
           </div>
-          <LogoutLink name="John Doe"/>
+          <Footer name="John Doe"/>
       </div>
   );
 };
