@@ -5,7 +5,7 @@ import Patient from '../types/Patient';
 import './header.css';
 import { PathwaySelector } from './PathwaySelector';
 
-interface HeaderProps {
+export interface HeaderProps {
 	patient?: Patient;
 	pathwayOptions: string[];
 	pathwayOnItemSelect: (name: string) => void;
