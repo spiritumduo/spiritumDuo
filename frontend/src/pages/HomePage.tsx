@@ -1,8 +1,7 @@
 import React from 'react';
 import './homepage.css'
 import { Header } from '../components/Header'
-import PatientList, { PatientListDataFn, PatientListProps } from '../components/PatientList'
-import { LogoutLink } from '../components/Link';
+import PatientList, { PatientListDataFn } from '../components/PatientList'
 import Patient from '../types/Patient';
 import User from '../types/Users'
 import Footer from '../components/Footer';
