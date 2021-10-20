@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { Header } from '../components/Header';
-import { LogoutLink } from '../components/Link';
 import User from '../types/Users';
+import Footer from '../components/Footer';
 
 interface NewPatientPageProps {
     user: User;
@@ -66,7 +66,7 @@ export const NewPatientPage = (props: NewPatientPageProps) => {
                     </div>
                 </section>
             </div>
-            <LogoutLink name="John Doe"/>
+            <Footer name="John Doe"/>
         </>
     );
 };
