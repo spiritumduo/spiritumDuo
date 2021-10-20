@@ -14,21 +14,18 @@ interface PatientInfoLonghandProps {
     TODO: Could look into making this into a format via component or w/e
     Factory with data validation?
 	*/
-	dateOfBirth: string;
+	dateOfBirth: Date;
 }
 
 /**
 * Primary UI component for user interaction
 */
-export const PatientInfoLonghand = (
-	{
-        hospitalIdentifier="MRN0000000",
-        name="first last",
-        dateOfBirth="01/01/1970"
-    }: PatientInfoLonghandProps) => {
+const PatientInfoLonghand = (props: PatientInfoLonghandProps) => {
 	return(
-		<p>
-            {hospitalIdentifier}, {name}, {dateOfBirth}
-        </p>
+		<div>
+            {props.hospitalIdentifier}, {props.name}, {props.dateOfBirth.toLocaleDateString()}
+        </div>
 	);
 };
+
+export default PatientInfoLonghand;

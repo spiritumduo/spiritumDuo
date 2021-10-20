@@ -1,6 +1,6 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Header } from './Header';
+import Header from './Header';
 import StoryRouter from 'storybook-react-router';
 
 export default {
@@ -8,8 +8,6 @@ export default {
   component: Header,
   decorators: [ StoryRouter() ],
 } as ComponentMeta<typeof Header>;
-
-
 
 const Template: ComponentStory<typeof Header> = (args) => <Header {...args} />;
 
@@ -28,7 +26,12 @@ Standard.args = {
  */
 export const Patient = Template.bind({});
 Patient.args = {
-  ...Standard.args,
+  pathwayOptions: ["Lung cancer", "Bronchieactasis"],
+  pathwayOnItemSelect: (name) => console.log(name),
+  searchOnSubmit: (e) => {
+    e.preventDefault();
+    console.log(e); // is there some kind of storybook method to make this appear in actions?
+  },
   patient: {
     patientId: "MRN1234567",
     name: "John Doe",

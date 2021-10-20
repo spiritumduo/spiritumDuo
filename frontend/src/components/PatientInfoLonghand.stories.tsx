@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { PatientInfoLonghand } from './PatientInfoLonghand';
+import PatientInfoLonghand from './PatientInfoLonghand';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -35,5 +35,5 @@ export const Standard = Template.bind({});
 Standard.args = {
     hospitalIdentifier: "MRN0000000",
     name: "first last",
-    dateOfBirth: "01/01/1970"
-};
+    dateOfBirth: new Date('1970-01-01')
+}
