@@ -6,7 +6,7 @@ import Patient from '../types/Patient';
 import User from '../types/Users';
 import { Link } from 'react-router-dom';
 
-interface PatientPageProps {
+export interface PatientPageProps {
     patient: Patient;
     user: User;
     decisions: { date: Date, decision: string }[];

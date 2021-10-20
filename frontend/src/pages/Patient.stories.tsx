@@ -1,6 +1,8 @@
-import PatientPage from "./Patient";
+import PatientPage, { PatientPageProps } from "./Patient";
 import { Story, Meta } from "@storybook/react";
 import StoryRouter from "storybook-react-router";
+import { actions } from '@storybook/addon-actions';
+import React from "react";
 
 export default {
     title: 'Pages/Patient',
@@ -8,26 +10,28 @@ export default {
     decorators: [ StoryRouter() ]
 } as Meta<typeof PatientPage>
 
-const Template: Story<typeof PatientPage> = (args) => <PatientPage {...args} />;
+const Template: Story<PatientPageProps> = (args: PatientPageProps) => <PatientPage {...args} />;
 
 const patient = {
     name: "John Doe",
     patientId: "MRN1234567",
-    dob: "25/11/1942"
+    dob: new Date("1942-11-25")
 }
 
 export const Default = Template.bind({});
 Default.args = {
     user: {
-        name: "John Smith"
+        name: "John Smith",
+        userId: "2"
     },
     headerProps: {
         patient: patient,
         pathwayOptions: ["Lung cancer", "Bronchieactasis"],
         pathwayOnItemSelect: (name: string) => console.log(name),
-        searchOnSubmit: (e) => {
+        searchOnSubmit: (e: React.FormEvent<EventTarget>) => {
             e.preventDefault();
-            console.log(e); // is there some kind of storybook method to make this appear in actions?
+            actions('grr');
+            console.log(e);
         }
     },
     patient: patient,
