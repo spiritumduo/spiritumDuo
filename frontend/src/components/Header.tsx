@@ -12,7 +12,7 @@ interface HeaderProps {
 	searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
 }
 
-export const Header = (props: HeaderProps) => {
+const Header = (props: HeaderProps) => {
 	const currentOption = props.pathwayOptions.splice(0,1);
 	return(
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -45,3 +45,5 @@ export const Header = (props: HeaderProps) => {
 		</nav>
 	);
 };
+
+export default Header;
