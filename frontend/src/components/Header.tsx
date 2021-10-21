@@ -49,9 +49,7 @@ const Header = (props: HeaderProps) => {
 				<div className="row text-center">
 				{ props.patient
 					?	<PatientInfoLonghand 
-							hospitalIdentifier={props.patient?.patientId as string}
-							name={props.patient.name as string}
-							dateOfBirth={props.patient.dob as Date}
+							patient={props.patient}
 						/> 
 					: 	''
 				}

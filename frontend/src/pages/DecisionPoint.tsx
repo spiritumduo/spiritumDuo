@@ -32,7 +32,7 @@ export const DecisionPointPage = (props: DecisionPointPageProps) => {
                                     <div className="container">
 
                                         <p className="text-center">
-                                            <PatientInfoLonghand hospitalIdentifier={"MRN0123456"} name={"John Doe"} dateOfBirth={new Date("01/01/1970")} /> <Link to={"/decisionpoint/"+props.patient.patientId+"/edit"}>Edit patient record</Link>
+                                            <PatientInfoLonghand patient={props.patient} /> <Link to={"/decisionpoint/"+props.patient.patientId+"/edit"}>Edit patient record</Link>
                                         </p>
 
                                         <hr />
