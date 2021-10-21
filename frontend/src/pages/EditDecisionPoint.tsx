@@ -74,7 +74,7 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                                     <div className="container pt-5">
                                         <hr />
                                         <div className="form-outline mb-4">
-                                            <label className="form-label">Clinical information</label>
+                                            <label className="form-label">Clinical history</label>
                                             <textarea readOnly={true} className="form-control" rows={3}></textarea>
                                         </div>
                                         <div className="form-outline mb-4">
