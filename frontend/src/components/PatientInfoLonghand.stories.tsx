@@ -33,7 +33,10 @@ const Template: ComponentStory<typeof PatientInfoLonghand> = (args) => <PatientI
 export const Standard = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Standard.args = {
-    hospitalIdentifier: "MRN0000000",
-    name: "first last",
-    dateOfBirth: new Date('1970-01-01')
+    patient: {
+      firstName: "John",
+      lastName:"Doe",
+      patientId: "MRN1234567",
+      dob: new Date('1970-01-01')
+    }
 }

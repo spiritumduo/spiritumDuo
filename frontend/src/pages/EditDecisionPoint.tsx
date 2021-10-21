@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import User from '../types/Users';
 import Patient from '../types/Patient';
 import Footer from '../components/Footer';
+import PatientInfoLonghand from '../components/PatientInfoLonghand';
 
 interface EditDecisionPointPageProps {
     user: User;
@@ -28,6 +29,11 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                             <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
                                 <form className="card-body p-5" action="/addPatient" method="POST">
                                     <div className="container">
+
+                                        <p className="text-center">
+                                            <PatientInfoLonghand patient={props.patient} />
+                                        </p>
+
                                         <div className="form-group mb-2">
                                             <label>Please enter details below to edit a patient's information</label>
                                         </div>
@@ -35,14 +41,14 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                                         <div className="form-group row mb-2">
                                             <label className="col-sm-3 col-form-label">First name</label>
                                             <div className="col-sm-9">
-                                            <input type="text" className="form-control" placeholder="First name" defaultValue={props.patient.name} />
+                                            <input type="text" className="form-control" placeholder="First name" defaultValue={props.patient.firstName} />
                                             </div>
                                         </div>
 
                                         <div className="form-group row mb-2">
                                             <label className="col-sm-3 col-form-label">Last name</label>
                                             <div className="col-sm-9">
-                                            <input type="text" className="form-control" placeholder="Last name" defaultValue={props.patient.name} />
+                                            <input type="text" className="form-control" placeholder="Last name" defaultValue={props.patient.lastName} />
                                             </div>
                                         </div>
 

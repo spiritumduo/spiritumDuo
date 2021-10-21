@@ -1,6 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PatientLink  from './PatientLink';
 import StoryRouter from 'storybook-react-router';
+import Patient from '../../types/Patient';
 
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -16,6 +17,9 @@ const Template: ComponentStory<typeof PatientLink> = (args) => <PatientLink {...
 export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
-    patientId: "MRN1234567",
-    name: "John Doe"
+  patient: {
+    patientId:"MRN0123456",
+    firstName:"John",
+    lastName:"Doe"
+  }
 };

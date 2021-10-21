@@ -28,7 +28,9 @@ Standard.args = {
     },
     patient:{
         patientId: "MRN9876543",
-        name: "John Doe"
+        firstName: "John",
+        lastName: "Doe",
+        dob: new Date("01/01/1970")
     },
     pathwayOptions: ["Lung cancer", "Bronchieactasis"],
     pathwayOnItemSelect: pathwayCallback,

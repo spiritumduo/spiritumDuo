@@ -19,13 +19,15 @@ export const Default = Template.bind({});
 const patientArray: Patient[] = [];
 const patient = {
     patientId: "MRN1234567",
-    name: "John Doe"
+    firstName: "John",
+    lastName: "Doe"
 };
 
 for (let i = 0; i < 50; ++i) {
     const newPatient = {
         patientId: patient.patientId + `-${i + 1}`,
-        name: patient.name + ` ${i + 1}`
+        firstName: patient.firstName,
+        lastName: +patient.lastName + ` ${i + 1}`
     }
     patientArray.push(newPatient);
 }
