@@ -1,0 +1,61 @@
+scalar Date
+
+type Patient {
+	id: ID
+	patientHospitalNumber: String
+	patientNationalNumber: String
+	communicationMethod: String
+	firstName: String
+	lastName: String
+    dateOfBirth: Date
+}
+
+type Role{
+    id: ID
+    name: String
+}
+
+type User {
+    id: ID
+    firstName: String
+    lastName: String
+    userName: String
+    password: String
+    department: String
+    lastAccess: Date
+    roles: [Role]
+}
+
+type Configuration {
+    hospitalNumberName: String
+    hospitalNumberRegex: String
+    nationalPatientNumberName: String
+    nationalPatientNumberRegex: String
+}
+
+enum DecisionPointType {
+        TRIAGE
+        CLINIC
+        MDT
+        AD_HOC
+        FOLLOW_UP
+}
+
+type DecisionPoint {
+    id: ID
+    patient: Patient
+    addedAt: Date
+    updatedAt: Date
+    clinician: User
+    decisionType: DecisionPointType
+    clinicHistory: String
+    comorbidities: String
+}
+
+interface TestResult {
+    id: ID
+    patient: Patient
+    addedAt: Date
+    description: String
+    mediaUrls: [String]
+}
