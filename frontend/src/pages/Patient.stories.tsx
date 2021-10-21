@@ -13,7 +13,8 @@ export default {
 const Template: Story<PatientPageProps> = (args: PatientPageProps) => <PatientPage {...args} />;
 
 const patient = {
-    name: "John Doe",
+    firstName: "John",
+    lastName:"Doe",
     patientId: "MRN1234567",
     dob: new Date("1942-11-25")
 }

@@ -1,20 +1,11 @@
 import React from 'react';
+import Patient from '../types/Patient';
 
 interface PatientInfoLonghandProps {
 	/**
-	* Patient's hospital identifier (eg MRN1234567)
+	* Patient object
 	*/
-	hospitalIdentifier: string;
-    /**
-	* Patient's full name
-	*/
-	name: string;
-    /**
-	* Patient's date of birth 
-    TODO: Could look into making this into a format via component or w/e
-    Factory with data validation?
-	*/
-	dateOfBirth: Date;
+	patient: Patient;
 }
 
 /**
@@ -23,7 +14,7 @@ interface PatientInfoLonghandProps {
 const PatientInfoLonghand = (props: PatientInfoLonghandProps) => {
 	return(
 		<div>
-            {props.hospitalIdentifier}, {props.name}, {props.dateOfBirth.toLocaleDateString()}
+            {props.patient.patientId}, {props.patient.firstName} {props.patient.lastName}, {props.patient.dob?.toLocaleDateString()}
         </div>
 	);
 };

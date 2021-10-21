@@ -34,7 +34,8 @@ Patient.args = {
   },
   patient: {
     patientId: "MRN1234567",
-    name: "John Doe",
+    firstName: "John",
+    lastName:"Doe",
     dob: new Date("2021-10-10")
   }
 }

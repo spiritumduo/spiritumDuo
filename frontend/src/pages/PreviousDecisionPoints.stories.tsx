@@ -27,7 +27,8 @@ Default.args = {
     headerProps: headerProps,
     patient: {
         patientId: "MRN1234567",
-        name: "John Doe",
+        firstName: "John",
+        lastName: "Doe",
         dob: new Date(1970-10-10)
     },
     decisions: [

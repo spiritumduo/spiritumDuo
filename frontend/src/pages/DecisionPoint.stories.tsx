@@ -2,15 +2,15 @@ import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import { EditDecisionPointPage } from './EditDecisionPoint';
+import { DecisionPointPage } from './DecisionPoint';
 
 export default {
-  title: 'Pages/Decision point: edit',
-  component: EditDecisionPointPage,
+  title: 'Pages/Decision point',
+  component: DecisionPointPage,
   decorators: [ StoryRouter() ],
-} as ComponentMeta<typeof EditDecisionPointPage>;
+} as ComponentMeta<typeof DecisionPointPage>;
 
-const Template: ComponentStory<typeof EditDecisionPointPage> = (args) => <EditDecisionPointPage {...args} />;
+const Template: ComponentStory<typeof DecisionPointPage> = (args) => <DecisionPointPage {...args} />;
 
 const searchCallback = (e: React.FormEvent<EventTarget>) => {
     console.log(e);
