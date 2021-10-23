@@ -7,7 +7,7 @@
   "rules": {
     "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
     "object-curly-spacing": [1, "always"],
-    "react/function-component-definition": [1, {
+    "react/function-component-definition": [2, {
       "namedComponents": "arrow-function",
       "unnamedComponents": "arrow-function"
     }]
