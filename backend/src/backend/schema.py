@@ -39,15 +39,15 @@ class Query(graphene.ObjectType):
 
     patient_by_mrn = graphene.Field(PatientType, hospitalNumber=graphene.String())
 
-    def resolve_all_patients(root, info):
+    def resolve_patients(root, info):
         return Patient.objects.all()
-    def resolve_all_users(root, info):
+    def resolve_users(root, info):
         return User.objects.all()
-    def resolve_all_configurations(root, info):
+    def resolve_configurations(root, info):
         return Configuration.objects.all()
-    def resolve_all_decisionpoints(root, info):
+    def resolve_decisionpoints(root, info):
         return DecisionPoint.objects.all()
-    def resolve_all_testresults(root, info):
+    def resolve_testresults(root, info):
         return TestResult.objects.all()
 
 
