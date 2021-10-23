@@ -14,7 +14,7 @@ interface PatientLinkProps {
  */
 const PatientLink = (props: PatientLinkProps) => {
   return (
-    <Link className="patient-link" to={ `/patient/${props.patient.patientId}` }>{ props.patient.patientId }, { props.patient.firstName } {props.patient.lastName}</Link>
+    <Link className="patient-link" to={ `/patient/${props.patient.patientHospitalNumber}` }>{ props.patient.patientHospitalNumber }, { props.patient.firstName } {props.patient.lastName}</Link>
   );
 };
 

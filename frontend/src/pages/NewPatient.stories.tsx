@@ -23,8 +23,11 @@ const pathwayCallback = (name: string) => {
 export const Standard = Template.bind({});
 Standard.args = {
     user: {
-        userId: "MRN123467",
-        name: "John Doe"
+        id: 2,
+        firstName: "John",
+        lastName: "Doe",
+        department: "Respiratory",
+        roles: []
     },
     pathwayOptions: ["Lung cancer", "Bronchieactasis"],
     pathwayOnItemSelect: pathwayCallback,

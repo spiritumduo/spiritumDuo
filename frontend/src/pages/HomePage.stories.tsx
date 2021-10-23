@@ -1,8 +1,8 @@
+import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import HomePage, { HomePageProps } from './HomePage';
 import StoryRouter from 'storybook-react-router';
 import Patient from '../types/Patient';
-import { PatientListDataFn } from '../components/PatientList';
 
 export default {
     title: 'Pages/Home Page',
@@ -15,14 +15,15 @@ const Template: Story<HomePageProps> = (args: HomePageProps) => <HomePage {...ar
 // Dummy data for display
 const patientArray: Patient[] = [];
 const patient = {
-    patientId: "MRN1234567",
+    patientHospitalNumber: "MRN1234567",
     firstName: "John",
     lastName: "Doe"
 };
 
 for (let i = 0; i < 50; ++i) {
     const newPatient = {
-        patientId: patient.patientId + `-${i + 1}`,
+        id: i,
+        patientHospitalNumber: patient.patientHospitalNumber + `-${i + 1}`,
         firstName: patient.firstName,
         lastName: patient.lastName + ` ${i + 1}`
     }
@@ -31,9 +32,10 @@ for (let i = 0; i < 50; ++i) {
 
 const dataCallback = (offset: number, limit: number) => {
     const data: Patient[] = patientArray.slice(offset, limit);
-    return { data: data, totalCount: patientArray.length};
+    return { data: data, totalCount: patientArray.length };
 }
 
+// eslint-disable-next-line no-undef
 const searchCallback = (e: React.FormEvent<EventTarget>) => {
     console.log(e);
 }
@@ -45,8 +47,11 @@ const pathwayCallback = (name: string) => {
 export const Default = Template.bind({});
 Default.args = {
     user: {
-        userId: "MRN123467",
-        name: "John Smith"
+        id: 1,
+        firstName: "John",
+        lastName: "Smith",
+        department: "Respiratory",
+        roles: [{ id: 1, name: "Test Role" }]
     },
     pathwayOptions: ["Lung cancer", "Bronchieactasis"],
     triageData: dataCallback,

@@ -13,6 +13,8 @@ export default {
 const Template: Story<PatientPageProps> = (args: PatientPageProps) => <PatientPage {...args} />;
 
 const patient = {
+    id: 2,
+    patientHospitalNumber:"MRN0123456",
     firstName: "John",
     lastName:"Doe",
     patientId: "MRN1234567",
@@ -22,8 +24,11 @@ const patient = {
 export const Default = Template.bind({});
 Default.args = {
     user: {
-        name: "John Smith",
-        userId: "2"
+        id: 2,
+        firstName: "John",
+        lastName: "Doe",
+        department: "Respiratory",
+        roles: []
     },
     headerProps: {
         patient: patient,

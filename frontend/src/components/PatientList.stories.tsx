@@ -1,5 +1,5 @@
 import { Story, ComponentMeta } from '@storybook/react';
-import PatientList, { PatientListProps, PatientListDataFn }  from './PatientList';
+import PatientList, { PatientListProps }  from './PatientList';
 import StoryRouter from 'storybook-react-router';
 import Patient from '../types/Patient';
 
@@ -18,14 +18,17 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 const patientArray: Patient[] = [];
 const patient = {
-    patientId: "MRN1234567",
+    id: 2,
+    patientHospitalNumber: "MRN1234567",
     firstName: "John",
-    lastName: "Doe"
-};
+    lastName:"Doe",
+    dob: new Date("1960-10-10")
+  }
 
 for (let i = 0; i < 50; ++i) {
     const newPatient = {
-        patientId: patient.patientId + `-${i + 1}`,
+        id: i,
+        patientHospitalNumber: patient.patientHospitalNumber + `-${i + 1}`,
         firstName: patient.firstName,
         lastName: +patient.lastName + ` ${i + 1}`
     }

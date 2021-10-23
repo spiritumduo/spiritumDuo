@@ -14,7 +14,7 @@ interface PatientInfoLonghandProps {
 const PatientInfoLonghand = (props: PatientInfoLonghandProps) => {
 	return(
 		<div>
-            {props.patient.patientId}, {props.patient.firstName} {props.patient.lastName}, {props.patient.dob?.toLocaleDateString()}
+            {props.patient.patientHospitalNumber}, {props.patient.firstName} {props.patient.lastName}, {props.patient.dob?.toLocaleDateString()}
         </div>
 	);
 };

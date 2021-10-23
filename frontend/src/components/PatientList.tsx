@@ -81,7 +81,7 @@ class PatientList extends React.Component {
         <ul className="patient-list px-0">
           {
             this.state.data.map( p => (
-              <li key={p.patientId}> <PatientLink patient={p} /> </li>
+              <li key={p.patientHospitalNumber}> <PatientLink patient={p} /> </li>
             ))
           }
         </ul>

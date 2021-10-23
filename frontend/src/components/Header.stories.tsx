@@ -33,9 +33,10 @@ Patient.args = {
     console.log(e); // is there some kind of storybook method to make this appear in actions?
   },
   patient: {
-    patientId: "MRN1234567",
+    id: 2,
+    patientHospitalNumber: "MRN1234567",
     firstName: "John",
     lastName:"Doe",
-    dob: new Date("2021-10-10")
+    dob: new Date("1960-10-10")
   }
 }

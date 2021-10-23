@@ -22,7 +22,7 @@ const PatientPage = (props: PatientPageProps) => {
             <div className="container-lg flex">
                 <div className="row decision-row">
                     <div className="row">
-                        <Link to={`/patient/${props.patient.patientId}/decisions`}>Previous decision points</Link>
+                        <Link to={`/patient/${props.patient.patientHospitalNumber}/decisions`}>Previous decision points</Link>
                     </div>
                     {
                         props.decisions.map( d => (
@@ -42,7 +42,7 @@ const PatientPage = (props: PatientPageProps) => {
                 </div>
                 <div className="row notes-row">
                     <div className="row">
-                        <Link to={`/patient/${props.patient.patientId}/notes`}>Notes</Link>
+                        <Link to={`/patient/${props.patient.patientHospitalNumber}/notes`}>Notes</Link>
                     </div>
                     {
                         props.notes.map( n => (
@@ -65,7 +65,7 @@ const PatientPage = (props: PatientPageProps) => {
                 </div>
                 <div className="row messages-row">
                     <div className="row">
-                        <Link to={`/patient/${props.patient.patientId}/messages`}>Messages</Link>
+                        <Link to={`/patient/${props.patient.patientHospitalNumber}/messages`}>Messages</Link>
                     </div>
                     {
                         props.messages.map( m => (
@@ -87,7 +87,7 @@ const PatientPage = (props: PatientPageProps) => {
                     }
                 </div>
             </div>
-            <Footer name={props.user.name}/>
+            <Footer name={`${props.user.firstName} ${props.user.lastName}`}/>
         </div>
     )
 }

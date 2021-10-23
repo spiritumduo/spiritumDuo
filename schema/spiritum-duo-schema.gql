@@ -50,6 +50,7 @@ type DecisionPoint {
     decisionType: DecisionPointType
     clinicHistory: String
     comorbidities: String
+    requestsReferrals: String
 }
 
 interface TestResult {

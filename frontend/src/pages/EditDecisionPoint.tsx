@@ -55,7 +55,7 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                                         <div className="form-group row mb-2">
                                             <label className="col-sm-3 col-form-label">Hospital number</label>
                                             <div className="col-sm-9">
-                                            <input type="text" className="form-control" placeholder="Hospital number" defaultValue={props.patient.patientId} />
+                                            <input type="text" className="form-control" placeholder="Hospital number" defaultValue={props.patient.patientHospitalNumber} />
                                             </div>
                                         </div>
 
@@ -68,7 +68,7 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                                     
                                         
                                         <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                                        <Link to={"/decisionpoint/"+props.patient.patientId} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
+                                        <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
                                     </div>
 
                                     <div className="container pt-5">

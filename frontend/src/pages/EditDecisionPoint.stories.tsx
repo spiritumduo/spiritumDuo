@@ -23,11 +23,15 @@ const pathwayCallback = (name: string) => {
 export const Standard = Template.bind({});
 Standard.args = {
     user: {
-        userId: "MRN123467",
-        name: "John Doe"
+        id: 2,
+        firstName: "John",
+        lastName: "Doe",
+        department: "Respiratory",
+        roles: []
     },
     patient:{
-        patientId: "MRN9876543",
+        id: 5,
+        patientHospitalNumber: "MRN9876543",
         firstName: "John",
         lastName: "Doe",
         dob: new Date("01/01/1970")

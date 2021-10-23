@@ -34,9 +34,10 @@ export const Standard = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Standard.args = {
     patient: {
+      id: 2,
+      patientHospitalNumber: "MRN1234567",
       firstName: "John",
       lastName:"Doe",
-      patientId: "MRN1234567",
-      dob: new Date('1970-01-01')
+      dob: new Date("1960-10-10")
     }
 }

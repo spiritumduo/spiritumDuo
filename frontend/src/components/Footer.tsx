@@ -1,5 +1,4 @@
 import { LogoutLink } from './Link'
-import User from '../types/Users'
 import './footer.css'
 
 interface FooterProps {

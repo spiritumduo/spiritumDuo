@@ -1,6 +1,9 @@
 export default interface Patient {
-    patientId: string;
+    id: number;
     firstName: string;
     lastName: string;
+	patientHospitalNumber: string;
+	patientNationalNumber?: string;
+	communicationMethod?: string;
     dob?: Date;
 }

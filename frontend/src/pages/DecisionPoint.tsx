@@ -10,7 +10,9 @@ interface DecisionPointPageProps {
     user: User;
     patient: Patient;
     pathwayOptions: string[];
+    // eslint-disable-next-line no-unused-vars
     pathwayOnItemSelect: (name: string) => void;
+    // eslint-disable-next-line no-undef, no-unused-vars
     searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
 }
 
@@ -32,7 +34,7 @@ export const DecisionPointPage = (props: DecisionPointPageProps) => {
                                     <div className="container">
 
                                         <p className="text-center">
-                                            <PatientInfoLonghand patient={props.patient} /> <Link to={"/decisionpoint/"+props.patient.patientId+"/edit"}>Edit patient record</Link>
+                                            <PatientInfoLonghand patient={props.patient} /> <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber+"/edit"}>Edit patient record</Link>
                                         </p>
 
                                         <hr />
@@ -156,7 +158,7 @@ export const DecisionPointPage = (props: DecisionPointPageProps) => {
                                         
                                         <div className="container mt-4">
                                             <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                                            <Link to={"/decisionpoint/"+props.patient.patientId} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
+                                            <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
                                         </div>
 
                                     </div>
