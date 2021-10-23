@@ -2,8 +2,8 @@ scalar Date
 
 type Patient {
 	id: ID
-	patientHospitalNumber: String
-	patientNationalNumber: String
+	hospitalNumber: String
+	nationalNumber: String
 	communicationMethod: String
 	firstName: String
 	lastName: String

@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  sd-backend:
+    depends_on:
+      - sd-postgres
+    container_name: sd-backend
+    image: sd-backend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
+    volumes:
+      - ./:/app
+    ports:
+      - "8080:8080"
+    command: python manage.py runserver 0.0.0.0:8080
+    networks:
+      - app-network
+    
+  sd-postgres:
+    container_name: sd-postgres
+    image: postgres:14.0-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/London
+    volumes:
+      - sd-postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  sd-postgres_data:
+networks:
+  app-network:
+    driver: bridge
