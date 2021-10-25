@@ -1,3 +1,4 @@
+import React from 'react';
 import { Story, ComponentMeta } from '@storybook/react';
 import PatientList, { PatientListProps }  from './PatientList';
 import StoryRouter from 'storybook-react-router';
@@ -37,7 +38,7 @@ for (let i = 0; i < 50; ++i) {
 
 const updateFn = function (offset: number, limit: number) {
     const data: Patient[] = patientArray.slice(offset, limit);
-    return { data: data, totalCount: patientArray.length};
+    return { data: data, totalCount: patientArray.length };
 }
 
 Default.args = {

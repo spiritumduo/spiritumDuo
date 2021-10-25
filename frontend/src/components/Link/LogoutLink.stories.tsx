@@ -1,3 +1,4 @@
+import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import LogoutLink  from './LogoutLink';
 import StoryRouter from 'storybook-react-router';

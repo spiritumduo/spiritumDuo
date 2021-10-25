@@ -11,12 +11,12 @@ export default {
   argTypes: {
     options: { 
       name:"Options",
-      type:{name:"array", required:true},
+      type:{ name:"array", required:true },
       description:"The pathways the user may select between"
     },
     currentOption: { 
       name:"Current option",
-      type:{name:"string", required:true},
+      type:{ name:"string", required:true },
       description:"The currently selected pathway"
     },
   },

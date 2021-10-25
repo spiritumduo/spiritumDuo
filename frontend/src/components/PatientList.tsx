@@ -107,6 +107,6 @@ class PatientList extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default PatientList;

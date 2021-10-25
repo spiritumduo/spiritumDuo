@@ -11,17 +11,17 @@ export default {
   argTypes: {
     hospitalIdentifier: { 
       name:"Hospital identifier",
-      type:{name:"string", required:true},
+      type:{ name:"string", required:true },
       description:"Patient's hospital identifier (MRNxxxxxxx)"
     },
     name: { 
       name:"Patient name",
-      type:{name:"string", required:true},
+      type:{ name:"string", required:true },
       description:"Patient's full name"
     },
     dateOfBirth: { 
       name:"Date of birth",
-      type:{name:"string", required:true},
+      type:{ name:"string", required:true },
       description:"This is the patient's bate of birth (formatted dd/mm/yyyy)"
     },
   },

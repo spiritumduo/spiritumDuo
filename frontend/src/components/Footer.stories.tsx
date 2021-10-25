@@ -1,3 +1,4 @@
+import React from 'react';
 import Footer from "./Footer";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import StoryRouter from "storybook-react-router";

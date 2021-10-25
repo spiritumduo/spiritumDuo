@@ -35,7 +35,7 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                                         </p>
 
                                         <div className="form-group mb-2">
-                                            <label>Please enter details below to edit a patient's information</label>
+                                            <label>Please enter details below to edit a patient&apos;s information</label>
                                         </div>
 
                                         <div className="form-group row mb-2">

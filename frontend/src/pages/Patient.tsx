@@ -1,5 +1,5 @@
 import './patient.css'
-
+import React from 'react';
 import Header, { HeaderProps } from '../components/Header';
 import Footer from '../components/Footer';
 import Patient from '../types/Patient';

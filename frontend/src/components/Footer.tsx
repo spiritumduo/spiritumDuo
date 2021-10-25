@@ -1,3 +1,4 @@
+import React from 'react';
 import { LogoutLink } from './Link'
 import './footer.css'
 

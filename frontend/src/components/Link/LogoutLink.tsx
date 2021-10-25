@@ -1,3 +1,4 @@
+import React from 'react';
 import './logoutlink.css';
 import { Link } from "react-router-dom";
 
