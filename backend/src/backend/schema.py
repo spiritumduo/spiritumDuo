@@ -2,7 +2,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from backend.api.models import Patient, User, Configuration, DecisionPoint, TestResult
+from backend.api.models import Patient, User, Configuration, DecisionPoint, TestResult, DecisionPointDecisionType
 
 class PatientType(DjangoObjectType):
     class Meta:
@@ -68,6 +68,7 @@ class CreateDecisionPoint(graphene.Mutation):
         addedAt=graphene.Date()
         updatedAt=graphene.Date()
         clinician=graphene.String()
+        # decisionType=graphene.Field(DecisionPointDecisionType)
         decisionType=graphene.String()
         clinicHistory=graphene.String()
         comorbidities=graphene.String()
