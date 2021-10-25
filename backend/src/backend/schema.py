@@ -1,4 +1,3 @@
-# from typing_extensions import Required
 import graphene
 from graphene_django import DjangoObjectType
 
@@ -29,20 +28,23 @@ class TestResultType(DjangoObjectType):
         model = TestResult
         fields = ("id","patient","addedAt","description","mediaUrls")
 
-class CreatePatient(graphene.Mutation):
-    newPatient=graphene.Field(PatientType)
-    class Arguments:
+
+# CREATING NEW RECORDS
+
+class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
+    newPatient=graphene.Field(PatientType) # Define base return data of mutation
+    class Arguments: # arguments the function can take
         id=graphene.ID()
         hospitalNumber=graphene.String()
         nationalNumber=graphene.String()
         communicationMethod=graphene.String()
         firstName=graphene.String()
         lastName=graphene.String()
-        dateOfBirth=graphene.Date()
-    def mutate(self, info, id, hospitalNumber, nationalNumber, communicationMethod, firstName, lastName, dateOfBirth):
-        newPatient=Patient(id=id, hospitalNumber=hospitalNumber, nationalNumber=nationalNumber, communicationMethod=communicationMethod, firstName=firstName, lastName=lastName, dateOfBirth=dateOfBirth)
-        newPatient.save()
-        return CreatePatient(newPatient=newPatient)
+        dateOfBirth=graphene.Date() # YYYY-MM-DD
+    def mutate(self, info, id, hospitalNumber, nationalNumber, communicationMethod, firstName, lastName, dateOfBirth): # function to handle mutation
+        newPatient=Patient(id=id, hospitalNumber=hospitalNumber, nationalNumber=nationalNumber, communicationMethod=communicationMethod, firstName=firstName, lastName=lastName, dateOfBirth=dateOfBirth) # create patient object based off data provided
+        newPatient.save() # save patient record to database
+        return CreatePatient(newPatient=newPatient) # return data
 
 class CreateUser(graphene.Mutation):
     user=graphene.Field(UserType)
@@ -91,11 +93,54 @@ class CreateTestResult(graphene.Mutation):
         newTestResult.save()
         return CreateUser(testResult=newTestResult)
 
+
+# MODIFYING EXISTING RECORDS
+class ModifyPatient(graphene.Mutation):
+    patient=graphene.Field(PatientType) # return object definition
+    class Arguments:
+        id=graphene.ID()
+        hospitalNumber=graphene.String()
+        nationalNumber=graphene.String()
+        communicationMethod=graphene.String()
+        firstName=graphene.String()
+        lastName=graphene.String()
+        dateOfBirth=graphene.Date()
+    def mutate(self, info, id=None, hospitalNumber=None, nationalNumber=None, communicationMethod=None, firstName=None, lastName=None, dateOfBirth=None): 
+        """
+            Hi there, a little bit about what's going on here. I've done this like this so you only need the record ID and the data you want to change.
+            Of course you can throw all the data you want at it, but I've designed it with simplicity in mind. This might backfire but we'll see.
+            This will update the record of only the required data. ie, if you only wanted to change the hospital number, you'd only provide the updated
+            hospital number.
+
+            This might bite me on the arse but it'll be easy enough to change this function to only handle objects 
+            ~Joe
+
+            PS: one thing I've just thought is this data might actually be handled by the trust integration engine but we'll cross that when we get there
+        """
+        patient=Patient.objects.get(id=id) # find the patient record by the id provided
+
+        if (hospitalNumber!=None): # if argument hospitalNumber is not null
+            patient.hospitalNumber=hospitalNumber # set the existing record's new hospitalNumber attribute to the described attribute provided
+        if (nationalNumber!=None):
+            patient.nationalNumber=nationalNumber
+        if (communicationMethod!=None):
+            patient.communicationMethod=communicationMethod
+        if (firstName!=None):
+            patient.firstName=firstName
+        if (lastName!=None):
+            patient.lastName=lastName
+        if (dateOfBirth!=None):
+            patient.dateOfBirth=dateOfBirth
+        patient.save() # save the patient record to the database
+        return ModifyPatient(patient=patient) # return data
+
 class Mutation(graphene.ObjectType):
     create_patient = CreatePatient.Field()
     create_user = CreateUser.Field()
     create_decisionpoint=CreateDecisionPoint.Field()
     create_testresult=CreateTestResult.Field()
+
+    modify_patient=ModifyPatient.Field()
 
 class Query(graphene.ObjectType):
     patients = graphene.List(PatientType)
