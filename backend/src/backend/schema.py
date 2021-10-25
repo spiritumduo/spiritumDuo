@@ -38,6 +38,7 @@ class Query(graphene.ObjectType):
     testresults = graphene.List(TestResultType)
 
     patient_by_mrn = graphene.Field(PatientType, hospitalNumber=graphene.String())
+    user_by_id=graphene.Field(UserType, id=graphene.Int())
 
     def resolve_patients(root, info):
         return Patient.objects.all()
@@ -55,6 +56,11 @@ class Query(graphene.ObjectType):
         try:
             return Patient.objects.get(hospitalNumber=hospitalNumber)
         except Patient.DoesNotExist:
+            return None
+    def resolve_user_by_id(root, info, id):
+        try:
+            return User.objects.get(id=id)
+        except User.DoesNotExist:
             return None
 
 schema = graphene.Schema(query=Query)
