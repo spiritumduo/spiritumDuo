@@ -50,7 +50,7 @@ class DecisionPoint(models.Model):
     updatedAt=models.DateTimeField()
     clinician=models.TextField()
     # decisionType=models.Field(DecisionPointDecisionType)
-    # TODO: implement 'decisionType' to use enum, errors parsing using this method
+    # TODO: implement 'decisionType' to use enum, errors parsing using this method ~Joe
     decisionType=models.TextField()
     clinicHistory=models.TextField()
     comorbidities=models.TextField()

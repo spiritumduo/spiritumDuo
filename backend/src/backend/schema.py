@@ -68,7 +68,7 @@ class CreateDecisionPoint(graphene.Mutation):
         addedAt=graphene.Date()
         updatedAt=graphene.Date()
         clinician=graphene.String()
-        # decisionType=graphene.Field(DecisionPointDecisionType)
+        # decisionType=graphene.Field(DecisionPointDecisionType) # NOTE: see comment in ./api/models.py ~Joe
         decisionType=graphene.String()
         clinicHistory=graphene.String()
         comorbidities=graphene.String()
