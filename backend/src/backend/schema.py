@@ -214,6 +214,36 @@ class ModifyTestResult(graphene.Mutation):
         testResult.save()
         return ModifyDecisionPoint(testResult=testResult)
 
+# DELETING EXISTING RECORDS
+class RemovePatient(graphene.Mutation):
+    patient=graphene.Field(PatientType)
+    class Arguments:
+        id=graphene.ID()
+    def mutate(self, info, id): 
+        patient=Patient.objects.get(id=id).delete() # find the patient record by the id provided and remove it
+        return True
+class RemoveUser(graphene.Mutation):
+    user=graphene.Field(UserType)
+    class Arguments:
+        id=graphene.ID()
+    def mutate(self, info, id): 
+        user=User.objects.get(id=id).delete()
+        return True
+class RemoveDecisionPoint(graphene.Mutation):
+    decisionPoint=graphene.Field(DecisionPointType)
+    class Arguments:
+        id=graphene.ID()
+    def mutate(self, info, id): 
+        decisionPoint=DecisionPoint.objects.get(id=id).delete()
+        return True
+class RemoveTestResult(graphene.Mutation):
+    testResult=graphene.Field(TestResultType)
+    class Arguments:
+        id=graphene.ID()
+    def mutate(self, info, id): 
+        testResult=TestResult.objects.get(id=id).delete()
+        return True
+
 class Mutation(graphene.ObjectType):
     create_patient = CreatePatient.Field()
     create_user = CreateUser.Field()
@@ -224,6 +254,11 @@ class Mutation(graphene.ObjectType):
     modify_user=ModifyUser.Field()
     modify_decisionpoint=ModifyDecisionPoint.Field()
     modify_testresult=ModifyTestResult.Field()
+
+    remove_patient=RemovePatient.Field()
+    remove_user=RemoveUser.Field()
+    remove_decisionpoint=RemoveDecisionPoint.Field()
+    remove_testresult=RemoveTestResult.Field()
 
 class Query(graphene.ObjectType):
     patients = graphene.List(PatientType)
