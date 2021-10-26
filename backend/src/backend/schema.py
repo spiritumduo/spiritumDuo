@@ -109,8 +109,8 @@ class ModifyPatient(graphene.Mutation):
         """
             Hi there, a little bit about what's going on here. I've done this like this so you only need the record ID and the data you want to change.
             Of course you can throw all the data you want at it, but I've designed it with simplicity in mind. This might backfire but we'll see.
-            This will update the record of only the required data. ie, if you only wanted to change the hospital number, you'd only provide the updated
-            hospital number only.
+            This will update the record of only the required data. ie, if you only wanted to change the hospital number, you'd provide the updated
+            hospital number and the record ID only.
 
             This might bite me on the arse but it'll be easy enough to change this function to only handle objects 
             ~Joe
