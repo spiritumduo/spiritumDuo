@@ -110,7 +110,7 @@ class ModifyPatient(graphene.Mutation):
             Hi there, a little bit about what's going on here. I've done this like this so you only need the record ID and the data you want to change.
             Of course you can throw all the data you want at it, but I've designed it with simplicity in mind. This might backfire but we'll see.
             This will update the record of only the required data. ie, if you only wanted to change the hospital number, you'd only provide the updated
-            hospital number.
+            hospital number only.
 
             This might bite me on the arse but it'll be easy enough to change this function to only handle objects 
             ~Joe
@@ -134,6 +134,86 @@ class ModifyPatient(graphene.Mutation):
         patient.save() # save the patient record to the database
         return ModifyPatient(patient=patient) # return data
 
+class ModifyUser(graphene.Mutation):
+    patient=graphene.Field(UserType)
+    class Arguments:
+        id=graphene.ID()
+        firstName=graphene.String()
+        lastName=graphene.String()
+        userName=graphene.String()
+        passwordHash=graphene.String()
+        department=graphene.String()
+        lastAccess=graphene.Date()
+        roles=graphene.String()
+    def mutate(self, info, firstName=None, lastName=None, userName=None, passwordHash=None, department=None, roles=None): 
+        user=User.objects.get(id=id)
+
+        if (firstName!=None):
+            user.firstName=firstName 
+        if (lastName!=None):
+            user.lastName=lastName
+        if (userName!=None):
+            user.userName=userName
+        if (passwordHash!=None):
+            user.passwordHash=passwordHash
+        if (department!=None):
+            user.department=department
+        if (roles!=None):
+            user.roles=roles
+        user.save()
+        return ModifyUser(user=user)
+
+class ModifyDecisionPoint(graphene.Mutation):
+    decisionPoint=graphene.Field(DecisionPointType)
+    class Arguments:
+        id=graphene.ID()
+        patient=graphene.String()
+        addedAt=graphene.Date()
+        updatedAt=graphene.Date()
+        clinician=graphene.String()
+        decisionType=graphene.String()
+        clinicHistory=graphene.String()
+        comorbidities=graphene.String()
+    def mutate(self, info, patient=None, addedAt=None, updatedAt=None, clinician=None, decisionType=None, clinicHistory=None, comorbidities=None): 
+        decisionPoint=DecisionPoint.objects.get(id=id)
+        if (patient!=None):
+            decisionPoint.patient=patient
+        if (addedAt!=None):
+            decisionPoint.addedAt=addedAt
+        if (updatedAt!=None):
+            decisionPoint.updatedAt=updatedAt
+        if (clinician!=None):
+            decisionPoint.clinician=clinician
+        if (decisionType!=None):
+            decisionPoint.decisionType=decisionType
+        if (clinicHistory!=None):
+            decisionPoint.clinicHistory=clinicHistory
+        if (comorbidities!=None):
+            decisionPoint.comorbidities=comorbidities
+        decisionPoint.save()
+        return ModifyDecisionPoint(decisionPoint=decisionPoint)
+
+class ModifyTestResult(graphene.Mutation):
+    testResult=graphene.Field(DecisionPointType)
+    class Arguments:
+        id=graphene.ID()
+        patient=graphene.String()
+        addedAt=graphene.Date()
+        description=graphene.String()
+        mediaUrls=graphene.String()
+    def mutate(self, info, patient=None, addedAt=None, description=None, mediaUrls=None): 
+        testResult=TestResult.objects.get(id=id)
+        if (patient!=None):
+            testResult.patient=patient
+        if (addedAt!=None):
+            testResult.addedAt=addedAt
+        if (description!=None):
+            testResult.description=description
+        if (mediaUrls!=None):
+            testResult.mediaUrls=mediaUrls
+        testResult.save()
+        return ModifyDecisionPoint(testResult=testResult)
+
 class Mutation(graphene.ObjectType):
     create_patient = CreatePatient.Field()
     create_user = CreateUser.Field()
@@ -141,6 +221,9 @@ class Mutation(graphene.ObjectType):
     create_testresult=CreateTestResult.Field()
 
     modify_patient=ModifyPatient.Field()
+    modify_user=ModifyUser.Field()
+    modify_decisionpoint=ModifyDecisionPoint.Field()
+    modify_testresult=ModifyTestResult.Field()
 
 class Query(graphene.ObjectType):
     patients = graphene.List(PatientType)
