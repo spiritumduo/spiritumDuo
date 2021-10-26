@@ -1,9 +1,11 @@
 version: "3.9"
 
 services:
-  postgres:
-    container_name: sd_postgres
-    image: postgres # need version number
+
+  # ********** BACKEND SERVICES ********** #
+  sd-postgres:
+    container_name: sd-postgres
+    image: postgres:14.0-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_DB=postgres
@@ -11,38 +13,107 @@ services:
       - POSTGRES_PASSWORD=postgres
       - TZ=Europe/London
     volumes:
-      - sd_postgres_data:/var/lib/postgresql/data
+      - sd-postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
 
-  backend:
+  sd-backend:
     depends_on:
-      - postgres
-    container_name: sd_backend
+      - sd-postgres
+    container_name: sd-backend
+    image: sd-backend
     build:
-      context: .
-      dockerfile: ./dockerfiles/backend/Dockerfile
+      context: ./backend
+      dockerfile: ./Dockerfile
     env_file: .env
-    environment:
-      - TZ=Europe/London
     volumes:
-      - ./backend:/src
+      - ./backend:/app
+      - ./socket:/socket
       - ./log:/log
       - ./media:/media
-      - ./nginx:/etc/nginx/sites-available
-      - ./socket:/socket
       - ./static:/static
       - ./uwsgi/vassals:/etc/uwsgi/vassals
-      - sd_wordpress:/var/www/html
     ports:
       - "8080:8080"
     networks:
       - app-network
-    command: python /src/core/startUp.py
-    #command: tail -F anything
+    # command: python manage.py runserver 0.0.0.0:8080 # use this if standalone (listens on HTTP:8080)
+    command: uwsgi --emperor /etc/uwsgi/vassals # use this is part of full stack (listens on WSGI:8080)
 
-  mysql:
-    container_name: sd_mysql
+    
+  # ********** FRONTEND SERVICES ********** #
+  sd-frontend:
+    container_name: sd-frontend
+    image: sd-frontend
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend/:/app
+      - ./media:/media
+      - ./static:/static
+    ports:
+      - 3000:3000
+    networks:
+      - app-network
+    command: ["yarn", "start"]
+    # command: bash -c "yarn install && yarn start"
+
+  # sd-frontend-sb:
+  #   container_name: sd-frontend-sb
+  #   image: sd-frontend-sb
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     NODE_ENV: development
+  #   volumes:
+  #     - ./frontend:/app
+  #   ports:
+  #     - 6006:6006
+  #   networks:
+  #     - app-network
+  #   command: ["yarn", "storybook"] 
+  #   # command: bash -c "yarn install && yarn storybook"   
+
+  # ********** INTERMEDIATE SERVICES ********** #
+  sd-nginx:
+    depends_on:
+      - sd-frontend
+      - sd-frontend-sb
+      - sd-backend
+    container_name: sd-nginx
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    volumes:
+      - ./media:/media
+      - ./nginxCertbot/nginx:/etc/nginx/conf.d
+      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
+      - ./nginxCertbot/data/certbot/www:/var/www/certbot
+      - ./socket:/socket
+      - ./static:/static
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - app-network
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  sd-certbot:
+    container_name: sd-certbot
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
+      - ./nginxCertbot/data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+
+    # ********** LANDING PAGE ********** #
+  sd-mysql:
+    container_name: sd-mysql
     image: mysql:8.0
     restart: unless-stopped
     env_file: .env
@@ -56,16 +127,16 @@ services:
     networks:
       - app-network
 
-  wordpress:
+  sd-wordpress:
     depends_on:
-      - mysql
-      - backend
-    container_name: sd_wordpress
-    image: wordpress:5.8.0-fpm-alpine
+      - sd-mysql
+      - sd-backend
+    container_name: sd-wordpress
+    image: wordpress:5.8.1-fpm-alpine
     restart: unless-stopped
     env_file: .env
     environment:
-      - WORDPRESS_DB_HOST=mysql:3306
+      - WORDPRESS_DB_HOST=sd-mysql:3306
       - WORDPRESS_DB_USER=$MYSQL_USER
       - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
       - WORDPRESS_DB_NAME=wordpress
@@ -74,52 +145,8 @@ services:
     networks:
       - app-network
 
-  frontend:
-    container_name: sd_frontend
-    build:
-      context: .
-      dockerfile: ./dockerfiles/frontend/Dockerfile
-    env_file: .env
-    #restart: unless-stopped
-    volumes:
-      - ./frontend:/src/frontend
-      - ./media:/media
-      - ./static:/static
-    networks:
-      - app-network
-    # command: npm run devExp
-    command: nodejs /src/frontend/server.js
-
-  nginx:
-    container_name: sd_nginx
-    image: nginx:1.15-alpine
-    restart: unless-stopped
-    volumes:
-      - ./media:/media
-      - ./nginxCertbot/nginx:/etc/nginx/conf.d
-      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
-      - ./nginxCertbot/data/certbot/www:/var/www/certbot
-      - ./socket:/socket
-      - ./static:/static
-      - sd_wordpress:/var/www/html
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - app-network
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-
-  certbot:
-    container_name: sd_certbot
-    image: certbot/certbot
-    restart: unless-stopped
-    volumes:
-      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
-      - ./nginxCertbot/data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
 volumes:
-  sd_postgres_data:
+  sd-postgres_data:
   sd_wordpress:
   sd_mysql_data:
 
