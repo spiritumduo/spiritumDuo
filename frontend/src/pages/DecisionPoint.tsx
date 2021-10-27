@@ -24,21 +24,17 @@ export const DecisionPointPage = (props: DecisionPointPageProps) => {
                 pathwayOnItemSelect={props.pathwayOnItemSelect}
                 searchOnSubmit={props.searchOnSubmit}
             />
-            
             <div className="vh-100">
                 <section className="vh-100">
                     <div className="container py-5 h-100">
                         <div className="row d-flex justify-content-center align-items-center h-100">
-                            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
-                                <form className="card-body p-5" action="/addPatient" method="POST">
-                                    <div className="container">
-
+                            <div className="card shadow-2-strong col-12 col-sm-12 col-md-10 col-lg-9 col-xl-7 mb-5">
+                                <form className="card-body p-xl-5 p-lg-5 p-md-5 py-5" action="/addPatient" method="POST">
+                                    <div className="container px-0">
                                         <p className="text-center">
                                             <PatientInfoLonghand patient={props.patient} /> <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber+"/edit"}>Edit patient record</Link>
                                         </p>
-
                                         <hr />
-                                        
                                         <div className="container pt-1">
                                             <div className="form-outline mb-4">
                                                 <label className="form-label">Decision</label>
@@ -153,17 +149,10 @@ export const DecisionPointPage = (props: DecisionPointPageProps) => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
                                         </div>
-                                        
-                                        <div className="container mt-4">
-                                            <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                                            <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
-                                        </div>
-
+                                        <button type="submit" name="loginBtn" className="btn btn-outline-secondary float-end ms-1 mt-4">Update patient</button>
+                                        <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary float-end mt-4">Cancel</Link>
                                     </div>
-                                    
-
                                 </form>
                             </div>
                         </div>

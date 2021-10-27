@@ -23,8 +23,8 @@ export const NewPatientPage = (props: NewPatientPageProps) => {
                 <section className="vh-100">
                     <div className="container py-5 h-100">
                         <div className="row d-flex justify-content-center align-items-center h-100">
-                            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
-                                <form className="card-body p-5" action="/addPatient" method="POST">
+                        <div className="card shadow-2-strong col-12 col-sm-12 col-md-10 col-lg-9 col-xl-7 mb-5">
+                                <form className="card-body p-xl-5 p-lg-5 p-md-5 py-5" action="/addPatient" method="POST">
                                     <div className="form-group mb-2">
                                         <label>Please enter details below to add a new patient</label>
                                     </div>
@@ -58,8 +58,8 @@ export const NewPatientPage = (props: NewPatientPageProps) => {
                                     </div>
                                    
                                     
-                                    <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Register patient</button>
-                                    <Link to="/home" className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
+                                    <button type="submit" name="loginBtn" className="btn btn-outline-secondary float-end ms-1 mt-4">Register patient</button>
+                                    <Link to="/home" className="btn btn-outline-secondary float-end mt-4">Cancel</Link>
                                 </form>
                             </div>
                         </div>

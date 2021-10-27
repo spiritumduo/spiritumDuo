@@ -26,14 +26,14 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                 <section className="vh-100">
                     <div className="container py-5 h-100">
                         <div className="row d-flex justify-content-center align-items-center h-100">
-                            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
-                                <form className="card-body p-5" action="/addPatient" method="POST">
-                                    <div className="container">
+                        <div className="card shadow-2-strong col-12 col-sm-12 col-md-10 col-lg-9 col-xl-7 mb-5">
+                                <form className="card-body p-xl-5 p-lg-5 p-md-5 py-5" action="/editPatient" method="POST">
+                                    <div className="container px-0">
 
                                         <p className="text-center">
                                             <PatientInfoLonghand patient={props.patient} />
                                         </p>
-
+                                        <hr />
                                         <div className="form-group mb-2">
                                             <label>Please enter details below to edit a patient&apos;s information</label>
                                         </div>
@@ -65,23 +65,27 @@ export const EditDecisionPointPage = (props: EditDecisionPointPageProps) => {
                                             <input type="text" className="form-control" placeholder="Date of birth" defaultValue={props.patient.dob?.toDateString()} />
                                             </div>
                                         </div>
-                                    
-                                        
-                                        <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                                        <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
-                                    </div>
 
-                                    <div className="container pt-5">
-                                        <hr />
-                                        <div className="form-outline mb-4">
-                                            <label className="form-label">Clinical history</label>
-                                            <textarea readOnly={true} className="form-control" rows={3}></textarea>
+                                        <div className="row justify-content-end mb-2">
+                                            <div>
+                                                <button type="submit" name="updateBtn" className="btn btn-outline-secondary float-end ms-1">Update patient</button>
+                                                <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary float-end">Cancel</Link>
+                                            </div>
                                         </div>
-                                        <div className="form-outline mb-4">
-                                            <label className="form-label">Co-morbidities</label>
-                                            <textarea readOnly={true} className="form-control" rows={3}></textarea>
+                                        <hr />
+                                        <div className="container px-0">
+                                            <div className="form-outline mb-4">
+                                                <label className="form-label">Clinical history</label>
+                                                <textarea readOnly={true} className="form-control" rows={3}></textarea>
+                                            </div>
+                                            <div className="form-outline mb-4">
+                                                <label className="form-label">Co-morbidities</label>
+                                                <textarea readOnly={true} className="form-control" rows={3}></textarea>
+                                            </div>
                                         </div>
                                     </div>
+                                    
+                                    
 
                                 </form>
                             </div>
