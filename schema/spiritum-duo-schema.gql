@@ -1,12 +1,35 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    # Can give patient ID or hospital number. If you don't give either it
+    # returns null!
+    getPatient(id: ID, hospitalNumber: String): Patient
+    getUser(id: ID!): User
+    
+    getDecisionPoint(id: ID!): DecisionPoint
+    getDecisionPointsForPatient(patientId: ID!): [DecisionPoint!]
+
+    getTestResult(id: ID!): TestResult
+    getTestResultsForPatient(patientId: ID!): [TestResult!]
+}
+
+type Mutation {
+    login(userName: String!, password: String!): User
+    addDecisionPoint(decisionPoint: DecisionPoint): DecisionPoint
+}
+
 scalar Date
 
 type Patient {
-	id: ID
-	hospitalNumber: String
-	nationalNumber: String
+	id: ID!
+	hospitalNumber: String!
+	nationalNumber: String!
 	communicationMethod: String
-	firstName: String
-	lastName: String
+	firstName: String!
+	lastName: String!
     dateOfBirth: Date
 }
 
@@ -16,21 +39,21 @@ type Role{
 }
 
 type User {
-    id: ID
-    firstName: String
-    lastName: String
-    userName: String
+    id: ID!
+    firstName: String!
+    lastName: String!
+    userName: String!
     password: String
-    department: String
-    lastAccess: Date
-    roles: [Role]
+    department: String!
+    lastAccess: Date!
+    roles: [Role!]
 }
 
 type Configuration {
-    hospitalNumberName: String
-    hospitalNumberRegex: String
-    nationalPatientNumberName: String
-    nationalPatientNumberRegex: String
+    hospitalNumberName: String!
+    hospitalNumberRegex: String!
+    nationalPatientNumberName: String!
+    nationalPatientNumberRegex: String!
 }
 
 enum DecisionPointType {
@@ -42,21 +65,21 @@ enum DecisionPointType {
 }
 
 type DecisionPoint {
-    id: ID
-    patient: Patient
-    addedAt: Date
+    id: ID!
+    patient: Patient!
+    addedAt: Date!
     updatedAt: Date
-    clinician: User
-    decisionType: DecisionPointType
-    clinicHistory: String
-    comorbidities: String
-    requestsReferrals: String
+    clinician: User!
+    decisionType: DecisionPointType!
+    clinicHistory: String!
+    comorbidities: String!
+    requestsReferrals: String!
 }
 
 interface TestResult {
-    id: ID
-    patient: Patient
-    addedAt: Date
-    description: String
+    id: ID!
+    patient: Patient!
+    addedAt: Date!
+    description: String!
     mediaUrls: [String]
 }
