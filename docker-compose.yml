@@ -59,24 +59,22 @@ services:
     networks:
       - app-network
     command: ["yarn", "start"]
-    # command: bash -c "yarn install && yarn start"
 
-  # sd-frontend-sb:
-  #   container_name: sd-frontend-sb
-  #   image: sd-frontend-sb
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./Dockerfile
-  #   environment:
-  #     NODE_ENV: development
-  #   volumes:
-  #     - ./frontend:/app
-  #   ports:
-  #     - 6006:6006
-  #   networks:
-  #     - app-network
-  #   command: ["yarn", "storybook"] 
-  #   # command: bash -c "yarn install && yarn storybook"   
+  sd-frontend-sb:
+    container_name: sd-frontend-sb
+    image: sd-frontend-sb
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 6006:6006
+    networks:
+      - app-network
+    command: ["yarn", "storybook"] 
 
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
