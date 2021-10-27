@@ -1,42 +1,29 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-
-import { DecisionPointPage } from './DecisionPoint';
+import { actions } from '@storybook/addon-actions';
+import { DefaultLayout } from 'components/PageLayout.stories';
+import { PageLayoutProps } from 'components/PageLayout';
+import DecisionPointPage from './DecisionPoint';
 
 export default {
   title: 'Pages/Decision point',
   component: DecisionPointPage,
-  decorators: [ StoryRouter() ],
+  decorators: [StoryRouter()],
 } as ComponentMeta<typeof DecisionPointPage>;
 
-const Template: ComponentStory<typeof DecisionPointPage> = (args) => <DecisionPointPage {...args} />;
-
-const searchCallback = (e: React.FormEvent<EventTarget>) => {
-    console.log(e);
-}
-
-const pathwayCallback = (name: string) => {
-    console.log(name);
-}
+// eslint-disable-next-line max-len
+const Template: ComponentStory<typeof DecisionPointPage> = (args) => <DecisionPointPage { ...args } />;
 
 export const Standard = Template.bind({});
 Standard.args = {
-    user: {
-        id: 2,
-        firstName: "John",
-        lastName: "Doe",
-        department: "Respiratory",
-        roles: []
-    },
-    patient:{
-        id: 5,
-        patientHospitalNumber: "MRN9876543",
-        firstName: "John",
-        lastName: "Doe",
-        dob: new Date("01/01/1970")
-    },
-    pathwayOptions: ["Lung cancer", "Bronchieactasis"],
-    pathwayOnItemSelect: pathwayCallback,
-    searchOnSubmit: searchCallback,
-}
+  pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps },
+  patient: {
+    id: 5,
+    patientHospitalNumber: 'MRN9876543',
+    firstName: 'John',
+    lastName: 'Doe',
+    dob: new Date('01/01/1970'),
+  },
+};

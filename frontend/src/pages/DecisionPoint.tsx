@@ -1,176 +1,168 @@
 import React from 'react';
-import { Link } from "react-router-dom";
-import Header from '../components/Header';
-import User from '../types/Users';
-import Patient from '../types/Patient';
-import Footer from '../components/Footer';
-import PatientInfoLonghand from '../components/PatientInfoLonghand';
+import { Link } from 'react-router-dom';
+import Patient from 'types/Patient';
+import PatientInfoLonghand from 'components/PatientInfoLonghand';
+import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 
 interface DecisionPointPageProps {
-    user: User;
-    patient: Patient;
-    pathwayOptions: string[];
-    // eslint-disable-next-line no-unused-vars
-    pathwayOnItemSelect: (name: string) => void;
-    // eslint-disable-next-line no-undef, no-unused-vars
-    searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
+  pageLayoutProps: PageLayoutProps;
+  patient: Patient;
 }
 
-export const DecisionPointPage = (props: DecisionPointPageProps) => {
-    return(
-        <>
-            <Header
-                pathwayOptions={props.pathwayOptions}
-                pathwayOnItemSelect={props.pathwayOnItemSelect}
-                searchOnSubmit={props.searchOnSubmit}
-            />
-            
-            <div className="vh-100">
-                <section className="vh-100">
-                    <div className="container py-5 h-100">
-                        <div className="row d-flex justify-content-center align-items-center h-100">
-                            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
-                                <form className="card-body p-5" action="/addPatient" method="POST">
-                                    <div className="container">
+const DecisionPointPage = ({ pageLayoutProps, patient }: DecisionPointPageProps) => {
+  const page = (
+    <div className="vh-100">
+      <section className="vh-100">
+        <div className="container py-5 h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
+              <form className="card-body p-5" action="/addPatient" method="POST">
+                <div className="container">
 
-                                        <p className="text-center">
-                                            <PatientInfoLonghand patient={props.patient} /> <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber+"/edit"}>Edit patient record</Link>
-                                        </p>
+                  <p className="text-center">
+                    <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.patientHospitalNumber}/edit` }>Edit patient record</Link>
+                  </p>
 
-                                        <hr />
-                                        
-                                        <div className="container pt-1">
-                                            <div className="form-outline mb-4">
-                                                <label className="form-label">Decision</label>
-                                                <select className="form-select">
-                                                    <option selected>Triage</option>
-                                                    <option>Follow-up</option>
-                                                </select>
-                                            </div>
+                  <hr />
 
-                                            <div className="form-outline mb-4">
-                                                <label className="form-label">Clinical history</label>
-                                                <textarea readOnly={true} className="form-control" rows={3}></textarea>
-                                            </div>
-                                            <div className="form-outline mb-4">
-                                                <label className="form-label">Co-morbidities</label>
-                                                <textarea readOnly={true} className="form-control" rows={3}></textarea>
-                                            </div>
-
-                                            <div className="row">
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            CT-head
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            MRI-head
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            CT-thorax
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Refer to physiotherapy
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Chest x-ray
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Refer to dietician
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Bronchoscopy
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Refer to smoking cessation
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Insert another option here
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="col">
-                                                    <div className="form-check">
-                                                        <input className="form-check-input" type="checkbox" value="" id="defaultCheck1"/>
-                                                        <label className="form-check-label pull-right" htmlFor="defaultCheck1">
-                                                            Add to MDT
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                        </div>
-                                        
-                                        <div className="container mt-4">
-                                            <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                                            <Link to={"/decisionpoint/"+props.patient.patientHospitalNumber} className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
-                                        </div>
-
-                                    </div>
-                                    
-
-                                </form>
-                            </div>
-                        </div>
+                  <div className="container pt-1">
+                    <div className="form-outline mb-4">
+                      <label className="form-label" htmlFor="decisionType">Decision
+                        <select className="form-select" id="decisionType" name="decisionType">
+                          <option selected>Triage</option>
+                          <option>Follow-up</option>
+                        </select>
+                      </label>
                     </div>
-                </section>
+
+                    <div className="form-outline mb-4">
+                      <label className="form-label" htmlFor="clinicHistory">Clinical history
+                        <textarea readOnly className="form-control" id="clinicHistory" name="clinicHistory" rows={ 3 } />
+                      </label>
+                    </div>
+                    <div className="form-outline mb-4">
+                      <label className="form-label" htmlFor="comorbidities">Co-morbidities
+                        <textarea readOnly className="form-control" id="comorbidities" name="comorbidities" rows={ 3 } />
+                      </label>
+                    </div>
+
+                    <div className="row">
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck1">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck1" />
+                            CT-head
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col" />
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck2">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck2" />
+                            MRI-head
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col" />
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck3">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck3" />
+                            CT-thorax
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck4">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck4" />
+                            Refer to physiotherapy
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck4">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck4" />
+                            Chest x-ray
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck5">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck5" />
+                            Refer to dietician
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck6">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck6" />
+                            Bronchoscopy
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck7">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck7" />
+                            Refer to smoking cessation
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck8">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck8" />
+                            Insert another option here
+                          </label>
+                        </div>
+                      </div>
+                      <div className="col">
+                        <div className="form-check">
+                          <label className="form-check-label pull-right" htmlFor="defaultCheck9">
+                            <input className="form-check-input" type="checkbox" value="" id="defaultCheck9" />
+                            Add to MDT
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div className="container mt-4">
+                    <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
+                    <Link to={ `/decisionpoint/${patient.patientHospitalNumber}` } className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
+                  </div>
+
+                </div>
+
+              </form>
             </div>
-            <Footer name="John Doe"/>
-        </>
-    );
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+
+  return PageLayout({
+    headerProps: pageLayoutProps.headerProps,
+    footerProps: pageLayoutProps.footerProps,
+    element: page,
+  });
 };
+
+export default DecisionPointPage;

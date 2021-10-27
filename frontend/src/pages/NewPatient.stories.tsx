@@ -1,35 +1,19 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-
-import { NewPatientPage } from './NewPatient';
+import { Story, Meta } from '@storybook/react';
+import { DefaultLayout } from 'components/PageLayout.stories';
+import { PageLayoutProps } from 'components/PageLayout';
+import NewPatientPage, { NewPatientPageProps } from './NewPatient';
 
 export default {
   title: 'Pages/New Patient',
   component: NewPatientPage,
-  decorators: [ StoryRouter() ],
-} as ComponentMeta<typeof NewPatientPage>;
+  decorators: [StoryRouter()],
+} as Meta<typeof NewPatientPage>;
 
-const Template: ComponentStory<typeof NewPatientPage> = (args) => <NewPatientPage {...args} />;
-
-const searchCallback = (e: React.FormEvent<EventTarget>) => {
-    console.log(e);
-}
-
-const pathwayCallback = (name: string) => {
-    console.log(name);
-}
+// eslint-disable-next-line max-len
+const Template: Story<NewPatientPageProps> = (args: NewPatientPageProps) => <NewPatientPage { ...args } />;
 
 export const Standard = Template.bind({});
-Standard.args = {
-    user: {
-        id: 2,
-        firstName: "John",
-        lastName: "Doe",
-        department: "Respiratory",
-        roles: []
-    },
-    pathwayOptions: ["Lung cancer", "Bronchieactasis"],
-    pathwayOnItemSelect: pathwayCallback,
-    searchOnSubmit: searchCallback,
-}
+Standard.args = { pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps } };

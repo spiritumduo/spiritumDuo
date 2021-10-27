@@ -1,15 +1,43 @@
 {
   "plugins": [
+    "import",
     "react"
   ],
-  "extends": ["eslint:recommended", "plugin:react/recommended"],
+  "extends": [
+    "airbnb",
+    "eslint:recommended", 
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "rules": {
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": "error",
+    "no-use-before-define": "off",
+    "react/prop-types": 0,
+    //"@typescript-eslint/no-use-before-define": "error",
     "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "react/jsx-curly-spacing": [1, { "when": "always" }],
     "object-curly-spacing": [1, "always"],
     "react/function-component-definition": [2, {
       "namedComponents": "arrow-function",
       "unnamedComponents": "arrow-function"
-    }]
+    }],
+    "react/jsx-one-expression-per-line": 0,
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "object-shorthand": ["error", "never"],
+    "import/extensions": [2, "never"],
+    "object-curly-newline": ["error", {"multiline": true}]
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+      }
+    }
   }
 }

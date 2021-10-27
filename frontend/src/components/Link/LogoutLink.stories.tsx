@@ -1,20 +1,16 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import LogoutLink  from './LogoutLink';
 import StoryRouter from 'storybook-react-router';
+import React from 'react';
+import LogoutLink from './LogoutLink';
 
-
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Logout Link',
   component: LogoutLink,
-  decorators: [ StoryRouter() ],
+  decorators: [StoryRouter()],
 } as ComponentMeta<typeof LogoutLink>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof LogoutLink> = (args) => <LogoutLink {...args} />;
+const Template: ComponentStory<typeof LogoutLink> = (args) => <LogoutLink { ...args } />;
 
 export const Default = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Default.args = {
-    name: "John Smith"
-};
+Default.args = { name: 'John Smith' };

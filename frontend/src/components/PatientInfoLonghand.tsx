@@ -2,21 +2,20 @@ import React from 'react';
 import Patient from '../types/Patient';
 
 interface PatientInfoLonghandProps {
-	/**
-	* Patient object
-	*/
-	patient: Patient;
+  /**
+  * Patient object
+  */
+  patient: Patient;
 }
 
 /**
 * Primary UI component for user interaction
 */
-const PatientInfoLonghand = (props: PatientInfoLonghandProps) => {
-	return(
-		<div>
-            {props.patient.patientHospitalNumber}, {props.patient.firstName} {props.patient.lastName}, {props.patient.dob?.toLocaleDateString()}
-        </div>
-	);
-};
+const PatientInfoLonghand = ({ patient }: PatientInfoLonghandProps) => (
+  <div>
+    {/* eslint-disable-next-line max-len */}
+    {patient.patientHospitalNumber}, {patient.firstName} {patient.lastName}, {patient.dob?.toLocaleDateString()}
+  </div>
+);
 
 export default PatientInfoLonghand;

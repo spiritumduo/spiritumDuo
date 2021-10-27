@@ -7,7 +7,7 @@ import LoginPage from './Login';
 export default {
   title: 'Pages/Login',
   component: LoginPage,
-  decorators: [ StoryRouter() ],
+  decorators: [StoryRouter()],
 } as ComponentMeta<typeof LoginPage>;
 
 const Template: ComponentStory<typeof LoginPage> = () => <LoginPage />;

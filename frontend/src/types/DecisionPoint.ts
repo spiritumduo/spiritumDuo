@@ -1,5 +1,5 @@
-import Patient from "./Patient";
-import User from "./Users";
+import Patient from './Patient';
+import User from './Users';
 
 export enum DecisionPointType {
     TRIAGE = 'triage',
@@ -9,7 +9,7 @@ export enum DecisionPointType {
     FOLLOW_UP = 'follow up'
 }
 
-export default interface DecisionPoint {
+interface DecisionPoint {
     id: number;
     patient: Patient;
     addedAt: Date;
@@ -20,3 +20,5 @@ export default interface DecisionPoint {
     comorbidities: string;
     requestsReferrals: string;
 }
+
+export default DecisionPoint;

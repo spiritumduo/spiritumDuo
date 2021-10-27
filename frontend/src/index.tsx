@@ -1,17 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from "react-router-dom";
+import App from 'app/App';
+import reportWebVitals from 'reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
+
+const client = new ApolloClient({
+  uri: 'https://4cc1760e-f6a2-4dec-a24e-3193f4cf639b.mock.pstmn.io',
+  cache: new InMemoryCache(),
+});
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ApolloProvider client={ client }>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ApolloProvider>
   </React.StrictMode>,
-  document.getElementById('root')
+  // eslint-disable-next-line no-undef
+  document.getElementById('root'),
 );
 
 // If you want to start measuring performance in your app, pass a function

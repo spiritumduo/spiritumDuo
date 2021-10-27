@@ -1,9 +1,11 @@
-import Patient from "./Patient";
+import Patient from './Patient';
 
-export default interface TestResult {
+interface TestResult {
     id: number;
     patient: Patient;
     addedAt: Date;
     description: string;
     mediaUrls: string[];
 }
+
+export default TestResult;

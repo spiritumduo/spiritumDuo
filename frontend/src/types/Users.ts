@@ -1,5 +1,6 @@
-import Role from "./Role";
-export default interface User {
+import Role from './Role';
+
+interface User {
     id: number;
     firstName: string;
     lastName: string;
@@ -7,3 +8,5 @@ export default interface User {
     lastAccess?: Date;
     roles: Role[];
 }
+
+export default User;
