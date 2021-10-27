@@ -9,7 +9,7 @@ interface DecisionPointPageProps {
   patient: Patient;
 }
 
-const DecisionPointPage = ({ pageLayoutProps, patient }: DecisionPointPageProps) => {
+const DecisionPointPage = ({ pageLayoutProps, patient }: DecisionPointPageProps): JSX.Element => {
   const page = (
     <div className="vh-100">
       <section className="vh-100">

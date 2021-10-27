@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Patient from 'types/Patient';
-import Footer from 'components/Footer';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 

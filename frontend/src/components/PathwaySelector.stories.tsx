@@ -8,19 +8,6 @@ import PathwaySelector from './PathwaySelector';
 export default {
   title: 'Pathway Selector',
   component: PathwaySelector,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {
-    options: {
-      name: 'Options',
-      type: { name: 'array', required: true },
-      description: 'The pathways the user may select between',
-    },
-    currentOption: {
-      name: 'Current option',
-      type: { name: 'string', required: true },
-      description: 'The currently selected pathway',
-    },
-  },
   decorators: [StoryRouter()],
 } as ComponentMeta<typeof PathwaySelector>;
 

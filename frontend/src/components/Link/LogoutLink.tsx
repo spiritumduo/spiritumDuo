@@ -13,7 +13,7 @@ interface LogoutLinkProps {
  * Link to individual Patient
  */
 const LogoutLink = ({ name }: LogoutLinkProps) => (
-  <div className="position-absolute bottom-0 end-0 m-2">Logged in: { name }, <Link to="/logout">Logout</Link></div>
+  <div className="float-end">Logged in: { name }, <Link to="/logout">Logout</Link></div>
 );
 
 export default LogoutLink;

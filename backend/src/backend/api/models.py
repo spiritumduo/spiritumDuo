@@ -1,4 +1,5 @@
 from django.db import models
+import graphene
 
 # Create your models here.
 class Patient(models.Model):
@@ -35,12 +36,21 @@ class Configuration(models.Model):
     def __str__(self):
         return self.hospitalNumberName
 
+class DecisionPointDecisionType(graphene.Enum):
+    TRIAGE=1
+    CLINIC=2
+    MDT=3
+    AD_HOC=4
+    FOLLOW_UP=5
+
 class DecisionPoint(models.Model):
     id=models.IntegerField(primary_key=True)
     patient=models.TextField()
     addedAt=models.DateTimeField()
     updatedAt=models.DateTimeField()
     clinician=models.TextField()
+    # decisionType=models.Field(DecisionPointDecisionType)
+    # TODO: implement 'decisionType' to use enum, errors parsing using this method ~Joe
     decisionType=models.TextField()
     clinicHistory=models.TextField()
     comorbidities=models.TextField()
