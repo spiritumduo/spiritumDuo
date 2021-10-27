@@ -40,6 +40,7 @@ const patient = {
 export const Default = Template.bind({});
 Default.args = {
     headerProps: headerProps,
+    user: user,
     patient: {
         id: 2,
         patientHospitalNumber: "MRN1234567",
