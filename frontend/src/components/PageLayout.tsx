@@ -21,7 +21,7 @@ const PageLayout = ({
   headerProps,
   footerProps,
   element,
-}: PageLayoutProps) => (
+}: PageLayoutProps): JSX.Element => (
   <div>
     <Header { ...headerProps } />
     {element}

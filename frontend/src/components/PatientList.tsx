@@ -37,7 +37,7 @@ export interface PatientListProps {
 type PatientListState = {
   data: Patient[];
   pageCount: number;
-}
+};
 
 /**
  * List of patients with pagination
