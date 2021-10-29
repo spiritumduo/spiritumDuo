@@ -13,6 +13,8 @@
   "parser": "@typescript-eslint/parser",
   "rules": {
     "no-shadow": "off",
+    "semi": "off",
+    "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/no-shadow": "error",
     "no-use-before-define": "off",
     "react/prop-types": 0,
@@ -28,7 +30,12 @@
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "object-shorthand": ["error", "never"],
     "import/extensions": [2, "never"],
-    "object-curly-newline": ["error", {"multiline": true}]
+    "object-curly-newline": ["error", {"multiline": true}],
+    "jsx-a11y/label-has-associated-control": [ 2, {
+      "controlComponents": ["Field"],
+      "depth": 3
+    }],
+    "no-underscore-dangle": [0]
   },
   "settings": {
     "import/parsers": {
