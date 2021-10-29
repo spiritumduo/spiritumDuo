@@ -16,7 +16,7 @@ export interface HomePageProps {
 const HomePage = ({
   pageLayoutProps, triageData, patientsPerPage,
   triagePatients, clinicData, clinicPatients,
-}: HomePageProps) => {
+}: HomePageProps): JSX.Element => {
   const page = (
     <div className="container text-center">
       <div className="row mt-1">
