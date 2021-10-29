@@ -1,22 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { cache } from 'app/cache';
 import './index.css';
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
 
 const client = new ApolloClient({
   uri: 'https://4cc1760e-f6a2-4dec-a24e-3193f4cf639b.mock.pstmn.io',
-  cache: new InMemoryCache(),
+  cache: cache,
 });
 
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={ client }>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <App />
     </ApolloProvider>
   </React.StrictMode>,
   // eslint-disable-next-line no-undef
