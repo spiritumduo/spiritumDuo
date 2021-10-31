@@ -36,9 +36,7 @@ class User(models.Model):
     def __str__(self):
         return self.id
 
-class UserRolesBind(models.Model):
-    role=models.ForeignKey(Role, on_delete=models.CASCADE)
-    user=models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 class Configuration(models.Model):
     hospitalNumberName=models.TextField()
@@ -81,3 +79,16 @@ class TestResult(models.Model):
     
     def __str__(self):
         return self.id
+
+
+class UserDecisionBind(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    decisionPoint=models.ForeignKey(DecisionPoint, on_delete=models.CASCADE)
+
+class PatientDecisionBind(models.Model):
+    patient=models.ForeignKey(Patient, on_delete=models.CASCADE)
+    decisionPoint=models.ForeignKey(DecisionPoint, on_delete=models.CASCADE)
+
+class UserRolesBind(models.Model):
+    role=models.ForeignKey(Role, on_delete=models.CASCADE)
+    user=models.ForeignKey(User, on_delete=models.CASCADE)

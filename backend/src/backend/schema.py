@@ -4,108 +4,99 @@ from graphene_django.types import DjangoObjectType
 import json
 from backend.api.models import Patient, User, Configuration, DecisionPoint, TestResult, DecisionPointTypes, Role
 
-class PatientType(DjangoObjectType):
-    class Meta:
-        model = Patient
-        fields = ("id", "hospitalNumber", "nationalNumber", "communicationMethod", "firstName", "lastName", "dateOfBirth")
+class RoleInput(InputObjectType):
+    id=graphene.ID(required=True)
+    roleName=graphene.String(required=True) 
+class PatientInput(InputObjectType):
+    id=graphene.ID(required=True)
+    hospitalNumber=graphene.String(required=True)
+    nationalNumber=graphene.String(required=True)
+    communicationMethod=graphene.String(required=True)
+    firstName=graphene.String(required=True)
+    lastName=graphene.String(required=True)
+    dateOfBirth=graphene.Date(required=True)
+class UserInput(InputObjectType):
+    id=graphene.ID(required=True)
+    firstName=graphene.String(required=True)
+    lastName=graphene.String(required=True)
+    userName=graphene.String(required=True)
+    passwordHash=graphene.String(required=True)
+    department=graphene.String(required=True)
+    lastAccess=graphene.DateTime(required=True)
+    roles=graphene.List(RoleInput)
 
-class UserType(DjangoObjectType):
-    class Meta:
-        model = User
-        fields = ("id", "firstName", "lastName", "userName", "passwordHash", "department", "lastAccess", "roles")
+class ConfigurationInput(InputObjectType):
+    hospitalNumberName=graphene.String(required=True)
+    hospitalNumberRegex=graphene.String(required=True)
+    nationalPatientNumberName=graphene.String(required=True)
+    nationalPatientNumberRegex=graphene.String(required=True)
+
+class DecisionPointInput(InputObjectType):
+    id=graphene.ID(required=True)
+    patient=graphene.Field(PatientInput)
+    addedAt=graphene.DateTime(required=True)
+    updatedAt=graphene.DateTime(required=True)
+    clinician=graphene.Field(UserInput)
+    DecisionPointType=graphene.String(required=True)
+    clinicHistory=graphene.String(required=True)
+    comorbidities=graphene.String(required=True)
 
 class RoleType(DjangoObjectType):
     class Meta:
         model = Role
-        fields = ("id", "roleName")
-
-class RoleInput(InputObjectType):
-    id=graphene.ID()
-    roleName=graphene.String() 
-
+class PatientType(DjangoObjectType):
+    class Meta:
+        model = Patient
+class UserType(DjangoObjectType):
+    class Meta:
+        model = User
 class ConfigurationType(DjangoObjectType):
     class Meta:
-        model = Configuration
-        fields = ("hospitalNumberName","hospitalNumberRegex","nationalPatientNumberName","nationalPatientNumberRegex")
-
+        model=Configuration
 class DecisionPointType(DjangoObjectType):
     class Meta:
-        model = DecisionPoint
-        fields = ("id","patient","addedAt","updatedAt","clinician","decisionType","clinicHistory","comorbidities")
+        model=DecisionPoint
 
-class TestResultType(DjangoObjectType):
-    class Meta:
-        model = TestResult
-        fields = ("id","patient","addedAt","description","mediaUrls")
+
 
 # CREATING NEW RECORDS
 class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
-    newPatient=graphene.Field(PatientType) # Define base return data of mutation
+    patient=graphene.Field(PatientType) # Define base return data of mutation
     class Arguments: # arguments the function can take
-        id=graphene.ID()
-        hospitalNumber=graphene.String()
-        nationalNumber=graphene.String()
-        communicationMethod=graphene.String()
-        firstName=graphene.String()
-        lastName=graphene.String()
-        dateOfBirth=graphene.Date() # YYYY-MM-DD
-    def mutate(self, info, id, hospitalNumber, nationalNumber, communicationMethod, firstName, lastName, dateOfBirth): # function to handle mutation
-        newPatient=Patient(id=id, hospitalNumber=hospitalNumber, nationalNumber=nationalNumber, communicationMethod=communicationMethod, firstName=firstName, lastName=lastName, dateOfBirth=dateOfBirth) # create patient object based off data provided
+        patientInput=graphene.Argument(PatientInput)
+    def mutate(self, info, patientInput): # function to handle mutation
+        newPatient=Patient(id=patientInput.id, hospitalNumber=patientInput.hospitalNumber, nationalNumber=patientInput.nationalNumber, communicationMethod=patientInput.communicationMethod, firstName=patientInput.firstName, lastName=patientInput.lastName, dateOfBirth=patientInput.dateOfBirth) # create patient object based off data provided
         newPatient.save() # save patient record to database
-        return CreatePatient(newPatient=newPatient) # return data
-
-'''
-TODO:
-- Each major data type (patient, user, etc) has to be an input type. This is so it can be used as part of a nested mutation.
-'''
+        return CreatePatient(patient=newPatient) # return data
 
 class CreateUser(graphene.Mutation):
     user=graphene.Field(UserType)
     class Arguments:
-        id=graphene.ID()
-        firstName=graphene.String()
-        lastName=graphene.String()
-        userName=graphene.String()
-        passwordHash=graphene.String()
-        department=graphene.String()
-        lastAccess=graphene.Date()
-        roles=graphene.List(RoleInput)
-    def mutate(self, info, id, firstName, lastName, userName, passwordHash, department, lastAccess, roles):
-        newUser=User(id=id, firstName=firstName, lastName=lastName, userName=userName, passwordHash=passwordHash, department=department, lastAccess=lastAccess)
+        userInput=graphene.Argument(UserInput)
+    def mutate(self, info, userInput):
+        newUser=User(id=userInput.id, firstName=userInput.firstName, lastName=userInput.lastName, userName=userInput.userName, passwordHash=userInput.passwordHash, department=userInput.department, lastAccess=userInput.lastAccess) # create patient object based off data provided
         newUser.save()
-        for role in roles:
+        for role in userInput.roles:
             newUser.roles.create(id=role.id, roleName=role.roleName)
         return CreateUser(user=newUser)
 
 class CreateConfiguration(graphene.Mutation):
-    configuration=graphene.Field(ConfigurationType)
+    config=graphene.Field(ConfigurationType)
     class Arguments:
-        hospitalNumberName=graphene.String()
-        hospitalNumberRegex=graphene.String()
-        nationalPatientNumberName=graphene.String()
-        nationalPatientNumberRegex=graphene.String()
-    def mutate(self, info, hospitalNumberName, hospitalNumberRegex, nationalPatientNumberName, nationalPatientNumberRegex):
-        newConfig=Configuration(hospitalNumberName=hospitalNumberName, hospitalNumberRegex=hospitalNumberRegex, nationalPatientNumberName=nationalPatientNumberName, nationalPatientNumberRegex=nationalPatientNumberRegex)
+        configInput=graphene.Argument(ConfigurationInput)
+    def mutate(self, info, configInput):
+        newConfig=Configuration(hospitalNumberName=configInput.hospitalNumberName, hospitalNumberRegex=configInput.hospitalNumberRegex, nationalPatientNumberName=configInput.nationalPatientNumberName, nationalPatientNumberRegex=configInput.nationalPatientNumberRegex)
         newConfig.save()
-        return CreateConfiguration(Configuration=newConfig)
+        return CreateConfiguration(config=newConfig)
 
 class CreateDecisionPoint(graphene.Mutation):
-    decisionPoint=graphene.Field(DecisionPointType)
+    DP=graphene.Field(DecisionPointType)
     class Arguments:
-        id=graphene.ID()
-        patient=graphene.Argument(PatientType)
-        addedAt=graphene.Date()
-        updatedAt=graphene.Date()
-        clinician=graphene.Argument(UserType)
-        # decisionType = graphene.Enum("decisionType", [("TRIAGE", 1), ("CLINIC", 2), ("MDT", 3), ("AD_HOC", 4), ("FOLLOW_UP", 5)])
-        decisionType=graphene.String()
-        clinicHistory=graphene.String()
-        comorbidities=graphene.String()
-
-    def mutate(self, info, id, patient, addedAt, updatedAt, clinician, decisionType, clinicHistory, comorbidities):
-        newDP=DecisionPoint(id=id, patient=patient, addedAt=addedAt, updatedAt=updatedAt, clinician=clinician, decisionType=decisionType, clinicHistory=clinicHistory, comorbidities=comorbidities)
+        dpInput=graphene.Argument(DecisionPointInput)
+    def mutate(self, info, dpInput):
+        newDP=DecisionPoint(id=dpInput.id, patient=dpInput.patient, addedAt=dpInput.addedAt, updatedAt=dpInput.updatedAt, clinician=dpInput.clinician, DecisionPointType=dpInput.DecisionPointType, clinicHistory=dpInput.clinicHistory, comorbidities=dpInput.comorbidities)
         newDP.save()
-        return CreateDecisionPoint(decisionPoint=newDP)
+        return CreateDecisionPoint(DP=newDP)
 
 class Mutation(graphene.ObjectType):
     create_patient = CreatePatient.Field()
@@ -116,6 +107,8 @@ class Mutation(graphene.ObjectType):
 class Query(graphene.ObjectType):
     patients = graphene.List(PatientType)
     users = graphene.List(UserType)
+    configuration=graphene.List(ConfigurationType)
+    decisionpoint=graphene.List(DecisionPointType)
 
     patient_by_mrn = graphene.Field(PatientType, hospitalNumber=graphene.String())
     user_by_id=graphene.Field(UserType, id=graphene.Int())
@@ -125,12 +118,8 @@ class Query(graphene.ObjectType):
         return Patient.objects.all()
     def resolve_users(root, info):
         return User.objects.all()
-    def resolve_configurations(root, info):
+    def resolve_configuration(root, info):
         return Configuration.objects.all()
-    def resolve_decisionpoints(root, info):
-        return DecisionPoint.objects.all()
-    def resolve_testresults(root, info):
-        return TestResult.objects.all()
 
     # Gets specified data only
     def resolve_patient_by_mrn(root, info, hospitalNumber):
