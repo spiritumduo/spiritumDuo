@@ -1,7 +1,9 @@
 from django.db import models
+from django.db.models.fields import related
 import graphene
+from graphene.types import field
+from enum import Enum
 
-# Create your models here.
 class Patient(models.Model):
     id=models.IntegerField(primary_key=True)
     hospitalNumber=models.TextField()
@@ -14,6 +16,13 @@ class Patient(models.Model):
     def __str__(self):
         return self.id
 
+class Role(models.Model):
+    id=models.IntegerField(primary_key=True)
+    roleName=models.TextField()
+
+    def __str__(self):
+        return self.roleName
+
 class User(models.Model):
     id=models.IntegerField(primary_key=True)
     firstName=models.TextField()
@@ -22,10 +31,14 @@ class User(models.Model):
     passwordHash=models.TextField()
     department=models.TextField()
     lastAccess=models.DateTimeField()
-    roles=models.TextField()
+    roles=models.ManyToManyField(Role, through="UserRolesBind")
     
     def __str__(self):
         return self.id
+
+class UserRolesBind(models.Model):
+    role=models.ForeignKey(Role, on_delete=models.CASCADE)
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Configuration(models.Model):
     hospitalNumberName=models.TextField()
@@ -36,7 +49,7 @@ class Configuration(models.Model):
     def __str__(self):
         return self.hospitalNumberName
 
-class DecisionPointDecisionType(graphene.Enum):
+class DecisionPointTypes(Enum):
     TRIAGE=1
     CLINIC=2
     MDT=3
@@ -45,13 +58,14 @@ class DecisionPointDecisionType(graphene.Enum):
 
 class DecisionPoint(models.Model):
     id=models.IntegerField(primary_key=True)
-    patient=models.TextField()
+    patient=models.ForeignKey(Patient, on_delete=models.CASCADE)
     addedAt=models.DateTimeField()
     updatedAt=models.DateTimeField()
-    clinician=models.TextField()
-    # decisionType=models.Field(DecisionPointDecisionType)
-    # TODO: implement 'decisionType' to use enum, errors parsing using this method ~Joe
-    decisionType=models.TextField()
+    clinician=models.ForeignKey(User, on_delete=models.CASCADE)
+    DecisionPointTypes = models.CharField(
+      max_length=5,
+      choices=[(tag, tag.value) for tag in DecisionPointTypes]
+    )
     clinicHistory=models.TextField()
     comorbidities=models.TextField()
     
@@ -60,7 +74,7 @@ class DecisionPoint(models.Model):
 
 class TestResult(models.Model):
     id=models.IntegerField(primary_key=True)
-    patient=models.TextField()
+    patient=models.ManyToManyField(Patient)
     addedAt=models.DateTimeField()
     description=models.TextField()
     mediaUrls=models.TextField()
