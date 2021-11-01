@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'backend.api',
     'graphene_django',
+    'backend.api.submodels'
 ]
 
 GRAPHENE = {
