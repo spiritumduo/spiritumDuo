@@ -1,9 +1,10 @@
-from django.utils.translation import get_language_from_path
 import graphene
 from graphene import InputObjectType
 from graphene_django.types import DjangoObjectType
 
-from backend.api.models import Patient, User, Configuration, DecisionPoint, TestResult, DecisionPointTypes, Role
+from api.models import Patient, Configuration, DecisionPoint, TestResult, DecisionPointTypes, Role
+from api.models import User
+
 
 class PatientType(DjangoObjectType):
     class Meta:
@@ -68,7 +69,7 @@ class CreateUser(graphene.Mutation):
         lastAccess=graphene.Date()
         roles=graphene.InputField(RoleInput)
     def mutate(self, info, id, firstName, lastName, userName, passwordHash, department, lastAccess, roles):
-        newUser=User(id=id, firstName=firstName, lastName=lastName, userName=userName, passwordHash=passwordHash, department=department, lastAccess=lastAccess, roles=roles)
+        newUser= User(id=id, firstName=firstName, lastName=lastName, userName=userName, passwordHash=passwordHash, department=department, lastAccess=lastAccess, roles=roles)
         newUser.save()
         return CreateUser(user=newUser)
 

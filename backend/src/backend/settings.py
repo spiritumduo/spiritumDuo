@@ -31,19 +31,18 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'api.apps.apiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backend.api',
-    'graphene_django',
-    'backend.api.submodels'
+    'graphene_django'
 ]
 
 GRAPHENE = {
-    "SCHEMA": "backend.schema.schema"
+    "SCHEMA": "api.schema.schema"
 }
 
 MIDDLEWARE = [

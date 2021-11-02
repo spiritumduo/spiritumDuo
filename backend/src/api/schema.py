@@ -1,5 +1,8 @@
 import graphene
-from backend.api.submodels.patient import PatientModel
+from graphene import Boolean
+from api.submodels.patient import PatientModel
+
+
 class PatientType(graphene.ObjectType):
     id=graphene.ID()
 
@@ -32,6 +35,13 @@ class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
             dateOfBirth=patientInput.dateOfBirth
         )
         return CreatePatient(patient=newPatient.save()) # return data
+
+class LoginMutation(graphene.Mutation):
+    class Arguments:
+        userName = graphene.String()
+        password = graphene.String()
+    ok = Boolean()
+    user = Field(User)
 
 class Mutation(graphene.ObjectType):
     create_patient = CreatePatient.Field()
