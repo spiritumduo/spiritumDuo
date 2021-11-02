@@ -29,6 +29,8 @@ class TestUserProfile(TestCase):
             department="Respiratory"
         )
         userProfile.save()
+        result = UserProfile.objects.filter(user=self.user)
+        self.assertIn(userProfile, result)
         userProfile.delete()
         result = UserProfile.objects.filter(user=self.user)
         self.assertNotIn(userProfile, result)
