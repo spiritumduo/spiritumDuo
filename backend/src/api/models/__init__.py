@@ -1,1 +1,2 @@
-from .User import User
+from .UserProfile import UserProfile
+from .SdUser import SdUser
