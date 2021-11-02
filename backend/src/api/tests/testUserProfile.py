@@ -29,10 +29,9 @@ class TestUserProfile(TestCase):
             department="Respiratory"
         )
         userProfile.save()
-        result = UserProfile.objects.filter(user=self.user)
-        self.assertIn(userProfile, result)
+        result = UserProfile.objects.get(user=self.user)
+        self.assertEqual(userProfile, result)
         userProfile.delete()
-        result = UserProfile.objects.filter(user=self.user)
-        self.assertNotIn(userProfile, result)
 
-
+        with self.assertRaises(UserProfile.DoesNotExist):
+            UserProfile.objects.get(user=self.user)
