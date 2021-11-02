@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import date, datetime
-from typing import Union
+from typing import Iterable, Union
 
 class patient_orm(models.Model):
     hospital_number = models.TextField()
@@ -37,24 +37,35 @@ class PatientModel:
             if searchParam==None:
                 returnData=patient_orm.objects.all()
             elif searchParam.isnumeric():
-                returnData=patient_orm.objects.get(patient_id=searchParam)
+                returnData=patient_orm.objects.get(id=searchParam)
             elif searchParam:
                 returnData=patient_orm.objects.get(hospital_number=searchParam)
             returnList=[]
             
-            for row in returnData:
-                returnList.append(
-                    PatientInterface(
-                        id=row.id,
-                        hospitalNumber=row.hospital_number,
-                        nationalNumber=row.national_number,
-                        communicationMethod=row.communication_method,
-                        firstName=row.first_name,
-                        lastName=row.last_name,
-                        dateOfBirth=row.date_of_birth,
+            if isinstance(returnData, Iterable):
+                for row in returnData:
+                    returnList.append(
+                        PatientInterface(
+                            id=row.id,
+                            hospitalNumber=row.hospital_number,
+                            nationalNumber=row.national_number,
+                            communicationMethod=row.communication_method,
+                            firstName=row.first_name,
+                            lastName=row.last_name,
+                            dateOfBirth=row.date_of_birth,
+                        )
                     )
+                return returnList
+            else:
+                return PatientInterface(
+                    id=returnData.id,
+                    hospitalNumber=returnData.hospital_number,
+                    nationalNumber=returnData.national_number,
+                    communicationMethod=returnData.communication_method,
+                    firstName=returnData.first_name,
+                    lastName=returnData.last_name,
+                    dateOfBirth=returnData.date_of_birth,
                 )
-            return returnList
         except (patient_orm.DoesNotExist):
             return False
 

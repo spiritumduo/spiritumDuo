@@ -38,11 +38,11 @@ class Mutation(graphene.ObjectType):
 
 class Query(graphene.ObjectType):
     patient = graphene.List(PatientType)
-    # patient_by_identifier = graphene.Field(PatientType, searchParam=graphene.String())
+    patient_by_identifier = graphene.Field(PatientType, searchParam=graphene.String())
     
     def resolve_patient(root, info): # Gets all data 
         return PatientModel.read()
-    # def resolve_patient_by_identifier(root, info, searchParam): # Gets specified data only
-    #     return PatientModel.read(searchParam) or None
+    def resolve_patient_by_identifier(root, info, searchParam): # Gets specified data only
+        return PatientModel.read(searchParam)
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
