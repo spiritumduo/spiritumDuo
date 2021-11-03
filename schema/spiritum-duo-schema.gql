@@ -23,7 +23,7 @@ type Query {
 }
 
 type Mutation {
-    login(userName: String!, password: String!): User
+    login(username: String!, password: String!): User
     addDecisionPoint(decisionPoint: DecisionPoint): DecisionPoint
     addPatient(patient: Patient!): Patient
 }
