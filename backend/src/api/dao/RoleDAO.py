@@ -45,7 +45,6 @@ class RoleDAO:
     def save(self):
         self._orm.name=self.name
         self._orm.save()
-        print("ID IS",self._orm.id)
         return _interface(
             id=self._orm.id,
             name=self._orm.name,
