@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 ]
 
 GRAPHENE = {
-    "SCHEMA": "api.schema.schema"
+    "SCHEMA": "api.schema.schema",
+    "ATOMIC_MUTATIONS": True
 }
 
 MIDDLEWARE = [
