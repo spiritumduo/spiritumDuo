@@ -1,48 +1,70 @@
-from api.models.User import User
+from api.models import UserProfile, SdUser
 from datetime import datetime
 from dataclasses import dataclass
-from typing import Union
 
 @dataclass
 class UserDAO:
-    id: int
+    _userProfile: UserProfile = None
+    id: int = None
     firstName: str = None
     lastName: str = None
-    userName: str = None
-    passwordHash: str = None
+    username: str = None
     department: str = None
     lastAccess: datetime = None
-    _orm: User = User()
+
+    def __post_init__(self):
+        """This adds a user if a supplied UserProfile does not have one"""
+        if self._userProfile is None:
+            self._userProfile = UserProfile()
+        if not hasattr(self._userProfile, 'user'):
+            self._userProfile.user = SdUser()
 
     @classmethod
-    def read(cls, searchParam: Union[int, str]):
-        user_orm = None
-        if isinstance(searchParam, int):
-            user_orm = User.objects.get(id=searchParam)
-        elif isinstance(searchParam, str):
-            user_orm = User.objects.get(id=searchParam)
+    def read(cls, userId: int):
+        user_profile_model = UserProfile.objects.get(pk=userId)
 
         return cls(
-            id=user_orm.id,
-            firstName=user_orm.firstName,
-            lastName=user_orm.lastName,
-            userName=user_orm.userName,
-            passwordHash=user_orm.passwordHash,
-            department=user_orm.department,
-            lastAccess=user_orm.lastAccess,
-            _orm=user_orm
+            id=user_profile_model.user_id,
+            firstName=user_profile_model.user.first_name,
+            lastName=user_profile_model.user.last_name,
+            username=user_profile_model.user.username,
+            department=user_profile_model.department,
+            lastAccess=user_profile_model.user.last_login,  # TODO: rename this for consistency
+            _userProfile=user_profile_model
         )
 
-    def save(self):
-        self._orm.id = self.id
-        self._orm.firstName = self.firstName
-        self._orm.lastName = self.lastName
-        self._orm.userName = self.userName
-        self._orm.passwordHash = self.passwordHash
-        self._orm.department = self.department
-        self._orm.lastAccess = self.lastAccess
+    @staticmethod
+    def readAll():
+        userProfileModels = UserProfile.objects.all()
+        userProfileList = []
 
-        self._orm.save()
+        for profile in userProfileModels:
+            userProfileDAO = UserDAO(
+                id=profile.user_id,
+                firstName=profile.user.first_name,
+                lastName=profile.user.last_name,
+                username=profile.user.username,
+                department=profile.department,
+                lastAccess=profile.user.last_login,  # TODO: rename this for consistency
+                _userProfile=profile
+            )
+            userProfileList.append(userProfileDAO)
+
+        return userProfileList
+
+    def save(self):
+        if self.id is not None:
+            self._userProfile.user.id = self.id
+        self._userProfile.user.first_name = self.firstName
+        self._userProfile.user.last_name = self.lastName
+        self._userProfile.user.username = self.username
+        self._userProfile.department = self.department
+        self._userProfile.user.lastAccess = self.lastAccess
+
+        self._userProfile.user.save()
+        self._userProfile.save()
+        #  Assign here in case there was no ID (will happen on initial create)
+        self.id = self._userProfile.user_id
 
     def delete(self):
-        self._orm.delete()
+        self._userProfile.delete()
