@@ -53,6 +53,8 @@ class PatientList extends React.Component<PatientListProps, PatientListState> {
       data: response.data as Patient[],
       pageCount: pageCount as number,
     } as PatientListState;
+
+    this.handlePageClick = this.handlePageClick.bind(this);
   }
 
   handlePageClick(item: { selected: number }): void {
@@ -69,6 +71,8 @@ class PatientList extends React.Component<PatientListProps, PatientListState> {
 
     this.render();
   }
+
+  props!: PatientListProps;
 
   render(): JSX.Element {
     const { data, pageCount } = this.state;
