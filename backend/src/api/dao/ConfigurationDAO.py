@@ -1,20 +1,14 @@
-from django.db import models
 from typing import Iterable
+from api.models.Configuration import configuration_orm
 
-class configuration_orm(models.Model):
-    hospital_number_name=models.TextField()
-    hospital_number_regex=models.TextField()
-    national_patient_number_name=models.TextField()
-    national_patient_number_regex=models.TextField()
-
-class ConfigurationInterface:
+class _interface:
     def __init__(self, hospitalNumberName:str, hospitalNumberRegex:str, nationalPatientNumberName:str, nationalPatientNumberRegex:str):
         self.hospitalNumberName=hospitalNumberName
         self.hospitalNumberRegex=hospitalNumberRegex
         self.nationalPatientNumberName=nationalPatientNumberName
         self.nationalPatientNumberRegex=nationalPatientNumberRegex
 
-class ConfigurationModel:
+class ConfigurationDAO:
     def __init__(self, hospitalNumberName:str, hospitalNumberRegex:str, nationalPatientNumberName:str, nationalPatientNumberRegex:str):
         self.hospitalNumberName=hospitalNumberName
         self.hospitalNumberRegex=hospitalNumberRegex
@@ -30,7 +24,7 @@ class ConfigurationModel:
                 returnList=[]
                 for row in returnData:
                     returnList.append(
-                        ConfigurationInterface(
+                        _interface(
                             hospitalNumberName=row.hospital_number_name,
                             hospitalNumberRegex=row.hospital_number_regex,
                             nationalPatientNumberName=row.national_patient_number_name,
@@ -39,7 +33,7 @@ class ConfigurationModel:
                     )
                 return returnList
             else:
-                return ConfigurationInterface(
+                return _interface(
                     hospitalNumberName=returnData.hospital_number_name,
                     hospitalNumberRegex=returnData.hospital_number_regex,
                     nationalPatientNumberName=returnData.national_patient_number_name,
@@ -58,7 +52,7 @@ class ConfigurationModel:
         self._orm.national_patient_number_regex=self.nationalPatientNumberRegex
         self._orm.save()
 
-        return ConfigurationInterface(
+        return _interface(
             hospitalNumberName=self._orm.hospital_number_name,
             hospitalNumberRegex=self._orm.hospital_number_regex,
             nationalPatientNumberName=self._orm.national_patient_number_name,

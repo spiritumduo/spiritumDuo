@@ -22,6 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-b0*8_tyb(4h9ljbv%80@16_hdkdxjjlp&ls@3fh17n^re#f6&*'
 
+# This is recommended so we can extend the user model in future if required
+AUTH_USER_MODEL = 'api.SdUser'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -31,19 +34,19 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'api.apps.apiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'backend.api',
-    'graphene_django',
-    'backend.api.submodels'
+    'graphene_django'
 ]
 
 GRAPHENE = {
-    "SCHEMA": "backend.schema.schema"
+    "SCHEMA": "api.schema.schema",
+    "ATOMIC_MUTATIONS": True
 }
 
 MIDDLEWARE = [
