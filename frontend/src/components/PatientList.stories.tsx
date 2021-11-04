@@ -10,9 +10,9 @@ export default {
   component: PatientList,
   decorators: [StoryRouter()],
 } as ComponentMeta<typeof PatientList>;
-const Template: ComponentStory<typeof PatientList> = (args) => <PatientList { ...args } />;
+// eslint-disable-next-line max-len
+const Template: ComponentStory<typeof PatientList> = (args: PatientListProps) => <PatientList { ...args } />;
 
-export const Default = Template.bind({});
 const patientArray: Patient[] = [];
 const patient = {
   id: 2,
@@ -27,7 +27,7 @@ for (let i = 0; i < 50; ++i) {
     id: i,
     patientHospitalNumber: `${patient.patientHospitalNumber}-${i + 1}`,
     firstName: patient.firstName,
-    lastName: `${+patient.lastName} ${i + 1}`,
+    lastName: `${patient.lastName} ${i + 1}`,
   };
   patientArray.push(newPatient);
 }
@@ -37,6 +37,7 @@ const updateFn = (offset: number, limit: number) => {
   return { data: data, totalCount: patientArray.length };
 };
 
+export const Default = Template.bind({});
 Default.args = {
   pageLimit: 10,
   totalCount: patientArray.length,
