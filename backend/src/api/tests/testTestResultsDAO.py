@@ -1,6 +1,5 @@
 from django.test import TestCase
 from api.dao import PatientDAO, TestResultDAO
-from api.models import SdUser
 
 class TestResultDAOTests(TestCase):
     def setUp(self):
