@@ -13,13 +13,14 @@ class DecisionPointDAOTests(TestCase):
         self.patient_lastName="DOE"
         self.patient_dateOfBirth="2000-01-01"
         self.patientDAO=PatientDAO(
-            hospitalNumber=self.patient_hospitalNumber,
-            nationalNumber=self.patient_nationalNumber,
-            communicationMethod=self.patient_communicationMethod,
-            firstName=self.patient_firstName,
-            lastName=self.patient_lastName,
-            dateOfBirth=self.patient_dateOfBirth
+            hospital_number=self.patient_hospitalNumber,
+            national_number=self.patient_nationalNumber,
+            communication_method=self.patient_communicationMethod,
+            first_name=self.patient_firstName,
+            last_name=self.patient_lastName,
+            date_of_birth=self.patient_dateOfBirth
         )
+        self.patientDAO.save()
 
         # creating user/clinician object
         self.user_first_name = "John"
@@ -51,23 +52,27 @@ class DecisionPointDAOTests(TestCase):
             patient=self.decisionpoint_patient,
             clinician=self.decisionpoint_clinician,
             type=self.decisionpoint_type,
-            addedAt=self.decisionpoint_addedAt,
-            updatedAt=self.decisionpoint_updatedAt,
-            clinicHistory=self.decisionpoint_clinicHistory,
+            added_at=self.decisionpoint_addedAt,
+            updated_at=self.decisionpoint_updatedAt,
+            clinic_history=self.decisionpoint_clinicHistory,
             comorbidities=self.decisionpoint_comorbidities
         )
+        self.decisionpointDAO.save()
+
     def testRead(self):
         decisionPoint=DecisionPointDAO.read(id=self.decisionpointDAO.id)
         self.assertTrue(decisionPoint)
+
     def testUpdate(self):
         decisionPoint=DecisionPointDAO.read(id=self.decisionpointDAO.id)
-        decisionPoint.clinicHistory="we're adding even more data"
+        decisionPoint.clinic_history="we're adding even more data"
         decisionPoint.comorbidities="I don't know what to put here, it just has to be different"
         decisionPoint.save()
 
         newDecisionPoint=DecisionPointDAO.read(id=self.decisionpointDAO.id)
-        self.assertEqual(decisionPoint.clinicHistory, newDecisionPoint.clinicHistory)
+        self.assertEqual(decisionPoint.clinic_history, newDecisionPoint.clinic_history)
         self.assertEqual(decisionPoint.comorbidities, newDecisionPoint.comorbidities)
+
     def testDelete(self):
         decisionPoint=DecisionPointDAO.read(id=self.decisionpointDAO.id)
         decisionPoint.delete()

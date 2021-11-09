@@ -3,41 +3,42 @@ from api.dao import PatientDAO
 
 class PatientDAOTests(TestCase):
     def setUp(self):
-        self.hospitalNumber="0123456"
-        self.nationalNumber="0123456"
-        self.communicationMethod="EMAIL"
-        self.firstName="JOHN"
-        self.lastName="DOE"
-        self.dateOfBirth="2000-01-01"
+        self.hospital_number="0123456"
+        self.national_number="0123456"
+        self.communication_method="EMAIL"
+        self.first_name="JOHN"
+        self.last_name="DOE"
+        self.date_of_birth="2000-01-01"
 
         self.patient=PatientDAO(
-            hospitalNumber=self.hospitalNumber,
-            nationalNumber=self.nationalNumber,
-            communicationMethod=self.communicationMethod,
-            firstName=self.firstName,
-            lastName=self.lastName,
-            dateOfBirth=self.dateOfBirth
+            hospital_number=self.hospital_number,
+            national_number=self.national_number,
+            communication_method=self.communication_method,
+            first_name=self.first_name,
+            last_name=self.last_name,
+            date_of_birth=self.date_of_birth
         )
+        self.patient.save()
 
     def testRead(self):
         recordID=self.patient.id
         newPatient=PatientDAO.read(recordID)
-        self.assertEqual(self.hospitalNumber, newPatient.hospitalNumber)
+        self.assertEqual(self.hospital_number, newPatient.hospital_number)
 
     def testUpdate(self):
         recordID=self.patient.id
         newPatient=PatientDAO.read(recordID)
-        newPatient.firstName="JASON"
-        newPatient.lastName="BOURNE"
+        newPatient.first_name="JASON"
+        newPatient.last_name="BOURNE"
         newPatient.save()
 
-        self.assertEqual("JASON", newPatient.firstName)
-        self.assertEqual("BOURNE", newPatient.lastName)
-        self.assertNotEqual(self.firstName, newPatient.firstName)
-        self.assertNotEqual(self.lastName, newPatient.lastName)
+        self.assertEqual("JASON", newPatient.first_name)
+        self.assertEqual("BOURNE", newPatient.last_name)
+        self.assertNotEqual(self.first_name, newPatient.first_name)
+        self.assertNotEqual(self.last_name, newPatient.last_name)
 
     def testDelete(self):
         recordID=self.patient.id
-        patient=PatientDAO.read(recordID)
+        patient=PatientDAO.read(searchParam=recordID)
         patient.delete()
-        self.assertFalse(PatientDAO.read(recordID))
+        self.assertFalse(PatientDAO.read(searchParam=recordID))
