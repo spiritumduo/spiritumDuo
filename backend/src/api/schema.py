@@ -4,7 +4,7 @@ from .graphql.configuration.schema import ConfigurationQueries, ConfigurationMut
 from .graphql.role.schema import RoleQueries, RoleMutations
 from .graphql.decisionpoint.schema import DecisionPointMutations, DecisionPointQueries
 from .graphql.user.schema import UserMutations, UserQueries
-
+from .graphql.testresult.schema import TestResultQueries, TestResultMutations
 from .graphql.login.schema import LoginMutations
 
 class Queries(
@@ -12,7 +12,8 @@ class Queries(
     ConfigurationQueries,
     RoleQueries,
     DecisionPointQueries,
-    UserQueries
+    UserQueries,
+    TestResultQueries
 ):pass
 class Mutations(
     PatientMutations,
@@ -20,7 +21,7 @@ class Mutations(
     RoleMutations,
     DecisionPointMutations,
     UserMutations,
-
+    TestResultMutations,
     LoginMutations
 ):pass
 
