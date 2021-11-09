@@ -2,32 +2,53 @@
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
-import { FormikHelpers } from 'formik';
+import { MockedProvider } from '@apollo/client/testing';
 import { action } from '@storybook/addon-actions';
-import LoginPage, { LoginPageProps, LoginStatus, LoginValues } from './Login';
+import { LoginStatus, LoginFormInputs, useLoginSubmit, useLoginForm, LOGIN_QUERY } from 'app/hooks/LoginHooks';
+import LoginPage, { LoginPageProps } from './Login';
+
+const apolloMocks = [
+  {
+    request: {
+      query: LOGIN_QUERY,
+      variables: {
+        username: 'Bob',
+        password: 'Bob',
+      },
+    },
+    result: {
+      data: {
+        login: {
+          user: {
+            id: '1',
+            firstName: 'John',
+            lastName: 'Doe',
+            username: 'bob',
+            department: 'respiratory',
+          },
+        },
+      },
+    },
+  },
+];
 
 export default {
   title: 'Pages/Login',
   component: LoginPage,
-  decorators: [StoryRouter()],
+  decorators: [
+    StoryRouter(),
+    (LoginStory) => (
+      <MockedProvider mocks={ apolloMocks }>
+        <LoginStory />
+      </MockedProvider>
+    ),
+  ],
 } as Meta<typeof LoginPage>;
 
-const Template: Story<LoginPageProps> = (args: LoginPageProps) => <LoginPage { ...args } />;
+const Template: Story<LoginPageProps> = () => <LoginPage />;
 
 export const Default = Template.bind({});
-Default.args = {
-  submitFn: (values: LoginValues, { setSubmitting, setStatus }: FormikHelpers<LoginValues>) => {
-    action('form-submit');
-    setStatus(LoginStatus.SUCCESS);
-    setSubmitting(false);
-  },
-};
+Default.args = { };
 
 export const InvalidLogin = Template.bind({});
-InvalidLogin.args = {
-  submitFn: (values: LoginValues, { setSubmitting, setStatus }: FormikHelpers<LoginValues>) => {
-    action('form-submit');
-    setStatus(LoginStatus.INVALID_LOGIN);
-    setSubmitting(false);
-  },
-};
+InvalidLogin.args = { };
