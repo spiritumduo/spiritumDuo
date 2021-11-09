@@ -1,13 +1,3 @@
-"""
-    TODO:
-        Better search functionality
-            First + last name + date of birth (and how to handle many return entries)
-            Hospital number
-            National number
-            Record ID
-    ~Joe
-"""
-
 from datetime import date
 from typing import Union, Iterable
 from api.models.Patient import patient_orm
