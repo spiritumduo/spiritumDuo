@@ -5,6 +5,7 @@ from .graphql.role.schema import RoleQueries, RoleMutations
 from .graphql.decisionpoint.schema import DecisionPointMutations, DecisionPointQueries
 from .graphql.user.schema import UserMutations, UserQueries
 from .graphql.testresult.schema import TestResultQueries, TestResultMutations
+from .graphql.pathway.schema import PathwayMutations, PathwayQueries
 from .graphql.login.schema import LoginMutations
 
 class Queries(
@@ -13,7 +14,9 @@ class Queries(
     RoleQueries,
     DecisionPointQueries,
     UserQueries,
-    TestResultQueries
+    TestResultQueries,
+    PathwayQueries
+
 ):pass
 class Mutations(
     PatientMutations,
@@ -22,7 +25,8 @@ class Mutations(
     DecisionPointMutations,
     UserMutations,
     TestResultMutations,
-    LoginMutations
+    LoginMutations,
+    PathwayMutations
 ):pass
 
 schema = graphene.Schema(query=Queries, mutation=Mutations)
