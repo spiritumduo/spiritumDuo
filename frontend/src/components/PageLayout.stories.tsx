@@ -25,5 +25,4 @@ DefaultLayout.args = {
     },
   },
   footerProps: { name: 'John Doe' },
-  element: (<> <h1>Page Layout!</h1> </>),
 };

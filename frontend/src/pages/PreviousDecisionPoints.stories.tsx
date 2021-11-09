@@ -33,7 +33,6 @@ const patient = {
 
 export const Default = Template.bind({});
 Default.args = {
-  pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps },
   decisions: [
     {
       id: 1,

@@ -16,7 +16,6 @@ const Template: Story<PatientPageProps> = (args: PatientPageProps) => <PatientPa
 
 export const Default = Template.bind({});
 Default.args = {
-  pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps },
   patient: {
     id: 2,
     patientHospitalNumber: 'MRN0123456',

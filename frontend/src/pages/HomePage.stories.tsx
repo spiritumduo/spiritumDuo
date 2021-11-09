@@ -4,13 +4,20 @@ import { Story, Meta } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
 import Patient from 'types/Patient';
 import { DefaultLayout } from 'components/PageLayout.stories';
-import { PageLayoutProps } from 'components/PageLayout';
+import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import HomePage, { HomePageProps } from './HomePage';
 
 export default {
   title: 'Pages/Home Page',
   component: HomePage,
-  decorators: [StoryRouter()],
+  decorators: [
+    (HomePageStory) => (
+      <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+        <HomePageStory />
+      </PageLayout>
+    ),
+    StoryRouter(), // for some reason this has to come last
+  ],
 } as Meta<typeof HomePage>;
 
 const Template: Story<HomePageProps> = (args: HomePageProps) => <HomePage { ...args } />;
@@ -40,10 +47,7 @@ const dataCallback = (offset: number, limit: number) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps },
   triageData: dataCallback,
   clinicData: dataCallback,
-  clinicPatients: patientArray,
-  triagePatients: patientArray,
   patientsPerPage: 10,
 };

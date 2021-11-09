@@ -2,27 +2,39 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 import React from 'react';
 import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom';
-import LoginController from 'app/controllers/LoginController';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
-import LoginModelImpl from 'app/models/LoginModel';
 import LoginPage from 'pages/Login';
 import { useReactiveVar } from '@apollo/client';
-import logo from './logo.svg';
 import './App.css';
+import HomePage from 'pages/HomePage';
+import { FooterProps } from 'components/Footer';
+import { HeaderProps } from 'components/Header';
+import PageLayout from 'components/PageLayout';
+import logo from './logo.svg';
+
+const headerProps: HeaderProps = {
+  pathwayOptions: pathwayOptionsVar(),
+  pathwayOnItemSelect: () => console.log('pathway select'),
+  searchOnSubmit: () => console.log('search submit'),
+};
+
+const footerProps: FooterProps = { name: `${loggedInUserVar()?.firstName} ${loggedInUserVar()?.lastName}` };
 
 const App = (): JSX.Element => (
   <BrowserRouter>
     <Switch>
       <Route path="/login">
-        { LoginController(LoginModelImpl, LoginPage) }
+        <LoginPage />
       </Route>
       <Route path="/logout">
         <Logout />
       </Route>
       <LoggedInRoute>
-        <Route path="/">
-          <HomeDemo />
-        </Route>
+        <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+          <Route path="/">
+            <HomeDemo />
+          </Route>
+        </PageLayout>
       </LoggedInRoute>
     </Switch>
   </BrowserRouter>

@@ -2,9 +2,7 @@
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
-import { DefaultLayout } from 'components/PageLayout.stories';
-import { PageLayoutProps } from 'components/PageLayout';
-import NewPatientPage, { NewPatientPageProps } from './NewPatient';
+import NewPatientPage from './NewPatient';
 
 export default {
   title: 'Pages/New Patient',
@@ -13,7 +11,7 @@ export default {
 } as Meta<typeof NewPatientPage>;
 
 // eslint-disable-next-line max-len
-const Template: Story<NewPatientPageProps> = (args: NewPatientPageProps) => <NewPatientPage { ...args } />;
+const Template: Story = () => <NewPatientPage />;
 
 export const Standard = Template.bind({});
-Standard.args = { pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps } };
+Standard.args = {};

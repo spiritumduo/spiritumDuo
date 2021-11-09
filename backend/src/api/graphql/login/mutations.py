@@ -17,6 +17,7 @@ class LoginMutation(graphene.Mutation):
     def mutate(root, info, username, password):
         user = authenticate(username=username, password=password)
         if user is not None:
-            return LoginMutation(user=user)
+            userProfile = UserDAO.read(userId=user.id)
+            return LoginMutation(user=userProfile)
         else:
             return None
