@@ -1,15 +1,14 @@
 from typing import Iterable, Union
 from api.models.Role import role_orm
 
-class _interface:
-    def __init__(self, id:int, name:str):
-        self.id=id,
-        self.name=name
-
 class RoleDAO:
-    def __init__(self, name:str):
+    def __init__(self, id:int=None, name:str=None):
+        self.id=id
         self.name=name
         self._orm: role_orm = role_orm()
+        if id:
+            self._orm.id=id
+            self._orm.name=name
     
     @classmethod
     def read(cls, searchParam:Union[int,str]=None):
@@ -24,14 +23,14 @@ class RoleDAO:
                 returnList=[]
                 for row in returnData:
                     returnList.append(
-                        _interface(
+                        cls(
                             id=row.id,
                             name=row.name,
                         )
                     )
                 return returnList
             else:
-                return _interface(
+                return cls(
                     id=returnData.id,
                     name=returnData.name,
                 )
@@ -45,7 +44,4 @@ class RoleDAO:
     def save(self):
         self._orm.name=self.name
         self._orm.save()
-        return _interface(
-            id=self._orm.id,
-            name=self._orm.name,
-        )
+        self.id=self._orm.id
