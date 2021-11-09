@@ -1,5 +1,6 @@
 import graphene
-from api.dao.DecisionPointDAO import DecisionPointDAO
+from api.dao import DecisionPointDAO, PathwayDAO
+
 from api.models import SdUser
 from .types import DecisionPointType, _InputDecisionPointType
 
@@ -12,9 +13,11 @@ class CreateDecisionPoint(graphene.Mutation):
     def mutate(self, info, input):
         patientRecord=PatientDAO.read(id=input.patient, dataOnly=True) # get patient object from ID
         clinicianRecord=SdUser.objects.get(id=input.clinician) # get user object from ID; need to figure out DAO for user model
+        pathwayRecord=PathwayDAO.read(id=input.pathway, dataOnly=True) # get pathway object from ID
         decisionPoint=DecisionPointDAO(
             patient=patientRecord,
             clinician=clinicianRecord,
+            pathway=pathwayRecord,
             type=input.type,
             added_at=input.added_at,
             updated_at=input.updated_at,

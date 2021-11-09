@@ -11,7 +11,7 @@ class PathwayDAO:
             self._orm.name=name
     
     @classmethod
-    def read(cls, id:int=None, name:str=None):
+    def read(cls, id:int=None, name:str=None, dataOnly:bool=False):
         try:
             if id:
                 returnData=pathway_orm.objects.get(id=id)
@@ -19,6 +19,9 @@ class PathwayDAO:
                 returnData=pathway_orm.objects.get(name=name)
             else:
                 returnData=pathway_orm.objects.all()
+
+            if dataOnly and not isinstance(returnData, Iterable):
+                return returnData
 
             if isinstance(returnData, Iterable):
                 returnList=[]

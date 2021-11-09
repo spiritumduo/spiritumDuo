@@ -5,10 +5,11 @@ from api.models import decisionpoint_orm
 
 # DAO object
 class DecisionPointDAO:
-    def __init__(self, id:int=None, patient:int=None, clinician:int=None, type:str=None, added_at:datetime=None, updated_at:datetime=None, clinic_history:str=None, comorbidities:str=None):
+    def __init__(self, id:int=None, patient:int=None, clinician:int=None, pathway:int=None, type:str=None, added_at:datetime=None, updated_at:datetime=None, clinic_history:str=None, comorbidities:str=None):
         self.id=id
         self.patient=patient
         self.clinician=clinician
+        self.pathway=pathway
         self.type=type
         self.added_at=added_at
         self.updated_at=updated_at
@@ -20,6 +21,7 @@ class DecisionPointDAO:
             self._orm.id=id
             self._orm.patient=patient
             self._orm.clinician=clinician
+            self._orm.pathway=pathway
             self._orm.type=type
             self._orm.added_at=added_at
             self._orm.updated_at=updated_at
@@ -44,6 +46,7 @@ class DecisionPointDAO:
                             id=row.id,
                             patient=row.patient,
                             clinician=row.clinician,
+                            pathway=row.pathway,
                             type=row.type,
                             added_at=row.added_at,
                             updated_at=row.updated_at,
@@ -57,6 +60,7 @@ class DecisionPointDAO:
                     id=returnData.id,
                     patient=returnData.patient,
                     clinician=returnData.clinician,
+                    pathway=returnData.pathway,
                     type=returnData.type,
                     added_at=returnData.added_at,
                     updated_at=returnData.updated_at,
@@ -72,6 +76,7 @@ class DecisionPointDAO:
     def save(self):
         self._orm.patient=self.patient
         self._orm.clinician=self.clinician
+        self._orm.pathway=self.pathway
         self._orm.type=self.type
         self._orm.added_at=self.added_at
         self._orm.updated_at=self.updated_at
