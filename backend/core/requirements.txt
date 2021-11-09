@@ -4,3 +4,4 @@ graphene_django==2.15.0
 typing_extensions==3.10.0.2
 uwsgi==2.0.20
 graphene~=2.1.9
+django-cors-headers==3.10.0
