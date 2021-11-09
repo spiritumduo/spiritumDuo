@@ -12,7 +12,11 @@
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
+    "react/jsx-props-no-spreading": ["error", {
+      "html": "ignore"
+    }],
     "no-shadow": "off",
+    "space-in-parens": "off",
     "semi": "off",
     "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/no-shadow": "error",
