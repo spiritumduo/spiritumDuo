@@ -5,12 +5,13 @@ from .types import ConfigurationType, _InputConfigurationType
 class CreateConfiguration(graphene.Mutation):
     configuration=graphene.Field(ConfigurationType)
     class Arguments:
-        configurationInput=graphene.Argument(_InputConfigurationType)
-    def mutate(self, info, configurationInput):
+        input=graphene.Argument(_InputConfigurationType)
+    def mutate(self, info, input):
         newConfiguration=ConfigurationDAO(
-            hospitalNumberName=configurationInput.hospitalNumberName,
-            hospitalNumberRegex=configurationInput.hospitalNumberRegex,
-            nationalPatientNumberName=configurationInput.nationalPatientNumberName,
-            nationalPatientNumberRegex=configurationInput.nationalPatientNumberRegex,
+            hospital_number_name=input.hospital_number_name,
+            hospital_number_regex=input.hospital_number_regex,
+            national_patient_number_name=input.national_patient_number_name,
+            national_patient_number_regex=input.national_patient_number_regex,
         )
-        return CreateConfiguration(configuration=newConfiguration.save())
+        newConfiguration.save()
+        return CreateConfiguration(configuration=newConfiguration)

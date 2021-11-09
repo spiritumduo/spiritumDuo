@@ -32,7 +32,7 @@ class TestLoginMutation(GraphQLTestCase):
                         lastName
                         username
                         department
-                        lastAccess
+                        lastLogin
                     }
                 }
             }

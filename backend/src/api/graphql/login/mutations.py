@@ -1,6 +1,6 @@
 import graphene
 from api.dao import UserDAO
-from .types import UserType
+from ..user.types import UserType
 from django.contrib.auth import authenticate
 
 class LoginMutation(graphene.Mutation):
