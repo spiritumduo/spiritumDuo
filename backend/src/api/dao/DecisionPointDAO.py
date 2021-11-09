@@ -1,19 +1,7 @@
 from datetime import datetime
 from typing import Iterable
 
-from api.models import decisionpoint_orm, patient_orm
-
-# Interface between database and GraphQL
-class _interface:
-    def __init__(self, id:int, patient:patient_orm, clinician:int, type:str, added_at:datetime, updated_at:datetime, clinic_history:str, comorbidities:str):
-        self.id=id
-        self.patient=patient
-        self.clinician=clinician
-        self.type=type
-        self.added_at=added_at
-        self.updated_at=updated_at
-        self.clinic_history=clinic_history
-        self.comorbidities=comorbidities
+from api.models import decisionpoint_orm
 
 # DAO object
 class DecisionPointDAO:
@@ -39,12 +27,14 @@ class DecisionPointDAO:
             self._orm.comorbidities=comorbidities
 
     @classmethod
-    def read(cls, id:int=None):
+    def read(cls, id:int=None, patientId:int=None):
         try:
-            if not id:
-                returnData=decisionpoint_orm.objects.all()
-            else:
+            if id:
                 returnData=decisionpoint_orm.objects.get(id=id)
+            elif patientId:
+                returnData=decisionpoint_orm.objects.filter(patient=patientId)
+            else:
+                returnData=decisionpoint_orm.objects.all()
             returnList=[]
             
             if isinstance(returnData, Iterable):
