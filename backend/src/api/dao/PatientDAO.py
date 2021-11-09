@@ -34,14 +34,19 @@ class PatientDAO:
             self._orm.date_of_birth=self.date_of_birth
 
     @classmethod
-    def read(cls, searchParam: Union[int, str]=None, searchParamExtension: str=None, dataOnly:bool=False):
+    def read(cls, dataOnly:bool=False, id:int=None, hospital_number:int=None, national_number:int=None, first_name:str=None, last_name:str=None, date_of_birth:date=None):
         try:
-            if searchParam==None:
-                returnData=patient_orm.objects.all()
-            elif type(searchParam) is int:
-                returnData=patient_orm.objects.get(id=searchParam)
+            if id:
+                returnData=patient_orm.objects.get(id=id)
+            elif hospital_number:
+                returnData=patient_orm.objects.get(hospital_number=hospital_number)
+            elif national_number:
+                returnData=patient_orm.objects.get(national_number=national_number)
+            elif first_name and last_name and date_of_birth:
+                returnData=patient_orm.objects.get(first_name=first_name, last_name=last_name, date_of_birth=date_of_birth)
             else:
-                returnData=patient_orm.objects.get(first_name=searchParam, last_name=searchParamExtension)
+                returnData=patient_orm.objects.all()
+
             returnList=[]
             
             """
