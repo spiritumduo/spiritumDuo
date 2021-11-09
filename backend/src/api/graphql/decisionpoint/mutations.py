@@ -10,7 +10,7 @@ class CreateDecisionPoint(graphene.Mutation):
     class Arguments:
         input=graphene.Argument(_InputDecisionPointType)
     def mutate(self, info, input):
-        patientRecord=PatientDAO.read(searchParam=input.patient, dataOnly=True) # get patient object from ID
+        patientRecord=PatientDAO.read(id=input.patient, dataOnly=True) # get patient object from ID
         clinicianRecord=SdUser.objects.get(id=input.clinician) # get user object from ID; need to figure out DAO for user model
         decisionPoint=DecisionPointDAO(
             patient=patientRecord,
