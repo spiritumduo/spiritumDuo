@@ -20,6 +20,9 @@ type Query {
 
     getTestResult(id: ID!): TestResult
     getTestResultsForPatient(patientId: ID!): [TestResult!]
+
+    getPatientPathways(patientId:ID!): [Pathway]
+    getPathwayPatients(pathwayId:ID!): [Patient]
 }
 
 type Mutation {

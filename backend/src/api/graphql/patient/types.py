@@ -1,4 +1,5 @@
 import graphene
+from ..pathway.types import PathwayType
 
 class PatientType(graphene.ObjectType):
     id=graphene.ID()

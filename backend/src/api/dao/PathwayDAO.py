@@ -1,5 +1,7 @@
 from typing import Iterable
 from api.models.Pathway import pathway_orm
+from api.models.Patient import pathway_patient_link_orm, patient_orm
+from api.dao.PatientDAO import PatientDAO
 
 class PathwayDAO:
     def __init__(self, id:int=None, name:str=None):
@@ -40,6 +42,40 @@ class PathwayDAO:
                 )
 
         except (pathway_orm.DoesNotExist):
+            return False
+
+    @classmethod
+    def readRelations(cls, patientId:int=None, pathwayId:int=None): # this will get a patient's pathways
+        try:
+            if patientId:
+                returnData=pathway_patient_link_orm.objects.filter(patient=patientId)
+                returnList=[]
+                for row in returnData:
+                    returnList.append(
+                        cls(
+                            id=row.pathway.id,
+                            name=row.pathway.name,
+                        )
+                    )
+                return returnList
+            elif pathwayId:
+                returnData=pathway_patient_link_orm.objects.filter(pathway=pathwayId)
+                returnList=[]
+                for row in returnData:
+                    returnList.append(
+                        PatientDAO(
+                            id=row.patient.id,
+                            hospital_number=row.patient.hospital_number,
+                            national_number=row.patient.national_number,
+                            communication_method=row.patient.communication_method,
+                            first_name=row.patient.first_name,
+                            last_name=row.patient.last_name,
+                            date_of_birth=row.patient.date_of_birth
+                        )
+                    )
+                return returnList
+
+        except (pathway_patient_link_orm.DoesNotExist):
             return False
 
     def delete(self):

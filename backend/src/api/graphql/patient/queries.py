@@ -1,7 +1,6 @@
 import graphene
 
 from api.dao.PatientDAO import PatientDAO
-
 class _PatientQueries(graphene.ObjectType):
     def _resolve_patients(root, info): # Gets all data 
         return PatientDAO.read()

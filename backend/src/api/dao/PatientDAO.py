@@ -1,5 +1,6 @@
 from datetime import date
-from typing import Union, Iterable
+from typing import Iterable
+
 from api.models.Patient import patient_orm
 
 # DAO object
@@ -51,16 +52,14 @@ class PatientDAO:
 
             if isinstance(returnData, Iterable):
                 for row in returnData:
-                    returnList.append(
-                        cls(
-                            id=row.id,
-                            hospital_number=row.hospital_number,
-                            national_number=row.national_number,
-                            communication_method=row.communication_method,
-                            first_name=row.first_name,
-                            last_name=row.last_name,
-                            date_of_birth=row.date_of_birth,
-                        )
+                    return cls(
+                        id=row.id,
+                        hospital_number=row.hospital_number,
+                        national_number=row.national_number,
+                        communication_method=row.communication_method,
+                        first_name=row.first_name,
+                        last_name=row.last_name,
+                        date_of_birth=row.date_of_birth
                     )
                 return returnList
             else:

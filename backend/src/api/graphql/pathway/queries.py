@@ -7,3 +7,7 @@ class _PathwayQueries(graphene.ObjectType):
         return PathwayDAO.read()
     def _resolve_pathway_search(root, info, id, name): # Gets specified data only
         return PathwayDAO.read(id=id, name=name)
+    def _resolve_patient_pathways(root, info, patientId=None):
+        return PathwayDAO.readRelations(patientId=patientId)
+    def _resolve_pathway_patients(root, info, pathwayId=None):
+        return PathwayDAO.readRelations(pathwayId=pathwayId)

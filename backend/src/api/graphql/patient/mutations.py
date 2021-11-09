@@ -1,5 +1,7 @@
+from django.db.models.lookups import GreaterThanOrEqual
 import graphene
 from api.dao.PatientDAO import PatientDAO
+from api.dao.PathwayDAO import PathwayDAO
 from .types import PatientType, _InputPatientType
 
 class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
@@ -17,3 +19,14 @@ class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
         )
         newPatient.save()
         return CreatePatient(patient=newPatient) # return data
+
+class AssignPathwayToPatient(graphene.Mutation):
+    success=graphene.Boolean()
+    class Arguments:
+        patientId=graphene.Int(required=True)
+        pathwayId=graphene.Int(required=True)
+    def mutate(self, info, patientId, pathwayId):
+        patient=PatientDAO.read(id=patientId)
+        patient._orm.pathways.add(pathwayId)
+        patient.save()
+        AssignPathwayToPatient(success=True)

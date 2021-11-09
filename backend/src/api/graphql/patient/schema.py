@@ -1,6 +1,6 @@
 import graphene
 
-from .mutations import CreatePatient
+from .mutations import CreatePatient, AssignPathwayToPatient
 from .queries import _PatientQueries
 from .types import PatientType
 
@@ -22,3 +22,4 @@ class PatientQueries(_PatientQueries, graphene.ObjectType):
 
 class PatientMutations(graphene.ObjectType):
     create_patient=CreatePatient.Field()
+    assign_patient_to_pathway=AssignPathwayToPatient.Field()
