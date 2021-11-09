@@ -6,7 +6,7 @@ import Footer, { FooterProps } from 'components/Footer';
 export interface PageLayoutProps {
     headerProps: HeaderProps,
     footerProps: FooterProps,
-    element: JSX.Element
+    children?: JSX.Element
 }
 
 /**
@@ -20,11 +20,11 @@ export interface PageLayoutProps {
 const PageLayout = ({
   headerProps,
   footerProps,
-  element,
+  children,
 }: PageLayoutProps): JSX.Element => (
   <div>
     <Header { ...headerProps } />
-    {element}
+    {children}
     <Footer { ...footerProps } />
   </div>
 

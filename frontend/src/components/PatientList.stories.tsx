@@ -40,6 +40,5 @@ const updateFn = (offset: number, limit: number) => {
 export const Default = Template.bind({});
 Default.args = {
   pageLimit: 10,
-  totalCount: patientArray.length,
   updateData: updateFn,
 };

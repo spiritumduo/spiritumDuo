@@ -18,7 +18,6 @@ const Template: ComponentStory<typeof DecisionPointPage> = (args) => <DecisionPo
 
 export const Standard = Template.bind({});
 Standard.args = {
-  pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps },
   patient: {
     id: 5,
     patientHospitalNumber: 'MRN9876543',

@@ -16,7 +16,6 @@ const Template: Story<EditDecisionPointPageProps> = (args) => <EditDecisionPoint
 
 export const Standard = Template.bind({});
 Standard.args = {
-  pageLayoutProps: { ...DefaultLayout.args as PageLayoutProps },
   patient: {
     id: 5,
     patientHospitalNumber: 'MRN9876543',

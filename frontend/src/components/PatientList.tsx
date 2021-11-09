@@ -25,10 +25,6 @@ export interface PatientListProps {
    */
   pageLimit: number;
   /**
-   * Total number of patients to in data source
-   */
-  totalCount: number;
-  /**
    * Function to update patient data
    */
   updateData: PatientListDataFn;
