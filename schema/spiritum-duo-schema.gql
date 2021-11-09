@@ -3,16 +3,16 @@ schema {
     mutation: Mutation
 }
 
-type Pathway {
-    id: ID!
-    name: String!
-}
-
 type Query {
-    # Can give patient ID or hospital number. If you don't give either it
-    # returns null!
-    getPatient(id: ID, hospitalNumber: String): Patient
+    # Searches for patient by:
+    # - hospitalNumber, 
+    # - nationalNumber, 
+    # - record ID, or 
+    # - firstName, lastName, and dateOfBirth
+    getPatient(id: ID, hospitalNumber: String, nationalNumber:String, firstName:String, lastName:String, dateOfBirth:String): Patient 
+
     getPatientsForPathway(pathwayId: ID!, filter: DecisionPointType): [Patient!]
+
     getUser(id: ID!): User
     
     getDecisionPoint(id: ID!): DecisionPoint
@@ -29,6 +29,11 @@ type Mutation {
 }
 
 scalar Date
+
+type Pathway {
+    id: ID!
+    name: String!
+}
 
 type Patient {
 	id: ID!
