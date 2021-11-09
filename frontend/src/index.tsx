@@ -1,14 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloClient, ApolloProvider } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+import { ApolloClient, ApolloProvider, HttpLink, from } from '@apollo/client';
 import { cache } from 'app/cache';
 import './index.css';
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
 
+// TODO: Disable this for production! This is just because we are on a different port
+const link = new HttpLink({ uri: 'http://localhost:8080/graphql' });
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+    });
+  }
+
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
 const client = new ApolloClient({
-  uri: 'https://4cc1760e-f6a2-4dec-a24e-3193f4cf639b.mock.pstmn.io',
+  link: from([errorLink, link]),
   cache: cache,
+  connectToDevTools: true,
 });
 
 ReactDOM.render(
