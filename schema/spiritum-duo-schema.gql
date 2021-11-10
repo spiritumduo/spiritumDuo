@@ -11,8 +11,6 @@ type Query {
     # - firstName, lastName, and dateOfBirth
     getPatient(id: ID, hospitalNumber: String, nationalNumber: String, firstName: String, lastName: String, dateOfBirth: String): Patient 
 
-    getPatientsForPathway(pathwayId: ID!, filter: DecisionPointType): [Patient!]
-
     getUser(id: ID!): User
     
     getDecisionPoint(id: ID!): DecisionPoint
