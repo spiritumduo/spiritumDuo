@@ -47,12 +47,12 @@ class PatientDAO:
                 only send that data as an orm class and not the DAO class, therefore resolving the issue. 
                 ~Joe
             """
-            if dataOnly and not isinstance(returnData, Iterable):
+            if dataOnly:
                 return returnData
 
             if isinstance(returnData, Iterable):
                 for row in returnData:
-                    return cls(
+                    returnList.append(cls(
                         id=row.id,
                         hospital_number=row.hospital_number,
                         national_number=row.national_number,
@@ -60,7 +60,7 @@ class PatientDAO:
                         first_name=row.first_name,
                         last_name=row.last_name,
                         date_of_birth=row.date_of_birth
-                    )
+                    ))
                 return returnList
             else:
                 return cls(
