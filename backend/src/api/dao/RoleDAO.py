@@ -11,14 +11,15 @@ class RoleDAO:
             self._orm.name=name
     
     @classmethod
-    def read(cls, searchParam:Union[int,str]=None):
+    def read(cls, id:int=None, name:str=None):
         try:
-            if not searchParam:
-                returnData=role_orm.objects.all()
-            elif searchParam.isnumeric():
-                returnData=role_orm.objects.get(id=searchParam)
+            if id:
+                returnData=role_orm.objects.get(id=id)
+            elif name:
+                returnData=role_orm.objects.get(name=name)
             else:
-                returnData=role_orm.objects.get(name=searchParam)
+                returnData=role_orm.objects.all()
+
             if isinstance(returnData, Iterable):
                 returnList=[]
                 for row in returnData:

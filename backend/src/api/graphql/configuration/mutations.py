@@ -2,8 +2,8 @@ import graphene
 from api.dao.ConfigurationDAO import ConfigurationDAO
 from .types import ConfigurationType, _InputConfigurationType
 
-class CreateConfiguration(graphene.Mutation):
-    configuration=graphene.Field(ConfigurationType)
+class createConfiguration(graphene.Mutation):
+    data=graphene.Field(ConfigurationType)
     class Arguments:
         input=graphene.Argument(_InputConfigurationType)
     def mutate(self, info, input):
@@ -14,4 +14,4 @@ class CreateConfiguration(graphene.Mutation):
             national_patient_number_regex=input.national_patient_number_regex,
         )
         newConfiguration.save()
-        return CreateConfiguration(configuration=newConfiguration)
+        return createConfiguration(data=newConfiguration)

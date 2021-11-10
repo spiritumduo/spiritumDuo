@@ -3,32 +3,50 @@ schema {
     mutation: Mutation
 }
 
+type Query {
+    getConfiguration(): [Configuration] # this needs to be investigated further as to how is best to handle it
+
+    getDecisionPoints(): [DecisionPoint]
+    getDecisionPointsByRecordId(id: ID!): [DecisionPoint]
+    getDecisionPointsByPatientId(id: ID!): [DecisionPoint]
+
+    getPathways():[Pathway!]
+    getPathwaySearch(id:ID, name:String):Pathway
+    getPatientPathways(patientId:ID!): [Pathway]
+    getPathwayPatients(pathwayId:ID!): [Patient]
+
+    getPatients():[Patient]
+    getPatientBySearch(id: ID, hospitalNumber: String, nationalNumber: String, firstName: String, lastName: String, dateOfBirth: String): Patient 
+
+    getRoles():[Role]
+    getRoleBySearch(id: ID, name:String): Role
+
+    getTestResults():[TestResult]
+    getTestResultByRecordId(id: ID!): TestResult
+    getTestResultByPatientId(id: ID!): TestResult
+
+    getUsers(): [User]
+    getUserById(id: ID!): User
+}
+
+type Mutation {
+    createConfiguration(input:Configuration!): Configuration
+    createDecisionPoint(input:DecisionPoint!): DecisionPoint
+    createTestResult(input:TestResult!): TestResult
+    createPathway(input:Pathway!): Pathway
+    createPatient(input:Patient!): Patient
+    createRole(input:Role!): Role
+    createUser(input:User!): User
+
+    login(username: String!, password: String!): User
+}
+
+scalar Date
+
 type Pathway {
     id: ID!
     name: String!
 }
-
-type Query {
-    # Can give patient ID or hospital number. If you don't give either it
-    # returns null!
-    getPatient(id: ID, hospitalNumber: String): Patient
-    getPatientsForPathway(pathwayId: ID!, filter: DecisionPointType): [Patient!]
-    getUser(id: ID!): User
-    
-    getDecisionPoint(id: ID!): DecisionPoint
-    getDecisionPointsForPatient(patientId: ID!): [DecisionPoint!]
-
-    getTestResult(id: ID!): TestResult
-    getTestResultsForPatient(patientId: ID!): [TestResult!]
-}
-
-type Mutation {
-    login(username: String!, password: String!): User
-    addDecisionPoint(decisionPoint: DecisionPoint): DecisionPoint
-    addPatient(patient: Patient!): Patient
-}
-
-scalar Date
 
 type Patient {
 	id: ID!

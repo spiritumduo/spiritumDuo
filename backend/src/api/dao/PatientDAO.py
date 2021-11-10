@@ -1,15 +1,6 @@
-"""
-    TODO:
-        Better search functionality
-            First + last name + date of birth (and how to handle many return entries)
-            Hospital number
-            National number
-            Record ID
-    ~Joe
-"""
-
 from datetime import date
-from typing import Union, Iterable
+from typing import Iterable
+
 from api.models.Patient import patient_orm
 
 # DAO object
@@ -56,22 +47,20 @@ class PatientDAO:
                 only send that data as an orm class and not the DAO class, therefore resolving the issue. 
                 ~Joe
             """
-            if dataOnly and not isinstance(returnData, Iterable):
+            if dataOnly:
                 return returnData
 
             if isinstance(returnData, Iterable):
                 for row in returnData:
-                    returnList.append(
-                        cls(
-                            id=row.id,
-                            hospital_number=row.hospital_number,
-                            national_number=row.national_number,
-                            communication_method=row.communication_method,
-                            first_name=row.first_name,
-                            last_name=row.last_name,
-                            date_of_birth=row.date_of_birth,
-                        )
-                    )
+                    returnList.append(cls(
+                        id=row.id,
+                        hospital_number=row.hospital_number,
+                        national_number=row.national_number,
+                        communication_method=row.communication_method,
+                        first_name=row.first_name,
+                        last_name=row.last_name,
+                        date_of_birth=row.date_of_birth
+                    ))
                 return returnList
             else:
                 return cls(

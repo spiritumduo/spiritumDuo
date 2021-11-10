@@ -22,12 +22,12 @@ class PatientDAOTests(TestCase):
 
     def testRead(self):
         recordID=self.patient.id
-        newPatient=PatientDAO.read(recordID)
+        newPatient=PatientDAO.read(id=recordID)
         self.assertEqual(self.hospital_number, newPatient.hospital_number)
 
     def testUpdate(self):
         recordID=self.patient.id
-        newPatient=PatientDAO.read(recordID)
+        newPatient=PatientDAO.read(id=recordID)
         newPatient.first_name="JASON"
         newPatient.last_name="BOURNE"
         newPatient.save()
@@ -39,6 +39,6 @@ class PatientDAOTests(TestCase):
 
     def testDelete(self):
         recordID=self.patient.id
-        patient=PatientDAO.read(searchParam=recordID)
+        patient=PatientDAO.read(id=recordID)
         patient.delete()
-        self.assertFalse(PatientDAO.read(searchParam=recordID))
+        self.assertFalse(PatientDAO.read(id=recordID))
