@@ -16,7 +16,7 @@ class _interface:
 
 
 class CreateUser(graphene.Mutation): # Create class inheriting mutation class
-    user=graphene.Field(UserType) # Define base return data of mutation
+    data=graphene.Field(UserType) # Define base return data of mutation
     class Arguments: # arguments the function can take
         userInput=graphene.Argument(_InputUserType)
     def mutate(self, info, userInput): # function to handle mutation
@@ -29,12 +29,4 @@ class CreateUser(graphene.Mutation): # Create class inheriting mutation class
             is_superuser=userInput.is_superuser
         )
         newUser.save()
-        return CreateUser(user=_interface(
-            id=newUser.id,
-            first_name=newUser.first_name,
-            last_name=newUser.last_name,
-            username=newUser.username,
-            password=newUser.password,
-            is_staff=newUser.is_staff,
-            is_superuser=newUser.is_superuser,
-        ))
+        return CreateUser(data=newUser)

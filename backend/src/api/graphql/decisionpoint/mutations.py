@@ -7,7 +7,7 @@ from .types import DecisionPointType, _InputDecisionPointType
 from api.dao import PatientDAO
 
 class CreateDecisionPoint(graphene.Mutation):
-    decisionPoint=graphene.Field(DecisionPointType)
+    data=graphene.Field(DecisionPointType)
     class Arguments:
         input=graphene.Argument(_InputDecisionPointType)
     def mutate(self, info, input):
@@ -25,4 +25,4 @@ class CreateDecisionPoint(graphene.Mutation):
             comorbidities=input.comorbidities
         )
         decisionPoint.save()
-        return CreateDecisionPoint(decisionPoint=decisionPoint)
+        return CreateDecisionPoint(data=decisionPoint)

@@ -4,7 +4,7 @@ from .types import TestResultType, _InputTestResultType
 from api.dao import PatientDAO
 
 class CreateTestResult(graphene.Mutation):
-    testResult=graphene.Field(TestResultType)
+    data=graphene.Field(TestResultType)
     class Arguments:
         input=graphene.Argument(_InputTestResultType)
     def mutate(self, info, input):
@@ -16,4 +16,4 @@ class CreateTestResult(graphene.Mutation):
             media_urls=input.media_urls
         )
         testResult.save()
-        return CreateTestResult(testResult=testResult)
+        return CreateTestResult(data=testResult)
