@@ -17,3 +17,7 @@ class _InputPatientType(graphene.InputObjectType):
     first_name=graphene.String(required=True)
     last_name=graphene.String(required=True)
     date_of_birth=graphene.Date(required=True)
+
+class PatientTypeConnection(graphene.relay.Connection):
+    class Meta:
+        node=PatientType
