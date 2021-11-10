@@ -1,5 +1,5 @@
 from django.test import TestCase
-from api.dao import PatientDAO, DecisionPointDAO, UserDAO
+from api.dao import PatientDAO, DecisionPointDAO, PathwayDAO
 from api.models import SdUser
 
 class DecisionPointDAOTests(TestCase):
@@ -38,10 +38,18 @@ class DecisionPointDAOTests(TestCase):
             is_superuser=self.user_is_superuser,
         )
         self.userDAO.save()
+
+        # creating pathway object
+        self.pathway_name = "Bronchiectasis"
+        self.pathwayDAO=PathwayDAO(
+            name=self.pathway_name
+        )
+        self.pathwayDAO.save()
         
         # creating decision point object
         self.decisionpoint_patient=self.patientDAO._orm
         self.decisionpoint_clinician=self.userDAO
+        self.decisionpoint_pathway=self.pathwayDAO._orm
         self.decisionpoint_type="TRIAGE"
         self.decisionpoint_addedAt="2020-01-01T03:00+00:00"
         self.decisionpoint_updatedAt="2020-01-01T03:30+00:00"
@@ -51,6 +59,7 @@ class DecisionPointDAOTests(TestCase):
         self.decisionpointDAO=DecisionPointDAO(
             patient=self.decisionpoint_patient,
             clinician=self.decisionpoint_clinician,
+            pathway=self.decisionpoint_pathway,
             type=self.decisionpoint_type,
             added_at=self.decisionpoint_addedAt,
             updated_at=self.decisionpoint_updatedAt,
