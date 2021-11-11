@@ -9,6 +9,8 @@ class CreatePathway(graphene.Mutation): # Create class inheriting mutation class
     def mutate(self, info, input): # function to handle mutation
         pathway=PathwayDAO(
             name=input.name, 
+            type=input.type,
+            is_discharged=input.is_discharged
         )
         pathway.save()
         return CreatePathway(data=pathway) # return data
