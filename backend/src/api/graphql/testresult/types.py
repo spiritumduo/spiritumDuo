@@ -10,7 +10,6 @@ class TestResultType(graphene.ObjectType):
     media_urls=graphene.String()
 
 class _InputTestResultType(graphene.InputObjectType):
-    id=graphene.ID()
     patient=graphene.Int(required=True)
     added_at=graphene.DateTime(required=True)
     description=graphene.String(required=True)

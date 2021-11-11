@@ -1,6 +1,7 @@
 import graphene
 from .types import UserType, _InputUserType
 from api.models.SdUser import SdUser
+from api.models.UserProfile import UserProfile
 
 
 # Interface between database and GraphQL
@@ -18,7 +19,7 @@ class _interface:
 class CreateUser(graphene.Mutation): # Create class inheriting mutation class
     data=graphene.Field(UserType) # Define base return data of mutation
     class Arguments: # arguments the function can take
-        userInput=graphene.Argument(_InputUserType)
+        userInput=graphene.Argument(_InputUserType, required=True)
     def mutate(self, info, userInput): # function to handle mutation
         newUser=SdUser(
             first_name=userInput.first_name,
@@ -28,5 +29,10 @@ class CreateUser(graphene.Mutation): # Create class inheriting mutation class
             is_staff=userInput.is_staff,
             is_superuser=userInput.is_superuser
         )
+        newProfile = UserProfile(
+            user=newUser,
+            department=userInput.department
+        )
         newUser.save()
+        newProfile.save()
         return CreateUser(data=newUser)

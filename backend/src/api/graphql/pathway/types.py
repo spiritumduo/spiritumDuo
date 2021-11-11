@@ -8,7 +8,7 @@ class PathwayType(graphene.ObjectType):
     fields="__all__"
 
 class _InputPathwayType(graphene.InputObjectType):
-    name=graphene.String()
+    name=graphene.String(required=True)
 
 
 class PathwayTypeConnection(graphene.relay.Connection):

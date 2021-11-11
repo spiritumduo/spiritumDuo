@@ -6,7 +6,7 @@ from api.dao import PatientDAO
 class CreateTestResult(graphene.Mutation):
     data=graphene.Field(TestResultType)
     class Arguments:
-        input=graphene.Argument(_InputTestResultType)
+        input=graphene.Argument(_InputTestResultType, required=True)
     def mutate(self, info, input):
         patientRecord=PatientDAO.read(id=input.patient, dataOnly=True) # get patient object from ID
         testResult=TestResultDAO(

@@ -1,13 +1,12 @@
 from django.db.models.lookups import GreaterThanOrEqual
 import graphene
 from api.dao.PatientDAO import PatientDAO
-from api.dao.PathwayDAO import PathwayDAO
 from .types import PatientType, _InputPatientType
 
 class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
     data=graphene.Field(PatientType) # Define base return data of mutation
     class Arguments: # arguments the function can take
-        input=graphene.Argument(_InputPatientType)
+        input=graphene.Argument(_InputPatientType, required=True)
     def mutate(self, info, input): # function to handle mutation
         newPatient=PatientDAO(
             hospital_number=input.hospital_number, 

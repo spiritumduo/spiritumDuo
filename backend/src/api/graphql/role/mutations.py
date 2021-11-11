@@ -5,7 +5,7 @@ from .types import RoleType, _InputRoleType
 class CreateRole(graphene.Mutation): # Create class inheriting mutation class
     data=graphene.Field(RoleType) # Define base return data of mutation
     class Arguments: # arguments the function can take
-        input=graphene.Argument(_InputRoleType)
+        input=graphene.Argument(_InputRoleType, required=True)
     def mutate(self, info, input): # function to handle mutation
         role=RoleDAO(
             name=input.name, 

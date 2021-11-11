@@ -5,7 +5,7 @@ from .types import PathwayType, _InputPathwayType
 class CreatePathway(graphene.Mutation): # Create class inheriting mutation class
     data=graphene.Field(PathwayType) # Define base return data of mutation
     class Arguments: # arguments the function can take
-        input=graphene.Argument(_InputPathwayType)
+        input=graphene.Argument(_InputPathwayType, required=True)
     def mutate(self, info, input): # function to handle mutation
         pathway=PathwayDAO(
             name=input.name, 
