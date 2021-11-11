@@ -33,10 +33,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://studio.apollographql.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "https://studio.apollographql.com/*",
 ]
 
 CORS_REPLACE_HTTPS_REFERER = True

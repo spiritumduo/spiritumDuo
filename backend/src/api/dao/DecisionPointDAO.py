@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Iterable
 
-from api.models import decisionpoint_orm
+from api.models import DecisionPoint
 
 # DAO object
 class DecisionPointDAO:
@@ -15,7 +15,7 @@ class DecisionPointDAO:
         self.updated_at=updated_at
         self.clinic_history=clinic_history
         self.comorbidities=comorbidities
-        self._orm: decisionpoint_orm = decisionpoint_orm()
+        self._orm: DecisionPoint = DecisionPoint()
 
         if id:
             self._orm.id=id
@@ -32,11 +32,11 @@ class DecisionPointDAO:
     def read(cls, id:int=None, patientId:int=None):
         try:
             if id:
-                returnData=decisionpoint_orm.objects.get(id=id)
+                returnData=DecisionPoint.objects.get(id=id)
             elif patientId:
-                returnData=decisionpoint_orm.objects.filter(patient=patientId)
+                returnData=DecisionPoint.objects.filter(patient=patientId)
             else:
-                returnData=decisionpoint_orm.objects.all()
+                returnData=DecisionPoint.objects.all()
             returnList=[]
             
             if isinstance(returnData, Iterable):
@@ -67,7 +67,7 @@ class DecisionPointDAO:
                     clinic_history=returnData.clinic_history,
                     comorbidities=returnData.comorbidities,
                 )
-        except (decisionpoint_orm.DoesNotExist):
+        except (DecisionPoint.DoesNotExist):
             return False
 
     def delete(self):

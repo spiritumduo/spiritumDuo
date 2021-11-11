@@ -1,11 +1,11 @@
 from typing import Iterable, Union
-from api.models.Role import role_orm
+from api.models.Role import Role
 
 class RoleDAO:
     def __init__(self, id:int=None, name:str=None):
         self.id=id
         self.name=name
-        self._orm: role_orm = role_orm()
+        self._orm: Role = Role()
         if id:
             self._orm.id=id
             self._orm.name=name
@@ -14,11 +14,11 @@ class RoleDAO:
     def read(cls, id:int=None, name:str=None):
         try:
             if id:
-                returnData=role_orm.objects.get(id=id)
+                returnData=Role.objects.get(id=id)
             elif name:
-                returnData=role_orm.objects.get(name=name)
+                returnData=Role.objects.get(name=name)
             else:
-                returnData=role_orm.objects.all()
+                returnData=Role.objects.all()
 
             if isinstance(returnData, Iterable):
                 returnList=[]
@@ -36,7 +36,7 @@ class RoleDAO:
                     name=returnData.name,
                 )
 
-        except (role_orm.DoesNotExist):
+        except (Role.DoesNotExist):
             return False
 
     def delete(self):

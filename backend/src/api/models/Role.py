@@ -1,5 +1,5 @@
 from django.db import models
 
 # Database table model
-class role_orm(models.Model):
+class Role(models.Model):
     name=models.TextField()

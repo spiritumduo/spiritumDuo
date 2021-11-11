@@ -6,7 +6,7 @@
 """
 
 from typing import Iterable
-from api.models.Configuration import configuration_orm
+from api.models.Configuration import Configuration
 
 class ConfigurationDAO:
     def __init__(self, hospital_number_name:str, hospital_number_regex:str, national_patient_number_name:str, national_patient_number_regex:str, id:int=None):
@@ -15,12 +15,12 @@ class ConfigurationDAO:
         self.hospital_number_regex=hospital_number_regex
         self.national_patient_number_name=national_patient_number_name
         self.national_patient_number_regex=national_patient_number_regex
-        self._orm: configuration_orm = configuration_orm()
+        self._orm: Configuration = Configuration()
     
     @classmethod
     def read(cls):
         try:
-            returnData=configuration_orm.objects.all()
+            returnData=Configuration.objects.all()
             if isinstance(returnData, Iterable):
                 returnList=[]
                 for row in returnData:
@@ -42,7 +42,7 @@ class ConfigurationDAO:
                     national_patient_number_name=returnData.national_patient_number_name,
                     national_patient_number_regex=returnData.national_patient_number_regex,
                 )
-        except (configuration_orm.DoesNotExist):
+        except (Configuration.DoesNotExist):
             return False
 
     def delete(self):

@@ -1,10 +1,11 @@
 from django.db import models
+from .Patient import Patient
 
-from .Patient import patient_orm
+
 # Database table model
-class testresult_orm(models.Model):
+class TestResult(models.Model):
     patient=models.ForeignKey(
-        to=patient_orm,
+        to=Patient,
         on_delete=models.CASCADE
     )
     added_at=models.DateTimeField()

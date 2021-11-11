@@ -1,13 +1,13 @@
 from django.db import models
 
-from .Patient import patient_orm
-from .Pathway import pathway_orm
+from .Patient import Patient
+from .Pathway import Pathway
 from .UserProfile import SdUser
 # Database table model
-class decisionpoint_orm(models.Model):
-    patient=models.ForeignKey(patient_orm, on_delete=models.CASCADE)
+class DecisionPoint(models.Model):
+    patient=models.ForeignKey(Patient, on_delete=models.CASCADE)
     clinician=models.ForeignKey(SdUser, on_delete=models.CASCADE)
-    pathway=models.ForeignKey(pathway_orm, on_delete=models.CASCADE)
+    pathway=models.ForeignKey(Pathway, on_delete=models.CASCADE)
     type=models.TextField()
     added_at=models.DateTimeField()
     updated_at=models.DateTimeField()

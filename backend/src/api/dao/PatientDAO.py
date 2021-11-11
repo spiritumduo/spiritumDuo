@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Iterable
 
-from api.models.Patient import patient_orm
+from api.models.Patient import Patient
 
 # DAO object
 class PatientDAO:
@@ -13,7 +13,7 @@ class PatientDAO:
         self.first_name=first_name
         self.last_name=last_name
         self.date_of_birth=date_of_birth
-        self._orm: patient_orm=patient_orm()
+        self._orm: Patient=Patient()
         
         if id:
             self._orm.id=id
@@ -28,15 +28,15 @@ class PatientDAO:
     def read(cls, dataOnly:bool=False, id:int=None, hospital_number:int=None, national_number:int=None, first_name:str=None, last_name:str=None, date_of_birth:date=None):
         try:
             if id:
-                returnData=patient_orm.objects.get(id=id)
+                returnData=Patient.objects.get(id=id)
             elif hospital_number:
-                returnData=patient_orm.objects.get(hospital_number=hospital_number)
+                returnData=Patient.objects.get(hospital_number=hospital_number)
             elif national_number:
-                returnData=patient_orm.objects.get(national_number=national_number)
+                returnData=Patient.objects.get(national_number=national_number)
             elif first_name and last_name and date_of_birth:
-                returnData=patient_orm.objects.get(first_name=first_name, last_name=last_name, date_of_birth=date_of_birth)
+                returnData=Patient.objects.get(first_name=first_name, last_name=last_name, date_of_birth=date_of_birth)
             else:
-                returnData=patient_orm.objects.all()
+                returnData=Patient.objects.all()
 
             returnList=[]
             
@@ -72,7 +72,7 @@ class PatientDAO:
                     last_name=returnData.last_name,
                     date_of_birth=returnData.date_of_birth,
                 )
-        except (patient_orm.DoesNotExist):
+        except (Patient.DoesNotExist):
             return False
 
     def delete(self):

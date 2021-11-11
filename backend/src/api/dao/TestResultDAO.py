@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Iterable
 
-from api.models import testresult_orm
+from api.models import TestResult
 
 # DAO object
 class TestResultDAO:
@@ -11,7 +11,7 @@ class TestResultDAO:
         self.added_at=added_at
         self.description=description
         self.media_urls=media_urls
-        self._orm: testresult_orm = testresult_orm()
+        self._orm: TestResult = TestResult()
 
         if id:
             self._orm.id=id
@@ -24,11 +24,11 @@ class TestResultDAO:
     def read(cls, id:int=None, patientId:int=None):
         try:
             if id:
-                returnData=testresult_orm.objects.get(id=id)
+                returnData=TestResult.objects.get(id=id)
             elif patientId:
-                returnData=testresult_orm.objects.filter(patient=patientId)
+                returnData=TestResult.objects.filter(patient=patientId)
             else:
-                returnData=testresult_orm.objects.all()
+                returnData=TestResult.objects.all()
             returnList=[]
             
             if isinstance(returnData, Iterable):
@@ -51,7 +51,7 @@ class TestResultDAO:
                     description=returnData.description,
                     media_urls=returnData.media_urls,
                 )
-        except (testresult_orm.DoesNotExist):
+        except (TestResult.DoesNotExist):
             return False
 
     def delete(self):

@@ -1,13 +1,13 @@
 from typing import Iterable
-from api.models.Pathway import pathway_orm
-from api.models.Patient import pathway_patient_link_orm, patient_orm
+from api.models.Pathway import Pathway
+from api.models.Patient import PathwayPatient, Patient
 from api.dao.PatientDAO import PatientDAO
 
 class PathwayDAO:
     def __init__(self, id:int=None, name:str=None):
         self.id=id
         self.name=name
-        self._orm: pathway_orm = pathway_orm()
+        self._orm: Pathway = Pathway()
         if id:
             self._orm.id=id
             self._orm.name=name
@@ -16,11 +16,11 @@ class PathwayDAO:
     def read(cls, id:int=None, name:str=None, dataOnly:bool=False):
         try:
             if id:
-                returnData=pathway_orm.objects.get(id=id)
+                returnData=Pathway.objects.get(id=id)
             elif name:
-                returnData=pathway_orm.objects.get(name=name)
+                returnData=Pathway.objects.get(name=name)
             else:
-                returnData=pathway_orm.objects.all()
+                returnData=Pathway.objects.all()
 
             if dataOnly and not isinstance(returnData, Iterable):
                 return returnData
@@ -41,14 +41,14 @@ class PathwayDAO:
                     name=returnData.name,
                 )
 
-        except (pathway_orm.DoesNotExist):
+        except (Pathway.DoesNotExist):
             return False
 
     @classmethod
     def readRelations(cls, patientId:int=None, pathwayId:int=None): # this will get a patient's pathways
         try:
             if patientId:
-                returnData=pathway_patient_link_orm.objects.filter(patient=patientId)
+                returnData=PathwayPatient.objects.filter(patient=patientId)
                 returnList=[]
                 for row in returnData:
                     returnList.append(
@@ -59,7 +59,7 @@ class PathwayDAO:
                     )
                 return returnList
             elif pathwayId:
-                returnData=pathway_patient_link_orm.objects.filter(pathway=pathwayId)
+                returnData=PathwayPatient.objects.filter(pathway=pathwayId)
                 returnList=[]
                 for row in returnData:
                     returnList.append(
@@ -75,7 +75,7 @@ class PathwayDAO:
                     )
                 return returnList
 
-        except (pathway_patient_link_orm.DoesNotExist):
+        except (PathwayPatient.DoesNotExist):
             return False
 
     def delete(self):

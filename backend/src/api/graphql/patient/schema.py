@@ -7,9 +7,9 @@ from .types import PatientType
 class PatientQueries(_PatientQueries, graphene.ObjectType):
     get_patients=graphene.List(PatientType)
     get_patient_by_search = graphene.Field(PatientType, 
-        id=graphene.Int(),
-        hospital_number=graphene.Int(),
-        national_number=graphene.Int(),
+        id=graphene.ID(),
+        hospital_number=graphene.String(),
+        national_number=graphene.String(),
         first_name=graphene.String(),
         last_name=graphene.String(),
         date_of_birth=graphene.Date(),

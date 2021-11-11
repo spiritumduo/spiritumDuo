@@ -6,8 +6,8 @@ from dataclasses import dataclass
 class UserDAO:
     _userProfile: UserProfile = None
     id: int = None
-    firstName: str = None
-    lastName: str = None
+    first_name: str = None
+    last_name: str = None
     username: str = None
     department: str = None
     lastAccess: datetime = None
@@ -25,8 +25,8 @@ class UserDAO:
 
         return cls(
             id=user_profile_model.user_id,
-            firstName=user_profile_model.user.first_name,
-            lastName=user_profile_model.user.last_name,
+            first_name=user_profile_model.user.first_name,
+            last_name=user_profile_model.user.last_name,
             username=user_profile_model.user.username,
             department=user_profile_model.department,
             lastAccess=user_profile_model.user.last_login,  # TODO: rename this for consistency
@@ -41,8 +41,8 @@ class UserDAO:
         for profile in userProfileModels:
             userProfileDAO = UserDAO(
                 id=profile.user_id,
-                firstName=profile.user.first_name,
-                lastName=profile.user.last_name,
+                first_name=profile.user.first_name,
+                last_name=profile.user.last_name,
                 username=profile.user.username,
                 department=profile.department,
                 lastAccess=profile.user.last_login,  # TODO: rename this for consistency
@@ -55,8 +55,8 @@ class UserDAO:
     def save(self):
         if self.id is not None:
             self._userProfile.user.id = self.id
-        self._userProfile.user.first_name = self.firstName
-        self._userProfile.user.last_name = self.lastName
+        self._userProfile.user.first_name = self.first_name
+        self._userProfile.user.last_name = self.last_name
         self._userProfile.user.username = self.username
         self._userProfile.department = self.department
         self._userProfile.user.lastAccess = self.lastAccess

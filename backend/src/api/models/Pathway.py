@@ -1,5 +1,5 @@
 from django.db import models
 
 # Database table model
-class pathway_orm(models.Model):
+class Pathway(models.Model):
     name = models.TextField()
