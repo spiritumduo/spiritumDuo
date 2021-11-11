@@ -5,7 +5,7 @@ from .types import ConfigurationType, _InputConfigurationType
 class createConfiguration(graphene.Mutation):
     data=graphene.Field(ConfigurationType)
     class Arguments:
-        input=graphene.Argument(_InputConfigurationType)
+        input=graphene.Argument(_InputConfigurationType, required=True)
     def mutate(self, info, input):
         newConfiguration=ConfigurationDAO(
             hospital_number_name=input.hospital_number_name,
