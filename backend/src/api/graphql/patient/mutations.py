@@ -1,7 +1,6 @@
 from django.db.models.lookups import GreaterThanOrEqual
 import graphene
 from api.dao.PatientDAO import PatientDAO
-from api.dao.PathwayDAO import PathwayDAO
 from .types import PatientType, _InputPatientType
 
 class CreatePatient(graphene.Mutation): # Create class inheriting mutation class
