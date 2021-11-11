@@ -32,7 +32,7 @@ class UserDAOTests(TestCase):
         """Do we get back the details from the fixture?"""
         userProfile = UserDAO.read(self.userProfile.user.id)
         self.assertEqual(self.department, userProfile.department)
-        self.assertEqual(self.first_name, userProfile.firstName)
+        self.assertEqual(self.first_name, userProfile.first_name)
 
     def testCreateSaveAndReadAll(self):
         """Can we add many UserProfiles and get them all back?"""
@@ -40,8 +40,8 @@ class UserDAOTests(TestCase):
         for i in range(0, 5):
             iStr = "-" + str(i)
             dao = UserDAO(
-                firstName=self.user.first_name + iStr,
-                lastName=self.user.last_name + iStr,
+                first_name=self.user.first_name + iStr,
+                last_name=self.user.last_name + iStr,
                 username=self.user.username + iStr,
                 department=self.department,
             )
@@ -55,8 +55,8 @@ class UserDAOTests(TestCase):
 
     def testReadChangeRead(self):
         dao = UserDAO().read(userId=self.userProfile.user_id)
-        dao.firstName = "Freddy"
+        dao.first_name = "Freddy"
         dao.save()
         dao = UserDAO().read(userId=self.userProfile.user_id)
-        self.assertEqual("Freddy", dao.firstName)
+        self.assertEqual("Freddy", dao.first_name)
 
