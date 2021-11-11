@@ -10,7 +10,7 @@ class RoleQueries(_RoleQueries, graphene.ObjectType):
     # this way we can keep it modular for permission decorators
     def resolve_get_roles(root, info):
         return _RoleQueries._resolve_get_roles(root, info)
-    def resolve_get_role_by_search(root, info, id, name):
+    def resolve_get_role_by_search(root, info, id=None, name=None):
         return _RoleQueries._resolve_get_role_by_search(root, info, id, name)
 
 class RoleMutations(graphene.ObjectType):

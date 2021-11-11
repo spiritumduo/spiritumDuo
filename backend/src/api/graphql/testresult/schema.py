@@ -12,9 +12,9 @@ class TestResultQueries(_TestResultQueries, graphene.ObjectType):
     # this way we can keep it modular for permission decorators
     def resolve_get_test_results(root, info):
         return _TestResultQueries._resolve_get_test_results(root, info)
-    def resolve_get_test_result_by_record_id(root, info, id):
+    def resolve_get_test_result_by_record_id(root, info, id=None):
         return _TestResultQueries._resolve_get_test_result_by_record_id(root, info, id)
-    def resolve_get_test_result_by_patient_id(root, info, id):
+    def resolve_get_test_result_by_patient_id(root, info, id=None):
         return _TestResultQueries._resolve_get_test_result_by_patient_id(root, info, id)
 
 class TestResultMutations(graphene.ObjectType):

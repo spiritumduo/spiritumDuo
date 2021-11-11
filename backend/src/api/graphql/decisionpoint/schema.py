@@ -12,9 +12,9 @@ class DecisionPointQueries(_DecisionPointQueries, graphene.ObjectType):
     # this way we can keep it modular for permission decorators
     def resolve_get_decision_points(root, info):
         return _DecisionPointQueries._resolve_get_decision_points(root, info)
-    def resolve_get_decision_point_by_record_id(root, info, id):
+    def resolve_get_decision_point_by_record_id(root, info, id=None):
         return _DecisionPointQueries._resolve_get_decision_point_by_record_id(root, info, id)
-    def resolve_get_decision_point_by_patient_id(root, info, id):
+    def resolve_get_decision_point_by_patient_id(root, info, id=None):
         return _DecisionPointQueries._resolve_get_decision_point_by_patient_id(root, info, id)
 
 class DecisionPointMutations(graphene.ObjectType):
