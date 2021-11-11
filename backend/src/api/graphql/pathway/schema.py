@@ -14,18 +14,14 @@ class PathwayQueries(_PathwayQueries, graphene.ObjectType):
 
     def resolve_pathways(root, info):
         return _PathwayQueries._resolve_pathways(root, info)
+
     def resolve_pathway_search(root, info, id=None, name=None):
-
-    def resolve_pathway_search(root, info, id, name):
         return _PathwayQueries._resolve_pathway_search(root, info, id, name)
+
     def resolve_get_patient_pathways(root, info, patientId=None):
-
-    def resolve_get_patient_pathways(root, info, patientId):
         return _PathwayQueries._resolve_patient_pathways(root, info, patientId)
-    def resolve_get_pathway_patients(root, info, pathwayId=None):
-        return _PathwayQueries._resolve_pathway_patients(root, info, pathwayId)
 
-    def resolve_get_patients_for_pathway(root, info, pathwayId):
+    def resolve_get_patients_for_pathway(root, info, pathwayId=None):
         return _PathwayQueries._resolve_patients_for_pathway(root, info, pathwayId)
 
 class PathwayMutations(graphene.ObjectType):
