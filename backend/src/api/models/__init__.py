@@ -1,7 +1,7 @@
 from .UserProfile import UserProfile
 from .SdUser import SdUser
-
 from .Patient import Patient
+from .PatientPathwayInstances import PatientPathwayInstances
 from .Configuration import Configuration
 from .Role import Role
 from .DecisionPoint import DecisionPoint
