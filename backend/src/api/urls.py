@@ -1,7 +1,7 @@
 from django.urls import path
-from graphene_django.views import GraphQLView
-from django.views.decorators.csrf import csrf_exempt  # TODO: This has to be removed in production
+from ariadne_django.views import GraphQLAsyncView
+from api.gql.schema import schema
 
 urlpatterns = [
-    path('', csrf_exempt(GraphQLView.as_view(graphiql=True)))
+    path('', GraphQLAsyncView.as_view(schema=schema), name='graphql')
 ]
