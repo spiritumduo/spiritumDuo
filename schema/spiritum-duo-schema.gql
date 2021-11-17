@@ -82,19 +82,20 @@ type Configuration {
 }
 
 enum DecisionPointType {
-        TRIAGE
-        CLINIC
-        MDT
-        AD_HOC
-        FOLLOW_UP
+    TRIAGE
+    CLINIC
+    MDT
+    AD_HOC
+    FOLLOW_UP
 }
 
 type DecisionPoint {
     id: ID!
     patient: Patient!
+    clinician: User!
+    pathway: Pathway!
     addedAt: Date!
     updatedAt: Date
-    clinician: User!
     decisionType: DecisionPointType!
     clinicHistory: String!
     comorbidities: String!
