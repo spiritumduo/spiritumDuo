@@ -1,6 +1,6 @@
 from typing import Optional, List
 from api.models import OnPathway, Patient, Pathway, DecisionPoint
-from api.dao.PatientDAO import PatientDAO
+# from api.dao.PatientDAO import PatientDAO
 from dataclasses import dataclass
 from promise import Promise
 from promise.dataloader import DataLoader
@@ -19,7 +19,7 @@ class OnPathwayDAO:
         if self._OnPathway is None:
             self._OnPathway = OnPathway()
         else:
-
+            pass
 
     @classmethod
     def read(cls, searchId: int = None) -> Optional['OnPathwayDAO']:
