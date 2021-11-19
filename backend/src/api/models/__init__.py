@@ -3,7 +3,7 @@ from .DAOModel import HasDAO
 from .DecisionPoint import DecisionPoint
 from .Pathway import Pathway
 from .Patient import Patient
-from .PatientPathwayInstances import PatientPathwayInstances
+from .PatientPathwayInstance import PatientPathwayInstance
 from .Role import Role
 from .UserProfile import UserProfile
 from .SdUser import SdUser

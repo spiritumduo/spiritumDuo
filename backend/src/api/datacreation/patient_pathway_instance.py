@@ -1,5 +1,5 @@
 from asgiref.sync import sync_to_async
-from api.models import PatientPathwayInstances
+from api.models import PatientPathwayInstance
 from api.dataloaders import PatientLoader, PathwayLoader
 from channels.db import database_sync_to_async
 
@@ -14,7 +14,7 @@ async def CreatePatientPathwayInstance(
     try:
         patientObj=await PatientLoader.load_from_id(context=context, ids=patient)
         pathwayObj=await PathwayLoader.load_from_id(context=context, ids=pathway)
-        instance=PatientPathwayInstances(
+        instance=PatientPathwayInstance(
             patient=patientObj,
             pathway=pathwayObj,
             is_discharged=is_discharged,
