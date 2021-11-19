@@ -1,9 +1,3 @@
-from ariadne import MutationType, gql
-
-type_defs = gql(
-    """
-    type Mutation
-    """
-)
+from ariadne import MutationType
 
 mutation = MutationType()

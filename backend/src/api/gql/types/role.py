@@ -1,7 +1,3 @@
-from ariadne import gql
-type_defs=gql("""
-    type Role{
-        id: ID!
-        name: String!
-    }
-""")
+from ariadne.objects import ObjectType
+
+RoleObjectType=ObjectType("Role")

@@ -1,0 +1,3 @@
+from ariadne.objects import ObjectType
+
+PatientPathwayInstanceObjectType=ObjectType("PatientPathwayInstance")

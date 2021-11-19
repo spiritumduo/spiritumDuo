@@ -1,9 +1,3 @@
-from ariadne import QueryType, gql
-
-type_defs = gql(
-    """
-    type Query
-    """
-)
+from ariadne import QueryType
 
 query = QueryType()
