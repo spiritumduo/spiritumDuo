@@ -1,0 +1,144 @@
+scalar Date
+scalar DateTime
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    getPathways(id:ID): [Pathway]
+    getPatient(id: ID): Patient
+    getUser(id: ID!): User
+    getRoles: [Role]
+}
+
+type Mutation {
+    # createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
+    # createTestResult(input:TestResultInput!): TestResult!
+    createPathway(input:PathwayInput!): Pathway!
+    createPatient(input:PatientInput!): Patient!
+    # createRole(input:RoleInput!): Role!
+    createUser(input:UserInput!): User!
+    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance!
+
+    login(username: String!, password: String!): User
+}
+
+
+#### ENUMS
+enum DecisionPointType {
+    TRIAGE
+    CLINIC
+    MDT
+    AD_HOC
+    FOLLOW_UP
+}
+
+enum PatientCommunicationMethods{
+    LETTER
+    EMAIL
+    LANDLINE
+    MOBILE
+}
+
+#### OUTPUT TYPES
+type Pathway {
+    id: ID!
+    name: String!
+
+    patients:[Patient]
+}
+
+type Patient {
+	id: ID!
+	hospitalNumber: String!
+	nationalNumber: String!
+	communicationMethod: PatientCommunicationMethods!
+	firstName: String!
+	lastName: String!
+    dateOfBirth: Date!
+
+    decisionPoints(filter: String):[DecisionPoint]
+    pathwayInstance(filter:String): [PatientPathwayInstance]
+    testResults(filter:Int):[TestResult]
+}
+
+type Role{
+    id: ID!
+    name: String!
+}
+
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    userName: String!
+    password: String
+    lastAccess: Date!
+
+    department: String!
+    roles: [Role!]
+}
+
+type DecisionPoint {
+    id: ID!
+    patient: Patient!
+    clinician: User!
+    pathway: Pathway!
+    addedAt: Date!
+    updatedAt: Date
+    decisionType: DecisionPointType!
+    clinicHistory: String!
+    comorbidities: String!
+    requestsReferrals: String!
+}
+
+type TestResult {
+    id: ID!
+    patient: Patient!
+    pathwayInstance: PatientPathwayInstance!
+    addedAt: Date!
+    description: String!
+    mediaUrls: [String]
+}
+
+type PatientPathwayInstance{
+    id: ID!
+    is_discharged: Boolean!
+    awaitingDecisionType: String!
+    pathway: Pathway!
+    patient: Patient!
+}
+
+#### INPUT TYPES
+input PathwayInput{
+    name:String!
+}
+
+input PatientInput{
+    firstName:String!
+    lastName:String!
+    communicationMethod:PatientCommunicationMethods!
+    hospitalNumber:Int!
+    nationalNumber:Int!
+    dateOfBirth:Date!
+}
+
+input PatientPathwayInstanceInput{
+    patient:Int!
+    pathway:Int!
+    isDischarged:Boolean!
+    awaitingDecisionType:String!
+}
+
+input UserInput{
+    firstName:String!
+    lastName:String!
+    username:String!
+    password:String!
+    isStaff:Boolean!
+    isSuperuser:Boolean!
+    
+    department:String!
+}
