@@ -56,11 +56,6 @@ INSTALLED_APPS = [
     "ariadne_django"
 ]
 
-GRAPHENE = {
-    "SCHEMA": "api.schema.schema",
-    "ATOMIC_MUTATIONS": True
-}
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
