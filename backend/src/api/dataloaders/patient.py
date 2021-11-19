@@ -16,7 +16,7 @@ class PatientLoader(DataLoader):
         return sortedPatients
 
     @classmethod
-    async def load_patient(cls, context=None, ids=None):
+    async def load_from_id(cls, context=None, ids=None):
         loader_name="_patient_loader"
         if loader_name not in context:
             context[loader_name]=cls()

@@ -16,7 +16,7 @@ class ConfigurationLoader(DataLoader):
         return sortedconfigurations
 
     @classmethod
-    async def load_configuration(cls, context=None, ids=None):
+    async def load_from_id(cls, context=None, ids=None):
         loader_name="_configuration_loader"
         if loader_name not in context:
             context[loader_name]=cls()
