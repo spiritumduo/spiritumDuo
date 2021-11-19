@@ -12,5 +12,5 @@ type_defs = gql(
 
 @query.field("getConfiguration")
 async def resolve_get_configuration(obj=None, info=None):
-    configuration=await ConfigurationLoader.load_configuration(info.context, 1)
+    configuration=await ConfigurationLoader.load_from_id(info.context, 1)
     return configuration or None
