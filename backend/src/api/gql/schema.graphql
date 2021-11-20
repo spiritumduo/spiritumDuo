@@ -11,10 +11,11 @@ type Query {
     getPatient(id: ID): Patient
     getUser(id: ID!): User
     getRoles: [Role]
+    getPatientsOnPathway(id: ID!, filter:DecisionPointType): [Patient]
 }
 
 type Mutation {
-    # createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
     # createTestResult(input:TestResultInput!): TestResult!
     createPathway(input:PathwayInput!): Pathway!
     createPatient(input:PatientInput!): Patient!
@@ -59,9 +60,9 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
 
-    decisionPoints(filter: String):[DecisionPoint]
-    pathwayInstance(filter:String): [PatientPathwayInstance]
-    testResults(filter:Int):[TestResult]
+    decisionPoints:[DecisionPoint]
+    pathways: [PatientPathwayInstance]
+    testResults:[TestResult]
 }
 
 type Role{
@@ -73,7 +74,7 @@ type User {
     id: ID!
     firstName: String!
     lastName: String!
-    userName: String!
+    username: String!
     password: String
     lastAccess: Date!
 
@@ -105,13 +106,26 @@ type TestResult {
 
 type PatientPathwayInstance{
     id: ID!
-    is_discharged: Boolean!
+    isDischarged: Boolean!
     awaitingDecisionType: String!
     pathway: Pathway!
     patient: Patient!
 }
 
 #### INPUT TYPES
+
+input DecisionPointInput{
+    patient: Int!
+    clinician: Int!
+    pathway: Int!
+    addedAt: Date!
+    updatedAt: Date
+    decisionType: DecisionPointType!
+    clinicHistory: String!
+    comorbidities: String!
+    requestsReferrals: String!
+}
+
 input PathwayInput{
     name:String!
 }
