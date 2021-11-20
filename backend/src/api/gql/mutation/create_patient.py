@@ -3,7 +3,6 @@ from api.datacreation import CreatePatient
 
 @mutation.field("createPatient")
 async def resolve_create_patient(_=None, info=None, input=None):
-    print(input["communicationMethod"])
     return await CreatePatient(
         first_name=input["firstName"],
         last_name=input["lastName"],

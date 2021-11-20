@@ -1,14 +1,17 @@
 from ariadne.objects import ObjectType
 from channels.db import database_sync_to_async
-from api.models import PatientPathwayInstance
+from api.models import PatientPathwayInstance, DecisionPoint, Patient
 
 PatientObjectType=ObjectType("Patient")
 
-@PatientObjectType.field("pathwayInstance")
-async def resolve_patient_pathway_instances(obj=None, *_):
-    if not obj:
-        return None
-    pathwayInstance=await database_sync_to_async(PatientPathwayInstance.objects.select_related)("patient")
-    patientPathwayInstance=await pathwayInstance.filter(patient=obj.id)
-    print(patientPathwayInstance)
-    return patientPathwayInstance
+@PatientObjectType.field("pathways")
+async def resolve_patient_pathways(obj=None, *_):
+    allRelated = await database_sync_to_async(PatientPathwayInstance.objects.select_related)("patient")
+    idRelated = await database_sync_to_async(list)(allRelated.filter(patient=obj.id))
+    return idRelated
+
+@PatientObjectType.field("decisionPoints")
+async def resolve_patient_decision_points(obj=None, *_):
+    allRelated = await database_sync_to_async(DecisionPoint.objects.select_related)("patient")
+    idRelated = await database_sync_to_async(list)(allRelated.filter(patient=obj.id))
+    return idRelated
