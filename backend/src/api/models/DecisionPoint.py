@@ -11,7 +11,7 @@ class DecisionPoint(models.Model):
     patient=models.ForeignKey(Patient, on_delete=models.CASCADE)
     clinician=models.ForeignKey(SdUser, on_delete=models.CASCADE)
     pathway=models.ForeignKey(Pathway, on_delete=models.CASCADE)
-    type=models.CharField(
+    decision_type=models.CharField(
         choices=DecisionPointType.choices,
         default=DecisionPointType.TRIAGE,
         max_length=10,
@@ -20,3 +20,4 @@ class DecisionPoint(models.Model):
     updated_at=models.DateTimeField()
     clinic_history=models.TextField()
     comorbidities=models.TextField()
+    requests_referrals=models.TextField()
