@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 import React from 'react';
@@ -10,6 +11,7 @@ import HomePage from 'pages/HomePage';
 import { FooterProps } from 'components/Footer';
 import { HeaderProps } from 'components/Header';
 import PageLayout from 'components/PageLayout';
+import DefaultHomePageProps from 'app/hooks/HomeHooks';
 import logo from './logo.svg';
 
 const headerProps: HeaderProps = {
@@ -32,7 +34,7 @@ const App = (): JSX.Element => (
       <LoggedInRoute>
         <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
           <Route path="/">
-            <HomeDemo />
+            <HomePage { ...DefaultHomePageProps() } />
           </Route>
         </PageLayout>
       </LoggedInRoute>

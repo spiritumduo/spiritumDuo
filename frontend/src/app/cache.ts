@@ -1,4 +1,5 @@
 import { InMemoryCache, ReactiveVar, makeVar } from '@apollo/client';
+import { relayStylePagination } from '@apollo/client/utilities';
 import User from 'types/Users';
 
 export const cache: InMemoryCache = new InMemoryCache({
@@ -7,6 +8,7 @@ export const cache: InMemoryCache = new InMemoryCache({
       fields: {
         pathwayOptions: { read: () => pathwayOptionsVar() },
         loggedInUser: { read: () => pathwayOptionsVar() },
+        getPatientOnPathwayConnection: relayStylePagination(['pathwayId', 'awaitingDecisionType']),
       },
     },
   },
