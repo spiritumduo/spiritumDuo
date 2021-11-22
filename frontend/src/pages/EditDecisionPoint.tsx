@@ -44,7 +44,7 @@ const EditDecisionPointPage = ({ patient }: EditDecisionPointPageProps) => (
                 <div className="form-group row mb-2">
                   <label className="col-sm-3 col-form-label" htmlFor="patientHostpitalNumber">Hospital number
                     <div className="col-sm-9">
-                      <input type="text" className="form-control" id="patientHostpitalNumber" name="patientHostpitalNumber" placeholder="Hospital number" defaultValue={ patient.patientHospitalNumber } />
+                      <input type="text" className="form-control" id="patientHostpitalNumber" name="patientHostpitalNumber" placeholder="Hospital number" defaultValue={ patient.hospitalNumber } />
                     </div>
                   </label>
                 </div>
@@ -58,7 +58,7 @@ const EditDecisionPointPage = ({ patient }: EditDecisionPointPageProps) => (
                 </div>
 
                 <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                <Link to={ `/decisionpoint/${patient.patientHospitalNumber}` } className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
+                <Link to={ `/decisionpoint/${patient.hospitalNumber}` } className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
               </div>
 
               <div className="container pt-5">

@@ -2,8 +2,8 @@ interface Patient {
   id: number;
   firstName: string;
   lastName: string;
-  patientHospitalNumber: string;
-  patientNationalNumber?: string;
+  hospitalNumber: string;
+  nationalNumber?: string;
   communicationMethod?: string;
   dob?: Date;
 }

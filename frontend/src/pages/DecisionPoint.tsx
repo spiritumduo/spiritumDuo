@@ -18,7 +18,7 @@ const DecisionPointPage = ({ patient }: DecisionPointPageProps): JSX.Element => 
               <div className="container">
 
                 <p className="text-center">
-                  <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.patientHospitalNumber}/edit` }>Edit patient record</Link>
+                  <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.hospitalNumber}/edit` }>Edit patient record</Link>
                 </p>
 
                 <hr />
@@ -143,7 +143,7 @@ const DecisionPointPage = ({ patient }: DecisionPointPageProps): JSX.Element => 
 
                 <div className="container mt-4">
                   <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Update patient</button>
-                  <Link to={ `/decisionpoint/${patient.patientHospitalNumber}` } className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
+                  <Link to={ `/decisionpoint/${patient.hospitalNumber}` } className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
                 </div>
 
               </div>

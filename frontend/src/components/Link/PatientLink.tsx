@@ -14,7 +14,7 @@ interface PatientLinkProps {
  * Link to individual Patient
  */
 const PatientLink = ({ patient }: PatientLinkProps) => (
-  <Link className="patient-link" to={ `/patient/${patient.patientHospitalNumber}` }>{patient.patientHospitalNumber}, {patient.firstName} {patient.lastName}</Link>
+  <Link className="patient-link" to={ `/patient/${patient.hospitalNumber}` }>{patient.hospitalNumber}, {patient.firstName} {patient.lastName}</Link>
 );
 
 export default PatientLink;

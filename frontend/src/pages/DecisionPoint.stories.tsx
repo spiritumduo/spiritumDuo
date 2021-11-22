@@ -20,7 +20,7 @@ export const Standard = Template.bind({});
 Standard.args = {
   patient: {
     id: 5,
-    patientHospitalNumber: 'MRN9876543',
+    hospitalNumber: 'MRN9876543',
     firstName: 'John',
     lastName: 'Doe',
     dob: new Date('01/01/1970'),

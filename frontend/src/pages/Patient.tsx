@@ -18,7 +18,7 @@ const PatientPage = ({
     <div className="container-lg flex">
       <div className="row decision-row">
         <div className="row">
-          <Link to={ `/patient/${patient.patientHospitalNumber}/decisions` }>Previous decision points</Link>
+          <Link to={ `/patient/${patient.hospitalNumber}/decisions` }>Previous decision points</Link>
         </div>
         {
           decisions.map((d) => (
@@ -38,7 +38,7 @@ const PatientPage = ({
       </div>
       <div className="row notes-row">
         <div className="row">
-          <Link to={ `/patient/${patient.patientHospitalNumber}/notes` }>Notes</Link>
+          <Link to={ `/patient/${patient.hospitalNumber}/notes` }>Notes</Link>
         </div>
         {
           notes.map((n) => (
@@ -61,7 +61,7 @@ const PatientPage = ({
       </div>
       <div className="row messages-row">
         <div className="row">
-          <Link to={ `/patient/${patient.patientHospitalNumber}/messages` }>Messages</Link>
+          <Link to={ `/patient/${patient.hospitalNumber}/messages` }>Messages</Link>
         </div>
         {
           messages.map((m) => (
