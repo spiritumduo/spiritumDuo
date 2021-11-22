@@ -18,7 +18,7 @@ const patient = {
 for (let i = 0; i < 150; ++i) {
   const newPatient = {
     id: i,
-    humber: `${patient.hospitalNumber}-${i + 1}`,
+    hospitalNumber: `${patient.hospitalNumber}-${i + 1}`,
     firstName: patient.firstName,
     lastName: `${patient.lastName} ${i + 1}`,
   };
