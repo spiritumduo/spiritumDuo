@@ -22,3 +22,10 @@ class PatientLoader(DataLoader):
             context[loader_name]=cls()
         patient=await context[loader_name].load(ids)
         return patient
+
+    @classmethod
+    async def load_many_patients(cls, context=None, ids=None):
+        loader_name = "_patient_loader"
+        if loader_name not in context:
+            context[loader_name] = cls()
+        return await context[loader_name].load_many(ids)

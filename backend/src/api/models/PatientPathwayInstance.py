@@ -10,3 +10,5 @@ class PatientPathwayInstance(models.Model):
         choices=DecisionPoint.DecisionPointType.choices,
         default=DecisionPoint.DecisionPointType.TRIAGE
     )
+    added_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
