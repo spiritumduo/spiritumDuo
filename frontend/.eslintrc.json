@@ -32,7 +32,7 @@
     }],
     "react/jsx-one-expression-per-line": 0,
     "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
-    "object-shorthand": ["error", "never"],
+    "object-shorthand": ["error", "consistent"],
     "import/extensions": [2, "never"],
     "object-curly-newline": ["error", {"multiline": true}],
     "jsx-a11y/label-has-associated-control": [ 2, {
