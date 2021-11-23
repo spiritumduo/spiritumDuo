@@ -1,3 +1,3 @@
 from django.contrib import admin
 
-from api.models import Configuration, DecisionPoint, Pathway, Patient, PatientPathwayInstance, Role, SdUser, TestResult, UserProfile
+from api.models import DecisionPoint, Pathway, Patient, PatientPathwayInstance, SdUser, TestResult, UserProfile
