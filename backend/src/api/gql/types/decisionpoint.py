@@ -1,6 +1,6 @@
 from ariadne.objects import ObjectType
 from channels.db import database_sync_to_async
-from api.models import DecisionPoint, SdUser
+from api.models import DecisionPoint
 
 DecisionPointObjectType=ObjectType("DecisionPoint")
 
