@@ -112,7 +112,7 @@ type User {
     lastName: String!
     username: String!
     password: String
-    lastAccess: Date!
+    lastLogin: DateTime
 
     department: String!
     roles: [Role!]
