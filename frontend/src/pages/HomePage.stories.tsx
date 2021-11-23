@@ -18,7 +18,7 @@ const patient = {
   lastName: 'Doe',
 };
 
-for (let i = 0; i < 50; ++i) {
+for (let i = 0; i < 20; ++i) {
   const newPatient = {
     id: i,
     hospitalNumber: `${patient.hospitalNumber}-${i + 1}`,
@@ -32,22 +32,23 @@ const edges = patientArray.map((p) => ({
   cursor: `${p.id}YXJyYXljb25uZWN0aW9uOjA=`,
   node: p,
 }));
+const patientsPerPage = 10;
 
 const apolloMocks = [
-  {
+  { // TRIAGE DATA
     request: {
       query: PATIENTS_FOR_PATHWAY_QUERY,
       variables: {
         pathwayId: 1,
-        last: 10,
-        after: undefined,
-        // filter: DecisionPointType.TRIAGE,
+        first: patientsPerPage,
+        awaitingDecisionType: DecisionPointType.TRIAGE,
       },
     },
     result: {
       data: {
-        getPatientsForPathway: {
-          edges: edges.slice(0, 10),
+        getPatientOnPathwayConnection: {
+          totalCount: edges.length,
+          edges: edges.slice(0, patientsPerPage),
           pageInfo: {
             hasNextPage: true,
             endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
@@ -56,20 +57,43 @@ const apolloMocks = [
       },
     },
   },
-  {
+  { // TRIAGE PAGE 2
     request: {
       query: PATIENTS_FOR_PATHWAY_QUERY,
       variables: {
         pathwayId: 1,
-        limit: 10,
+        first: patientsPerPage,
+        awaitingDecisionType: DecisionPointType.TRIAGE,
         after: 'YXJyYXljb25uZWN0aW9uOjA=',
-        // filter: DecisionPointType.TRIAGE,
       },
     },
     result: {
       data: {
-        getPatientsForPathway: {
-          edges: edges.slice(10, 10),
+        getPatientOnPathwayConnection: {
+          totalCount: edges.length,
+          edges: edges.slice(11, patientsPerPage),
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+          },
+        },
+      },
+    },
+  },
+  { // CLINIC DATA
+    request: {
+      query: PATIENTS_FOR_PATHWAY_QUERY,
+      variables: {
+        pathwayId: 1,
+        first: patientsPerPage,
+        awaitingDecisionType: DecisionPointType.CLINIC,
+      },
+    },
+    result: {
+      data: {
+        getPatientOnPathwayConnection: {
+          totalCount: edges.length,
+          edges: edges.slice(0, patientsPerPage),
           pageInfo: {
             hasNextPage: true,
             endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
@@ -78,66 +102,23 @@ const apolloMocks = [
       },
     },
   },
-  {
+  { // CLINIC PAGE 2
     request: {
       query: PATIENTS_FOR_PATHWAY_QUERY,
       variables: {
         pathwayId: 1,
-        limit: 10,
+        first: patientsPerPage,
         after: 'YXJyYXljb25uZWN0aW9uOjA=',
-        // filter: DecisionPointType.TRIAGE,
+        awaitingDecisionType: DecisionPointType.CLINIC,
       },
     },
     result: {
       data: {
-        getPatientsForPathway: {
-          edges: edges.slice(20, 10),
+        getPatientOnPathwayConnection: {
+          totalCount: edges.length,
+          edges: edges.slice(5, patientsPerPage),
           pageInfo: {
-            hasNextPage: true,
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          },
-        },
-      },
-    },
-  },
-  {
-    request: {
-      query: PATIENTS_FOR_PATHWAY_QUERY,
-      variables: {
-        pathwayId: 1,
-        limit: 10,
-        cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-        // filter: DecisionPointType.TRIAGE,
-      },
-    },
-    result: {
-      data: {
-        getPatientsForPathway: {
-          edges: edges.slice(30, 10),
-          pageInfo: {
-            hasNextPage: true,
-            endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-          },
-        },
-      },
-    },
-  },
-  {
-    request: {
-      query: PATIENTS_FOR_PATHWAY_QUERY,
-      variables: {
-        pathwayId: 1,
-        limit: 10,
-        cursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-        // filter: DecisionPointType.TRIAGE,
-      },
-    },
-    result: {
-      data: {
-        getPatientsForPathway: {
-          edges: edges.slice(40, 10),
-          pageInfo: {
-            hasNextPage: true,
+            hasNextPage: false,
             endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
         },
@@ -163,18 +144,5 @@ export default {
 
 const Template: Story<HomePageProps> = (args: HomePageProps) => <HomePage { ...args } />;
 
-const patientsPerPage = 10;
-const dataCallback = (selectedItem: { selected: number; }) => {
-  const start = selectedItem.selected * patientsPerPage;
-  const end = start + patientsPerPage;
-  const data: Patient[] = patientArray.slice(start, end);
-};
-
 export const Default = Template.bind({});
-Default.args = {
-  patientsPerPage: patientsPerPage,
-  triageData: patientArray.slice(0, patientsPerPage),
-  updateTriage: dataCallback,
-  clinicData: patientArray.slice(0, patientsPerPage),
-  updateClinic: dataCallback,
-};
+Default.args = { patientsPerPage: patientsPerPage };
