@@ -35,7 +35,7 @@ Patient.args = {
   },
   patient: {
     id: 2,
-    patientHospitalNumber: 'MRN1234567',
+    hospitalNumber: 'MRN1234567',
     firstName: 'John',
     lastName: 'Doe',
     dob: new Date('1960-10-10'),

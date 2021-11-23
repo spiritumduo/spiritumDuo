@@ -8,7 +8,7 @@ import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
 
 // TODO: Disable this for production! This is just because we are on a different port
-const link = new HttpLink({ uri: 'http://localhost:8080/graphql' });
+const link = new HttpLink({ uri: 'http://localhost:8080/graphql/' });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {

@@ -43,13 +43,11 @@ type LoginSubmitHook = [
 export const LOGIN_QUERY = gql`
 mutation login ($username: String!, $password: String!) {
   login (username: $username, password: $password) {
-      user {
-          id
-          firstName
-          lastName
-          username
-          department
-      }
+        id
+        firstName
+        lastName
+        username
+        department
     }
   }`;
 

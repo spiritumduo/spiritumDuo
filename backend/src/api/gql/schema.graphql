@@ -7,11 +7,30 @@ schema {
 }
 
 type Query {
-    getPathways(id:ID): [Pathway] # done
-    getPatient(id: ID, hospitalNumber: Int): Patient # done
-    getUser(id: ID!): User # done
-    getGroups: [Group] # done
-    getPatientsOnPathway(id: ID!, filter: DecisionPointType, discharged: Boolean = False): [Patient] # done
+    getPathways(id:ID): [Pathway]
+    getPatient(id: ID, hospitalNumber: Int): Patient
+    getUser(id: ID!): User
+    getGroups: [Group]
+    getPatientsOnPathway(id: ID!, filter: DecisionPointType, discharged: Boolean = False): [Patient]
+
+    """
+    getPatentOnPathwayConnection:
+    This query takes either before or after arguments, but never both.
+    If neither before or after is present, it requires a first argument to
+    limit the number of results returned
+
+    TODO: This returns a PatientConnection. It should return a PatientPathwayInstance connection
+    That requires new schema work
+    """
+    getPatientOnPathwayConnection(
+        pathwayId: ID!
+        awaitingDecisionType: DecisionPointType!
+        isDischarged: Boolean
+        first: Int
+        after: String
+        last: Int
+        before: String
+    ): PatientConnection!
 }
 
 type Mutation {
@@ -66,7 +85,25 @@ type Patient {
     testResults: [TestResult]
 }
 
-type Group{
+type PageInfo {
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
+    startCursor: String!
+    endCursor: String!
+}
+
+type PatientConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [PatientEdge]
+}
+
+type PatientEdge {
+    node: Patient!
+    cursor: String!
+}
+
+type Role{
     id: ID!
     name: String!
     permissions: [String]
@@ -78,7 +115,7 @@ type User {
     lastName: String!
     username: String!
     password: String
-    lastAccess: Date!
+    lastLogin: DateTime
 
     department: String!
     groups: [Group]

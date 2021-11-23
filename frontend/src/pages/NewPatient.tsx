@@ -30,9 +30,9 @@ const NewPatientPage = () => (
                 </div>
 
                 <div className="form-group row mb-2">
-                  <label className="col-sm-3 col-form-label" htmlFor="patientHospitalNumber">Hospital number
+                  <label className="col-sm-3 col-form-label" htmlFor="hospitalNumber">Hospital number
                     <div className="col-sm-9">
-                      <input type="text" className="form-control" id="patientHospitalNumber" name="patientHospitalNumber" placeholder="MRN1234567" />
+                      <input type="text" className="form-control" id="hospitalNumber" name="hospitalNumber" placeholder="MRN1234567" />
                     </div>
                   </label>
                 </div>

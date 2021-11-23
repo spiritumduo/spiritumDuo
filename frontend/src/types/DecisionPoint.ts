@@ -2,11 +2,11 @@ import Patient from './Patient';
 import User from './Users';
 
 export enum DecisionPointType {
-    TRIAGE = 'triage',
-    CLINIC = 'clinic',
+    TRIAGE = 'TRIAGE',
+    CLINIC = 'CLINIC',
     MDT = 'MDT',
-    AD_HOC = 'ad hoc',
-    FOLLOW_UP = 'follow up'
+    AD_HOC = 'AD_HOC',
+    FOLLOW_UP = 'FOLLOW_UP'
 }
 
 interface DecisionPoint {

@@ -1,10 +1,12 @@
-from graphene_django.utils.testing import GraphQLTestCase
+from django.test import TestCase
+from graphql import graphql_sync
+from api.gql.schema import schema
 from api.models import SdUser, UserProfile
 import json
 
 
-class TestLoginMutation(GraphQLTestCase):
-    GRAPHQL_URL = "http://localhost/graphql"  # this makes it not 404
+class TestLoginMutation(TestCase):
+    GRAPHQL_URL = "http://localhost/graphql/"
 
     def setUp(self):
         self.username = "John"
@@ -26,30 +28,23 @@ class TestLoginMutation(GraphQLTestCase):
         self.loginQuery = '''
             mutation login ($username: String!, $password: String!) {
                 login (username: $username, password: $password) {
-                    user {
-                        id
-                        firstName
-                        lastName
-                        username
-                        department
-                        lastLogin
-                    }
+                    id
+                    firstName
+                    lastName
+                    username
+                    department
+                    lastLogin
                 }
             }
             '''
 
     def testLogin(self):
-        response = self.query(
-            self.loginQuery,
-            variables={
-                'username': self.username,
-                'password': self.password
-            }
+        response = graphql_sync(
+            schema, self.loginQuery, variable_values={'username': self.username, 'password': self.password}
         )
-        self.assertResponseNoErrors(response)
+        #  self.assertResponseNoErrors(response)
         content = json.loads(response.content)
         responseUsername = content['data']['login']['user']['username']
         self.assertEqual(self.username, responseUsername)
         responseFirstName = content['data']['login']['user']['firstName']
         self.assertEqual(self.user.first_name, responseFirstName)
-
