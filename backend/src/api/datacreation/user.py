@@ -12,7 +12,7 @@ def CreateUser(
     department:str=None,
 ):
     try:
-        user=SdUser(
+        user=SdUser.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             username=username,
