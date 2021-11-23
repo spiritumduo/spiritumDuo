@@ -7,21 +7,22 @@ schema {
 }
 
 type Query {
-    getPathways(id:ID): [Pathway]
-    getPatient(id: ID): Patient
-    getUser(id: ID!): User
-    getRoles: [Role]
-    getPatientsOnPathway(id: ID!, filter:DecisionPointType): [Patient]
+    getPathways(id:ID): [Pathway] # done
+    getPatient(id: ID, hospitalNumber: Int): Patient # done
+    getUser(id: ID!): User # done
+    getGroups: [Group] # done
+    getPatientsOnPathway(id: ID!, filter: DecisionPointType, discharged: Boolean = False): [Patient] # done
 }
 
 type Mutation {
-    createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
-    # createTestResult(input:TestResultInput!): TestResult!
-    createPathway(input:PathwayInput!): Pathway!
-    createPatient(input:PatientInput!): Patient!
-    # createRole(input:RoleInput!): Role!
-    createUser(input:UserInput!): User!
-    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance!
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint! # done
+    createTestResult(input:TestResultInput!): TestResult!
+    createPathway(input:PathwayInput!): Pathway! # done
+    createPatient(input:PatientInput!): Patient! # done
+    createUser(input:UserInput!): User! # done
+    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance! # done
+
+    addUserToGroup(input:AddUserToGroupInput!): User # done
 
     login(username: String!, password: String!): User
 }
@@ -62,12 +63,13 @@ type Patient {
 
     decisionPoints:[DecisionPoint]
     pathways: [PatientPathwayInstance]
-    testResults:[TestResult]
+    testResults: [TestResult]
 }
 
-type Role{
+type Group{
     id: ID!
     name: String!
+    permissions: [String]
 }
 
 type User {
@@ -79,7 +81,7 @@ type User {
     lastAccess: Date!
 
     department: String!
-    roles: [Role!]
+    groups: [Group]
 }
 
 type DecisionPoint {
@@ -114,6 +116,18 @@ type PatientPathwayInstance{
 
 #### INPUT TYPES
 
+input TestResultInput{
+    patient: Int!
+    pathwayInstance: Int!
+    description: String!
+    mediaUrls: [String]
+}
+
+input AddUserToGroupInput{
+    user: Int!
+    groupName: String!
+}
+
 input DecisionPointInput{
     patient: Int!
     clinician: Int!
@@ -127,6 +141,10 @@ input DecisionPointInput{
 }
 
 input PathwayInput{
+    name:String!
+}
+
+input GroupInput{
     name:String!
 }
 
