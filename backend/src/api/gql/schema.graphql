@@ -103,7 +103,7 @@ type PatientEdge {
     cursor: String!
 }
 
-type Role{
+type Group{
     id: ID!
     name: String!
     permissions: [String]
