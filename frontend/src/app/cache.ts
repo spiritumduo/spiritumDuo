@@ -65,8 +65,9 @@ export const pathwayOptionsVar: ReactiveVar<PathwayOption[] | undefined> = makeP
   'pathwayOptions',
 );
 
+const _currentId = pathwayOptionsArray[0] ? pathwayOptionsArray[0].id : 0;
 // Save the current pathway ID
-export const currentPathwayId: ReactiveVar<number> = makePersistantVar<number>(pathwayOptionsArray[0].id, 'currentPathwayId');
+export const currentPathwayId: ReactiveVar<number> = makePersistantVar<number>(_currentId, 'currentPathwayId');
 
 // Here we reconstruct the user from local storage. If any fields are missing, we
 // don't use it
