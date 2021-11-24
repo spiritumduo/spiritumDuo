@@ -60,7 +60,11 @@ const WrappedPatientList = ({
           if (selected > maxFetchedPage) {
             if (pageInfo?.hasNextPage) {
               setMaxFetchedPage(selected);
-              fetchMore({ variables: { after: pageInfo?.endCursor } });
+              fetchMore({
+                variables: {
+                  after: pageInfo?.endCursor,
+                },
+              });
             }
           }
         } }
