@@ -24,7 +24,6 @@ const LoginPage = (): JSX.Element => {
     formState: { errors },
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
-  console.log(data);
   if (data?.login) {
     loginSuccess({ user: data.login });
     return (<Redirect to="/" />);
