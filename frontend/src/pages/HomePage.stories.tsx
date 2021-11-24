@@ -6,7 +6,7 @@ import Patient from 'types/Patient';
 import { DefaultLayout } from 'components/PageLayout.stories';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { MockedProvider } from '@apollo/client/testing';
-import { PATIENTS_FOR_PATHWAY_QUERY } from 'app/queries/UsePatientsForPathway';
+import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import HomePage, { HomePageProps } from './HomePage';
 
@@ -37,7 +37,7 @@ const patientsPerPage = 10;
 const apolloMocks = [
   { // TRIAGE DATA
     request: {
-      query: PATIENTS_FOR_PATHWAY_QUERY,
+      query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
       variables: {
         pathwayId: 1,
         first: patientsPerPage,
@@ -59,7 +59,7 @@ const apolloMocks = [
   },
   { // TRIAGE PAGE 2
     request: {
-      query: PATIENTS_FOR_PATHWAY_QUERY,
+      query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
       variables: {
         pathwayId: 1,
         first: patientsPerPage,
@@ -82,7 +82,7 @@ const apolloMocks = [
   },
   { // CLINIC DATA
     request: {
-      query: PATIENTS_FOR_PATHWAY_QUERY,
+      query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
       variables: {
         pathwayId: 1,
         first: patientsPerPage,
@@ -104,7 +104,7 @@ const apolloMocks = [
   },
   { // CLINIC PAGE 2
     request: {
-      query: PATIENTS_FOR_PATHWAY_QUERY,
+      query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
       variables: {
         pathwayId: 1,
         first: patientsPerPage,
