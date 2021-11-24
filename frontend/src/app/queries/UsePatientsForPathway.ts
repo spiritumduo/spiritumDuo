@@ -2,7 +2,7 @@ import { gql, useQuery } from '@apollo/client';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { getPatientOnPathwayConnection } from 'app/queries/__generated__/getPatientOnPathwayConnection';
 
-export const PATIENTS_FOR_PATHWAY_QUERY = gql`
+export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
     $pathwayId:ID!, $awaitingDecisionType:DecisionPointType!,
     $first:Int, $after: String
@@ -33,7 +33,7 @@ const usePatientsForPathwayQuery = (
   pathwayId: number, awaitingDecisionType: DecisionPointType,
   first: number,
 ) => useQuery<getPatientOnPathwayConnection>(
-  PATIENTS_FOR_PATHWAY_QUERY, {
+  GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
       pathwayId: pathwayId,
       awaitingDecisionType: awaitingDecisionType,
