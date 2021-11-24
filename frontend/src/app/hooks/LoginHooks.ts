@@ -65,6 +65,7 @@ type LoginData = {
 };
 
 export function loginSuccess({ user }: LoginData) {
+  console.log(user);
   loggedInUserVar(user);
   pathwayOptionsVar(['Lung Cancer', 'Bronceastasis']);
 }
