@@ -1,7 +1,7 @@
 import React from 'react';
 import './patient.css';
 import { Link } from 'react-router-dom';
-import Patient from 'types/Patient';
+import Patient, { PatientCommunicationMethods } from 'types/Patient';
 
 export interface PatientPageProps {
   patient: Patient;
