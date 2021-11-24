@@ -14,7 +14,7 @@ interface PatientInfoLonghandProps {
 const PatientInfoLonghand = ({ patient }: PatientInfoLonghandProps) => (
   <div>
     {/* eslint-disable-next-line max-len */}
-    {patient.hospitalNumber}, {patient.firstName} {patient.lastName}, {patient.dob?.toLocaleDateString()}
+    {patient.hospitalNumber}, {patient.firstName} {patient.lastName}, {patient.dateOfBirth?.toLocaleDateString()}
   </div>
 );
 

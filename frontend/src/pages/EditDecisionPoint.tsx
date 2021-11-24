@@ -52,7 +52,7 @@ const EditDecisionPointPage = ({ patient }: EditDecisionPointPageProps) => (
                 <div className="form-group row mb-2">
                   <label className="col-sm-3 col-form-label" htmlFor="dateOfBirth">Date of birth
                     <div className="col-sm-9">
-                      <input type="text" className="form-control" id="dateOfBirth" name="dateOfBirth" placeholder="Date of birth" defaultValue={ patient.dob?.toDateString() } />
+                      <input type="text" className="form-control" id="dateOfBirth" name="dateOfBirth" placeholder="Date of birth" defaultValue={ patient.dateOfBirth?.toDateString() } />
                     </div>
                   </label>
                 </div>

@@ -2,6 +2,8 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
+import PathwayOption from 'types/PathwayOption';
+import { pathwayOptionsVar } from 'app/cache';
 import Header from './Header';
 
 export default {
@@ -12,9 +14,21 @@ export default {
 
 const Template: ComponentStory<typeof Header> = (args) => <Header { ...args } />;
 
+const pathways: PathwayOption[] = [
+  {
+    id: 0,
+    name: 'Lung Cancer',
+  },
+  {
+    id: 1,
+    name: 'Bronchieactasis',
+  },
+];
+
 export const Standard = Template.bind({});
 Standard.args = {
-  pathwayOptions: ['Lung cancer', 'Bronchieactasis'],
+  pathwayOptions: pathways,
+  currentPathwayId: pathways[0].id,
   pathwayOnItemSelect: (name) => console.log(name),
   searchOnSubmit: (e) => {
     e.preventDefault();
@@ -27,7 +41,8 @@ Standard.args = {
  */
 export const Patient = Template.bind({});
 Patient.args = {
-  pathwayOptions: ['Lung cancer', 'Bronchieactasis'],
+  pathwayOptions: pathways,
+  currentPathwayId: pathways[0].id,
   pathwayOnItemSelect: (name) => console.log(name),
   searchOnSubmit: (e) => {
     e.preventDefault();
@@ -38,6 +53,6 @@ Patient.args = {
     hospitalNumber: 'MRN1234567',
     firstName: 'John',
     lastName: 'Doe',
-    dob: new Date('1960-10-10'),
+    dateOfBirth: new Date('1960-10-10'),
   },
 };

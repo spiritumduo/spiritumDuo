@@ -21,7 +21,7 @@ Default.args = {
     hospitalNumber: 'MRN0123456',
     firstName: 'John',
     lastName: 'Doe',
-    dob: new Date('1942-11-25'),
+    dateOfBirth: new Date('1942-11-25'),
   },
   decisions: [
     {

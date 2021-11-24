@@ -1,19 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Patient from '../types/Patient';
+import Patient from 'types/Patient';
+import PathwayOption from 'types/PathwayOption';
 import PatientInfoLonghand from './PatientInfoLonghand';
-
 import './header.css';
 import PathwaySelector from './PathwaySelector';
 
 export interface HeaderProps {
   patient?: Patient;
-  pathwayOptions: string[];
+  pathwayOptions: PathwayOption[];
+  currentPathwayId: number;
   pathwayOnItemSelect: (name: string) => void;
   searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
 }
 
-const Header = ({ patient, pathwayOptions, pathwayOnItemSelect, searchOnSubmit }: HeaderProps) => (
+const Header = ({
+  patient, pathwayOptions, currentPathwayId, pathwayOnItemSelect, searchOnSubmit,
+}: HeaderProps) => (
   <div>
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -42,7 +45,7 @@ const Header = ({ patient, pathwayOptions, pathwayOnItemSelect, searchOnSubmit }
         </div>
         <PathwaySelector
           options={ pathwayOptions }
-          currentOption={ pathwayOptions[0] }
+          currentOption={ pathwayOptions[currentPathwayId] }
           onItemSelect={ pathwayOnItemSelect }
         />
       </div>

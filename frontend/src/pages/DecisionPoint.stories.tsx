@@ -23,6 +23,6 @@ Standard.args = {
     hospitalNumber: 'MRN9876543',
     firstName: 'John',
     lastName: 'Doe',
-    dob: new Date('01/01/1970'),
+    dateOfBirth: new Date('01/01/1970'),
   },
 };

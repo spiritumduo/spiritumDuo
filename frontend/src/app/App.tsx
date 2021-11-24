@@ -3,18 +3,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 import React from 'react';
 import { BrowserRouter, Link, Redirect, Route, Switch } from 'react-router-dom';
-import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
+import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
 import LoginPage from 'pages/Login';
-import { useReactiveVar } from '@apollo/client';
 import './App.css';
 import HomePage from 'pages/HomePage';
 import { FooterProps } from 'components/Footer';
 import { HeaderProps } from 'components/Header';
 import PageLayout from 'components/PageLayout';
-import logo from './logo.svg';
+import PathwayOption from 'types/PathwayOption';
 
 const headerProps: HeaderProps = {
-  pathwayOptions: pathwayOptionsVar() as string[],
+  pathwayOptions: pathwayOptionsVar() as PathwayOption[],
+  currentPathwayId: currentPathwayId(),
   pathwayOnItemSelect: () => console.log('pathway select'),
   searchOnSubmit: () => console.log('search submit'),
 };

@@ -2,6 +2,7 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import StoryRouter from 'storybook-react-router';
+import PathwayOption from 'types/PathwayOption';
 import PathwaySelector from './PathwaySelector';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -13,10 +14,20 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof PathwaySelector> = (args) => <PathwaySelector { ...args } />;
+const pathways: PathwayOption[] = [
+  {
+    id: 0,
+    name: 'Lung Cancer',
+  },
+  {
+    id: 1,
+    name: 'Bronchieactasis',
+  },
+];
 
 export const Standard = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Standard.args = {
-  options: ['Lung cancer', 'Bronchieactasis'],
-  currentOption: 'Lung cancer',
+  options: pathways,
+  currentOption: pathways[0],
 };

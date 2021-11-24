@@ -1,6 +1,7 @@
 import { InMemoryCache, ReactiveVar, makeVar } from '@apollo/client';
 import { relayStylePagination } from '@apollo/client/utilities';
 import User from 'types/Users';
+import PathwayOption from 'types/PathwayOption';
 
 export const cache: InMemoryCache = new InMemoryCache({
   typePolicies: {
@@ -42,19 +43,16 @@ function makePersistantVar<T>(value: T, storageKey: string): ReactiveVar<T> {
 // Get initial pathway options from LocalStorage if cached. Make sure we have
 // correct types (this will change when we get a proper pathway type)
 // If it isn't an array, or any element isn't a string, we don't use it
-let pathwayOptionsInitialValue: string[] = [''];
+const pathwayOptionsArray: PathwayOption[] = [];
 const pathwayOptionsLocalStorage = localStorage.getItem('pathwayOptions');
 if (pathwayOptionsLocalStorage) {
   try {
     const pathwayOptions = JSON.parse(pathwayOptionsLocalStorage);
     if (Array.isArray(pathwayOptions)) {
-      let isAllString = true;
-      pathwayOptions.forEach((item) => {
-        if (typeof item !== 'string') {
-          isAllString = false;
-        }
+      pathwayOptions.forEach((p) => {
+        const pathway = { id: p.id, name: p.name };
+        pathwayOptionsArray.push(pathway);
       });
-      if (isAllString) pathwayOptionsInitialValue = pathwayOptions;
     }
   } catch (err) {
     console.warn(err);
@@ -62,20 +60,24 @@ if (pathwayOptionsLocalStorage) {
 }
 
 // eslint-disable-next-line max-len
-export const pathwayOptionsVar: ReactiveVar<string[] | undefined> = makePersistantVar<string[] | undefined>(
-  pathwayOptionsInitialValue,
+export const pathwayOptionsVar: ReactiveVar<PathwayOption[] | undefined> = makePersistantVar<PathwayOption[] | undefined>(
+  pathwayOptionsArray,
   'pathwayOptions',
 );
 
+// Save the current pathway ID
+export const currentPathwayId: ReactiveVar<number> = makePersistantVar<number>(pathwayOptionsArray[0].id, 'currentPathwayId');
+
 // Here we reconstruct the user from local storage. If any fields are missing, we
 // don't use it
-const sanitisedUser: User = {
+let sanitisedUser: User | undefined = {
   id: 0,
   firstName: '',
   lastName: '',
   department: '',
   roles: [],
 };
+
 const loggedInuserLocalStorage = localStorage.getItem('loggedInUser');
 if (loggedInuserLocalStorage) {
   try {
@@ -87,6 +89,7 @@ if (loggedInuserLocalStorage) {
     sanitisedUser.roles = loggedInUser.roles;
   } catch (err) {
     console.warn(err);
+    sanitisedUser = undefined;
   }
 }
 export const loggedInUserVar: ReactiveVar<User | undefined> = makePersistantVar<User | undefined>(
