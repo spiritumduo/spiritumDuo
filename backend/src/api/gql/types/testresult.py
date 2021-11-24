@@ -1,6 +1,6 @@
 from ariadne.objects import ObjectType
 from channels.db import database_sync_to_async
-from api.models import PatientPathwayInstance
+from api.models import PatientPathwayInstance, TestResultMedia
 
 TestResultObjectType=ObjectType("TestResult")
 
@@ -11,4 +11,8 @@ async def resolve_instance_pathway_instance(obj=None, *_, filter=None):
 
 @TestResultObjectType.field("mediaUrls")
 async def resolve_test_result_media_urls(obj=None, *_):
-    return ["test1", "test2"]
+    dataSet=await database_sync_to_async(list)(TestResultMedia.objects.filter(test_result_id=obj.id))
+    mediaUrls=[]
+    for item in dataSet:
+        mediaUrls.append(item.resource_path)
+    return mediaUrls

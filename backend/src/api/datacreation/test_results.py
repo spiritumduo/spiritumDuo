@@ -17,10 +17,10 @@ def CreateTestResult(
             description=description,
         )
         testResult.save()
-        for resource in media_urls:
+        for resource_path in media_urls:
             resource=TestResultMedia(
                 test_result=testResult,
-                resource=resource
+                resource_path=resource_path
             )
             resource.save()
         return testResult
