@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ApolloError, gql, useMutation } from '@apollo/client';
-import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
+import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
 import User from 'types/Users';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -70,6 +70,7 @@ export function loginSuccess({ user }: LoginData) {
     { id: 0, name: 'Lung Cancer' },
     { id: 1, name: 'Bronceastasis' },
   ]);
+  currentPathwayId(0);
 }
 
 export function useLoginForm() {
