@@ -14,7 +14,7 @@ import PageLayout from 'components/PageLayout';
 import logo from './logo.svg';
 
 const headerProps: HeaderProps = {
-  pathwayOptions: pathwayOptionsVar(),
+  pathwayOptions: pathwayOptionsVar() as string[],
   pathwayOnItemSelect: () => console.log('pathway select'),
   searchOnSubmit: () => console.log('search submit'),
 };
@@ -49,8 +49,9 @@ const Logout = () => {
 
 const LoggedInRoute = ({ children, ...props }: React.ComponentPropsWithRef<any>): JSX.Element => {
   const user = loggedInUserVar();
+  console.log(user);
   const pathwayOptions = pathwayOptionsVar();
-  const loggedIn = (user.firstName !== '') && (pathwayOptions[0] !== '');
+  const loggedIn = user && pathwayOptions;
   return (
     <Route
       // eslint-disable-next-line react/jsx-props-no-spreading

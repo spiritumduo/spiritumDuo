@@ -61,7 +61,8 @@ if (pathwayOptionsLocalStorage) {
   }
 }
 
-export const pathwayOptionsVar: ReactiveVar<string[]> = makePersistantVar<string[]>(
+// eslint-disable-next-line max-len
+export const pathwayOptionsVar: ReactiveVar<string[] | undefined> = makePersistantVar<string[] | undefined>(
   pathwayOptionsInitialValue,
   'pathwayOptions',
 );
@@ -88,7 +89,7 @@ if (loggedInuserLocalStorage) {
     console.warn(err);
   }
 }
-export const loggedInUserVar: ReactiveVar<User> = makePersistantVar<User>(
+export const loggedInUserVar: ReactiveVar<User | undefined> = makePersistantVar<User | undefined>(
   sanitisedUser,
   'loggedInUser',
 );
