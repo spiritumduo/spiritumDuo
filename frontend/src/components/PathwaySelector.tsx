@@ -23,9 +23,10 @@ interface PathwaySelectorProps {
 const PathwaySelector = ({
   options, currentOption, onItemSelect,
 }: PathwaySelectorProps): JSX.Element => {
+  console.log(currentOption);
   // filter out the current option from the item list
   const itemList = options.map((pathway) => (
-    pathway !== currentOption ? <Link key={ `pathwaySelect-${pathway.id}` } className="dropdown-item" to={ `/page/${pathway}` }>{pathway}</Link> : undefined
+    pathway !== currentOption ? <Link key={ `pathwaySelect-${pathway.id}` } className="dropdown-item" to={ `/page/${pathway.name}` }>{pathway.name}</Link> : undefined
   ));
 
   return (
