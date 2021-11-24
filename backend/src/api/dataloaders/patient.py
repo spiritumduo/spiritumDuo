@@ -1,10 +1,10 @@
 from typing import List
 from aiodataloader import DataLoader
-from asgiref.sync import sync_to_async
+from api.common import database_sync_to_async
 from api.models import Patient
 
 class PatientLoader(DataLoader):
-    @sync_to_async
+    @database_sync_to_async
     def fetch_patients(self, keys)->List[Patient]:
         return Patient.objects.in_bulk(id_list=keys)
 
@@ -33,7 +33,7 @@ class PatientLoader(DataLoader):
         return await context[loader_name].load_many(ids)
 
 class PatientLoaderByHospitalNumber(DataLoader):
-    @sync_to_async
+    @database_sync_to_async
     def fetch_patients(self, keys)->List[Patient]:
         return Patient.objects.in_bulk(id_list=keys, field_name="hospital_number")
 

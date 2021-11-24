@@ -1,7 +1,7 @@
 from .mutation_type import mutation
 from django.contrib.auth import authenticate
 from api.dataloaders import UserLoader
-from channels.db import database_sync_to_async
+from api.common import database_sync_to_async
 
 @mutation.field("login")
 async def resolve_login(_=None, info=None, username=None, password=None):

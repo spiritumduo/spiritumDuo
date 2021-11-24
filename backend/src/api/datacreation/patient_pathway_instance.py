@@ -1,9 +1,8 @@
-from asgiref.sync import sync_to_async
+from api.common import database_sync_to_async
 from api.models import PatientPathwayInstance
 from api.dataloaders import PatientLoader, PathwayLoader
-from channels.db import database_sync_to_async
 
-# @sync_to_async
+# @database_sync_to_async
 async def CreatePatientPathwayInstance(
     patient:int=None,
     pathway:int=None,

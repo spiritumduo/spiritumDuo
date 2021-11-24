@@ -1,8 +1,8 @@
-from asgiref.sync import sync_to_async
+from api.common import database_sync_to_async
 from api.models import Patient
 from datetime import date
 
-@sync_to_async
+@database_sync_to_async
 def CreatePatient(
     first_name:str=None,
     last_name:str=None,

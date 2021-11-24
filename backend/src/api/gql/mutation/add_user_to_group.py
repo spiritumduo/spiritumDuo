@@ -1,7 +1,7 @@
 from .mutation_type import mutation
 from api.dataloaders import UserLoader
 from django.contrib.auth.models import Group
-from channels.db import database_sync_to_async
+from api.common import database_sync_to_async
 
 @mutation.field("addUserToGroup")
 async def resolve_add_user_to_group(_=None, info=None, input=None):

@@ -1,5 +1,5 @@
 from .query_type import query
-from channels.db import database_sync_to_async
+from api.common import database_sync_to_async
 from api.models import PatientPathwayInstance
 from api.dataloaders import PatientLoader
 
