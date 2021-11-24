@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { useLoginStatus, useLoginSubmit, LoginStatus, LoginFormInputs, loginSuccess } from 'app/hooks/LoginHooks';
+import { useLoginSubmit, LoginFormInputs, loginSuccess } from 'app/hooks/LoginHooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
