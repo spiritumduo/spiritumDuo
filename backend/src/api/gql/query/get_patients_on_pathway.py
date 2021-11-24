@@ -7,7 +7,6 @@ from api.dataloaders import PatientLoader
 async def resolve_get_patients_on_pathway(obj=None, info=None, id=None, filter=None, discharged=False):
     if not id:
         return None
-    print(id, filter, discharged)
     if filter and discharged:
         ptPwInstances=await database_sync_to_async(list)(PatientPathwayInstance.objects.filter(pathway=id, awaiting_decision_type=filter, is_discharged=discharged))
     elif filter is not None:
