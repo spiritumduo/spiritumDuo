@@ -8,7 +8,7 @@ schema {
 
 type Query {
     getPathways(id:ID): [Pathway]
-    getPatient(id: ID, hospitalNumber: Int): Patient
+    getPatient(id: ID, hospitalNumber: String): Patient
     getUser(id: ID!): User
     getGroups: [Group]
     getPatientsOnPathway(id: ID!, filter: DecisionPointType, discharged: Boolean = False): [Patient]
@@ -34,14 +34,14 @@ type Query {
 }
 
 type Mutation {
-    createDecisionPoint(input:DecisionPointInput!): DecisionPoint! # done
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
     createTestResult(input:TestResultInput!): TestResult!
-    createPathway(input:PathwayInput!): Pathway! # done
-    createPatient(input:PatientInput!): Patient! # done
-    createUser(input:UserInput!): User! # done
-    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance! # done
+    createPathway(input:PathwayInput!): Pathway!
+    createPatient(input:PatientInput!): Patient!
+    createUser(input:UserInput!): User!
+    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance!
 
-    addUserToGroup(input:AddUserToGroupInput!): User # done
+    addUserToGroup(input:AddUserToGroupInput!): User
 
     login(username: String!, password: String!): User
 }
@@ -137,7 +137,7 @@ type DecisionPoint {
 type TestResult {
     id: ID!
     patient: Patient!
-    pathwayInstance: PatientPathwayInstance!
+    patientPathwayInstance: PatientPathwayInstance!
     addedAt: Date!
     description: String!
     mediaUrls: [String]
@@ -155,7 +155,7 @@ type PatientPathwayInstance{
 
 input TestResultInput{
     patient: Int!
-    pathwayInstance: Int!
+    patientPathwayInstance: Int!
     description: String!
     mediaUrls: [String]
 }
@@ -189,8 +189,8 @@ input PatientInput{
     firstName:String!
     lastName:String!
     communicationMethod:PatientCommunicationMethods!
-    hospitalNumber:Int!
-    nationalNumber:Int!
+    hospitalNumber:String!
+    nationalNumber:String!
     dateOfBirth:Date!
 }
 

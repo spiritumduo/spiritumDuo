@@ -13,4 +13,10 @@ class TestResult(models.Model):
     )
     added_at=models.DateTimeField(auto_now=True)
     description=models.TextField()
-    media_urls=models.TextField()
+
+class TestResultMedia(models.Model):
+    test_result=models.ForeignKey(
+        to=TestResult,
+        on_delete=models.CASCADE
+    )
+    resource_path=models.TextField()

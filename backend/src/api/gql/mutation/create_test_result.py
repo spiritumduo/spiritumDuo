@@ -4,11 +4,11 @@ from api.dataloaders import PatientPathwayInstanceLoader, PatientLoader
 
 @mutation.field("createTestResult")
 async def resolve_create_test_result(_=None, info=None, input=None):
-    pathwayInstance=await PatientPathwayInstanceLoader.load_from_id(info.context, input['pathwayInstance'])
+    patientPathwayInstance=await PatientPathwayInstanceLoader.load_from_id(info.context, input['patientPathwayInstance'])
     patient=await PatientLoader.load_from_id(info.context, input['patient'])
     return await CreateTestResult(
         patient=patient,
-        pathway_instance=pathwayInstance,
+        patient_pathway_instance=patientPathwayInstance,
         description=input['description'],
         media_urls=input['mediaUrls']
     )
