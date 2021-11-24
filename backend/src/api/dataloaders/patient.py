@@ -41,7 +41,7 @@ class PatientLoaderByHospitalNumber(DataLoader):
         patientDict=await self.fetch_patients(keys)
         sortedPatients=[]
         for key in keys:
-            sortedPatients.append(patientDict.get(int(key)))
+            sortedPatients.append(patientDict.get(str(key)))
         return sortedPatients
 
     @classmethod
