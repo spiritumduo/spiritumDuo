@@ -7,7 +7,7 @@ class TestResult(models.Model):
         to=Patient,
         on_delete=models.CASCADE
     )
-    pathway_instance=models.ForeignKey(
+    patient_pathway_instance=models.ForeignKey(
         to=PatientPathwayInstance,
         on_delete=models.CASCADE
     )

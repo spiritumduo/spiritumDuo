@@ -4,9 +4,9 @@ from api.models import PatientPathwayInstance, TestResultMedia
 
 TestResultObjectType=ObjectType("TestResult")
 
-@TestResultObjectType.field("pathwayInstance")
+@TestResultObjectType.field("patientPathwayInstance")
 async def resolve_instance_pathway_instance(obj=None, *_, filter=None):
-    idRelated = await database_sync_to_async(PatientPathwayInstance.objects.get)(id=obj.pathway_instance_id)
+    idRelated = await database_sync_to_async(PatientPathwayInstance.objects.get)(id=obj.patient_pathway_instance_id)
     return idRelated
 
 @TestResultObjectType.field("mediaUrls")

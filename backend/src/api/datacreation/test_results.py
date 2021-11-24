@@ -6,14 +6,14 @@ from api.models import Patient, PatientPathwayInstance
 @sync_to_async
 def CreateTestResult(
     patient:Patient=None,
-    pathway_instance:PatientPathwayInstance=None,
+    patient_pathway_instance:PatientPathwayInstance=None,
     description:str=None,
     media_urls:List[str]=None
 ):
     try:
         testResult=TestResult(
             patient=patient,
-            pathway_instance=pathway_instance,
+            patient_pathway_instance=patient_pathway_instance,
             description=description,
         )
         testResult.save()
