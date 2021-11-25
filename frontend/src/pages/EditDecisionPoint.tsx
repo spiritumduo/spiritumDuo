@@ -22,7 +22,7 @@ const EditDecisionPointPage = ({ patient }: EditDecisionPointPageProps) => (
                 </p>
 
                 <div className="form-group mb-2">
-                  <h5>Please enter details below to edit a patient`&apos`s information</h5>
+                  <h5>Please enter details below to edit a patient&apos;s information</h5>
                 </div>
 
                 <div className="form-group row mb-2">
