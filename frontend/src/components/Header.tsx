@@ -27,19 +27,25 @@ const Header = ({
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link active" to="/Home">Home</Link>
+              <Link className="nav-link active" to="/">Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link active" to="/Triage">Triage</Link>
+              <Link className="nav-link active" to="/triage">Triage</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link active" to="/Clinic">Clinic</Link>
+              <Link className="nav-link active" to="/clinic">Clinic</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link active" to="/MDT">MDT</Link>
+              <Link className="nav-link active" to="/mdt">MDT</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link active" to="/Refer">Refer</Link>
+              <Link className="nav-link active" to="/refer">Refer</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link active" to="/patient/add">Add Patient</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link active" to="/logout">Logout</Link>
             </li>
           </ul>
         </div>
