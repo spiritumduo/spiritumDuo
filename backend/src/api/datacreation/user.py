@@ -11,18 +11,18 @@ def CreateUser(
     is_superuser:str=None,
     department:str=None,
 ):
-      user=SdUser.objects.create_user(
-          first_name=first_name,
-          last_name=last_name,
-          username=username,
-          password=password,
-          is_staff=is_staff,
-          is_superuser=is_superuser,
-      )
-      user.save()
-      profile=UserProfile(
-          user=user,
-          department=department
-      )
-      profile.save()
-      return user
+    user=SdUser.objects.create_user(
+        first_name=first_name,
+        last_name=last_name,
+        username=username,
+        password=password,
+        is_staff=is_staff,
+        is_superuser=is_superuser,
+    )
+    user.save()
+    profile=UserProfile(
+        user=user,
+        department=department
+    )
+    profile.save()
+    return user
