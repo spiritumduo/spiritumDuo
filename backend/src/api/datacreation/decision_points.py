@@ -1,6 +1,5 @@
 from api.common import db_sync_to_async
 from api.models import DecisionPoint
-from datetime import datetime
 
 from api.models import SdUser, Pathway, Patient
 
@@ -9,8 +8,6 @@ def CreateDecisionPoint(
     patient:int=None,
     clinician:int=None,
     pathway:int=None,
-    added_at:datetime=None,
-    updated_at:datetime=None,
     decision_type:str=None,
     clinic_history:str=None,
     comorbidities:str=None,
@@ -24,8 +21,6 @@ def CreateDecisionPoint(
             patient=patient,
             clinician=clinician,
             pathway=pathway,
-            added_at=added_at,
-            updated_at=updated_at,
             decision_type=decision_type,
             clinic_history=clinic_history,
             comorbidities=comorbidities,

@@ -11,7 +11,7 @@ class TestResult(models.Model):
         to=PatientPathwayInstance,
         on_delete=models.CASCADE
     )
-    added_at=models.DateTimeField(auto_now=True)
+    added_at=models.DateTimeField(auto_now_add=True)
     description=models.TextField()
 
 class TestResultMedia(models.Model):

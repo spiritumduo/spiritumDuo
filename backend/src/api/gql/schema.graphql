@@ -126,9 +126,10 @@ type DecisionPoint {
     patient: Patient!
     clinician: User!
     pathway: Pathway!
-    addedAt: Date!
-    updatedAt: Date
     decisionType: DecisionPointType!
+
+    addedAt: DateTime!
+    updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
     requestsReferrals: String!
@@ -138,9 +139,9 @@ type TestResult {
     id: ID!
     patient: Patient!
     patientPathwayInstance: PatientPathwayInstance!
-    addedAt: Date!
     description: String!
     mediaUrls: [String]
+    addedAt: DateTime!
 }
 
 type PatientPathwayInstance{
@@ -169,8 +170,6 @@ input DecisionPointInput{
     patient: Int!
     clinician: Int!
     pathway: Int!
-    addedAt: Date!
-    updatedAt: Date
     decisionType: DecisionPointType!
     clinicHistory: String!
     comorbidities: String!
