@@ -1,10 +1,10 @@
 from typing import List
 from aiodataloader import DataLoader
-from api.common import database_sync_to_async
+from api.common import db_sync_to_async
 from api.models import DecisionPoint
 
 class DecisionPointLoader(DataLoader):
-    @database_sync_to_async
+    @db_sync_to_async
     def fetch_decision_points(self, keys)->List[DecisionPoint]:
         decision_points=DecisionPoint.objects.in_bulk(keys)
         return decision_points

@@ -1,9 +1,9 @@
-from api.common import database_sync_to_async
+from api.common import db_sync_to_async
 from api.models import TestResult, TestResultMedia
 from typing import List
 from api.models import Patient, PatientPathwayInstance
 
-@database_sync_to_async
+@db_sync_to_async
 def CreateTestResult(
     patient:Patient=None,
     patient_pathway_instance:PatientPathwayInstance=None,

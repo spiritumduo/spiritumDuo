@@ -1,10 +1,10 @@
 from typing import List
 from aiodataloader import DataLoader
-from api.common import database_sync_to_async
+from api.common import db_sync_to_async
 from api.models import Pathway
 
 class PathwayLoader(DataLoader):
-    @database_sync_to_async
+    @db_sync_to_async
     def fetch_patients(self, keys=None)->List[Pathway]:
         records=Pathway.objects.in_bulk(keys)
         return records
@@ -24,6 +24,6 @@ class PathwayLoader(DataLoader):
         return pathway
     
     @classmethod
-    @database_sync_to_async
+    @db_sync_to_async
     def load_all(cls):
         return list(Pathway.objects.all())

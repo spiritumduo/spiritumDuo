@@ -1,11 +1,11 @@
-from api.common import database_sync_to_async
+from api.common import db_sync_to_async
 from api.dataloaders import PatientLoader
 from .query_type import query
 from api.models import PatientPathwayInstance, DecisionPoint
 from .pagination import *
 
 
-@database_sync_to_async
+@db_sync_to_async
 def get_patient_pathway_instances(pathway_id=None, awaiting_decision_type=None, is_discharged=False):
     dv = awaiting_decision_type.value
     dl = awaiting_decision_type.label

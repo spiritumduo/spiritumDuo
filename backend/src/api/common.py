@@ -1,12 +1,10 @@
 from asgiref.sync import SyncToAsync
 from django.db import close_old_connections
 
-class DatabaseSyncToAsync(SyncToAsync):
+class db_sync_to_async(SyncToAsync):
     """
-    FROM DJANGO CHANNELS
+    Inspired by Django Channels
     (https://github.com/django/channels/blob/main/channels/db.py)
-
-    SyncToAsync version that cleans up old database connections when it exits.
     """
 
     def thread_handler(self, loop, *args, **kwargs):
@@ -15,7 +13,3 @@ class DatabaseSyncToAsync(SyncToAsync):
             return super().thread_handler(loop, *args, **kwargs)
         finally:
             close_old_connections()
-
-
-# The class is TitleCased, but we want to encourage use as a callable/decorator
-database_sync_to_async = DatabaseSyncToAsync

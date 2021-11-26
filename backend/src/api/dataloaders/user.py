@@ -1,10 +1,10 @@
 from typing import List
 from aiodataloader import DataLoader
-from api.common import database_sync_to_async
+from api.common import db_sync_to_async
 from api.models import SdUser
 
 class UserLoader(DataLoader):
-    @database_sync_to_async
+    @db_sync_to_async
     def fetch_users(self, keys)->List[SdUser]:
         return SdUser.objects.in_bulk(keys)
     async def batch_load_fn(self, keys)->List[SdUser]:

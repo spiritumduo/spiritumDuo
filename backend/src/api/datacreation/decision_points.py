@@ -1,10 +1,10 @@
-from api.common import database_sync_to_async
+from api.common import db_sync_to_async
 from api.models import DecisionPoint
 from datetime import datetime
 
 from api.models import SdUser, Pathway, Patient
 
-@database_sync_to_async
+@db_sync_to_async
 def CreateDecisionPoint(
     patient:int=None,
     clinician:int=None,
