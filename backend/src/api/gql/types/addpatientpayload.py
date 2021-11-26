@@ -8,8 +8,8 @@ async def resolve_patient_payload_patient(obj=None, *_):
         return obj['patient']
     return None
 
-@AddPatientPayloadObjectType.field("userError")
+@AddPatientPayloadObjectType.field("userErrors")
 async def resolve_patient_payload_user_error(obj=None, *_):
-    if "userError" in obj:
-        return obj['userError']
+    if "userErrors" in obj:
+        return obj['userErrors']
     return None

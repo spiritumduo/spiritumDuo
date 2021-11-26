@@ -5,16 +5,20 @@ from api.models import Pathway
 def CreatePathway(
     name:str=None,
 ):
+    userErrors=[]
     try:
         Pathway.objects.get(name=name)
     except Pathway.DoesNotExist:
         pass
     else:
-        return{
-            "userError":{
+        userErrors.append(
+            {
                 "field":"name",
                 "message":"A pathway with this name already exists!"
             }
+        )
+        return {
+            "userErrors":userErrors
         }
     pathway=Pathway(
         name=name,

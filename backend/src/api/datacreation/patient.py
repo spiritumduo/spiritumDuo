@@ -19,21 +19,19 @@ def CreatePatient(
     pathway:int=None,
     awaiting_decision_type:str="TRIAGE"
 ):
+    userErrors=[]
     # check if hospital number provided matches REGEX in configuration
     if re.search(SdConfig["HOSPITAL_NUMBER_REGEX"], hospital_number) is None: 
-        return{
-            "userError":{{
-                "message":_("Regex failure"),
-                "field":"hospital_number"
-            }}
-        }
+        userErrors.append({
+            "message":_("Regex failure"),
+            "field":"hospital_number"
+        })
+        
     if re.search(SdConfig["NATIONAL_NUMBER_REGEX"], national_number) is None:
-        return{
-            "userError":{{
-                "message":_("Regex failure"),
-                "field":"national_number"
-            }}
-        }
+        userErrors.append({
+            "message":_("Regex failure"),
+            "field":"national_number"
+        })
 
     patientObject=None # readability's sake
     try:
@@ -58,11 +56,14 @@ def CreatePatient(
     try:
         pathwayObject=Pathway.objects.get(id=pathway)
     except Pathway.DoesNotExist:
-        return{
-            "userError":{{
-                "message":_("Pathway provided does not exist"),
-                "field":"pathway"
-            }}
+        userErrors.append({
+            "message":_("Pathway provided does not exist"),
+            "field":"pathway"
+        })
+
+    if len(userErrors)>0:
+        return {
+            "userErrors": userErrors 
         }
 
     if patientObject is None: # patient does not exist in database
@@ -95,12 +96,11 @@ def CreatePatient(
     # if the patient does already exist
     existingPPIs=PatientPathwayInstance.objects.filter(patient=patientObject, pathway=pathwayObject, is_discharged=False) # get any active pathway instances
     if len(existingPPIs)>0: # if there is an active pathway instance
-        return{
-            "userError":{
-                "message":_("Patient is already enrolled on active pathway (not discharged)"),
-                "field":"pathway"
-            }
-        }
+        userErrors.append({
+            "message":_("Patient is already enrolled on active pathway (not discharged)"),
+            "field":"pathway"
+        })
+        return userErrors
 
     # there isn't an active instance, so let's make a new one
     pPI=PatientPathwayInstance(

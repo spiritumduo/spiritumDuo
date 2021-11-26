@@ -8,8 +8,8 @@ async def resolve_pathway_payload_pathway(obj=None, *_):
         return obj['pathway']
     return None
 
-@AddPathwayPayloadObjectType.field("userError")
+@AddPathwayPayloadObjectType.field("userErrors")
 async def resolve_pathway_payload_user_error(obj=None, *_):
-    if "userError" in obj:
-        return obj['userError']
+    if "userErrors" in obj:
+        return list(obj['userErrors'])
     return None

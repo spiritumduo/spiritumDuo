@@ -66,11 +66,11 @@ enum PatientCommunicationMethods{
 #### RETURN TYPES
 type AddPatientPayload{
     patient:Patient
-    userError:UserError
+    userErrors:[UserError]
 }
 type AddPathwayPayload{
     pathway:Pathway
-    userError:UserError
+    userErrors:[UserError]
 }
 
 #### DATA TYPES
