@@ -7,7 +7,7 @@ from api.models import SdUser, Pathway, Patient
 class ReferencedItemDoesNotExistError(Exception):
     """
         This occurs when a referenced item (patient, user, pathway)
-        does not exist and cannot be found
+        does not exist and cannot be found when it should
     """
 
 @db_sync_to_async
@@ -29,19 +29,19 @@ def CreateDecisionPoint(
     try:
         patientObject=Patient.objects.get(id=patient)
     except Patient.DoesNotExist:
-        raise ReferencedItemDoesNotExistError("referenced item does not exist: patient ("+str(patient)+")")
+        raise ReferencedItemDoesNotExistError("referenced item does not exist: patient (id:"+str(patient)+")")
 
     clinicianObject=None
     try:
         clinicianObject=SdUser.objects.get(id=clinician)
     except SdUser.DoesNotExist:
-        raise ReferencedItemDoesNotExistError("referenced item does not exist: clinician ("+str(clinician)+")")
+        raise ReferencedItemDoesNotExistError("referenced item does not exist: clinician (id:"+str(clinician)+")")
 
     pathwayObject=None
     try:
         pathwayObject=Pathway.objects.get(id=pathway)
     except Pathway.DoesNotExist:
-        raise ReferencedItemDoesNotExistError("referenced item does not exist: pathway ("+str(pathway)+")")
+        raise ReferencedItemDoesNotExistError("referenced item does not exist: pathway (id:"+str(pathway)+")")
 
     try:
         dp=DecisionPoint(
