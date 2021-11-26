@@ -34,14 +34,15 @@ type Query {
 }
 
 type Mutation {
-    createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
-    createTestResult(input:TestResultInput!): TestResult!
-    createPathway(input:PathwayInput!): Pathway!
-    createPatient(input:PatientInput!): Patient!
-    createUser(input:UserInput!): User!
+    createPatient(input:PatientInput!): AddPatientPayload
+    createPathway(input:PathwayInput!): AddPathwayPayload
+
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint
+    createTestResult(input:TestResultInput!): TestResult
+    
+    createUser(input:UserInput!): User
 
     addUserToGroup(input:AddUserToGroupInput!): User
-
     login(username: String!, password: String!): User
 }
 
@@ -62,7 +63,22 @@ enum PatientCommunicationMethods{
     MOBILE
 }
 
-#### OUTPUT TYPES
+#### RETURN TYPES
+type AddPatientPayload{
+    patient:Patient
+    userError:UserError
+}
+type AddPathwayPayload{
+    pathway:Pathway
+    userError:UserError
+}
+
+#### DATA TYPES
+type UserError{
+    message:String!
+    field:String!
+}
+
 type Pathway {
     id: ID!
     name: String!
@@ -191,6 +207,7 @@ input PatientInput{
     dateOfBirth:Date!
 
     pathway:Int!
+    awaitingDecisionType:String = "TRIAGE"
 }
 
 input UserInput{

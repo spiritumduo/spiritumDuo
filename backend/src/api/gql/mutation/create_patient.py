@@ -10,4 +10,6 @@ async def resolve_create_patient(_=None, info=None, input=None):
         hospital_number=input["hospitalNumber"],
         national_number=input["nationalNumber"],
         date_of_birth=input["dateOfBirth"],
+        pathway=input["pathway"],
+        awaiting_decision_type=input["awaitingDecisionType"]
     )
