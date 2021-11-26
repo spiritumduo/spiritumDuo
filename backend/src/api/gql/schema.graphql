@@ -170,7 +170,7 @@ type PatientPathwayInstance{
 #### INPUT TYPES
 input TestResultInput{
     patient: Int!
-    patientPathwayInstance: Int!
+    pathway: Int!
     description: String!
     mediaUrls: [String]
 }
