@@ -1,5 +1,5 @@
 django==3.2.8
-psycopg2-binary>=2.8
+psycopg2>=2.8
 typing_extensions==3.10.0.2
 uwsgi==2.0.20
 django-cors-headers==3.10.0
