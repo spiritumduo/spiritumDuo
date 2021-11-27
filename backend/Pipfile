@@ -4,6 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+psycopg2-binary = ">=2.8"
+typing-extensions = "==3.10.0.2"
+django-cors-headers = "==3.10.0"
+ariadne = "==0.13.0"
+ariadne-django = "==0.2.0"
+aiodataloader = "==0.2.0"
+channels = "==3.0.4"
+asgiref = "~=3.4.1"
+Django = "==3.2.8"
+uWSGI = "==2.0.20"
 
 [dev-packages]
 
