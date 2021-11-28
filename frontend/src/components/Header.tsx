@@ -44,9 +44,6 @@ const Header = ({
             <li className="nav-item">
               <Link className="nav-link active" to="/patient/add">Add Patient</Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link active" to="/logout">Logout</Link>
-            </li>
           </ul>
         </div>
         <PathwaySelector
