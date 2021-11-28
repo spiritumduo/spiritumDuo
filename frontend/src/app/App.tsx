@@ -2,7 +2,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 import React from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
 import LoginPage from 'pages/Login';
 import './App.css';
@@ -24,46 +24,59 @@ const footerProps: FooterProps = { name: `${loggedInUserVar()?.firstName} ${logg
 
 const App = (): JSX.Element => (
   <BrowserRouter>
-    <Routes>
-      <Route path="/login" element={ <LoginPage /> } />
-      <Route path="/logout" element={ <Logout /> } />
-      <Route
-        path="/"
-        element={ (
-          <LoggedInRoute>
-            <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-              <HomePage patientsPerPage={ 20 } />
-            </PageLayout>
-          </LoggedInRoute>
-        ) }
-      />
-      <Route
-        path="/patient/add"
-        element={ (
-          <LoggedInRoute>
-            <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-              <NewPatientPage />
-            </PageLayout>
-          </LoggedInRoute>
-        ) }
-      />
-    </Routes>
+    <Switch>
+      <Route path="/login">
+        <LoginPage />
+      </Route>
+      <Route path="/logout">
+        <Logout />
+      </Route>
+      <Route path="/patient/add">
+        <LoggedInRoute>
+          <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+            <NewPatientPage />
+          </PageLayout>
+        </LoggedInRoute>
+      </Route>
+      <Route path="/">
+        <LoggedInRoute>
+          <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+            <HomePage patientsPerPage={ 20 } />
+          </PageLayout>
+        </LoggedInRoute>
+      </Route>
+    </Switch>
   </BrowserRouter>
 );
 
-const Logout = (): JSX.Element => {
+const Logout = () => {
   loggedInUserVar(undefined);
   pathwayOptionsVar(undefined);
-  return <Navigate to="/login" replace />;
+  return (<Redirect to="/" />);
 };
 
-const LoggedInRoute = ({ children }: React.ComponentPropsWithRef<any>): JSX.Element => {
+const LoggedInRoute = ({ children, ...props }: React.ComponentPropsWithRef<any>): JSX.Element => {
   const user = loggedInUserVar();
+  console.log(user);
   const pathwayOptions = pathwayOptionsVar();
   const loggedIn = user && pathwayOptions;
-  return loggedIn
-    ? children
-    : <Navigate to="/login" replace />;
+  return (
+    <Route
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      { ...props }
+      render={ ({ location }) => (
+        loggedIn
+          ? children
+          : (
+            <Redirect to={ {
+              pathname: '/login',
+              state: { from: location },
+            } }
+            />
+          )
+      ) }
+    />
+  );
 };
 
 export default App;

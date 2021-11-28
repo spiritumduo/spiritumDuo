@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -12,7 +12,6 @@ const LoginPage = (): JSX.Element => {
   // const { status, setLoginStatus } = useLoginStatus();
   let invalidLogin = false;
   const [loading, error, data, doLogin] = useLoginSubmit();
-  const navigate = useNavigate();
 
   const loginSchema = yup.object({
     username: yup.string().required(),
@@ -27,7 +26,7 @@ const LoginPage = (): JSX.Element => {
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   if (data?.login) {
     loginSuccess({ user: data.login });
-    navigate('/');
+    return (<Redirect to="/" />);
   // eslint-disable-next-line no-else-return
   } else if (data?.login === null) {
     invalidLogin = true;
