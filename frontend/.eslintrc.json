@@ -39,7 +39,8 @@
       "controlComponents": ["Field"],
       "depth": 3
     }],
-    "no-underscore-dangle": [0]
+    "no-underscore-dangle": [0],
+    "react/require-default-props": [0]
   },
   "settings": {
     "import/parsers": {
