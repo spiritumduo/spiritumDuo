@@ -7,3 +7,4 @@ ariadne==0.13.0
 ariadne-django==0.2.0
 aiodataloader==0.2.0
 asgiref~=3.4.1
+simplejson==3.17.6
