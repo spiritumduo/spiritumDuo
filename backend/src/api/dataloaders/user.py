@@ -19,5 +19,5 @@ class UserLoader(DataLoader):
         loader_name="_user_loader"
         if loader_name not in context:
             context[loader_name]=cls()
-        patient=await context[loader_name].load(ids)
-        return patient
+        user=await context[loader_name].load(ids)
+        return user
