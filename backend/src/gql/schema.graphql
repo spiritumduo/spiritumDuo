@@ -1,0 +1,14 @@
+scalar Date
+scalar DateTime
+
+schema {
+    query: Query
+}
+
+type Query {
+    test: TestType!
+}
+
+type TestType{
+    message:String!
+}

@@ -1,0 +1,9 @@
+django==3.2.8
+psycopg2>=2.8
+typing_extensions==3.10.0.2
+uwsgi==2.0.20
+django-cors-headers==3.10.0
+ariadne==0.13.0
+ariadne-django==0.2.0
+aiodataloader==0.2.0
+asgiref~=3.4.1
