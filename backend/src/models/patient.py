@@ -1,4 +1,4 @@
-from .db import db
+from .ginobind import db
 
 
 class Patient(db.Model):

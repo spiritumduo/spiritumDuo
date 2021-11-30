@@ -1,5 +1,4 @@
-from gino import Gino
+from .ginobind import db
+from .patient import Patient
 
-db=Gino()
-
-db.set_bind("postgresql://postgres:postgres@sd-postgres:5432/starlette")
+db = db
