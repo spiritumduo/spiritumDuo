@@ -1,5 +1,5 @@
-from .test import TestObjectType
+from .patient import PatientObjectType
 
 object_types_list=[
-    TestObjectType
+    PatientObjectType
 ]
