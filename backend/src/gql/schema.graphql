@@ -6,9 +6,26 @@ schema {
 }
 
 type Query {
-    test: TestType!
+    getPatient(id:ID!): Patient!
 }
 
-type TestType{
-    message:String!
+enum PatientCommunicationMethods{
+    LETTER
+    EMAIL
+    LANDLINE
+    MOBILE
+}
+
+type Patient {
+	id: ID!
+	hospitalNumber: String!
+	nationalNumber: String!
+	communicationMethod: PatientCommunicationMethods!
+	firstName: String!
+	lastName: String!
+    dateOfBirth: Date!
+
+    # decisionPoints:[DecisionPoint]
+    # pathways: [PatientPathwayInstance]
+    # testResults: [TestResult]
 }
