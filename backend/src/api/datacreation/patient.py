@@ -106,16 +106,18 @@ def CreatePatient(
         return {
             "patient": patientObject
         }
-
+    
     # if the patient does already exist
     existingPPIs=PatientPathwayInstance.objects.filter(patient=patientObject, pathway=pathwayObject, is_discharged=False) # get any active pathway instances
     if len(existingPPIs)>0: # if there is an active pathway instance
-        return {"userErrors":[
-            {
-                "message":_("Patient is already enrolled on specified pathway (not discharged)"),
-                "field":"pathway"
-            }
-        ]}
+        return {
+            "userErrors": [
+                {
+                    "message":_("Patient is already enrolled on specified pathway (not discharged)"),
+                    "field":"pathway"
+                }
+            ]
+        }
 
     # there isn't an active instance, so let's make a new one
     pPI=PatientPathwayInstance(

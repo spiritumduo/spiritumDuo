@@ -9,4 +9,4 @@ async def resolve_login(_=None, info=None, username=None, password=None):
     if user is None:
         return None
     
-    return await UserLoader.load_from_id(info.context, user.id)
+    return user

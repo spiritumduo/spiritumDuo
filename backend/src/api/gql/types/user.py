@@ -9,8 +9,7 @@ UserObjectType=ObjectType("User")
 async def resolve_user_department(obj=None, *_):
     if not obj:
         return None
-    profiles=await db_sync_to_async(UserProfile.objects.select_related)("user")
-    userProfile=await db_sync_to_async(profiles.get)(user=obj.id)
+    userProfile=await db_sync_to_async(UserProfile.objects.get)(pk=obj.id)
     department=userProfile.department
     return department
 
