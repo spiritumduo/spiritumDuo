@@ -31,10 +31,12 @@ type Query {
         last: Int
         before: String
     ): PatientConnection!
+
+    testError: String
 }
 
 type Mutation {
-    createPatient(input:PatientInput!): AddPatientPayload
+    createPatient(input:PatientInput!, pathwayId: ID!): AddPatientPayload
     createPathway(input:PathwayInput!): AddPathwayPayload
 
     createDecisionPoint(input:DecisionPointInput!): DecisionPoint
@@ -181,13 +183,13 @@ input AddUserToGroupInput{
 }
 
 input DecisionPointInput{
-    patient: Int!
-    clinician: Int!
-    pathway: Int!
+    patientId: Int!
+    clinicianID: Int!
+    pathwayId: Int!
     decisionType: DecisionPointType!
     clinicHistory: String!
     comorbidities: String!
-    requestsReferrals: String!
+    requestsReferrals: [String]!
 }
 
 input PathwayInput{
