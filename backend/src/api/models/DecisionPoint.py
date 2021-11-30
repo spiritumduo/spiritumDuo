@@ -19,8 +19,8 @@ class DecisionPoint(models.Model):
         default=DecisionPointType.TRIAGE,
         max_length=10,
     )
-    added_at=models.DateTimeField()
-    updated_at=models.DateTimeField()
+    added_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
     clinic_history=models.TextField()
     comorbidities=models.TextField()
     requests_referrals=models.TextField()

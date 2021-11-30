@@ -34,15 +34,15 @@ type Query {
 }
 
 type Mutation {
-    createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
-    createTestResult(input:TestResultInput!): TestResult!
-    createPathway(input:PathwayInput!): Pathway!
-    createPatient(input:PatientInput!): Patient!
-    createUser(input:UserInput!): User!
-    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance!
+    createPatient(input:PatientInput!): AddPatientPayload
+    createPathway(input:PathwayInput!): AddPathwayPayload
+
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint
+    createTestResult(input:TestResultInput!): TestResult
+    
+    createUser(input:UserInput!): User
 
     addUserToGroup(input:AddUserToGroupInput!): User
-
     login(username: String!, password: String!): User
 }
 
@@ -63,7 +63,22 @@ enum PatientCommunicationMethods{
     MOBILE
 }
 
-#### OUTPUT TYPES
+#### RETURN TYPES
+type AddPatientPayload{
+    patient:Patient
+    userErrors:[UserError]
+}
+type AddPathwayPayload{
+    pathway:Pathway
+    userErrors:[UserError]
+}
+
+#### DATA TYPES
+type UserError{
+    message:String!
+    field:String!
+}
+
 type Pathway {
     id: ID!
     name: String!
@@ -126,9 +141,10 @@ type DecisionPoint {
     patient: Patient!
     clinician: User!
     pathway: Pathway!
-    addedAt: Date!
-    updatedAt: Date
     decisionType: DecisionPointType!
+
+    addedAt: DateTime!
+    updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
     requestsReferrals: String!
@@ -138,9 +154,9 @@ type TestResult {
     id: ID!
     patient: Patient!
     patientPathwayInstance: PatientPathwayInstance!
-    addedAt: Date!
     description: String!
     mediaUrls: [String]
+    addedAt: DateTime!
 }
 
 type PatientPathwayInstance{
@@ -152,10 +168,9 @@ type PatientPathwayInstance{
 }
 
 #### INPUT TYPES
-
 input TestResultInput{
     patient: Int!
-    patientPathwayInstance: Int!
+    pathway: Int!
     description: String!
     mediaUrls: [String]
 }
@@ -169,8 +184,6 @@ input DecisionPointInput{
     patient: Int!
     clinician: Int!
     pathway: Int!
-    addedAt: Date!
-    updatedAt: Date
     decisionType: DecisionPointType!
     clinicHistory: String!
     comorbidities: String!
@@ -192,13 +205,9 @@ input PatientInput{
     hospitalNumber:String!
     nationalNumber:String!
     dateOfBirth:Date!
-}
 
-input PatientPathwayInstanceInput{
-    patient:Int!
     pathway:Int!
-    isDischarged:Boolean!
-    awaitingDecisionType:String!
+    awaitingDecisionType:String = "TRIAGE"
 }
 
 input UserInput{

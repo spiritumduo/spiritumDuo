@@ -1,10 +1,10 @@
 from typing import List
 from aiodataloader import DataLoader
-from asgiref.sync import sync_to_async
+from api.common import db_sync_to_async
 from api.models import PatientPathwayInstance
 
 class PatientPathwayInstanceLoader(DataLoader):
-    @sync_to_async
+    @db_sync_to_async
     def fetch_data(self, keys)->List[PatientPathwayInstance]:
         return PatientPathwayInstance.objects.in_bulk(id_list=keys)
 

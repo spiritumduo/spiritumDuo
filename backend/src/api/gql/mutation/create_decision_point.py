@@ -7,8 +7,6 @@ async def resolve_create_decision_point(_=None, info=None, input=None):
         patient=input["patient"],
         clinician=input["clinician"],
         pathway=input["pathway"],
-        added_at=input["addedAt"],
-        updated_at=input["updatedAt"],
         decision_type=input["decisionType"],
         clinic_history=input["clinicHistory"],
         comorbidities=input["comorbidities"],

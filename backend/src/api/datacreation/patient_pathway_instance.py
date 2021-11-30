@@ -1,9 +1,8 @@
-from asgiref.sync import sync_to_async
+from api.common import db_sync_to_async
 from api.models import PatientPathwayInstance
 from api.dataloaders import PatientLoader, PathwayLoader
-from channels.db import database_sync_to_async
 
-# @sync_to_async
+# @db_sync_to_async
 async def CreatePatientPathwayInstance(
     patient:int=None,
     pathway:int=None,
@@ -21,7 +20,7 @@ async def CreatePatientPathwayInstance(
             awaiting_decision_type=awaiting_decision_type
         )
 
-        await database_sync_to_async(instance.save)()
+        await db_sync_to_async(instance.save)()
         return instance
     except Exception as e:
         print(e)

@@ -5,6 +5,8 @@ from .group import GroupObjectType
 from .testresult import TestResultObjectType
 from .user import UserObjectType
 from .patientpathwayinstance import PatientPathwayInstanceObjectType
+from .addpatientpayload import AddPatientPayloadObjectType
+from .addpathwaypayload import AddPathwayPayloadObjectType
 
 object_types_list=[
     PatientObjectType,
@@ -14,4 +16,6 @@ object_types_list=[
     TestResultObjectType,
     UserObjectType,
     PatientPathwayInstanceObjectType,
+    AddPatientPayloadObjectType,
+    AddPathwayPayloadObjectType,
 ]

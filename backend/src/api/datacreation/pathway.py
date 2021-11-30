@@ -1,15 +1,29 @@
-from asgiref.sync import sync_to_async
+from api.common import db_sync_to_async
 from api.models import Pathway
 
-@sync_to_async
+@db_sync_to_async
 def CreatePathway(
     name:str=None,
 ):
+    userErrors=[]
     try:
-        pathway=Pathway(
-            name=name,
+        Pathway.objects.get(name=name)
+    except Pathway.DoesNotExist:
+        pass
+    else:
+        userErrors.append(
+            {
+                "field":"name",
+                "message":"A pathway with this name already exists!"
+            }
         )
-        pathway.save()
-        return pathway
-    except Exception as e:
-        return False
+        return {
+            "userErrors":userErrors
+        }
+    pathway=Pathway(
+        name=name,
+    )
+    pathway.save()
+    return {
+        "pathway":pathway
+    }
