@@ -2,12 +2,20 @@
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
+import { MockedProvider } from '@apollo/client/testing';
 import NewPatientPage from './NewPatient';
 
 export default {
   title: 'Pages/New Patient',
   component: NewPatientPage,
-  decorators: [StoryRouter()],
+  decorators: [
+    StoryRouter(),
+    (NewPatientStory) => (
+      <MockedProvider>
+        <NewPatientStory />
+      </MockedProvider>
+    ),
+  ],
 } as Meta<typeof NewPatientPage>;
 
 // eslint-disable-next-line max-len
