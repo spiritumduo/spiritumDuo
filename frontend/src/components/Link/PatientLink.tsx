@@ -8,13 +8,17 @@ interface PatientLinkProps {
    * Patient object
    */
   patient: Patient;
+  /**
+   * Location to go to
+   */
+  to?: string;
 }
 
 /**
  * Link to individual Patient
  */
-const PatientLink = ({ patient }: PatientLinkProps) => (
-  <Link className="patient-link" to={ `/patient/${patient.hospitalNumber}` }>{patient.hospitalNumber}, {patient.firstName} {patient.lastName}</Link>
+const PatientLink = ({ patient, to = `/patient/${patient.hospitalNumber}` }: PatientLinkProps) => (
+  <Link className="patient-link" to={ to }>{patient.hospitalNumber}, {patient.firstName} {patient.lastName}</Link>
 );
 
 export default PatientLink;
