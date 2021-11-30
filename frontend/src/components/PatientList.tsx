@@ -5,14 +5,14 @@ import Patient from 'types/Patient';
 import { PatientLink } from './Link';
 
 /**
- * PatientListDataFn
+ * PatientListUpdateDataFn
  *
  * Used to feed data to the Patient list.
  *
  * @param {number} offset The offset to start from
  * @param {number} limit  How much to return from offset
  */
-export type PatientListDataFn = (selectedItem: { selected: number; }) => void;
+export type PatientListUpdateDataFn = (selectedItem: { selected: number; }) => void;
 
 export interface PatientListProps {
   /**
@@ -22,11 +22,11 @@ export interface PatientListProps {
   /**
    * Function to update patient data
    */
-  updateData: PatientListDataFn;
+  updateData: PatientListUpdateDataFn;
   /**
    * Patient data
    */
-  data: Patient[];
+  data: JSX.Element[];
   /**
    * Is data loading?
   */
@@ -44,7 +44,7 @@ const PatientList = (
     <ul className="patient-list px-0">
       {
         data.map((p) => (
-          <li key={ p.hospitalNumber }> <PatientLink patient={ p } /> </li>
+          <li key={ p.key }> { p } </li>
         ))
       }
     </ul>

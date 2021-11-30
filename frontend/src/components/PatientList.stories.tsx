@@ -3,6 +3,7 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { useArgs } from '@storybook/client-api';
 import StoryRouter from 'storybook-react-router';
+import { PatientLink } from 'components/Link';
 import PatientList, { PatientListProps } from './PatientList';
 import Patient from '../types/Patient';
 
@@ -52,7 +53,9 @@ const Template: ComponentStory<typeof PatientList> = ({ pageCount, isLoading, ..
   );
 };
 
-const data: Patient[] = patientArray.slice(0, patientsPerPage);
+const data: JSX.Element[] = patientArray.slice(0, patientsPerPage).map(
+  (n) => <PatientLink key={ n.id } patient={ n } />,
+);
 const pageCount = patientArray.length / patientsPerPage;
 
 export const Default = Template.bind({});
