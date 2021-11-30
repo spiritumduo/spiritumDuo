@@ -6,6 +6,7 @@ import PatientList from 'components/PatientList';
 import usePatientsForPathwayQuery from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { getPatientOnPathwayConnection } from 'app/queries/__generated__/getPatientOnPathwayConnection';
+import { PatientLink } from 'components/Link';
 
 export interface HomePageProps {
   patientsPerPage: number;
@@ -45,15 +46,18 @@ const WrappedPatientList = ({
     data,
     fetchMore,
   } = usePatientsForPathwayQuery(pathwayId, decisionPointType, patientsPerPage);
-
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+
   const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsPerPage);
+  const lowerCaseDecisionType = decisionPointType.toString().toLowerCase();
+  const listElements: JSX.Element[] = nodes.map((n) => <PatientLink key={ n.id } patient={ n } to={ `/decision/${lowerCaseDecisionType}/${n.hospitalNumber}` } />);
+
   return (
     <>
       <div>{ error?.message }</div>
       <PatientList
-        data={ nodes }
+        data={ listElements }
         isLoading={ loading }
         updateData={ ({ selected }) => {
           setCurrentPage(selected);
