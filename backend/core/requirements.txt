@@ -1,6 +1,7 @@
 typing_extensions==3.10.0.2
-ariadne==0.13.0
+ariadne==0.14.0
 aiodataloader==0.2.0
-uvicorn
-starlette
-gino
+uvicorn==0.15.0
+starlette==0.17.0
+gino==1.0.1
+alembic==1.7.5

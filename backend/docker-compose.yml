@@ -14,25 +14,25 @@ services:
       - ./:/app
     ports:
       - "8080:8080"
-    command: uvicorn --host 0.0.0.0 --port 8080 api:app
+    command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
     
-  # sd-postgres:
-  #   container_name: sd-postgres
-  #   image: postgres:14.0-alpine
-  #   restart: unless-stopped
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     - POSTGRES_DB=postgres
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #     - TZ=Europe/London
-  #   volumes:
-  #     - sd-postgres_data:/var/lib/postgresql/data
-  #   networks:
-  #     - app-network
+  sd-postgres:
+    container_name: sd-postgres
+    image: postgres:14.0-alpine
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/London
+    volumes:
+      - sd-postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
 
 volumes:
   sd-postgres_data:
