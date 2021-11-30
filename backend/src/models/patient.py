@@ -1,5 +1,4 @@
-from .ginobind import db
-
+from . import db
 
 class Patient(db.Model):
     __tablename__ = "patient"
