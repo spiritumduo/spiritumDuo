@@ -19,13 +19,13 @@ class PathwayLoader(DataLoader):
         return sortedPathways
 
     @classmethod
-    async def load_from_id(cls, context=None, ids=None):
-        if not ids:
+    async def load_from_id(cls, context=None, id=None):
+        if not id:
             return None
         loader_name="_pathway_loader"
         if loader_name not in context:
             context[loader_name]=cls()
-        pathway=await context[loader_name].load(ids)
+        pathway=await context[loader_name].load(id)
         return pathway
 
     @classmethod
