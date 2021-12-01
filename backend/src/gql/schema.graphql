@@ -11,6 +11,25 @@ type Query {
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionPointType, isDischarged: Boolean = False): [Patient]
+
+    """
+    getPatentOnPathwayConnection:
+    This query takes either before or after arguments, but never both.
+    If neither before or after is present, it requires a first argument to
+    limit the number of results returned
+
+    TODO: This returns a PatientConnection. It should return a PatientPathwayInstance connection
+    That requires new schema work
+    """
+    getPatientOnPathwayConnection(
+        pathwayId: ID!
+        awaitingDecisionType: DecisionPointType!
+        isDischarged: Boolean
+        first: Int
+        after: String
+        last: Int
+        before: String
+    ): PatientConnection!
 }
 
 type Mutation {
