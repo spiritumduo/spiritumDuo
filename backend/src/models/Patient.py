@@ -1,4 +1,4 @@
-from . import db
+from .db import db
 
 class Patient(db.Model):
     __tablename__ = "patient"
@@ -9,4 +9,4 @@ class Patient(db.Model):
     communication_method = db.Column(db.String())
     first_name = db.Column(db.String())
     last_name = db.Column(db.String())
-    date_of_birth = db.Column(db.Integer())
+    date_of_birth = db.Column(db.Date())
