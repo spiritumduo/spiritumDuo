@@ -12,6 +12,10 @@ type Query {
     getPathways: [Pathway]
 }
 
+type Mutation {
+    login(username: String!, password: String!): User
+}
+
 enum PatientCommunicationMethods{
     LETTER
     EMAIL
