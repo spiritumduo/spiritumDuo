@@ -1,9 +1,11 @@
 from starlette.applications import Starlette
+from starlette.routing import Route
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from ariadne.asgi import GraphQL
 from gql.schema import schema
 from models import db
+from randomdata import generate_random
 
 
 middleware = [
@@ -16,6 +18,10 @@ middleware = [
     )
 ]
 
-app=Starlette(debug=True, middleware=middleware)
+routes = [
+    Route("/random", endpoint=generate_random)
+]
+
+app=Starlette(debug=True, middleware=middleware, routes=routes)
 db.init_app(app)
 app.mount("/graphql", GraphQL(schema, debug=True, context_value={'db':db}))
