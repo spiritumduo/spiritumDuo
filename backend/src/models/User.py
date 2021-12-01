@@ -10,5 +10,5 @@ class User(db.Model):
     first_name = db.Column(db.String(), nullable=False)
     last_name = db.Column(db.String(), nullable=False)
     department = db.Column(db.String(), nullable=False)
-    last_login = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    last_login = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
 

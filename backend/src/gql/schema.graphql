@@ -7,9 +7,10 @@ schema {
 }
 
 type Query {
-    getPatient(id:ID, hospitalNumber:String): [Patient]
+    getPatient(id:ID, hospitalNumber:String): Patient
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
+    getUser(id:ID!): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionPointType, isDischarged: Boolean = False): [Patient]
 
     """
@@ -36,20 +37,19 @@ type Mutation {
     login(username: String!, password: String!): User
 }
 
-#### ENUMS
-enum DecisionPointType {
-    TRIAGE
-    CLINIC
-    MDT
-    AD_HOC
-    FOLLOW_UP
-}
-
 enum PatientCommunicationMethods{
     LETTER
     EMAIL
     LANDLINE
     MOBILE
+}
+
+enum DecisionTypes{
+    TRIAGE
+    CLINIC
+    MDT
+    AD_HOC
+    FOLLOW_UP
 }
 
 #### RETURN TYPES
@@ -71,7 +71,6 @@ type UserError{
 type Pathway {
     id: ID!
     name: String!
-
     patients:[Patient]
 }
 
@@ -84,9 +83,9 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
 
+    pathways: [OnPathway]
     decisionPoints:[DecisionPoint]
-    pathways: [PatientPathwayInstance]
-    testResults: [TestResult]
+    # testResults: [TestResult]
 }
 
 type PageInfo {
@@ -113,16 +112,24 @@ type Group{
     permissions: [String]
 }
 
+type OnPathway{
+    id: ID!
+    patient: Patient!
+    pathway: Pathway!
+    isDischarged: Boolean!
+    awaitingDecisionType: DecisionTypes!
+    addedAt: DateTime!
+    updatedAt: DateTime!
+}
+
 type User {
     id: ID!
     firstName: String!
     lastName: String!
     username: String!
-    password: String
     lastLogin: DateTime
-
     department: String!
-    groups: [Group]
+    # groups: [Group]
 }
 
 type DecisionPoint {
@@ -130,8 +137,7 @@ type DecisionPoint {
     patient: Patient!
     clinician: User!
     pathway: Pathway!
-    decisionType: DecisionPointType!
-
+    decisionType: DecisionTypes!
     addedAt: DateTime!
     updatedAt: DateTime!
     clinicHistory: String!
@@ -146,14 +152,6 @@ type TestResult {
     description: String!
     mediaUrls: [String]
     addedAt: DateTime!
-}
-
-type PatientPathwayInstance{
-    id: ID!
-    isDischarged: Boolean!
-    awaitingDecisionType: String!
-    pathway: Pathway!
-    patient: Patient!
 }
 
 #### INPUT TYPES
