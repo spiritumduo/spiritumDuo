@@ -5,7 +5,7 @@ datetime_scalar=ScalarType("DateTime")
 
 @date_scalar.serializer
 def serialize_date(value):
-    return value
+    return value.isoformat()
     # return value.isoformat()
 
 @datetime_scalar.serializer
