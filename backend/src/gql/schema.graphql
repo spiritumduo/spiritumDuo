@@ -7,23 +7,14 @@ schema {
 }
 
 type Query {
-    getPatient(id:ID, hospitalNumber:String): [Patient]
+    getPatient(id:ID, hospitalNumber:String): Patient
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
-    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionPointType, isDischarged: Boolean = False): [Patient]
+    getUser(id:ID!): User
 }
 
-type Mutation {
-    login(username: String!, password: String!): User
-}
-
-#### ENUMS
-enum DecisionPointType {
-    TRIAGE
-    CLINIC
-    MDT
-    AD_HOC
-    FOLLOW_UP
+type Mutation{
+    login(username:String!, password:String!): User
 }
 
 enum PatientCommunicationMethods{
@@ -31,6 +22,14 @@ enum PatientCommunicationMethods{
     EMAIL
     LANDLINE
     MOBILE
+}
+
+enum DecisionTypes{
+    TRIAGE
+    CLINIC
+    MDT
+    AD_HOC
+    FOLLOW_UP
 }
 
 #### RETURN TYPES
@@ -65,128 +64,48 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
 
+    pathways: [OnPathway]
     decisionPoints:[DecisionPoint]
-    pathways: [PatientPathwayInstance]
-    testResults: [TestResult]
-}
-
-type PageInfo {
-    hasPreviousPage: Boolean!
-    hasNextPage: Boolean!
-    startCursor: String!
-    endCursor: String!
-}
-
-type PatientConnection {
-    totalCount: Int!
-    pageInfo: PageInfo!
-    edges: [PatientEdge]
-}
-
-type PatientEdge {
-    node: Patient!
-    cursor: String!
+    # testResults: [TestResult]
 }
 
 type Group{
     id: ID!
     name: String!
-    permissions: [String]
 }
 
-type User {
-    id: ID!
-    firstName: String!
-    lastName: String!
-    username: String!
-    password: String
-    lastLogin: DateTime
 
-    department: String!
-    groups: [Group]
+
+type OnPathway{
+    id: ID!
+    patient: Patient!
+    pathway: Pathway!
+    isDischarged: Boolean!
+    awaitingDecisionType: DecisionTypes!
+    addedAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type User{
+    id:ID!
+    username:String!
+    password:String!
+    firstName:String!
+    lastName:String!
+    department:String!
+    lastLogin:DateTime!
 }
 
 type DecisionPoint {
     id: ID!
     patient: Patient!
     clinician: User!
-    pathway: Pathway!
-    decisionType: DecisionPointType!
+    onPathway: OnPathway!
 
+    decisionType: DecisionTypes!
     addedAt: DateTime!
     updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
     requestsReferrals: String!
-}
-
-type TestResult {
-    id: ID!
-    patient: Patient!
-    patientPathwayInstance: PatientPathwayInstance!
-    description: String!
-    mediaUrls: [String]
-    addedAt: DateTime!
-}
-
-type PatientPathwayInstance{
-    id: ID!
-    isDischarged: Boolean!
-    awaitingDecisionType: String!
-    pathway: Pathway!
-    patient: Patient!
-}
-
-#### INPUT TYPES
-input TestResultInput{
-    patient: Int!
-    pathway: Int!
-    description: String!
-    mediaUrls: [String]
-}
-
-input AddUserToGroupInput{
-    user: Int!
-    groupName: String!
-}
-
-input DecisionPointInput{
-    patientId: Int!
-    clinicianID: Int!
-    pathwayId: Int!
-    decisionType: DecisionPointType!
-    clinicHistory: String!
-    comorbidities: String!
-    requestsReferrals: [String]!
-}
-
-input PathwayInput{
-    name:String!
-}
-
-input GroupInput{
-    name:String!
-}
-
-input PatientInput{
-    firstName:String!
-    lastName:String!
-    communicationMethod:PatientCommunicationMethods!
-    hospitalNumber:String!
-    nationalNumber:String!
-    dateOfBirth:Date!
-
-    pathway:Int!
-    awaitingDecisionType:String = "TRIAGE"
-}
-
-input UserInput{
-    firstName:String!
-    lastName:String!
-    username:String!
-    password:String!
-    isStaff:Boolean!
-    isSuperuser:Boolean!
-
-    department:String!
 }
