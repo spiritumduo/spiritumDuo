@@ -11,7 +11,7 @@ type Query {
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
     getUser(id:ID!): User
-    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionTypes, isDischarged: Boolean = False): [Patient]
+    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
 
     """
     getPatentOnPathwayConnection:
@@ -24,7 +24,7 @@ type Query {
     """
     getPatientOnPathwayConnection(
         pathwayId: ID!
-        awaitingDecisionType: DecisionTypes!
+        awaitingDecisionType: DecisionType!
         isDischarged: Boolean
         first: Int
         after: String
@@ -35,6 +35,7 @@ type Query {
 
 type Mutation {
     login(username: String!, password: String!): User
+    createPatient(input:PatientInput!, pathwayId: ID!): AddPatientPayload
 }
 
 enum PatientCommunicationMethods {
@@ -44,7 +45,7 @@ enum PatientCommunicationMethods {
     MOBILE
 }
 
-enum DecisionTypes{
+enum DecisionType{
     TRIAGE
     CLINIC
     MDT
@@ -117,7 +118,7 @@ type OnPathway{
     patient: Patient!
     pathway: Pathway!
     isDischarged: Boolean!
-    awaitingDecisionType: DecisionTypes!
+    awaitingDecisionType: DecisionType!
     addedAt: DateTime!
     updatedAt: DateTime!
 }
@@ -137,7 +138,7 @@ type DecisionPoint {
     patient: Patient!
     clinician: User!
     pathway: Pathway!
-    decisionType: DecisionTypes!
+    decisionType: DecisionType!
     addedAt: DateTime!
     updatedAt: DateTime!
     clinicHistory: String!
@@ -171,7 +172,7 @@ input DecisionPointInput{
     patientId: Int!
     clinicianID: Int!
     pathwayId: Int!
-    decisionType: DecisionTypes!
+    decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String!
     requestsReferrals: [String]!
@@ -194,7 +195,7 @@ input PatientInput{
     dateOfBirth:Date!
 
     pathway:Int!
-    awaitingDecisionType: DecisionTypes
+    awaitingDecisionType: DecisionType
 }
 
 input UserInput{
