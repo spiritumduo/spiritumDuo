@@ -6,7 +6,9 @@ schema {
 }
 
 type Query {
-    getPatient(id:ID!): Patient
+    getPatient(id:ID, hospitalNumber:String): [Patient]
+    getPathway(id:ID!): Pathway
+    getPathways: [Pathway]
 }
 
 enum PatientCommunicationMethods{
@@ -28,4 +30,9 @@ type Patient {
     # decisionPoints:[DecisionPoint]
     # pathways: [PatientPathwayInstance]
     # testResults: [TestResult]
+}
+
+type Pathway{
+    id: ID!
+    name: String!
 }
