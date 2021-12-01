@@ -11,7 +11,7 @@ type Query {
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
     getUser(id:ID!): User
-    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionPointType, isDischarged: Boolean = False): [Patient]
+    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionTypes, isDischarged: Boolean = False): [Patient]
 
     """
     getPatentOnPathwayConnection:
@@ -19,12 +19,12 @@ type Query {
     If neither before or after is present, it requires a first argument to
     limit the number of results returned
 
-    TODO: This returns a PatientConnection. It should return a PatientPathwayInstance connection
+    TODO: This returns a PatientConnection. It should return a OnPathway connection
     That requires new schema work
     """
     getPatientOnPathwayConnection(
         pathwayId: ID!
-        awaitingDecisionType: DecisionPointType!
+        awaitingDecisionType: DecisionTypes!
         isDischarged: Boolean
         first: Int
         after: String
@@ -37,7 +37,7 @@ type Mutation {
     login(username: String!, password: String!): User
 }
 
-enum PatientCommunicationMethods{
+enum PatientCommunicationMethods {
     LETTER
     EMAIL
     LANDLINE
@@ -148,7 +148,7 @@ type DecisionPoint {
 type TestResult {
     id: ID!
     patient: Patient!
-    patientPathwayInstance: PatientPathwayInstance!
+    onPathway: OnPathway!
     description: String!
     mediaUrls: [String]
     addedAt: DateTime!
@@ -171,7 +171,7 @@ input DecisionPointInput{
     patientId: Int!
     clinicianID: Int!
     pathwayId: Int!
-    decisionType: DecisionPointType!
+    decisionType: DecisionTypes!
     clinicHistory: String!
     comorbidities: String!
     requestsReferrals: [String]!
@@ -194,7 +194,7 @@ input PatientInput{
     dateOfBirth:Date!
 
     pathway:Int!
-    awaitingDecisionType:String = "TRIAGE"
+    awaitingDecisionType: DecisionTypes
 }
 
 input UserInput{
