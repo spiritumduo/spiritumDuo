@@ -17,6 +17,5 @@ middleware = [
 ]
 
 app=Starlette(debug=True, middleware=middleware)
-app.mount("/graphql", GraphQL(schema, debug=True))
-
 db.init_app(app)
+app.mount("/graphql", GraphQL(schema, debug=True, context_value={'db':db}))
