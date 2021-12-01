@@ -6,6 +6,7 @@ import { cache } from 'app/cache';
 import './index.css';
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
+import scalarLink from 'app/scalars';
 
 // TODO: Disable this for production! This is just because we are on a different port
 const link = new HttpLink({ uri: 'http://localhost:8080/graphql/' });
@@ -21,7 +22,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const client = new ApolloClient({
-  link: from([errorLink, link]),
+  link: from([scalarLink, errorLink, link]),
   cache: cache,
   connectToDevTools: true,
 });
