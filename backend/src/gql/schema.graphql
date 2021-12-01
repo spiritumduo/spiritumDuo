@@ -6,7 +6,7 @@ schema {
 }
 
 type Query {
-    getPatient(id:ID!): Patient!
+    getPatient(id:ID!): Patient
 }
 
 enum PatientCommunicationMethods{

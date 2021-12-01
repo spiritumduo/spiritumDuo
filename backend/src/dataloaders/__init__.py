@@ -1,1 +1,1 @@
-from .patient import PatientByIdDataLoader, PatientByHospitalNumberDataLoader
+from .patient import PatientDataLoader
