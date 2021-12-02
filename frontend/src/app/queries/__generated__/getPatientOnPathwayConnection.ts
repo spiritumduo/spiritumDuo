@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { DecisionPointType } from "./../../../../__generated__/globalTypes";
+import { DecisionType } from "./../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL query operation: getPatientOnPathwayConnection
@@ -43,7 +43,7 @@ export interface getPatientOnPathwayConnection {
    * If neither before or after is present, it requires a first argument to
    * limit the number of results returned
    * 
-   * TODO: This returns a PatientConnection. It should return a PatientPathwayInstance connection
+   * TODO: This returns a PatientConnection. It should return a OnPathway connection
    * That requires new schema work
    */
   getPatientOnPathwayConnection: getPatientOnPathwayConnection_getPatientOnPathwayConnection;
@@ -51,6 +51,7 @@ export interface getPatientOnPathwayConnection {
 
 export interface getPatientOnPathwayConnectionVariables {
   pathwayId: string;
-  awaitingDecisionType: DecisionPointType;
+  awaitingDecisionType: DecisionType;
   first?: number | null;
+  after?: string | null;
 }
