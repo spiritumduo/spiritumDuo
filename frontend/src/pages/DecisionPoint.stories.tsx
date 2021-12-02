@@ -17,6 +17,7 @@ const apolloMocks = [
       query: GET_PATIENT_QUERY,
       variables: {
         hospitalNumber: patientHospitalNumber,
+        limit: 1,
       },
     },
     result: {

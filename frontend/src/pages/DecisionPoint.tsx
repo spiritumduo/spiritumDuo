@@ -21,7 +21,7 @@ export const GET_PATIENT_QUERY = gql`
         lastName
         dateOfBirth
 
-        decisionPoints {
+        decisionPoints(limit: 1) {
           clinicHistory
           comorbidities
         }
@@ -36,12 +36,13 @@ const DecisionPointPage = (
     GET_PATIENT_QUERY, {
       variables: {
         hospitalNumber: hospitalNumber,
+        limit: 1,
       },
     },
   );
   if (loading) return <h1>Loading!</h1>;
   console.log(data);
-  const patient = data.getPatient;
+  const patient = data?.getPatient;
 
   const decisionKeys = enumKeys(DecisionPointType);
 
