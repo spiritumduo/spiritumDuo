@@ -7,6 +7,7 @@ import Patient, { PatientCommunicationMethods } from 'types/Patient';
 import { ADD_PATIENT_MUTATION } from 'app/mutations/AddPatient';
 import { useMutation } from '@apollo/client';
 import { currentPathwayId } from 'app/cache';
+import { enumKeys } from 'sdutils';
 
 const NewPatientPage = () => {
   const newPatientSchema = yup.object({
@@ -34,11 +35,6 @@ const NewPatientPage = () => {
     });
   };
 
-  // get string keys from an enum
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
-    return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
-  }
   const commMethodKeys = enumKeys(PatientCommunicationMethods);
   const commMethodOptions = commMethodKeys.map(
     (k) => <option value={ k } key={ `commMethod-${k}` }>{ PatientCommunicationMethods[k] }</option>,
