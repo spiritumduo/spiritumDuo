@@ -20,3 +20,4 @@ class DecisionPoint(db.Model):
     )
     clinic_history = db.Column(db.String(), nullable=False)
     comorbidities = db.Column(db.String(), nullable=False)
+    requests_referrals = db.Column(db.String(), nullable=False)
