@@ -11,10 +11,12 @@ class DecisionPoint(db.Model):
     user = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
     pathway = db.Column(db.Integer(), db.ForeignKey('pathway.id'), nullable=False)
     decision_type = db.Column(
-     Enum(DecisionTypes, native_enum=False), default=DecisionTypes.TRIAGE.value,
-     server_default=DecisionTypes.TRIAGE.value, nullable=False, native_enum=False
+        Enum(DecisionTypes, native_enum=False), default=DecisionTypes.TRIAGE.value,
+        server_default=DecisionTypes.TRIAGE.value, nullable=False, native_enum=False
     )
     added_at = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
     updated_at = db.Column(
         db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
     )
+    clinic_history = db.Column(db.String(), nullable=False)
+    comorbidities = db.Column(db.String(), nullable=False)
