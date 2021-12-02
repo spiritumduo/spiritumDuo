@@ -4,16 +4,14 @@ import Patient from 'types/Patient';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { gql, useQuery } from '@apollo/client';
+import { enumKeys } from 'sdutils';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
   decisionType: DecisionPointType;
 }
 
-const DecisionPointPage = (
-  { hospitalNumber, decisionType }: DecisionPointPageProps,
-): JSX.Element => {
-  const GET_PATIENT_QUERY = gql`
+export const GET_PATIENT_QUERY = gql`
     query GetPatient($hospitalNumber: String) {
       getPatient(hospitalNumber: $hospitalNumber) {
         hospitalNumber
@@ -22,9 +20,18 @@ const DecisionPointPage = (
         firstName
         lastName
         dateOfBirth
+
+        decisionPoints {
+          clinicHistory
+          comorbidities
+        }
       }
     }
-  `;
+`;
+
+const DecisionPointPage = (
+  { hospitalNumber, decisionType }: DecisionPointPageProps,
+): JSX.Element => {
   const { loading, data, error } = useQuery(
     GET_PATIENT_QUERY, {
       variables: {
@@ -32,9 +39,15 @@ const DecisionPointPage = (
       },
     },
   );
-  console.log(data);
   if (loading) return <h1>Loading!</h1>;
+  console.log(data);
   const patient = data.getPatient;
+
+  const decisionKeys = enumKeys(DecisionPointType);
+
+  const decisionSelectOptions = decisionKeys.map(
+    (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
+  );
 
   return (
     <div className="vh-100">
@@ -45,26 +58,26 @@ const DecisionPointPage = (
               <form className="card-body p-5" action="/addPatient" method="POST">
                 <div className="container">
 
-                  <p className="text-center">
+                  <div className="text-center">
                     <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.hospitalNumber}/edit` }>Edit patient record</Link>
-                  </p>
+                  </div>
 
                   <hr />
                   <p>{ error?.message }</p>
 
                   <div className="container pt-1">
                     <div className="form-outline mb-4">
-                      <p>Decision: { decisionType }</p>
+                      <p>Decision: <select name="" id="" defaultValue={ decisionType.toUpperCase() }>{ decisionSelectOptions }</select></p>
                     </div>
 
                     <div className="form-outline mb-4">
                       <label className="form-label" htmlFor="clinicHistory">Clinical history
-                        <textarea className="form-control" id="clinicHistory" name="clinicHistory" rows={ 3 } />
+                        <textarea className="form-control" id="clinicHistory" name="clinicHistory" rows={ 3 } defaultValue={ data.getPatient.decisionPoints[0]?.clinicHistory } />
                       </label>
                     </div>
                     <div className="form-outline mb-4">
                       <label className="form-label" htmlFor="comorbidities">Co-morbidities
-                        <textarea className="form-control" id="comorbidities" name="comorbidities" rows={ 3 } />
+                        <textarea className="form-control" id="comorbidities" name="comorbidities" rows={ 3 } defaultValue={ data.getPatient.decisionPoints[0]?.comorbidities } />
                       </label>
                     </div>
 

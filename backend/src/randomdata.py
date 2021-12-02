@@ -3,6 +3,7 @@ from models.User import User
 from models.Patient import Patient
 from models.Pathway import Pathway
 from models.OnPathway import OnPathway
+from models.DecisionPoint import DecisionPoint
 from random import randint
 from datetime import date, datetime
 from SdTypes import DecisionTypes
@@ -35,16 +36,34 @@ async def generate_random(request):
 
     d_types = [
         DecisionTypes.TRIAGE.value,
-        DecisionTypes.CLINIC.value
+        DecisionTypes.CLINIC.value,
+        DecisionTypes.AD_HOC.value,
+        DecisionTypes.MDT.value,
     ]
+
+    lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed gravida, arcu at tempus consequat, metus felis ornare tortor, et consectetur ipsum ipsum eget ex. Pellentesque molestie est ut magna tristique, in sollicitudin odio malesuada. Sed viverra, massa vitae imperdiet faucibus, ligula dui tristique turpis, eget efficitur elit erat nec ante."
+    user = await User.query.gino.first()
     for p in patients:
         path = pathways[randint(0, 1)]
-        d_t = d_types[randint(0,1)]
+        d_t = d_types[randint(0, 1)]
         await OnPathway.create(
             patient=p.id,
             pathway=path.id,
             awaiting_decision_type=d_t
         )
+
+        num_dp = randint(0, 5)
+        d_t = d_types[randint(0, 3)]
+        for i in range(1, num_dp):
+            await DecisionPoint.create(
+                patient=p.id,
+                user=user.id,
+                pathway=path.id,
+                decision_type=d_t,
+                clinic_history=lorem,
+                comorbidities=lorem,
+            )
+
 
 
 
