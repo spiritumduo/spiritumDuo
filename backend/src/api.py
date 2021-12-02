@@ -7,7 +7,6 @@ from gql.schema import schema
 from models import db
 from randomdata import generate_random
 
-
 middleware = [
     Middleware(CORSMiddleware, allow_origins=[
         'https://studio.apollographql.com',

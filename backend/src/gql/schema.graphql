@@ -35,7 +35,7 @@ type Query {
 
 type Mutation {
     login(username: String!, password: String!): User
-    createPatient(input:PatientInput!, pathwayId: ID!): AddPatientPayload
+    createPatient(input:PatientInput!): AddPatientPayload
 }
 
 enum PatientCommunicationMethods {
@@ -189,7 +189,7 @@ input GroupInput{
 input PatientInput{
     firstName:String!
     lastName:String!
-    communicationMethod:PatientCommunicationMethods!
+    communicationMethod:PatientCommunicationMethods
     hospitalNumber:String!
     nationalNumber:String!
     dateOfBirth:Date!
