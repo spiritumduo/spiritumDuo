@@ -85,7 +85,7 @@ type Patient {
     dateOfBirth: Date!
 
     pathways: [OnPathway]
-    decisionPoints:[DecisionPoint]
+    decisionPoints(pathwayId:ID, decisionType:DecisionType, limit:Int):[DecisionPoint]
     # testResults: [TestResult]
 }
 
