@@ -5,7 +5,6 @@ import React from 'react';
 import { BrowserRouter, Redirect, Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
 import LoginPage from 'pages/Login';
-import './App.css';
 import HomePage from 'pages/HomePage';
 import { FooterProps } from 'components/Footer';
 import { HeaderProps } from 'components/Header';
@@ -13,6 +12,8 @@ import PageLayout from 'components/PageLayout';
 import PathwayOption from 'types/PathwayOption';
 import NewPatientPage from 'pages/NewPatient';
 import DecisionPointPage, { DecisionPointPageProps } from 'pages/DecisionPoint';
+import PreviousDecisionPoints, { PreviousDecisionPointsProps } from 'pages/PreviousDecisionPoints';
+import './App.css';
 
 const headerProps: HeaderProps = {
   pathwayOptions: pathwayOptionsVar() as PathwayOption[],
@@ -22,6 +23,19 @@ const headerProps: HeaderProps = {
 };
 
 const footerProps: FooterProps = { name: `${loggedInUserVar()?.firstName} ${loggedInUserVar()?.lastName}` };
+
+const PreviousDecisionPointsPageRoute = () => {
+  const { hospitalNumber } = useParams<PreviousDecisionPointsProps>();
+  return (
+    <>
+      <LoggedInRoute>
+        <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+          <PreviousDecisionPoints hospitalNumber={ hospitalNumber } />
+        </PageLayout>
+      </LoggedInRoute>
+    </>
+  );
+};
 
 const PatientRoutes = () => {
   const match = useRouteMatch();
@@ -33,6 +47,9 @@ const PatientRoutes = () => {
             <NewPatientPage />
           </PageLayout>
         </LoggedInRoute>
+      </Route>
+      <Route path={ `${match.url}/:hospitalNumber/decisions` }>
+        <PreviousDecisionPointsPageRoute />
       </Route>
     </>
   );

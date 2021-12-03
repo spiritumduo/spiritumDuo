@@ -1,6 +1,5 @@
 import React from 'react';
 import './previousdecisionpoints.css';
-import DecisionPoint from 'types/DecisionPoint';
 import { gql, useQuery } from '@apollo/client';
 import { currentPathwayId } from 'app/cache';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
@@ -32,7 +31,7 @@ export const PREVIOUS_DECISION_POINTS_QUERY = gql`
 const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps): JSX.Element => {
   // TODO: FIX THIS WITH LOGIN!
   // const pathwayId = currentPathwayId();
-  const pathwayId = 16;
+  const pathwayId = currentPathwayId();
   const { loading, error, data } = useQuery<previousDecisionPoints>(
     PREVIOUS_DECISION_POINTS_QUERY, {
       variables: {
