@@ -6,7 +6,7 @@ from ariadne.asgi import GraphQL
 from gql.schema import schema
 from models import db
 from randomdata import generate_random
-
+from rest.api import _FastAPI
 middleware = [
     Middleware(CORSMiddleware, allow_origins=[
         'https://studio.apollographql.com',
@@ -17,10 +17,11 @@ middleware = [
     )
 ]
 
-routes = [
+starlette_routes = [
     Route("/random", endpoint=generate_random)
 ]
 
-app=Starlette(debug=True, middleware=middleware, routes=routes)
+app=Starlette(debug=True, middleware=middleware, routes=starlette_routes)
 db.init_app(app)
 app.mount("/graphql", GraphQL(schema, debug=True, context_value={'db':db}))
+app.mount("/rest", _FastAPI)
