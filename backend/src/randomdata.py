@@ -10,6 +10,7 @@ from SdTypes import DecisionTypes
 
 
 async def generate_random(request):
+    await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
     await Pathway.delete.where(Pathway.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
@@ -53,8 +54,8 @@ async def generate_random(request):
         )
 
         num_dp = randint(0, 5)
-        d_t = d_types[randint(0, 3)]
         for i in range(1, num_dp):
+            d_t = d_types[randint(0, 3)]
             await DecisionPoint.create(
                 patient=p.id,
                 user=user.id,
@@ -62,6 +63,7 @@ async def generate_random(request):
                 decision_type=d_t,
                 clinic_history=lorem,
                 comorbidities=lorem,
+                requests_referrals='Some referrals'
             )
 
 
