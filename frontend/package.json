@@ -15,6 +15,7 @@
     "@storybook/node-logger": "^6.3.12",
     "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/react": "^6.3.12",
+    "@storybook/testing-react": "^1.0.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -41,6 +42,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-testing-library": "^8.0.1",
+    "storybook-addon-apollo-client": "^4.0.9",
     "storybook-react-router": "^1.0.8",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
@@ -48,7 +50,10 @@
   },
   "resolutions": {
     "babel-loader": "8.1.0",
-    "webpack": "4.44.2"
+    "webpack": "4.44.2",
+    "storybook-addon-apollo-client/@storybook/addons": "6.3.12",
+    "storybook-addon-apollo-client/@storybook/api": "6.3.12",
+    "storybook-addon-apollo-client/@storybook/components": "6.3.12"
   },
   "scripts": {
     "start": "react-scripts start",
