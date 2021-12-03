@@ -49,13 +49,12 @@ class DecisionPointsByPatient:
         if not context or not id:
             return None
 
-        query=DecisionPoint.query.where(DecisionPoint.patient==id)
+        query=DecisionPoint.query.where(DecisionPoint.patient==id).order_by(DecisionPoint.added_at.desc())
         if pathwayId is not None:
             query=query.where(DecisionPoint.pathway==int(pathwayId))
         if decisionType:
             query=query.where(DecisionPoint.decision_type==decisionType)
         if limit is not None:
-            print("LIMIT IS",limit)
             query=query.limit(int(limit))
 
         _gino=context['db']
