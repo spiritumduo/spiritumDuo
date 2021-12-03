@@ -1,6 +1,6 @@
 from ariadne import ScalarType
 from dateutil import parser as dateparser
-
+from datetime import datetime
 date_scalar = ScalarType("Date")
 datetime_scalar=ScalarType("DateTime")
 
@@ -8,8 +8,9 @@ datetime_scalar=ScalarType("DateTime")
 def serialize_date(value):
     return value.isoformat()
 @date_scalar.value_parser
-def parse_datetime_value(value):
-    return dateparser.parse(value)
+def parse_date_value(value):
+    # parse value into datetime, then extract date only
+    return dateparser.parse(value).date()
 
 @datetime_scalar.serializer
 def serialize_date_time(value):
