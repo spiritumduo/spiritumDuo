@@ -4,6 +4,8 @@ from .user import UserObjectType
 from .decisionpoint import DecisionPointObjectType
 from .on_pathway import OnPathwayObjectType
 from .decision_type import DecisionTypeEnumType
+from .add_patient_payload import AddPatientPayloadObjectType
+from .add_pathway_payload import AddPathwayPayloadObjectType
 
 object_types_list=[
     PatientObjectType,
@@ -11,5 +13,7 @@ object_types_list=[
     UserObjectType,
     DecisionPointObjectType,
     OnPathwayObjectType,
-    DecisionTypeEnumType
+    DecisionTypeEnumType,
+    AddPatientPayloadObjectType,
+    AddPathwayPayloadObjectType
 ]

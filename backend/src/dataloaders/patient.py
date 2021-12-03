@@ -38,9 +38,10 @@ class PatientByIdLoader(DataLoader):
             context[cls.loader_name] = cls(db=context['db'])
         patient=await context[cls.loader_name].load(id)
 
-        if not PatientByHospitalNumberLoader.loader_name in context:
-            context[PatientByHospitalNumberLoader.loader_name]=PatientByHospitalNumberLoader(db=context['db'])
-        context[PatientByHospitalNumberLoader.loader_name].prime(patient.hospital_number, patient)
+        if patient:
+            if not PatientByHospitalNumberLoader.loader_name in context:
+                context[PatientByHospitalNumberLoader.loader_name]=PatientByHospitalNumberLoader(db=context['db'])
+            context[PatientByHospitalNumberLoader.loader_name].prime(patient.hospital_number, patient)
 
         return patient
 
@@ -78,16 +79,17 @@ class PatientByHospitalNumberLoader(DataLoader):
         return sortedPatients
 
     @classmethod
-    async def load_from_id(cls, context=None, ids=None):
-        if not ids:
+    async def load_from_id(cls, context=None, id=None):
+        if not id:
             return None
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
-        patient=await context[cls.loader_name].load(ids)
+        patient=await context[cls.loader_name].load(id)
 
-        if not PatientByIdLoader.loader_name in context:
-            context[PatientByIdLoader.loader_name]=PatientByIdLoader(db=context['db'])
-        context[PatientByIdLoader.loader_name].prime(patient.id, patient)
+        if patient:
+            if not PatientByIdLoader.loader_name in context:
+                context[PatientByIdLoader.loader_name]=PatientByIdLoader(db=context['db'])
+            context[PatientByIdLoader.loader_name].prime(patient.id, patient)
 
         return patient
 

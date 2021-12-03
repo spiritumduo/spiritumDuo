@@ -1,6 +1,6 @@
 from api.common import db_sync_to_async
 from api.models import PatientPathwayInstance
-from api.dataloaders import PatientLoader, PathwayLoader
+from api.dataloaders import PatientLoader, PathwayByIdLoader
 
 # @db_sync_to_async
 async def CreatePatientPathwayInstance(
@@ -12,7 +12,7 @@ async def CreatePatientPathwayInstance(
 ):
     try:
         patientObj=await PatientLoader.load_from_id(context=context, ids=patient)
-        pathwayObj=await PathwayLoader.load_from_id(context=context, ids=pathway)
+        pathwayObj=await PathwayByIdLoader.load_from_id(context=context, ids=pathway)
         instance=PatientPathwayInstance(
             patient=patientObj,
             pathway=pathwayObj,

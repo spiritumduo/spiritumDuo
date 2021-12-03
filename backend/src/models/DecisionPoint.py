@@ -16,7 +16,7 @@ class DecisionPoint(db.Model):
     )
     added_at = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
     updated_at = db.Column(
-        db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
+        db.DateTime(), server_default=func.now(), onupdate=func.now(), nullable=False
     )
     clinic_history = db.Column(db.String(), nullable=False)
     comorbidities = db.Column(db.String(), nullable=False)

@@ -1,5 +1,5 @@
 from ariadne.objects import ObjectType
-from dataloaders import UserByIdLoader, PatientByIdLoader, PathwayLoader
+from dataloaders import UserByIdLoader, PatientByIdLoader, PathwayByIdLoader
 
 DecisionPointObjectType=ObjectType("DecisionPoint")
 
@@ -13,4 +13,4 @@ async def resolve_on_pathway_patient(obj=None, info=None, *_):
 
 @DecisionPointObjectType.field("pathway")
 async def resolve_on_pathway_pathway(obj=None, info=None, *_):
-    return await PathwayLoader.load_from_id(context=info.context, id=obj.pathway)
+    return await PathwayByIdLoader.load_from_id(context=info.context, id=obj.pathway)

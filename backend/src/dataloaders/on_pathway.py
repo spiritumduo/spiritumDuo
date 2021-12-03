@@ -2,7 +2,7 @@ from aiodataloader import DataLoader
 from models import OnPathway
 from typing import List
 
-class OnPathwayLoader(DataLoader):
+class OnPathwayByIdLoader(DataLoader):
     loader_name = "_on_pathway_loader"
     _db=None
 
@@ -51,8 +51,8 @@ class OnPathwaysByPatient:
         _gino=context['db']
         async with _gino.acquire(reuse=False) as conn:
             onPathways=await conn.all(OnPathway.query.where(OnPathway.patient==id))
-        if OnPathwayLoader.loader_name not in context:
-            context[OnPathwayLoader.loader_name]=OnPathwayLoader(db=context['db'])
+        if OnPathwayByIdLoader.loader_name not in context:
+            context[OnPathwayByIdLoader.loader_name]=OnPathwayByIdLoader(db=context['db'])
         for oP in onPathways:
-            context[OnPathwayLoader.loader_name].prime(oP.id, oP)
+            context[OnPathwayByIdLoader.loader_name].prime(oP.id, oP)
         return onPathways
