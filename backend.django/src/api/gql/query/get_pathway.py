@@ -1,6 +1,6 @@
 from .query_type import query
-from api.dataloaders import PathwayLoader
+from api.dataloaders import PathwayByIdLoader
 
 @query.field("getPathways")
 async def resolve_get_pathways(obj=None, info=None):
-    return await PathwayLoader.load_all()
+    return await PathwayByIdLoader.load_all()

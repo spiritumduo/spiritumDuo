@@ -1,9 +1,9 @@
 from .query_type import query
-from dataloaders import PathwayLoader
+from dataloaders import PathwayByIdLoader
 
 @query.field("getPathway")
 async def resolve_get_pathway(obj=None, info=None, id=None):
     if id:
-        return await PathwayLoader.load_from_id(info.context, id)
+        return await PathwayByIdLoader.load_from_id(info.context, id)
     else:
         return None

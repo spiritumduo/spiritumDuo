@@ -2,7 +2,7 @@ from models import Patient, OnPathway
 from datetime import date
 from gettext import gettext as _
 import re
-from dataloaders import PatientByHospitalNumberLoader, PathwayLoader
+from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader
 from config import config as SdConfig
 from typing import Optional
 class ReferencedItemDoesNotExistError(Exception):
@@ -50,7 +50,7 @@ async def Create(
 
     if not pathway:
         raise ReferencedItemDoesNotExistError("Pathway ID not provided. Could not add new patient.")
-    _pathway=await PathwayLoader.load_from_id(context=context, id=pathway)
+    _pathway=await PathwayByIdLoader.load_from_id(context=context, id=pathway)
     if not _pathway:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
     

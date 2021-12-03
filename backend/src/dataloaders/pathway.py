@@ -2,8 +2,8 @@ from aiodataloader import DataLoader
 from models import Pathway
 from typing import List
 
-class PathwayLoader(DataLoader):
-    loader_name = "_pathway_loader"
+class PathwayByIdLoader(DataLoader):
+    loader_name = "_pathway_by_id_loader"
     _db=None
 
     def __init__(self, db):
