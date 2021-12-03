@@ -2,8 +2,9 @@ from .mutation_type import mutation
 from datacreators import CreatePatient
 @mutation.field("createPatient")
 async def resolve_create_patient(_=None, info=None, input=None):
+    ret=None
     if 'communicationMethod' not in input and 'awaitingDecisionType' not in input:
-        return await CreatePatient(
+        ret= await CreatePatient(
             first_name=input["firstName"],
             last_name=input["lastName"],
             hospital_number=input["hospitalNumber"],
@@ -13,7 +14,7 @@ async def resolve_create_patient(_=None, info=None, input=None):
             context=info.context
         )
     elif 'communicationMethod' in input:
-        return await CreatePatient(
+        ret= await CreatePatient(
             first_name=input["firstName"],
             last_name=input["lastName"],
             hospital_number=input["hospitalNumber"],
@@ -24,7 +25,7 @@ async def resolve_create_patient(_=None, info=None, input=None):
             communication_method=input['communicationMethod'],
         )
     elif 'awaitingDecisionType' in input:
-        return await CreatePatient(
+        ret= await CreatePatient(
             first_name=input["firstName"],
             last_name=input["lastName"],
             hospital_number=input["hospitalNumber"],
@@ -35,7 +36,7 @@ async def resolve_create_patient(_=None, info=None, input=None):
             awaiting_decision_type=input["awaitingDecisionType"],
         )
     else:
-        return await CreatePatient(
+        ret= await CreatePatient(
             first_name=input["firstName"],
             last_name=input["lastName"],
             hospital_number=input["hospitalNumber"],
@@ -46,3 +47,4 @@ async def resolve_create_patient(_=None, info=None, input=None):
             awaiting_decision_type=input["awaitingDecisionType"],
             context=info.context
         )
+    return ret

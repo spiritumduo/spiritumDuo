@@ -11,7 +11,7 @@ class ReferencedItemDoesNotExistError(Exception):
         exist and cannot be found when it should
     """
 
-async def Create(
+async def CreatePatient(
     context=None,
     first_name:str=None,
     last_name:str=None,
@@ -24,12 +24,11 @@ async def Create(
     awaiting_decision_type:Optional[str]="TRIAGE",
     communication_method:Optional[str]="LETTER",
 ):
-
-
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
+    _db=context['db']
     userErrors=[]
-    print("hosp no: ",hospital_number)
+    
     # check if hospital number provided matches regex in configuration
     if re.search(SdConfig["HOSPITAL_NUMBER_REGEX"], hospital_number) is None: 
         userErrors.append({
@@ -56,7 +55,6 @@ async def Create(
     
     _patient=await PatientByHospitalNumberLoader.load_from_id(context=context, id=hospital_number)
     if _patient:
-        print("Found patient")
         if _patient.first_name!=first_name:
             userErrors.append({
                 "message":_("Entry does not match patient from hospital number. Please check the information provided is correct"),
@@ -79,10 +77,24 @@ async def Create(
             })
         if len(userErrors)>0:
             return {
+                "patient": None,
                 "userErrors": userErrors 
             }
+
+        # if the patient does already exist
+        existingOnPathwayQuery=OnPathway.query.where(OnPathway.patient==_patient.id).where(OnPathway.pathway==_pathway.id).where(OnPathway.is_discharged==False)
+        
+        async with _db.acquire(reuse=False) as conn:
+            existingOnPathway=await conn.one_or_none(existingOnPathwayQuery)
+        
+        if existingOnPathway: # if there is an active pathway instance
+            return {"userErrors":[
+                {
+                    "message":_("Patient is already enrolled on specified pathway (not discharged)"),
+                    "field":"pathway"
+                }
+            ]}
     else:
-        print("Creating new patient")
         _patient=await Patient.create(
             first_name=first_name,
             last_name=last_name,

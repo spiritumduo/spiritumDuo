@@ -35,7 +35,9 @@ type Query {
 
 type Mutation {
     login(username: String!, password: String!): User
-    createPatient(input:PatientInput!): AddPatientPayload
+    createPatient(input:PatientInput!): AddPatientPayload!
+    createPathway(input:PathwayInput!): AddPathwayPayload!
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint
 }
 
 enum PatientCommunicationMethods {
@@ -56,11 +58,11 @@ enum DecisionType{
 #### RETURN TYPES
 type AddPatientPayload{
     patient:Patient
-    userErrors:[UserError]
+    userErrors:[UserError!]
 }
 type AddPathwayPayload{
     pathway:Pathway
-    userErrors:[UserError]
+    userErrors:[UserError!]
 }
 
 #### DATA TYPES
@@ -170,12 +172,12 @@ input AddUserToGroupInput{
 
 input DecisionPointInput{
     patientId: Int!
-    clinicianID: Int!
+    clinicianId: Int!
     pathwayId: Int!
     decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String!
-    requestsReferrals: [String]!
+    requestsReferrals: String!
 }
 
 input PathwayInput{
