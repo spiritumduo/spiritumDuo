@@ -41,6 +41,7 @@ const PatientList = (
   { pageCount, updateData, data, isLoading }: PatientListProps,
 ): JSX.Element => (
   <div className="patient-list-div">
+    <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
     <ul className="patient-list px-0">
       {
         data.map((p) => (
