@@ -10,7 +10,7 @@ type Query {
     getPatient(id:ID, hospitalNumber:String): Patient
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
-    getUser(id:ID!): User
+    getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
 
     """
