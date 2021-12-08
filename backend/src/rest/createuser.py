@@ -1,6 +1,5 @@
 from .api import _FastAPI
 from pydantic import BaseModel
-from asyncpg.exceptions import UniqueViolationError
 from datacreators import CreateUser
 class CreateUserInput(BaseModel):
     username:str
