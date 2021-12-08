@@ -33,8 +33,8 @@ const LoginPage = (): JSX.Element => {
   }
 
   return (
-    <div className="vh-100">
-      <section className="vh-100">
+    <div>
+      <section>
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="card shadow-2-strong col-12 col-sm-12 col-md-10 col-lg-7 col-xl-5 mb-5">

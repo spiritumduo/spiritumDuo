@@ -22,10 +22,20 @@ export enum PatientCommunicationMethods {
   MOBILE = "MOBILE",
 }
 
+export interface DecisionPointInput {
+  patientId: number;
+  clinicianId: number;
+  pathwayId: number;
+  decisionType: DecisionType;
+  clinicHistory: string;
+  comorbidities: string;
+  requestsReferrals: string;
+}
+
 export interface PatientInput {
   firstName: string;
   lastName: string;
-  communicationMethod: PatientCommunicationMethods;
+  communicationMethod?: PatientCommunicationMethods | null;
   hospitalNumber: string;
   nationalNumber: string;
   dateOfBirth: any;

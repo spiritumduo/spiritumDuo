@@ -39,5 +39,4 @@ export interface previousDecisionPoints {
 export interface previousDecisionPointsVariables {
   hospitalNumber: string;
   pathwayId: string;
-  limit?: number | null;
 }

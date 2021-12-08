@@ -83,7 +83,7 @@ const loggedInuserLocalStorage = localStorage.getItem('loggedInUser');
 if (loggedInuserLocalStorage) {
   try {
     const loggedInUser: User = JSON.parse(loggedInuserLocalStorage) as User;
-    sanitisedUser.id = loggedInUser.id;
+    sanitisedUser.id = parseInt(loggedInUser.id.toString(), 10);
     sanitisedUser.firstName = loggedInUser.firstName;
     sanitisedUser.lastName = loggedInUser.lastName;
     sanitisedUser.department = loggedInUser.department;
