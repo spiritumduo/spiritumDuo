@@ -22,12 +22,12 @@ export interface createPatient_createPatient_patient {
 
 export interface createPatient_createPatient {
   __typename: "AddPatientPayload";
-  userErrors: (createPatient_createPatient_userErrors | null)[] | null;
+  userErrors: createPatient_createPatient_userErrors[] | null;
   patient: createPatient_createPatient_patient | null;
 }
 
 export interface createPatient {
-  createPatient: createPatient_createPatient | null;
+  createPatient: createPatient_createPatient;
 }
 
 export interface createPatientVariables {
