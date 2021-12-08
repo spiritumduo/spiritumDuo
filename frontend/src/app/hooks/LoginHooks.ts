@@ -67,10 +67,10 @@ type LoginData = {
 export function loginSuccess({ user }: LoginData) {
   loggedInUserVar(user);
   pathwayOptionsVar([
-    { id: 0, name: 'Lung Cancer' },
-    { id: 1, name: 'Bronceastasis' },
+    { id: 1, name: 'Lung Cancer' },
+    { id: 2, name: 'Bronceastasis' },
   ]);
-  currentPathwayId(0);
+  currentPathwayId(1);
 }
 
 export function useLoginForm() {
