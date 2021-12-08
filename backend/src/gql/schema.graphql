@@ -10,7 +10,7 @@ type Query {
     getPatient(id:ID, hospitalNumber:String): Patient
     getPathway(id:ID!): Pathway
     getPathways: [Pathway]
-    getUser(id:ID!): User
+    getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
 
     """
@@ -132,7 +132,6 @@ type User {
     username: String!
     lastLogin: DateTime
     department: String!
-    # groups: [Group]
 }
 
 type DecisionPoint {
@@ -198,15 +197,4 @@ input PatientInput{
 
     pathway:Int!
     awaitingDecisionType: DecisionType
-}
-
-input UserInput{
-    firstName:String!
-    lastName:String!
-    username:String!
-    password:String!
-    isStaff:Boolean!
-    isSuperuser:Boolean!
-
-    department:String!
 }
