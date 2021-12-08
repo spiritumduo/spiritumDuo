@@ -15,6 +15,7 @@
     "react/jsx-props-no-spreading": ["error", {
       "html": "ignore"
     }],
+    "camelcase": ["error", {"ignoreImports": true}],
     "no-shadow": "off",
     "space-in-parens": "off",
     "semi": "off",
