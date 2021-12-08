@@ -5,6 +5,9 @@ import User from 'types/Users';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { ValuesOfCorrectTypeRule } from 'graphql';
+import { getPatientOnPathwayConnectionVariables } from 'app/queries/__generated__/getPatientOnPathwayConnection';
+import PathwayOption from 'types/PathwayOption';
 
 export enum LoginStatus {
   SUCCESS,
@@ -36,7 +39,8 @@ export function useLoginStatus(): LoginStatusHook {
 
 type LoginSubmitHook = [
   boolean,
-  ApolloError | undefined, any,
+  any,
+  LoginData | undefined,
   (variables: LoginFormInputs) => void
 ];
 
@@ -52,25 +56,41 @@ mutation login ($username: String!, $password: String!) {
   }`;
 
 export function useLoginSubmit(): LoginSubmitHook {
-  function doLogin(variables: LoginFormInputs) {
-    loginMutation({ variables: variables });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(undefined);
+  const [data, setData] = useState<LoginData | undefined>(undefined);
+
+  async function doLogin(variables: LoginFormInputs) {
+    // loginMutation({ variables: variables });
+    setLoading(true);
+    try {
+      const response = await window.fetch('http://localhost:8080/rest/login', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+        },
+        body: JSON.stringify(variables),
+      });
+      const decoded: LoginData = await response.json();
+      setData(decoded);
+    } catch (err) {
+      setError(err);
+    }
   }
-  const [loginMutation, { loading, error, data }] = useMutation(LOGIN_QUERY);
+  // const [loginMutation, { loading, error, data }] = useMutation(LOGIN_QUERY);
 
   return [loading, error, data, doLogin];
 }
 
 type LoginData = {
   user: User;
+  pathways: PathwayOption[];
 };
 
-export function loginSuccess({ user }: LoginData) {
+export function loginSuccess({ user, pathways }: LoginData) {
   loggedInUserVar(user);
-  pathwayOptionsVar([
-    { id: 1, name: 'Lung Cancer' },
-    { id: 2, name: 'Bronceastasis' },
-  ]);
-  currentPathwayId(1);
+  pathwayOptionsVar(pathways);
+  currentPathwayId(pathways[0].id);
 }
 
 export function useLoginForm() {

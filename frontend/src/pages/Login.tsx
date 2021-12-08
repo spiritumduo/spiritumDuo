@@ -24,11 +24,12 @@ const LoginPage = (): JSX.Element => {
     formState: { errors },
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
-  if (data?.login) {
-    loginSuccess({ user: data.login });
+
+  if (data) {
+    loginSuccess(data);
     return (<Redirect to="/" />);
   // eslint-disable-next-line no-else-return
-  } else if (data?.login === null) {
+  } else if (error) {
     invalidLogin = true;
   }
 
