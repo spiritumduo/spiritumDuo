@@ -1,6 +1,8 @@
 from .query_type import query
 from dataloaders import UserByIdLoader, UserByUsernameLoader
+from authentication.authentication import needsAuthorization
 
+@needsAuthorization(["authenticated"])
 @query.field("getUser")
 async def resolve_get_user(obj=None, info=None, id=None, username=None):
     if id:

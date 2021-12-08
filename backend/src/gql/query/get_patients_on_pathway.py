@@ -1,8 +1,9 @@
 from .query_type import query
 from models.OnPathway import OnPathway
 from models.Patient import Patient
-# from dataloaders.patient import PatientByIdLoaderLoader
+from authentication.authentication import needsAuthorization
 
+@needsAuthorization(["authenticated"])
 @query.field("getPatientsOnPathway")
 async def resolve_get_patients_on_pathway(
         obj=None, info=None, pathwayId=None, awaitingDecisionType=None, isDischarged=False

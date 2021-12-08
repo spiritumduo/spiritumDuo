@@ -2,8 +2,9 @@ from dataloaders import PatientByIdLoader
 from .query_type import query
 from models.OnPathway import OnPathway
 from .pagination import *
+from authentication.authentication import needsAuthorization
 
-
+@needsAuthorization(["authenticated"])
 @query.field("getPatientOnPathwayConnection")
 async def get_patient_connection(
         _, info, pathwayId=None, awaitingDecisionType=None, isDischarged=False,

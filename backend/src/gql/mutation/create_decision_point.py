@@ -1,7 +1,9 @@
 from .mutation_type import mutation
 from datacreators import CreateDecisionPoint
-@mutation.field("createDecisionPoint")
+from authentication.authentication import needsAuthorization
 
+@mutation.field("createDecisionPoint")
+@needsAuthorization(["authenticated"])
 async def resolve_create_decision(_=None, info=None, input=None):
     return await CreateDecisionPoint(
         context=info.context,

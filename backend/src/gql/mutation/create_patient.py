@@ -1,6 +1,9 @@
 from .mutation_type import mutation
 from datacreators import CreatePatient
+from authentication.authentication import needsAuthorization
+
 @mutation.field("createPatient")
+@needsAuthorization(["authenticated"])
 async def resolve_create_patient(_=None, info=None, input=None):
     ret=None
     if 'communicationMethod' not in input and 'awaitingDecisionType' not in input:
