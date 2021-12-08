@@ -1,5 +1,6 @@
 from models import User
 from asyncpg.exceptions import UniqueViolationError
+from bcrypt import hashpw, gensalt
 
 async def CreateUser(
     username:str=None,
@@ -8,15 +9,13 @@ async def CreateUser(
     last_name:str=None,
     department:str=None
 ):
-    """
-    - password hashing
-    - session handling
-    """
+    hashedPassword=hashpw(password.encode('utf-8'), gensalt())
+    hashedPassword=hashedPassword.decode('utf-8')
     newUser=None
     try:
         newUser=await User.create(
             username=username,
-            password=password,
+            password=hashedPassword,
             first_name=first_name,
             last_name=last_name,
             department=department
