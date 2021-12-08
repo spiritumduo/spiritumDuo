@@ -21,7 +21,7 @@ starlette_middleware = [
         allow_credentials=True,
         allow_methods=['*']
     ),
-    Middleware(SessionMiddleware, secret_key=config['SESSION_SECRET_KEY'], session_cookie="SDSESSION"),
+    Middleware(SessionMiddleware, secret_key=config['SESSION_SECRET_KEY'], session_cookie="SDSESSION", max_age=60*60*6),
     Middleware(AuthenticationMiddleware, backend=SDAuthentication()),
 ]
 starlette_routes = [
