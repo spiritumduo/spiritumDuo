@@ -1,15 +1,18 @@
 from starlette.authentication import (
-    AuthenticationBackend, AuthenticationError, BaseUser,
+    AuthenticationBackend, BaseUser,
     AuthCredentials, has_required_scope
 )
 import inspect
-import base64
+
+from starlette.responses import RedirectResponse
 from models.db import db
-from models import User
+from models import User, Session
 from starlette.requests import HTTPConnection
 from typing import Callable, List
 from bcrypt import checkpw
-
+from random import getrandbits
+from datetime import datetime, timedelta
+from config import config
 class CredentialsError(Exception):
     """
     Raised when either a username or password does
@@ -19,6 +22,12 @@ class PermissionsError(Exception):
     """
     Raised when a user is lacking a required 
     permission
+    """
+class SessionAlreadyExists(Exception):
+    """
+    Raised when a user attempts to login
+    despite already having an active
+    session
     """
 
 class SDUser(BaseUser):
@@ -50,10 +59,10 @@ class SDAuthentication(AuthenticationBackend):
         if "Authorization" not in request.headers:
             if request['session']:
                 async with db.acquire(reuse=False) as conn:
-                    query=User.query.where(User.username==request['session'])
-                    user=await conn.one_or_none(query)
-
+                    session=db.select([User, Session]).where(Session.session_key==request['session']).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
+                    user=await conn.one_or_none(session)
                 if user:
+                    print("Found a user with this session!")
                     sdUser=SDUser(
                         id=user.id,
                         username=user.username,
@@ -65,30 +74,30 @@ class SDAuthentication(AuthenticationBackend):
                         scopes=["authenticated"]
                     ), sdUser
             else:
-                return
+                return None
 
-        auth=request.headers["Authorization"]
-        try:
-            scheme, credentials=auth.split()
-            decoded=base64.b64decode(credentials).decode("ascii")
-        except Exception:
-            raise AuthenticationError
-            
-        if scheme.lower()!="basic":
-            return
+    async def login(request:HTTPConnection):
 
-        username, _, password=decoded.partition(":")
-        user=None
+        if request['session']:
+            async with db.acquire(reuse=False) as conn:
+                session=db.select([User, Session]).where(Session.session_key==request['session']).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
+                user=await conn.one_or_none(session)
+            if user:
+                raise SessionAlreadyExists
+
+        body=await request.json()
+        username=body['username']
+        password=body['password']
+
         async with db.acquire(reuse=False) as conn:
             user=await conn.one_or_none(
                 User.query.where(User.username==username)
             )
         if user is None:
-            raise CredentialsError("An account with that username does not exist")
+            raise CredentialsError
 
-        # if user.password!=password:
         if not checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            raise CredentialsError("The password specified is incorrect")
+            raise CredentialsError
 
         sdUser=SDUser(
             id=user.id,
@@ -98,20 +107,35 @@ class SDAuthentication(AuthenticationBackend):
             department=user.department
         )
 
+        sessionKey=None
+        async with db.acquire(reuse=False) as conn:
+            while sessionKey==None:
+                tempKey=getrandbits(64)
+                result=await conn.one_or_none(
+                    Session.query.where(sessionKey==tempKey)
+                )
+                if not result:
+                    sessionKey=tempKey
+                
+        sessionExpiry=datetime.now()+timedelta(seconds=int(config['SESSION_EXPIRY_LENGTH']))
+        
+        sdSession=await Session.create(
+            session_key=str(sessionKey),
+            expiry=sessionExpiry,
+            user_id=sdUser.id
+        )
+
         request.scope['user']=sdUser
-        request.scope['session']=sdUser.username
+        request.scope['session']=sdSession.session_key
         
         return AuthCredentials(
             scopes=["authenticated"]
         ), sdUser
 
-
-DEBUG_DISABLE_GRAPHQL_PERMISSION_CHECKING=True
-
+DEBUG_DISABLE_PERMISSION_CHECKING=False
 def needsAuthorization(
     scopes:List[str]=None
 )-> Callable:
-   
     def decorator(func:Callable)->Callable:
         signature=inspect.signature(func)
         info=False
@@ -124,12 +148,13 @@ def needsAuthorization(
 
         def wrapper(*args, **kwargs):
             request=args[1].context['request']
-            if DEBUG_DISABLE_GRAPHQL_PERMISSION_CHECKING:
+            if DEBUG_DISABLE_PERMISSION_CHECKING:
                 return func(*args, **kwargs)
 
             if has_required_scope(request, scopes):
                 return func(*args, **kwargs)
             else:
                 return PermissionsError("Missing one or many permissions:",scopes)
+                # return None
         return wrapper
     return decorator
