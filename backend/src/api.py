@@ -1,27 +1,40 @@
+from starlette import requests
 from starlette.applications import Starlette
 from starlette.routing import Route
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.authentication import AuthenticationMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from ariadne.asgi import GraphQL
 from gql.schema import schema
 from models import db
 from randomdata import generate_random
 from rest.api import _FastAPI
-middleware = [
+from authentication import SDAuthentication
+from config import config
+
+starlette_middleware = [
     Middleware(CORSMiddleware, allow_origins=[
         'https://studio.apollographql.com',
         'http://localhost:3000'
         ],
         allow_credentials=True,
         allow_methods=['*']
-    )
+    ),
+    Middleware(SessionMiddleware, secret_key=config['SESSION_SECRET_KEY'], session_cookie="SDSESSION"),
+    Middleware(AuthenticationMiddleware, backend=SDAuthentication()),
 ]
-
 starlette_routes = [
     Route("/random", endpoint=generate_random)
 ]
 
-app=Starlette(debug=True, middleware=middleware, routes=starlette_routes)
+def get_context_values(request:requests.HTTPConnection):
+    return{
+        "request":request,
+        "db":db
+    }
+
+app=Starlette(debug=True, middleware=starlette_middleware, routes=starlette_routes)
 db.init_app(app)
-app.mount("/graphql", GraphQL(schema, debug=True, context_value={'db':db}))
+app.mount("/graphql", GraphQL(schema, debug=True, context_value=get_context_values))
 app.mount("/rest", _FastAPI)
