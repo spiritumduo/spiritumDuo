@@ -2,6 +2,7 @@
 import React from 'react';
 import Header, { HeaderProps } from 'components/Header';
 import Footer, { FooterProps } from 'components/Footer';
+import './pagelayout.css';
 
 export interface PageLayoutProps {
     headerProps: HeaderProps,
