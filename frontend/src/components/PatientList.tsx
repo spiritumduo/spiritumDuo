@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import './patientlist.css';
+import React from 'react';
 import ReactPaginate from 'react-paginate';
-import Patient from 'types/Patient';
-import { PatientLink } from './Link';
+import './patientlist.css';
 
 /**
  * PatientListUpdateDataFn
