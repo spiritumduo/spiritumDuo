@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -35,13 +35,12 @@ const LoginPage = (): JSX.Element => {
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   const navigate = useNavigate();
-  if (data?.user && data?.pathways) {
-    loginSuccess(data);
-    navigate('/', { replace: true });
-  }
-
-  console.log(errors);
-  console.log(data?.errors);
+  useEffect(() => {
+    if (data?.user && data?.pathways) {
+      loginSuccess(data);
+      navigate('/', { replace: true });
+    }
+  });
 
   return (
     <div>
