@@ -4,7 +4,6 @@ import { act, waitFor, render, screen, fireEvent } from '@testing-library/react'
 import { composeStories } from '@storybook/testing-react';
 import '@testing-library/jest-dom';
 import { MockedProvider } from '@apollo/client/testing';
-import userEvent from '@testing-library/user-event'
 import * as stories from './NewPatient.stories';
 
 const { Standard } = composeStories(stories);
