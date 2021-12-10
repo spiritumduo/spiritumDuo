@@ -11,10 +11,10 @@ import { HeaderProps } from 'components/Header';
 import PageLayout from 'components/PageLayout';
 import PathwayOption from 'types/PathwayOption';
 import NewPatientPage from 'pages/NewPatient';
-import DecisionPointPage, { DecisionPointPageProps } from 'pages/DecisionPoint';
-import PreviousDecisionPoints, { PreviousDecisionPointsProps } from 'pages/PreviousDecisionPoints';
-import './App.css';
+import DecisionPointPage from 'pages/DecisionPoint';
+import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import { DecisionPointType } from 'types/DecisionPoint';
+import './App.css';
 
 const headerProps: HeaderProps = {
   pathwayOptions: pathwayOptionsVar() as PathwayOption[],
@@ -28,35 +28,40 @@ const footerProps: FooterProps = { name: `${loggedInUserVar()?.firstName} ${logg
 const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
   return (
-    <>
-      <RequireAuth>
-        <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-          <PreviousDecisionPoints hospitalNumber={ hospitalNumber as string } />
-        </PageLayout>
-      </RequireAuth>
-    </>
+    <RequireAuth>
+      <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+        <PreviousDecisionPoints hospitalNumber={ hospitalNumber as string } />
+      </PageLayout>
+    </RequireAuth>
   );
 };
 
 const PatientRoutes = () => (
   <Routes>
-    <Route path="add">
-      <RequireAuth>
-        <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-          <NewPatientPage />
-        </PageLayout>
-      </RequireAuth>
-    </Route>
-    <Route path=":hospitalNumber/decisions">
-      <PreviousDecisionPointsPageRoute />
-    </Route>
+    <Route
+      path="add"
+      element={ (
+        <RequireAuth>
+          <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+            <NewPatientPage />
+          </PageLayout>
+        </RequireAuth>
+      ) }
+    />
+    <Route
+      path=":hospitalNumber/decisions"
+      element={ (<PreviousDecisionPointsPageRoute />) }
+    />
   </Routes>
 );
 
 const DecisionPointPageRoute = () => {
   const { decisionType, hospitalNumber } = useParams();
   try {
-    const decisionTypeEnum = decisionType?.toUpperCase() as DecisionPointType;
+    const decisionTypeEnum = Object.values(DecisionPointType).find(
+      (x) => x === decisionType?.toUpperCase(),
+    );
+    if (decisionTypeEnum === undefined) throw new Error('Invalid Decision Type!');
     return (
       <>
         <RequireAuth>
@@ -70,15 +75,17 @@ const DecisionPointPageRoute = () => {
       </>
     );
   } catch (err) {
-    return <h1>Invalid decision type!</h1>;
+    return (
+      <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+        <h1>Error: Invalid decision type!</h1>
+      </PageLayout>
+    );
   }
 };
 
 const DecisionRoutes = () => (
   <Routes>
-    <Route path=":decisionType/:hospitalNumber">
-      <DecisionPointPageRoute />
-    </Route>
+    <Route path=":decisionType/:hospitalNumber" element={ <DecisionPointPageRoute /> } />
   </Routes>
 );
 
@@ -88,7 +95,7 @@ const App = (): JSX.Element => (
       <Route path="/login" element={ <LoginPage /> } />
       <Route path="/logout" element={ <Logout /> } />
       <Route path="/patient/*" element={ <PatientRoutes /> } />
-      <Route path="/decision" element={ <DecisionRoutes /> } />
+      <Route path="/decision/*" element={ <DecisionRoutes /> } />
       <Route
         path="/"
         element={ (
@@ -103,7 +110,7 @@ const App = (): JSX.Element => (
   </BrowserRouter>
 );
 
-const Logout = () => {
+const Logout = (): JSX.Element => {
   loggedInUserVar(undefined);
   pathwayOptionsVar(undefined);
   return (<Navigate to="/" />);
@@ -113,7 +120,8 @@ const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): 
   const user = loggedInUserVar();
   const pathwayOptions = pathwayOptionsVar();
   const loggedIn = user && pathwayOptions;
-  if (!loggedIn) return <Navigate to="/login" state={ { from: location } } />;
+  const navigate = useNavigate();
+  if (!loggedIn) navigate('/login', { state: { from: location } });
   return children;
 };
 
