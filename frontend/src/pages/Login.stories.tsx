@@ -2,35 +2,10 @@
 import React from 'react';
 import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
-import { MockedProvider } from '@apollo/client/testing';
-import { action } from '@storybook/addon-actions';
-import { LoginStatus, LoginFormInputs, useLoginSubmit, useLoginForm, LOGIN_QUERY } from 'app/hooks/LoginHooks';
+import fetchMock from 'fetch-mock';
+import User from 'types/Users';
+import PathwayOption from 'types/PathwayOption';
 import LoginPage, { LoginPageProps } from './Login';
-
-const apolloMocks = [
-  {
-    request: {
-      query: LOGIN_QUERY,
-      variables: {
-        username: 'Bob',
-        password: 'Bob',
-      },
-    },
-    result: {
-      data: {
-        login: {
-          user: {
-            id: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            username: 'bob',
-            department: 'respiratory',
-          },
-        },
-      },
-    },
-  },
-];
 
 export default {
   title: 'Pages/Login',
@@ -38,17 +13,58 @@ export default {
   decorators: [
     StoryRouter(),
     (LoginStory) => (
-      <MockedProvider mocks={ apolloMocks }>
-        <LoginStory />
-      </MockedProvider>
+      <LoginStory />
     ),
   ],
 } as Meta<typeof LoginPage>;
 
-const Template: Story<LoginPageProps> = () => <LoginPage />;
-
-export const Default = Template.bind({});
+const validLoginMock: { user: User, pathways: PathwayOption[], errors: string | null } = {
+  user: {
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    department: 'Respiratory',
+    roles: [],
+  },
+  pathways: [
+    {
+      id: 1,
+      name: 'Lung Cancer',
+    },
+    {
+      id: 2,
+      name: 'Broncheastasis',
+    },
+  ],
+  errors: null,
+};
+export const Default: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', validLoginMock);
+  return <LoginPage />;
+};
 Default.args = { };
 
-export const InvalidLogin = Template.bind({});
+export const Loading: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', validLoginMock);
+  return <LoginPage />;
+};
+
+export const Error: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', validLoginMock, { headers: { status: 403 } });
+  return <LoginPage />;
+};
+
+const invalidLoginMock: {
+  user?: User,
+  pathways?: PathwayOption[],
+  errors?: string;
+} = {
+  user: undefined,
+  pathways: undefined,
+  errors: 'Invalid username or password',
+};
+export const InvalidLogin: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', invalidLoginMock);
+  return <LoginPage />;
+};
 InvalidLogin.args = { };
