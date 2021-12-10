@@ -85,7 +85,6 @@ export default {
         </PageLayout>
       </MockedProvider>
     ),
-    StoryRouter(),
   ],
 } as Meta<typeof PreviousDecisionPoints>;
 

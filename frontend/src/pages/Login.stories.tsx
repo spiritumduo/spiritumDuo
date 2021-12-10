@@ -10,12 +10,6 @@ import LoginPage, { LoginPageProps } from './Login';
 export default {
   title: 'Pages/Login',
   component: LoginPage,
-  decorators: [
-    StoryRouter(),
-    (LoginStory) => (
-      <LoginStory />
-    ),
-  ],
 } as Meta<typeof LoginPage>;
 
 const validLoginMock: { user: User, pathways: PathwayOption[], errors: string | null } = {

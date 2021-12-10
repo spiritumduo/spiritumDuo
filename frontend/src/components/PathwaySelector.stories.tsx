@@ -9,7 +9,6 @@ import PathwaySelector from './PathwaySelector';
 export default {
   title: 'Pathway Selector',
   component: PathwaySelector,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof PathwaySelector>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

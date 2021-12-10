@@ -31,7 +31,6 @@ const patientsPerPage = 10;
 export default {
   title: 'Components/Patient List',
   component: PatientList,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof PatientList>;
 // eslint-disable-next-line max-len
 const Template: ComponentStory<typeof PatientList> = ({ pageCount, isLoading, ...args }: PatientListProps) => {

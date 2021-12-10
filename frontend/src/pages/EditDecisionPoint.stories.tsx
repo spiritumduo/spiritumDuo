@@ -9,7 +9,6 @@ import EditDecisionPointPage, { EditDecisionPointPageProps } from './EditDecisio
 export default {
   title: 'Pages/Decision point: edit',
   component: EditDecisionPointPage,
-  decorators: [StoryRouter()],
 } as Meta<typeof EditDecisionPointPage>;
 
 const Template: Story<EditDecisionPointPageProps> = (args) => <EditDecisionPointPage { ...args } />;

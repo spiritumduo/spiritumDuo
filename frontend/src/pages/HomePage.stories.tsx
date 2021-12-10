@@ -43,7 +43,6 @@ export default {
         <HomePageStory />
       </PageLayout>
     ),
-    StoryRouter(), // for some reason this has to come last
   ],
 } as Meta<typeof HomePage>;
 

@@ -64,7 +64,6 @@ export default {
         </PageLayout>
       </MockedProvider>
     ),
-    StoryRouter(),
   ],
 } as ComponentMeta<typeof DecisionPointPage>;
 

@@ -9,7 +9,6 @@ import PathwayOption from 'types/PathwayOption';
 export default {
   title: 'Components/Page Layout',
   component: PageLayout,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof PageLayout>;
 
 // eslint-disable-next-line max-len

@@ -9,7 +9,6 @@ import PatientPage, { PatientPageProps } from './Patient';
 export default {
   title: 'Pages/Patient',
   component: PatientPage,
-  decorators: [StoryRouter()],
 } as Meta<typeof PatientPage>;
 
 const Template: Story<PatientPageProps> = (args: PatientPageProps) => <PatientPage { ...args } />;

@@ -7,7 +7,6 @@ import PatientLink from './PatientLink';
 export default {
   title: 'Patient Link',
   component: PatientLink,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof PatientLink>;
 
 const Template: ComponentStory<typeof PatientLink> = (args) => <PatientLink { ...args } />;

@@ -9,7 +9,6 @@ export default {
   title: 'Pages/New Patient',
   component: NewPatientPage,
   decorators: [
-    StoryRouter(),
     (NewPatientStory) => (
       <MockedProvider>
         <NewPatientStory />
