@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Patient from 'types/Patient';
-import DecisionPoint, { DecisionPointType } from 'types/DecisionPoint';
+import { DecisionPointType } from 'types/DecisionPoint';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { enumKeys } from 'sdutils';
@@ -103,7 +103,8 @@ const DecisionPointPage = (
   useEffect(() => {
     if (isSubmitted) setTimeout(() => setSubmittedState(true), 2000);
   });
-  if (submittedState) return <Redirect to="/" />;
+  const navigate = useNavigate();
+  if (submittedState) navigate('/');
   if (loading) return <h1>Loading!</h1>;
 
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;

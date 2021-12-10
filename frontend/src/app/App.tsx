@@ -2,7 +2,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 import React from 'react';
-import { BrowserRouter, Redirect, Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate, Navigate, useParams } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
 import LoginPage from 'pages/Login';
 import HomePage from 'pages/HomePage';
@@ -14,6 +14,7 @@ import NewPatientPage from 'pages/NewPatient';
 import DecisionPointPage, { DecisionPointPageProps } from 'pages/DecisionPoint';
 import PreviousDecisionPoints, { PreviousDecisionPointsProps } from 'pages/PreviousDecisionPoints';
 import './App.css';
+import { DecisionPointType } from 'types/DecisionPoint';
 
 const headerProps: HeaderProps = {
   pathwayOptions: pathwayOptionsVar() as PathwayOption[],
@@ -25,113 +26,95 @@ const headerProps: HeaderProps = {
 const footerProps: FooterProps = { name: `${loggedInUserVar()?.firstName} ${loggedInUserVar()?.lastName}` };
 
 const PreviousDecisionPointsPageRoute = () => {
-  const { hospitalNumber } = useParams<PreviousDecisionPointsProps>();
+  const { hospitalNumber } = useParams();
   return (
     <>
-      <LoggedInRoute>
+      <RequireAuth>
         <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-          <PreviousDecisionPoints hospitalNumber={ hospitalNumber } />
+          <PreviousDecisionPoints hospitalNumber={ hospitalNumber as string } />
         </PageLayout>
-      </LoggedInRoute>
+      </RequireAuth>
     </>
   );
 };
 
-const PatientRoutes = () => {
-  const match = useRouteMatch();
-  return (
-    <>
-      <Route path={ `${match.url}/add` }>
-        <LoggedInRoute>
-          <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-            <NewPatientPage />
-          </PageLayout>
-        </LoggedInRoute>
-      </Route>
-      <Route path={ `${match.url}/:hospitalNumber/decisions` }>
-        <PreviousDecisionPointsPageRoute />
-      </Route>
-    </>
-  );
-};
+const PatientRoutes = () => (
+  <Routes>
+    <Route path="add">
+      <RequireAuth>
+        <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+          <NewPatientPage />
+        </PageLayout>
+      </RequireAuth>
+    </Route>
+    <Route path=":hospitalNumber/decisions">
+      <PreviousDecisionPointsPageRoute />
+    </Route>
+  </Routes>
+);
 
 const DecisionPointPageRoute = () => {
-  const { decisionType, hospitalNumber } = useParams<DecisionPointPageProps>();
-  return (
-    <>
-      <LoggedInRoute>
-        <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-          <DecisionPointPage decisionType={ decisionType } hospitalNumber={ hospitalNumber } />
-        </PageLayout>
-      </LoggedInRoute>
-    </>
-  );
+  const { decisionType, hospitalNumber } = useParams();
+  try {
+    const decisionTypeEnum = decisionType?.toUpperCase() as DecisionPointType;
+    return (
+      <>
+        <RequireAuth>
+          <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+            <DecisionPointPage
+              decisionType={ decisionTypeEnum }
+              hospitalNumber={ hospitalNumber as string }
+            />
+          </PageLayout>
+        </RequireAuth>
+      </>
+    );
+  } catch (err) {
+    return <h1>Invalid decision type!</h1>;
+  }
 };
 
-const DecisionRoutes = () => {
-  const match = useRouteMatch();
-  return (
-    <>
-      <Route path={ `${match.url}/:decisionType/:hospitalNumber` }>
-        <DecisionPointPageRoute />
-      </Route>
-    </>
-  );
-};
+const DecisionRoutes = () => (
+  <Routes>
+    <Route path=":decisionType/:hospitalNumber">
+      <DecisionPointPageRoute />
+    </Route>
+  </Routes>
+);
 
 const App = (): JSX.Element => (
   <BrowserRouter>
-    <Switch>
-      <Route path="/login">
-        <LoginPage />
-      </Route>
-      <Route path="/logout">
-        <Logout />
-      </Route>
-      <Route path="/patient">
-        <PatientRoutes />
-      </Route>
-      <Route path="/decision">
-        <DecisionRoutes />
-      </Route>
-      <Route path="/">
-        <LoggedInRoute>
-          <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
-            <HomePage patientsPerPage={ 20 } />
-          </PageLayout>
-        </LoggedInRoute>
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="/login" element={ <LoginPage /> } />
+      <Route path="/logout" element={ <Logout /> } />
+      <Route path="/patient/*" element={ <PatientRoutes /> } />
+      <Route path="/decision" element={ <DecisionRoutes /> } />
+      <Route
+        path="/"
+        element={ (
+          <RequireAuth>
+            <PageLayout headerProps={ headerProps } footerProps={ footerProps }>
+              <HomePage patientsPerPage={ 20 } />
+            </PageLayout>
+          </RequireAuth>
+        ) }
+      />
+    </Routes>
   </BrowserRouter>
 );
 
 const Logout = () => {
   loggedInUserVar(undefined);
   pathwayOptionsVar(undefined);
-  return (<Redirect to="/" />);
+  return (<Navigate to="/" />);
 };
 
-const LoggedInRoute = ({ children, ...props }: React.ComponentPropsWithRef<any>): JSX.Element => {
+const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): JSX.Element => {
   const user = loggedInUserVar();
   const pathwayOptions = pathwayOptionsVar();
   const loggedIn = user && pathwayOptions;
-  return (
-    <Route
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      { ...props }
-      render={ ({ location }) => (
-        loggedIn
-          ? children
-          : (
-            <Redirect to={ {
-              pathname: '/login',
-              state: { from: location },
-            } }
-            />
-          )
-      ) }
-    />
-  );
+  if (!loggedIn) return <Navigate to="/login" state={ { from: location } } />;
+  return children;
 };
 
 export default App;
