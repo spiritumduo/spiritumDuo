@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
 import { MockedProvider } from '@apollo/client/testing';
 import NewPatientPage from './NewPatient';

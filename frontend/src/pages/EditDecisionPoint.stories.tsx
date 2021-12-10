@@ -1,9 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
-import { DefaultLayout } from 'components/PageLayout.stories';
-import { PageLayoutProps } from 'components/PageLayout';
 import EditDecisionPointPage, { EditDecisionPointPageProps } from './EditDecisionPoint';
 
 export default {

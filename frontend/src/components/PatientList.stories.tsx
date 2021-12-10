@@ -2,7 +2,6 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { useArgs } from '@storybook/client-api';
-import StoryRouter from 'storybook-react-router';
 import { PatientLink } from 'components/Link';
 import PatientList, { PatientListProps } from './PatientList';
 import Patient from '../types/Patient';

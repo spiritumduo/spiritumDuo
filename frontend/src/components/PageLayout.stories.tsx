@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { actions } from '@storybook/addon-actions';
 import PathwayOption from 'types/PathwayOption';

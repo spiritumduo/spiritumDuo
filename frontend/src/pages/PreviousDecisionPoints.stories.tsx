@@ -1,8 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
-import { DecisionPointType } from 'types/DecisionPoint';
 import { MockedProvider } from '@apollo/client/testing';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { DefaultLayout } from 'components/PageLayout.stories';

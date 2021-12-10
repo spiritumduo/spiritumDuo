@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { DecisionPointType } from 'types/DecisionPoint';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';

@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
 import fetchMock from 'fetch-mock';
 import User from 'types/Users';

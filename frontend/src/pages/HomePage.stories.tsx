@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 import Patient from 'types/Patient';
 import { DefaultLayout } from 'components/PageLayout.stories';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
