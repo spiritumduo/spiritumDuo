@@ -38,7 +38,7 @@ export default {
 /**
  * Successful login
  */
-const successfulLoginMock: { user: User, pathways: PathwayOption[], errors: string | null } = {
+const successfulLoginMock: { user: User, pathways: PathwayOption[], error: string | null } = {
   user: {
     id: 1,
     firstName: 'John',
@@ -65,9 +65,9 @@ const successfulLoginMock: { user: User, pathways: PathwayOption[], errors: stri
 const invalidLoginMock: {
   user?: User,
   pathways?: PathwayOption[],
-  errors?: string;
+  error?: string;
 } = {
-  errors: 'Invalid username or password',
+  error: 'Incorrect username and/or password',
 };
 
 /**

@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 import React from 'react';
 import '@testing-library/jest-dom';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { composeStories } from '@storybook/testing-react';
 import * as stories from './Login.stories';
@@ -77,5 +77,5 @@ test('Invalid login should display to user', async () => {
     userEvent.type(passwordInput, 'Password');
     userEvent.click(loginButton);
   });
-  expect(screen.getByText(/invalid username or password/i)).toBeInTheDocument();
+  expect(screen.getByText(/Incorrect username and\/or password/i)).toBeInTheDocument();
 });
