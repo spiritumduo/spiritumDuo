@@ -18,19 +18,11 @@ async def CreateUser(
             password=hashedPassword,
             first_name=first_name,
             last_name=last_name,
-            department=department,
-            is_active=True
+            department=department
         )
     except UniqueViolationError as e:
         return {
             "error":"An account with this username already exists!"
         }
     else:
-        return{
-            "id": newUser.id,
-            "username": newUser.username,
-            "firstName": newUser.first_name,
-            "lastName": newUser.last_name,
-            "department": newUser.department,
-            "isActive": newUser.is_active
-        }
+        return newUser

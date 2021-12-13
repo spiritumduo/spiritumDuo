@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import { MockedProvider } from '@apollo/client/testing';
-import { MemoryRouter } from 'react-router';
 import * as stories from './NewPatient.stories';
 
 const { Standard } = composeStories(stories);

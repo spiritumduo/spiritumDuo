@@ -1,15 +1,64 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { useLoginSubmit, LoginFormInputs, LoginData } from 'app/hooks/LoginHooks';
 import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
+
+export type LoginData = {
+  user: User | null;
+  pathways: PathwayOption[] | null;
+  error: string;
+};
+
+export interface LoginFormInputs {
+  username: string;
+  password: string;
+}
+
+type LoginSubmitHook = [
+  boolean,
+  any,
+  LoginData | undefined,
+  (variables: LoginFormInputs) => void
+];
+
+export function useLoginSubmit(): LoginSubmitHook {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<unknown>(undefined);
+  const [data, setData] = useState<LoginData | undefined>(undefined);
+
+  async function doLogin(variables: LoginFormInputs) {
+    setLoading(true);
+    try {
+      const response = await window.fetch('http://localhost:8080/rest/login', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+        },
+        body: JSON.stringify(variables),
+      });
+      if (!response.ok) {
+        throw new Error(`Error: Response ${response.status} ${response.statusText}`);
+      }
+      const decoded: LoginData = await response.json();
+      if (decoded.error) {
+        setError({ message: decoded.error }); // e.g. invalid password
+      } else {
+        setData(decoded);
+      }
+    } catch (err) {
+      setError(err);
+    }
+    setLoading(false);
+  }
+  return [loading, error, data, doLogin];
+}
 
 function loginSuccess({ user, pathways }: LoginData) {
   // Here were going to cast to avoid the nulls because this will only be called
