@@ -27,9 +27,10 @@ async def CreateUser(
         }
     else:
         return{
-            "username":newUser.username,
-            "firstName":newUser.first_name,
-            "lastName":newUser.last_name,
-            "department":newUser.department,
-            "isActive":newUser.is_active
+            "id": newUser.id,
+            "username": newUser.username,
+            "firstName": newUser.first_name,
+            "lastName": newUser.last_name,
+            "department": newUser.department,
+            "isActive": newUser.is_active
         }
