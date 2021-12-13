@@ -100,7 +100,7 @@ const App = (): JSX.Element => {
     if (localStorageUser) updateUser(localStorageUser);
   }
   const [pathwayOptions, updatePathwayOptions] = useState<PathwayOption[]>([]);
-  if (pathwayOptions === []) {
+  if (pathwayOptions.length === 0) {
     const localStoragePathwayOptions = pathwayOptionsVar();
     if (localStoragePathwayOptions !== []) updatePathwayOptions(localStoragePathwayOptions);
   }
