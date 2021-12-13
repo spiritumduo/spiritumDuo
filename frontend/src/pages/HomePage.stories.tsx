@@ -6,7 +6,7 @@ import { DefaultLayout } from 'components/PageLayout.stories';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
-import { currentPathwayId } from 'app/cache';
+import { currentPathwayIdVar } from 'app/cache';
 import { MemoryRouter } from 'react-router';
 import HomePage, { HomePageProps } from './HomePage';
 
@@ -49,7 +49,7 @@ export default {
 } as Meta<typeof HomePage>;
 
 export const Default: Story<HomePageProps> = (args: HomePageProps) => {
-  currentPathwayId(1);
+  currentPathwayIdVar(1);
   return <HomePage { ...args } />;
 };
 Default.args = { patientsPerPage: patientsPerPage };

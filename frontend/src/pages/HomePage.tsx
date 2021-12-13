@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './homepage.css';
 import Patient from 'types/Patient';
 import PatientList from 'components/PatientList';
@@ -7,7 +7,8 @@ import usePatientsForPathwayQuery from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { getPatientOnPathwayConnection } from 'app/queries/__generated__/getPatientOnPathwayConnection';
 import { PatientLink } from 'components/Link';
-import { currentPathwayId } from 'app/cache';
+import { currentPathwayIdVar } from 'app/cache';
+import { PathwayContext } from 'app/context';
 
 export interface HomePageProps {
   patientsPerPage: number;
@@ -80,9 +81,9 @@ const WrappedPatientList = ({
 };
 
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
-  // const patientsPerPage = 20; // TODO: This should change dynamic as page is resized
-  // const pathwayId = currentPathwayId();
-  const pathwayId = 19;
+  const { currentPathwayId } = useContext(PathwayContext);
+  const pathwayId = currentPathwayId || 1;
+  console.log(pathwayId);
 
   return (
     <div className="container text-center">

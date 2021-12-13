@@ -7,7 +7,7 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { enumKeys } from 'sdutils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { currentPathwayId, loggedInUserVar } from 'app/cache';
+import { currentPathwayIdVar, loggedInUserVar } from 'app/cache';
 import { createDecisionPointVariables, createDecisionPoint } from 'pages/__generated__/createDecisionPoint';
 import { GetPatient, GetPatient_getPatient_decisionPoints } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
@@ -158,7 +158,7 @@ const DecisionPointPage = (
                 <fieldset disabled={ loading || mutateLoading || isSubmitted }>
                   <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
                   <input type="hidden" value={ currentUserId } { ...register('clinicianId', { required: true }) } />
-                  <input type="hidden" value={ currentPathwayId() } { ...register('pathwayId', { required: true }) } />
+                  <input type="hidden" value={ currentPathwayIdVar() } { ...register('pathwayId', { required: true }) } />
                   <div className="container">
 
                     <div className="text-center">

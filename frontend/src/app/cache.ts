@@ -31,6 +31,10 @@ function makePersistantVar<T>(value: T, storageKey: string): ReactiveVar<T> {
       localStorage.setItem(_constStorageKey, JSON.stringify(newValue));
       return reactiveVar(newValue);
     }
+    if (newValue === null) {
+      localStorage.removeItem(_constStorageKey);
+      return reactiveVar(undefined);
+    }
     return reactiveVar();
   };
 
@@ -40,9 +44,7 @@ function makePersistantVar<T>(value: T, storageKey: string): ReactiveVar<T> {
   return persistantReactiveVar;
 }
 
-// Get initial pathway options from LocalStorage if cached. Make sure we have
-// correct types (this will change when we get a proper pathway type)
-// If it isn't an array, or any element isn't a string, we don't use it
+// Get initial pathway options from LocalStorage if cached.
 const pathwayOptionsArray: PathwayOption[] = [];
 const pathwayOptionsLocalStorage = localStorage.getItem('pathwayOptions');
 if (pathwayOptionsLocalStorage) {
@@ -60,18 +62,18 @@ if (pathwayOptionsLocalStorage) {
 }
 
 // eslint-disable-next-line max-len
-export const pathwayOptionsVar: ReactiveVar<PathwayOption[] | undefined> = makePersistantVar<PathwayOption[] | undefined>(
+export const pathwayOptionsVar: ReactiveVar<PathwayOption[]> = makePersistantVar<PathwayOption[]>(
   pathwayOptionsArray,
   'pathwayOptions',
 );
 
 const _currentId = pathwayOptionsArray[0] ? pathwayOptionsArray[0].id : 0;
 // Save the current pathway ID
-export const currentPathwayId: ReactiveVar<number> = makePersistantVar<number>(_currentId, 'currentPathwayId');
+export const currentPathwayIdVar: ReactiveVar<number> = makePersistantVar<number>(_currentId, 'currentPathwayId');
 
 // Here we reconstruct the user from local storage. If any fields are missing, we
 // don't use it
-let sanitisedUser: User | undefined = {
+let sanitisedUser: User | null = {
   id: 0,
   firstName: '',
   lastName: '',
@@ -88,12 +90,13 @@ if (loggedInuserLocalStorage) {
     sanitisedUser.lastName = loggedInUser.lastName;
     sanitisedUser.department = loggedInUser.department;
     sanitisedUser.roles = loggedInUser.roles;
+    sanitisedUser = sanitisedUser.id === 0 ? null : sanitisedUser;
   } catch (err) {
     console.warn(err);
-    sanitisedUser = undefined;
+    sanitisedUser = null;
   }
 }
-export const loggedInUserVar: ReactiveVar<User | undefined> = makePersistantVar<User | undefined>(
+export const loggedInUserVar: ReactiveVar<User | null> = makePersistantVar<User | null>(
   sanitisedUser,
   'loggedInUser',
 );

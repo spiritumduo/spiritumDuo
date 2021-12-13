@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import { pathwayOptionsVar, loggedInUserVar, currentPathwayId } from 'app/cache';
+import { pathwayOptionsVar, loggedInUserVar, currentPathwayIdVar } from 'app/cache';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
+import { AuthContext } from 'app/context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
@@ -66,7 +67,7 @@ function loginSuccess({ user, pathways }: LoginData) {
   loggedInUserVar(user as User);
   const paths = pathways as PathwayOption[];
   pathwayOptionsVar(paths);
-  currentPathwayId(paths[0].id);
+  currentPathwayIdVar(paths[0].id);
 }
 
 const LoginPage = (): JSX.Element => {
@@ -84,8 +85,10 @@ const LoginPage = (): JSX.Element => {
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   useEffect(() => {
-    if (!error && data?.user && data?.pathways) {
+    if (user) navigate('/');
+    if (data?.user && data?.pathways) {
       loginSuccess(data);
       navigate('/', { replace: true });
     }

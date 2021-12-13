@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import Patient, { PatientCommunicationMethods } from 'types/Patient';
 import { ADD_PATIENT_MUTATION } from 'app/mutations/AddPatient';
 import { useMutation } from '@apollo/client';
-import { currentPathwayId } from 'app/cache';
+import { currentPathwayIdVar } from 'app/cache';
 import { enumKeys } from 'sdutils';
 
 const NewPatientPage = () => {
@@ -29,7 +29,7 @@ const NewPatientPage = () => {
   const useSubmit = (mutation: typeof addPatient, values: Patient) => {
     mutation({
       variables: {
-        pathwayId: currentPathwayId(),
+        pathwayId: currentPathwayIdVar(),
         patient: values,
       },
     });
