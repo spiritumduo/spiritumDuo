@@ -18,8 +18,7 @@ async def CreateUser(
             password=hashedPassword,
             first_name=first_name,
             last_name=last_name,
-            department=department,
-            is_active=True
+            department=department
         )
     except UniqueViolationError as e:
         return {
