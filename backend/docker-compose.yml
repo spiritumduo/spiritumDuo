@@ -14,7 +14,7 @@ services:
       - ./:/app
     ports:
       - "8080:8080"
-    command: python manage.py runserver 0.0.0.0:8080
+    command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
     
@@ -25,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=starlette
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - TZ=Europe/London

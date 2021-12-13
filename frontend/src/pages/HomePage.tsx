@@ -7,6 +7,7 @@ import usePatientsForPathwayQuery from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { getPatientOnPathwayConnection } from 'app/queries/__generated__/getPatientOnPathwayConnection';
 import { PatientLink } from 'components/Link';
+import { currentPathwayId } from 'app/cache';
 
 export interface HomePageProps {
   patientsPerPage: number;
@@ -80,7 +81,8 @@ const WrappedPatientList = ({
 
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   // const patientsPerPage = 20; // TODO: This should change dynamic as page is resized
-  const pathwayId = 1;
+  // const pathwayId = currentPathwayId();
+  const pathwayId = 19;
 
   return (
     <div className="container text-center">

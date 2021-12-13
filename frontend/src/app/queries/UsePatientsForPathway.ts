@@ -4,7 +4,7 @@ import { getPatientOnPathwayConnection } from 'app/queries/__generated__/getPati
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
-    $pathwayId:ID!, $awaitingDecisionType:DecisionPointType!,
+    $pathwayId:ID!, $awaitingDecisionType:DecisionType!,
     $first:Int, $after: String
   ){
     getPatientOnPathwayConnection(

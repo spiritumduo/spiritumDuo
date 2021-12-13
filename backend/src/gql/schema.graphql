@@ -1,0 +1,200 @@
+scalar Date
+scalar DateTime
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Query {
+    getPatient(id:ID, hospitalNumber:String): Patient
+    getPathway(id:ID!): Pathway
+    getPathways: [Pathway]
+    getUser(id:ID, username:String): User
+    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
+
+    """
+    getPatentOnPathwayConnection:
+    This query takes either before or after arguments, but never both.
+    If neither before or after is present, it requires a first argument to
+    limit the number of results returned
+
+    TODO: This returns a PatientConnection. It should return a OnPathway connection
+    That requires new schema work
+    """
+    getPatientOnPathwayConnection(
+        pathwayId: ID!
+        awaitingDecisionType: DecisionType!
+        isDischarged: Boolean
+        first: Int
+        after: String
+        last: Int
+        before: String
+    ): PatientConnection!
+}
+
+type Mutation {
+    login(username: String!, password: String!): User
+    createPatient(input:PatientInput!): AddPatientPayload!
+    createPathway(input:PathwayInput!): AddPathwayPayload!
+    createDecisionPoint(input:DecisionPointInput!): DecisionPoint
+}
+
+enum PatientCommunicationMethods {
+    LETTER
+    EMAIL
+    LANDLINE
+    MOBILE
+}
+
+enum DecisionType{
+    TRIAGE
+    CLINIC
+    MDT
+    AD_HOC
+    FOLLOW_UP
+}
+
+#### RETURN TYPES
+type AddPatientPayload{
+    patient:Patient
+    userErrors:[UserError!]
+}
+type AddPathwayPayload{
+    pathway:Pathway
+    userErrors:[UserError!]
+}
+
+#### DATA TYPES
+type UserError{
+    message:String!
+    field:String!
+}
+
+type Pathway {
+    id: ID!
+    name: String!
+    patients:[Patient]
+}
+
+type Patient {
+	id: ID!
+	hospitalNumber: String!
+	nationalNumber: String!
+	communicationMethod: PatientCommunicationMethods!
+	firstName: String!
+	lastName: String!
+    dateOfBirth: Date!
+
+    pathways: [OnPathway]
+    decisionPoints(pathwayId:ID, decisionType:DecisionType, limit:Int):[DecisionPoint!]
+    # testResults: [TestResult]
+}
+
+type PageInfo {
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
+    startCursor: String!
+    endCursor: String!
+}
+
+type PatientConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [PatientEdge]
+}
+
+type PatientEdge {
+    node: Patient!
+    cursor: String!
+}
+
+type Group{
+    id: ID!
+    name: String!
+    permissions: [String]
+}
+
+type OnPathway{
+    id: ID!
+    patient: Patient!
+    pathway: Pathway!
+    isDischarged: Boolean!
+    awaitingDecisionType: DecisionType!
+    addedAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    username: String!
+    lastLogin: DateTime
+    department: String!
+}
+
+type DecisionPoint {
+    id: ID!
+    patient: Patient!
+    clinician: User!
+    pathway: Pathway!
+    decisionType: DecisionType!
+    addedAt: DateTime!
+    updatedAt: DateTime!
+    clinicHistory: String!
+    comorbidities: String!
+    requestsReferrals: String!
+}
+
+type TestResult {
+    id: ID!
+    patient: Patient!
+    onPathway: OnPathway!
+    description: String!
+    mediaUrls: [String]
+    addedAt: DateTime!
+}
+
+#### INPUT TYPES
+input TestResultInput{
+    patient: Int!
+    pathway: Int!
+    description: String!
+    mediaUrls: [String]
+}
+
+input AddUserToGroupInput{
+    user: Int!
+    groupName: String!
+}
+
+input DecisionPointInput{
+    patientId: Int!
+    clinicianId: Int!
+    pathwayId: Int!
+    decisionType: DecisionType!
+    clinicHistory: String!
+    comorbidities: String!
+    requestsReferrals: String!
+}
+
+input PathwayInput{
+    name:String!
+}
+
+input GroupInput{
+    name:String!
+}
+
+input PatientInput{
+    firstName:String!
+    lastName:String!
+    communicationMethod:PatientCommunicationMethods
+    hospitalNumber:String!
+    nationalNumber:String!
+    dateOfBirth:Date!
+
+    pathway:Int!
+    awaitingDecisionType: DecisionType
+}

@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { actions } from '@storybook/addon-actions';
 import PathwayOption from 'types/PathwayOption';
@@ -9,7 +8,6 @@ import PathwayOption from 'types/PathwayOption';
 export default {
   title: 'Components/Page Layout',
   component: PageLayout,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof PageLayout>;
 
 // eslint-disable-next-line max-len

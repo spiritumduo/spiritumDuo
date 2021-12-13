@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
-import './patientlist.css';
+import React from 'react';
 import ReactPaginate from 'react-paginate';
-import Patient from 'types/Patient';
-import { PatientLink } from './Link';
+import './patientlist.css';
 
 /**
  * PatientListUpdateDataFn
@@ -41,6 +39,7 @@ const PatientList = (
   { pageCount, updateData, data, isLoading }: PatientListProps,
 ): JSX.Element => (
   <div className="patient-list-div">
+    <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
     <ul className="patient-list px-0">
       {
         data.map((p) => (

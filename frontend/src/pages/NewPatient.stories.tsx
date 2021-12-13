@@ -1,19 +1,20 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import StoryRouter from 'storybook-react-router';
 import { Story, Meta } from '@storybook/react';
 import { MockedProvider } from '@apollo/client/testing';
+import { MemoryRouter } from 'react-router';
 import NewPatientPage from './NewPatient';
 
 export default {
   title: 'Pages/New Patient',
   component: NewPatientPage,
   decorators: [
-    StoryRouter(),
     (NewPatientStory) => (
-      <MockedProvider>
-        <NewPatientStory />
-      </MockedProvider>
+      <MemoryRouter>
+        <MockedProvider>
+          <NewPatientStory />
+        </MockedProvider>
+      </MemoryRouter>
     ),
   ],
 } as Meta<typeof NewPatientPage>;
