@@ -10,6 +10,7 @@
     "@storybook/addon-essentials": "^6.4.9",
     "@storybook/addon-jest": "^6.4.9",
     "@storybook/addon-links": "^6.4.9",
+    "@storybook/addons": "^6.4.9",
     "@storybook/api": "^6.4.9",
     "@storybook/client-api": "^6.4.9",
     "@storybook/node-logger": "^6.4.9",
