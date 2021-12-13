@@ -3,21 +3,15 @@ from starlette.authentication import (
     AuthCredentials, has_required_scope
 )
 import inspect
-
-from starlette.responses import RedirectResponse
+from starlette.responses import JSONResponse, RedirectResponse, Response
 from models.db import db
-from models import User, Session
+from models import User, Session, Pathway
 from starlette.requests import HTTPConnection
 from typing import Callable, List
 from bcrypt import checkpw
 from random import getrandbits
 from datetime import datetime, timedelta
 from config import config
-class CredentialsError(Exception):
-    """
-    Raised when either a username or password does
-    not match records
-    """
 class PermissionsError(Exception):
     """
     Raised when a user is lacking a required 
@@ -62,7 +56,6 @@ class SDAuthentication(AuthenticationBackend):
                     session=db.select([User, Session]).where(Session.session_key==request['session']).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
                     user=await conn.one_or_none(session)
                 if user:
-                    print("Found a user with this session!")
                     sdUser=SDUser(
                         id=user.id,
                         username=user.username,
@@ -76,28 +69,40 @@ class SDAuthentication(AuthenticationBackend):
             else:
                 return None
 
-    async def login(request:HTTPConnection):
 
-        if request['session']:
-            async with db.acquire(reuse=False) as conn:
-                session=db.select([User, Session]).where(Session.session_key==request['session']).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
-                user=await conn.one_or_none(session)
-            if user:
-                raise SessionAlreadyExists
+class LoginController:
+    WRONG_USERNAME_OR_PASSWORD_PROMPT="Incorrect username and/or password"
+    NO_PERMISSIONS_PROMPT="This account is not authenticated for use in this system"
 
-        body=await request.json()
-        username=body['username']
-        password=body['password']
+    def __init__(self, model=None):
+        self.model=model
+        self.view=JSONResponse()
 
+    async def login(self):
+        if not self.model['username'] or not self.model['password']:
+            self.view.body={
+                "error": self.WRONG_USERNAME_OR_PASSWORD_PROMPT
+            }
+            return self.view
+
+        username=self.model['username']
+        password=self.model['password']
         async with db.acquire(reuse=False) as conn:
             user=await conn.one_or_none(
                 User.query.where(User.username==username)
             )
+
         if user is None:
-            raise CredentialsError
+            self.view.body={
+                "error":self.WRONG_USERNAME_OR_PASSWORD_PROMPT
+            }
+            return self.view
 
         if not checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            raise CredentialsError
+            self.view.body={
+                "error":self.WRONG_USERNAME_OR_PASSWORD_PROMPT
+            }
+            return self.view 
 
         sdUser=SDUser(
             id=user.id,
@@ -124,13 +129,36 @@ class SDAuthentication(AuthenticationBackend):
             expiry=sessionExpiry,
             user_id=sdUser.id
         )
-
-        request.scope['user']=sdUser
-        request.scope['session']=sdSession.session_key
         
-        return AuthCredentials(
-            scopes=["authenticated"]
-        ), sdUser
+        pathways=None
+        async with db.acquire(reuse=False) as conn:
+            pathways=await conn.all(
+                Pathway.query
+            )
+
+        preparedPathways=[]
+        for pathway in pathways:
+            preparedPathways.append(pathway.to_dict())
+
+        self.view.set_cookie("SESSION", sdSession.session_key)
+
+        self.view.body={
+            "user":{
+                "id": sdUser.id,
+                "username": sdUser.username,
+                "firstName": sdUser.firstName,
+                "lastName": sdUser.lastName,
+                "department": sdUser.department
+            },
+            "pathways": preparedPathways
+        }
+        return self.view
+    async def logout():
+        pass
+
+
+
+
 
 DEBUG_DISABLE_PERMISSION_CHECKING=False
 def needsAuthorization(
