@@ -13,3 +13,5 @@ fastapi==0.70.0
 pydantic==1.8.2
 itsdangerous==2.0.1
 bcrypt==3.2.0
+behave==1.2.6
+requests==2.26.0
