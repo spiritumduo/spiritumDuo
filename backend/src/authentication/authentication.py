@@ -76,14 +76,12 @@ class LoginController:
 
     def __init__(self, model=None):
         self.model=model
-        self.view=JSONResponse()
 
     async def login(self):
         if not self.model['username'] or not self.model['password']:
-            self.view.body={
-                "error": self.WRONG_USERNAME_OR_PASSWORD_PROMPT
-            }
-            return self.view
+            return JSONResponse({
+                "error":self.WRONG_USERNAME_OR_PASSWORD_PROMPT
+            })
 
         username=self.model['username']
         password=self.model['password']
@@ -93,16 +91,14 @@ class LoginController:
             )
 
         if user is None:
-            self.view.body={
+            return JSONResponse({
                 "error":self.WRONG_USERNAME_OR_PASSWORD_PROMPT
-            }
-            return self.view
+            })
 
         if not checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            self.view.body={
+            return JSONResponse({
                 "error":self.WRONG_USERNAME_OR_PASSWORD_PROMPT
-            }
-            return self.view 
+            })
 
         sdUser=SDUser(
             id=user.id,
@@ -140,9 +136,7 @@ class LoginController:
         for pathway in pathways:
             preparedPathways.append(pathway.to_dict())
 
-        self.view.set_cookie("SESSION", sdSession.session_key)
-
-        self.view.body={
+        res=JSONResponse({
             "user":{
                 "id": sdUser.id,
                 "username": sdUser.username,
@@ -151,8 +145,11 @@ class LoginController:
                 "department": sdUser.department
             },
             "pathways": preparedPathways
-        }
-        return self.view
+        })
+
+        res.set_cookie(key="SESSION", value=sdSession.session_key, max_age=config['SESSION_EXPIRY_LENGTH'])
+        return res
+
     async def logout():
         pass
 
