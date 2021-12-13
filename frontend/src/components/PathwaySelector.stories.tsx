@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 import PathwayOption from 'types/PathwayOption';
 import PathwaySelector from './PathwaySelector';
 
@@ -9,7 +8,6 @@ import PathwaySelector from './PathwaySelector';
 export default {
   title: 'Pathway Selector',
   component: PathwaySelector,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof PathwaySelector>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

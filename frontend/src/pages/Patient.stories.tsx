@@ -1,15 +1,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
+import { MemoryRouter } from 'react-router-dom';
+import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { DefaultLayout } from 'components/PageLayout.stories';
-import StoryRouter from 'storybook-react-router';
-import { PageLayoutProps } from 'components/PageLayout';
 import PatientPage, { PatientPageProps } from './Patient';
 
 export default {
   title: 'Pages/Patient',
   component: PatientPage,
-  decorators: [StoryRouter()],
+  decorators: [
+    (DecisionPointPageStory) => (
+      <MemoryRouter>
+        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+          <DecisionPointPageStory />
+        </PageLayout>
+      </MemoryRouter>
+    ),
+  ],
 } as Meta<typeof PatientPage>;
 
 const Template: Story<PatientPageProps> = (args: PatientPageProps) => <PatientPage { ...args } />;

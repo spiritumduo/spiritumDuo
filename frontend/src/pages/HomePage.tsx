@@ -81,7 +81,8 @@ const WrappedPatientList = ({
 
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   // const patientsPerPage = 20; // TODO: This should change dynamic as page is resized
-  const pathwayId = currentPathwayId();
+  // const pathwayId = currentPathwayId();
+  const pathwayId = 19;
 
   return (
     <div className="container text-center">

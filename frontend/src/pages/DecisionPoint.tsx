@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Patient from 'types/Patient';
-import DecisionPoint, { DecisionPointType } from 'types/DecisionPoint';
+import { DecisionPointType } from 'types/DecisionPoint';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { enumKeys } from 'sdutils';
@@ -65,6 +65,7 @@ interface DecisionPointPageForm {
 const DecisionPointPage = (
   { hospitalNumber, decisionType }: DecisionPointPageProps,
 ): JSX.Element => {
+  // GET PATIENT DATA QUERY
   const { loading, data, error } = useQuery<GetPatient>(
     GET_PATIENT_QUERY, {
       variables: {
@@ -74,10 +75,13 @@ const DecisionPointPage = (
     },
   );
 
+  // CREATE DECISION POINT MUTATION
   const [createDecision, {
     data: mutateData, loading: mutateLoading, error: mutateError,
   }] = useMutation<createDecisionPoint>(CREATE_DECISION_POINT_MUTATION);
+  const isSubmitted = mutateData?.createDecisionPoint?.id !== undefined;
 
+  // FORM HOOK & VALIDATION
   const newDecisionPointSchema = yup.object({
     decisionType: yup.mixed().oneOf([Object.keys(DecisionPointType)]).required(),
     clinicHistory: yup.string().required(),
@@ -95,6 +99,12 @@ const DecisionPointPage = (
     getValues,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
+  const [submittedState, setSubmittedState] = useState<boolean>(false);
+  useEffect(() => {
+    if (isSubmitted) setTimeout(() => setSubmittedState(true), 2000);
+  });
+  const navigate = useNavigate();
+  if (submittedState) navigate('/');
   if (loading) return <h1>Loading!</h1>;
 
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
@@ -104,12 +114,6 @@ const DecisionPointPage = (
     lastName: data.getPatient.lastName,
     hospitalNumber: data.getPatient.hospitalNumber,
   };
-
-  const decisionKeys = enumKeys(DecisionPointType);
-
-  const decisionSelectOptions = decisionKeys.map(
-    (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
-  );
 
   const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
     // for some reason this gets coerced into a string. Cast it back
@@ -135,7 +139,14 @@ const DecisionPointPage = (
     : null;
 
   const currentUser = loggedInUserVar();
+  // TODO: maybe not use these reactive vars in pages? It leads to stuff like this.
+  // Perhaps make a React context for current user and pathway options.
   const currentUserId = currentUser ? currentUser.id : 0;
+
+  const decisionKeys = enumKeys(DecisionPointType);
+  const decisionSelectOptions = decisionKeys.map(
+    (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
+  );
 
   return (
     <div>
@@ -144,133 +155,136 @@ const DecisionPointPage = (
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
               <form className="card-body p-5" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
-                <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
-                <input type="hidden" value={ currentUserId } { ...register('clinicianId', { required: true }) } />
-                <input type="hidden" value={ currentPathwayId() } { ...register('pathwayId', { required: true }) } />
-                <div className="container">
+                <fieldset disabled={ loading || mutateLoading || isSubmitted }>
+                  <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
+                  <input type="hidden" value={ currentUserId } { ...register('clinicianId', { required: true }) } />
+                  <input type="hidden" value={ currentPathwayId() } { ...register('pathwayId', { required: true }) } />
+                  <div className="container">
 
-                  <div className="text-center">
-                    <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.hospitalNumber}/edit` }>Edit patient record</Link>
+                    <div className="text-center">
+                      <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.hospitalNumber}/edit` }>Edit patient record</Link>
+                    </div>
+
+                    <hr />
+                    <p>{ error?.message }</p>
+
+                    <div className="container pt-1">
+                      <div className="form-outline mb-4">
+                        <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
+                      </div>
+
+                      <div className="form-outline mb-4">
+                        <label className="form-label" htmlFor="clinicHistory">Clinical history
+                          <textarea className="form-control" id="clinicHistory" rows={ 3 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
+                          <p>{ formErrors.clinicHistory?.message }</p>
+                        </label>
+                      </div>
+                      <div className="form-outline mb-4">
+                        <label className="form-label" htmlFor="comorbidities">Co-morbidities
+                          <textarea className="form-control" id="comorbidities" rows={ 3 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
+                          <p>{ formErrors.comorbidities?.message }</p>
+                        </label>
+                      </div>
+
+                      <div className="row">
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referCTHead">
+                              <input className="form-check-input" type="checkbox" value="" id="referCtHead" { ...register('referCtHead') } />
+                              CT-head
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col" />
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referMRIHead">
+                              <input className="form-check-input" type="checkbox" value="" id="referMRIHead" { ...register('referMRIHead') } />
+                              MRI-head
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col" />
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referCTThorax">
+                              <input className="form-check-input" type="checkbox" value="" id="referCTThorax" { ...register('referCTThorax') } />
+                              CT-thorax
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referPhysiotherapy">
+                              <input className="form-check-input" type="checkbox" value="" id="referPhysiotherapy" { ...register('referPhysiotherapy') } />
+                              Refer to physiotherapy
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referXRay">
+                              <input className="form-check-input" type="checkbox" value="" id="referXRay" { ...register('referXRay') } />
+                              Chest x-ray
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referDietician">
+                              <input className="form-check-input" type="checkbox" value="" id="referDietician" { ...register('referDietician') } />
+                              Refer to dietician
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referBronchoscopy">
+                              <input className="form-check-input" type="checkbox" value="" id="referBronchoscopy" { ...register('referBronchoscopy') } />
+                              Bronchoscopy
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referSmokingCessation">
+                              <input className="form-check-input" type="checkbox" value="" id="referSmokingCessation" { ...register('referSmokingCessation') } />
+                              Refer to smoking cessation
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor="referMDT">
+                              <input className="form-check-input" type="checkbox" value="" id="referMDT" { ...register('referMDT') } />
+                              Add to MDT
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div className="container mt-4">
+                      <button type="submit" name="submitBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Submit</button>
+                    </div>
+
+                    <p>{ mutateLoading ? 'Submitting...' : '' }</p>
+                    <p>{ isSubmitted ? 'Success!' : '' }</p>
+                    <p>{ mutateError?.message }</p>
+
                   </div>
-
-                  <hr />
-                  <p>{ error?.message }</p>
-
-                  <div className="container pt-1">
-                    <div className="form-outline mb-4">
-                      <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
-                    </div>
-
-                    <div className="form-outline mb-4">
-                      <label className="form-label" htmlFor="clinicHistory">Clinical history
-                        <textarea className="form-control" id="clinicHistory" rows={ 3 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
-                        <p>{ formErrors.clinicHistory?.message }</p>
-                      </label>
-                    </div>
-                    <div className="form-outline mb-4">
-                      <label className="form-label" htmlFor="comorbidities">Co-morbidities
-                        <textarea className="form-control" id="comorbidities" rows={ 3 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
-                        <p>{ formErrors.comorbidities?.message }</p>
-                      </label>
-                    </div>
-
-                    <div className="row">
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referCTHead">
-                            <input className="form-check-input" type="checkbox" value="" id="referCtHead" { ...register('referCtHead') } />
-                            CT-head
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col" />
-                    </div>
-                    <div className="row">
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referMRIHead">
-                            <input className="form-check-input" type="checkbox" value="" id="referMRIHead" { ...register('referMRIHead') } />
-                            MRI-head
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col" />
-                    </div>
-                    <div className="row">
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referCTThorax">
-                            <input className="form-check-input" type="checkbox" value="" id="referCTThorax" { ...register('referCTThorax') } />
-                            CT-thorax
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referPhysiotherapy">
-                            <input className="form-check-input" type="checkbox" value="" id="referPhysiotherapy" { ...register('referPhysiotherapy') } />
-                            Refer to physiotherapy
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referXRay">
-                            <input className="form-check-input" type="checkbox" value="" id="referXRay" { ...register('referXRay') } />
-                            Chest x-ray
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referDietician">
-                            <input className="form-check-input" type="checkbox" value="" id="referDietician" { ...register('referDietician') } />
-                            Refer to dietician
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referBronchoscopy">
-                            <input className="form-check-input" type="checkbox" value="" id="referBronchoscopy" { ...register('referBronchoscopy') } />
-                            Bronchoscopy
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referSmokingCessation">
-                            <input className="form-check-input" type="checkbox" value="" id="referSmokingCessation" { ...register('referSmokingCessation') } />
-                            Refer to smoking cessation
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col">
-                        <div className="form-check">
-                          <label className="form-check-label pull-right" htmlFor="referMDT">
-                            <input className="form-check-input" type="checkbox" value="" id="referMDT" { ...register('referMDT') } />
-                            Add to MDT
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <div className="container mt-4">
-                    <button type="submit" name="submitBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Submit</button>
-                  </div>
-                  <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-                  <p>{ mutateError?.message }</p>
-
-                </div>
-
+                </fieldset>
               </form>
             </div>
           </div>

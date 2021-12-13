@@ -1,15 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import StoryRouter from 'storybook-react-router';
 import PathwayOption from 'types/PathwayOption';
-import { pathwayOptionsVar } from 'app/cache';
+import { MemoryRouter } from 'react-router-dom';
 import Header from './Header';
 
 export default {
   title: 'Header',
   component: Header,
-  decorators: [StoryRouter()],
 } as ComponentMeta<typeof Header>;
 
 const Template: ComponentStory<typeof Header> = (args) => <Header { ...args } />;
