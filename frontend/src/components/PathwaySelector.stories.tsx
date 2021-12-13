@@ -2,12 +2,20 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PathwayOption from 'types/PathwayOption';
+import { MemoryRouter } from 'react-router-dom';
 import PathwaySelector from './PathwaySelector';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Pathway Selector',
   component: PathwaySelector,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } as ComponentMeta<typeof PathwaySelector>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

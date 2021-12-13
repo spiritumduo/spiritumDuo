@@ -1,11 +1,19 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { MemoryRouter } from 'react-router-dom';
 import PatientLink from './PatientLink';
 
 export default {
   title: 'Patient Link',
   component: PatientLink,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } as ComponentMeta<typeof PatientLink>;
 
 const Template: ComponentStory<typeof PatientLink> = (args) => <PatientLink { ...args } />;

@@ -3,8 +3,9 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { useArgs } from '@storybook/client-api';
 import { PatientLink } from 'components/Link';
+import { MemoryRouter } from 'react-router-dom';
+import Patient from 'types/Patient';
 import PatientList, { PatientListProps } from './PatientList';
-import Patient from '../types/Patient';
 
 const patientArray: Patient[] = [];
 const patient = {
@@ -30,6 +31,13 @@ const patientsPerPage = 10;
 export default {
   title: 'Components/Patient List',
   component: PatientList,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } as ComponentMeta<typeof PatientList>;
 // eslint-disable-next-line max-len
 const Template: ComponentStory<typeof PatientList> = ({ pageCount, isLoading, ...args }: PatientListProps) => {

@@ -1,12 +1,19 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-
+import { MemoryRouter } from 'react-router-dom';
 import PatientInfoLonghand from './PatientInfoLonghand';
 
 export default {
   title: 'Patient Information (longhand)',
   component: PatientInfoLonghand,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } as ComponentMeta<typeof PatientInfoLonghand>;
 
 // eslint-disable-next-line max-len

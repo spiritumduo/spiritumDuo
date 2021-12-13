@@ -4,10 +4,18 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { actions } from '@storybook/addon-actions';
 import PathwayOption from 'types/PathwayOption';
+import { MemoryRouter } from 'react-router-dom';
 
 export default {
   title: 'Components/Page Layout',
   component: PageLayout,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } as ComponentMeta<typeof PageLayout>;
 
 // eslint-disable-next-line max-len

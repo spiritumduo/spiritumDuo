@@ -7,6 +7,13 @@ import Footer from './Footer';
 export default {
   title: 'Footer',
   component: Footer,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 } as ComponentMeta<typeof Footer>;
 
 const Template: ComponentStory<typeof Footer> = (args) => <Footer { ...args } />;
