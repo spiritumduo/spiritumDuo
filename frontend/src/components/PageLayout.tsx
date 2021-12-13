@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useContext } from 'react';
 import Header, { HeaderProps } from 'components/Header';
 import Footer, { FooterProps } from 'components/Footer';
 import './pagelayout.css';
+import { AuthContext, PathwayContext } from 'app/context';
 
 export interface PageLayoutProps {
     headerProps: HeaderProps,
@@ -23,13 +24,21 @@ const PageLayout = ({
   headerProps,
   footerProps,
   children,
-}: PageLayoutProps): JSX.Element => (
-  <div>
-    <Header { ...headerProps } />
-    {children}
-    <Footer { ...footerProps } />
-  </div>
-
-);
+}: PageLayoutProps): JSX.Element => {
+  const { user } = useContext(AuthContext);
+  const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
+  const actualCurrentPathwayId = currentPathwayId || headerProps.currentPathwayId;
+  return (
+    <div>
+      <Header
+        { ...headerProps }
+        pathwayOptions={ pathwayOptions }
+        currentPathwayId={ actualCurrentPathwayId }
+      />
+      {children}
+      <Footer name={ `${user?.firstName} ${user?.lastName}` } />
+    </div>
+  );
+};
 
 export default PageLayout;
