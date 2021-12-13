@@ -5,7 +5,7 @@ import PathwayOption from 'types/PathwayOption';
 export type LoginData = {
   user: User | null;
   pathways: PathwayOption[] | null;
-  errors: string;
+  error: string;
 };
 
 export interface LoginFormInputs {
@@ -39,8 +39,8 @@ export function useLoginSubmit(): LoginSubmitHook {
         throw new Error(`Error: Response ${response.status} ${response.statusText}`);
       }
       const decoded: LoginData = await response.json();
-      if (decoded.errors) {
-        setError({ message: decoded.errors }); // e.g. invalid password
+      if (decoded.error) {
+        setError({ message: decoded.error }); // e.g. invalid password
       } else {
         setData(decoded);
       }
