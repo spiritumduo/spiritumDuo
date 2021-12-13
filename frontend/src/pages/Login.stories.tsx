@@ -56,7 +56,7 @@ const successfulLoginMock: { user: User, pathways: PathwayOption[], error: strin
       name: 'Broncheastasis',
     },
   ],
-  errors: null,
+  error: null,
 };
 
 /**

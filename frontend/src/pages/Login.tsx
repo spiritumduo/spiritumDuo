@@ -36,7 +36,7 @@ const LoginPage = (): JSX.Element => {
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   const navigate = useNavigate();
   useEffect(() => {
-    if (!data?.errors && data?.user && data?.pathways) {
+    if (!error && data?.user && data?.pathways) {
       loginSuccess(data);
       navigate('/', { replace: true });
     }
