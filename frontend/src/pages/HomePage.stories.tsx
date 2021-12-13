@@ -7,6 +7,7 @@ import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { currentPathwayId } from 'app/cache';
+import { MemoryRouter } from 'react-router';
 import HomePage, { HomePageProps } from './HomePage';
 
 // Dummy data for display
@@ -38,9 +39,11 @@ export default {
   component: HomePage,
   decorators: [
     (HomePageStory) => (
-      <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-        <HomePageStory />
-      </PageLayout>
+      <MemoryRouter>
+        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+          <HomePageStory />
+        </PageLayout>
+      </MemoryRouter>
     ),
   ],
 } as Meta<typeof HomePage>;

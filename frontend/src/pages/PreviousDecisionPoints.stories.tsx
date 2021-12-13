@@ -4,6 +4,7 @@ import { Story, Meta } from '@storybook/react';
 import { MockedProvider } from '@apollo/client/testing';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { DefaultLayout } from 'components/PageLayout.stories';
+import { MemoryRouter } from 'react-router';
 import PreviousDecisionPoints, { PreviousDecisionPointsProps, PREVIOUS_DECISION_POINTS_QUERY } from './PreviousDecisionPoints';
 
 const patient = {
@@ -77,11 +78,13 @@ export default {
   component: PreviousDecisionPoints,
   decorators: [
     (DecisionPointPageStory) => (
-      <MockedProvider mocks={ apolloMocks }>
-        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-          <DecisionPointPageStory />
-        </PageLayout>
-      </MockedProvider>
+      <MemoryRouter>
+        <MockedProvider mocks={ apolloMocks }>
+          <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+            <DecisionPointPageStory />
+          </PageLayout>
+        </MockedProvider>
+      </MemoryRouter>
     ),
   ],
 } as Meta<typeof PreviousDecisionPoints>;

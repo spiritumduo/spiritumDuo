@@ -2,6 +2,7 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import { MockedProvider } from '@apollo/client/testing';
+import { MemoryRouter } from 'react-router';
 import NewPatientPage from './NewPatient';
 
 export default {
@@ -9,9 +10,11 @@ export default {
   component: NewPatientPage,
   decorators: [
     (NewPatientStory) => (
-      <MockedProvider>
-        <NewPatientStory />
-      </MockedProvider>
+      <MemoryRouter>
+        <MockedProvider>
+          <NewPatientStory />
+        </MockedProvider>
+      </MemoryRouter>
     ),
   ],
 } as Meta<typeof NewPatientPage>;

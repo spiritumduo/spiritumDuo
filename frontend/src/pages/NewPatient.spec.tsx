@@ -1,16 +1,19 @@
 /* eslint-disable comma-dangle */
 import React from 'react';
-import { act, waitFor, render, screen, fireEvent } from '@testing-library/react';
-import { composeStories } from '@storybook/testing-react';
 import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import { composeStories } from '@storybook/testing-react';
 import { MockedProvider } from '@apollo/client/testing';
+import { MemoryRouter } from 'react-router';
 import * as stories from './NewPatient.stories';
 
 const { Standard } = composeStories(stories);
 
-const doRenderStandard = () => render(<MockedProvider><Standard /></MockedProvider>);
+const doRenderStandard = () => render(
+  <MockedProvider><Standard /></MockedProvider>
+);
 
-test('Renders without error', () => {
+test('Should render without error', () => {
   doRenderStandard();
 });
 
@@ -36,7 +39,7 @@ test('Should have date of birth input', () => {
 
 test('Should have communication methods input', () => {
   doRenderStandard();
-  expect(screen.getByRole('Communication Method')).toBeInTheDocument();
+  expect(screen.getByRole('combobox', { name: 'Communication Method' })).toBeInTheDocument();
 });
 
 /*

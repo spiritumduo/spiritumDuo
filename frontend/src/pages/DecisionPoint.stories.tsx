@@ -5,6 +5,7 @@ import { DecisionPointType } from 'types/DecisionPoint';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { MockedProvider } from '@apollo/client/testing';
 import { DefaultLayout } from 'components/PageLayout.stories';
+import { MemoryRouter } from 'react-router';
 import DecisionPointPage, { GET_PATIENT_QUERY } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
@@ -57,11 +58,13 @@ export default {
   component: DecisionPointPage,
   decorators: [
     (DecisionPointPageStory) => (
-      <MockedProvider mocks={ apolloMocks }>
-        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-          <DecisionPointPageStory />
-        </PageLayout>
-      </MockedProvider>
+      <MemoryRouter>
+        <MockedProvider mocks={ apolloMocks }>
+          <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+            <DecisionPointPageStory />
+          </PageLayout>
+        </MockedProvider>
+      </MemoryRouter>
     ),
   ],
 } as ComponentMeta<typeof DecisionPointPage>;
