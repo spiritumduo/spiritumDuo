@@ -36,7 +36,7 @@ const LoginPage = (): JSX.Element => {
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   const navigate = useNavigate();
   useEffect(() => {
-    if (data?.user && data?.pathways) {
+    if (!data?.errors && data?.user && data?.pathways) {
       loginSuccess(data);
       navigate('/', { replace: true });
     }
@@ -52,26 +52,22 @@ const LoginPage = (): JSX.Element => {
                 doLogin(getValues());
               } ) }
               >
-                <fieldset disabled={ loading }>
+                <fieldset disabled={ loading } aria-label="Login Form">
                   <div className="form-group mb-2">
                     <h5>Please enter credentials below to access Spiritum Duo</h5>
                   </div>
 
                   <div className="form-group row mb-2">
                     <label className="col-sm-9 col-form-label" htmlFor="username">Username
-                      <div className="col-sm-9">
-                        <input type="text" placeholder="Username" className="form-control" { ...register('username', { required: true }) } />
-                        <p>{ errors.username?.message }</p>
-                      </div>
+                      <input id="username" type="text" placeholder="Username" className="form-control" { ...register('username', { required: true }) } />
+                      <p>{ errors.username?.message }</p>
                     </label>
                   </div>
 
                   <div className="form-group row mb-4">
                     <label className="col-sm-9 col-form-label" htmlFor="password">Password
-                      <div className="col-sm-9">
-                        <input type="password" placeholder="Password" className="form-control" { ...register('password', { required: true }) } />
-                        <p>{ errors.password?.message }</p>
-                      </div>
+                      <input id="password" type="password" placeholder="Password" className="form-control" { ...register('password', { required: true }) } />
+                      <p>{ errors.password?.message }</p>
                     </label>
                   </div>
                   <p>{ error?.message }</p>

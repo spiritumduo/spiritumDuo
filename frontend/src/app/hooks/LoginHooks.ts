@@ -2,13 +2,6 @@ import { useState } from 'react';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 
-export enum LoginStatus {
-  SUCCESS,
-  INVALID_LOGIN,
-  INITIAL,
-  LOADING
-}
-
 export type LoginData = {
   user: User | null;
   pathways: PathwayOption[] | null;
@@ -42,15 +35,19 @@ export function useLoginSubmit(): LoginSubmitHook {
         },
         body: JSON.stringify(variables),
       });
+      if (!response.ok) {
+        throw new Error(`Error: Response ${response.status} ${response.statusText}`);
+      }
       const decoded: LoginData = await response.json();
       if (decoded.errors) {
-        setError(decoded.errors); // e.g. invalid password
+        setError({ message: decoded.errors }); // e.g. invalid password
       } else {
         setData(decoded);
       }
     } catch (err) {
       setError(err);
     }
+    setLoading(false);
   }
   return [loading, error, data, doLogin];
 }

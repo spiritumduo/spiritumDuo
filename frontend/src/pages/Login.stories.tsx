@@ -1,17 +1,44 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Story, Meta } from '@storybook/react';
 import fetchMock from 'fetch-mock';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
+import { Routes, Route, useNavigate, MemoryRouter } from 'react-router-dom';
 import LoginPage, { LoginPageProps } from './Login';
+
+const MockHome = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate('/login');
+    }, 1000);
+    return () => clearTimeout(timer);
+  });
+  return <h1>Login Success!</h1>;
+};
 
 export default {
   title: 'Pages/Login',
   component: LoginPage,
+  decorators: [(LoginStory) => (
+    <MemoryRouter initialEntries={ ['/login'] }>
+      <Routes>
+        <Route path="/" element={ <MockHome /> } />
+        <Route path="/login" element={ <LoginStory /> } />
+      </Routes>
+    </MemoryRouter>
+  )],
 } as Meta<typeof LoginPage>;
 
-const validLoginMock: { user: User, pathways: PathwayOption[], errors: string | null } = {
+/**
+ * MOCK RESPONSES
+ */
+
+/**
+ * Successful login
+ */
+const successfulLoginMock: { user: User, pathways: PathwayOption[], errors: string | null } = {
   user: {
     id: 1,
     firstName: 'John',
@@ -31,33 +58,50 @@ const validLoginMock: { user: User, pathways: PathwayOption[], errors: string | 
   ],
   errors: null,
 };
-export const Default: Story<LoginPageProps> = () => {
-  fetchMock.restore().mock('end:/rest/login', validLoginMock);
-  return <LoginPage />;
-};
-Default.args = { };
 
-export const Loading: Story<LoginPageProps> = () => {
-  fetchMock.restore().mock('end:/rest/login', validLoginMock);
-  return <LoginPage />;
-};
-
-export const Error: Story<LoginPageProps> = () => {
-  fetchMock.restore().mock('end:/rest/login', validLoginMock, { headers: { status: 403 } });
-  return <LoginPage />;
-};
-
+/**
+ * Invalid login
+ */
 const invalidLoginMock: {
   user?: User,
   pathways?: PathwayOption[],
   errors?: string;
 } = {
-  user: undefined,
-  pathways: undefined,
   errors: 'Invalid username or password',
 };
+
+/**
+ * STORIES
+ */
+
+/**
+ * Default login page - results in successful login
+ */
+export const Default: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', successfulLoginMock);
+  return <LoginPage />;
+};
+
+/**
+ * Loading state - will pause loading for short time
+ */
+export const Loading: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', successfulLoginMock, { delay: 1000 });
+  return <LoginPage />;
+};
+
+/**
+ * Error state - fetch responds with error code
+ */
+export const Error: Story<LoginPageProps> = () => {
+  fetchMock.restore().mock('end:/rest/login', { body: { user: null, pathways: null }, status: 500 });
+  return <LoginPage />;
+};
+
+/**
+ * Invalid login - incorrect username or passsword
+ */
 export const InvalidLogin: Story<LoginPageProps> = () => {
   fetchMock.restore().mock('end:/rest/login', invalidLoginMock);
   return <LoginPage />;
 };
-InvalidLogin.args = { };
