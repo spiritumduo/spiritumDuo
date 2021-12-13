@@ -9,6 +9,7 @@ from ariadne.asgi import GraphQL
 from gql.schema import schema
 from models import db
 from randomdata import generate_random
+from adduser import add_dev_user
 from rest.api import _FastAPI
 from authentication import SDAuthentication
 from config import config
@@ -25,7 +26,8 @@ starlette_middleware = [
     Middleware(AuthenticationMiddleware, backend=SDAuthentication()),
 ]
 starlette_routes = [
-    Route("/random", endpoint=generate_random)
+    Route("/random", endpoint=generate_random),
+    Route("/add-user", endpoint=add_dev_user)
 ]
 
 def get_context_values(request:requests.HTTPConnection):

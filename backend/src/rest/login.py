@@ -38,10 +38,13 @@ async def login(request: Request):
     for pathway in pathways:
         preparedPathways.append(pathway.to_dict())
 
-    return{
-        "username":user.username,
-        "firstName":user.firstName,
-        "lastName":user.lastName,
-        "department":user.department,
-        "pathways":preparedPathways
+    return {
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "firstName": user.firstName,
+            "lastName": user.lastName,
+            "department": user.department
+        },
+        "pathways": preparedPathways,
     }
