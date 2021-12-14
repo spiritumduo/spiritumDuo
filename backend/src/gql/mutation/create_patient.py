@@ -4,7 +4,7 @@ from authentication.authentication import needsAuthorization
 
 @mutation.field("createPatient")
 @needsAuthorization(["authenticated"])
-async def resolve_create_patient(_=None, info=None, input=None):
+async def resolve_create_patient(_=None, info=None, input:dict=None):
     patientInfo={
         "first_name":input["firstName"],
         "last_name":input["lastName"],

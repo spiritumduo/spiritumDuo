@@ -11,7 +11,7 @@ async def CreateUser(
 ):
     hashedPassword=hashpw(password.encode('utf-8'), gensalt())
     hashedPassword=hashedPassword.decode('utf-8')
-    newUser=None
+    newUser:User=None
     try:
         newUser=await User.create(
             username=username,

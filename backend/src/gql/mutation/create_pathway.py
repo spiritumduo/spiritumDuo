@@ -4,7 +4,7 @@ from authentication.authentication import needsAuthorization
 
 @mutation.field("createPathway")
 @needsAuthorization(["authenticated"])
-async def resolve_create_pathway(_=None, info=None, input=None):
+async def resolve_create_pathway(_=None, info=None, input:dict=None):
     return await CreatePathway(
         context=info.context,
         name=input['name']

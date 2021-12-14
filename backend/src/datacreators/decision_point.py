@@ -8,7 +8,7 @@ class ReferencedItemDoesNotExistError(Exception):
         exist and cannot be found when it should
     """
 async def CreateDecisionPoint(
-    context=None, 
+    context:dict=None, 
     patient_id:int=None,
     clinician_id:int=None,
     pathway_id:int=None,

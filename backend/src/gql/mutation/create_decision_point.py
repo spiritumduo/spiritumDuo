@@ -4,7 +4,7 @@ from authentication.authentication import needsAuthorization
 
 @mutation.field("createDecisionPoint")
 @needsAuthorization(["authenticated"])
-async def resolve_create_decision(_=None, info=None, input=None):
+async def resolve_create_decision(_=None, info=None, input:dict=None):
     return await CreateDecisionPoint(
         context=info.context,
         patient_id=input['patientId'],

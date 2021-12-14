@@ -1,6 +1,6 @@
 from aiodataloader import DataLoader
 from models import Pathway
-from typing import List
+from typing import List, Union
 
 class PathwayByIdLoader(DataLoader):
     loader_name = "_pathway_by_id_loader"
@@ -31,7 +31,7 @@ class PathwayByIdLoader(DataLoader):
         return sortedPathways
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[Pathway, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -46,13 +46,13 @@ class PathwayByIdLoader(DataLoader):
         return pathway
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[Pathway], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
     @classmethod
-    async def load_all(cls):
+    async def load_all(cls)->Union[List[Pathway], None]:
         return await Pathway.query.gino.all()
 
 
@@ -86,7 +86,7 @@ class PathwayByNameLoader(DataLoader):
         return sortedPathways
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[Pathway, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -101,7 +101,7 @@ class PathwayByNameLoader(DataLoader):
         return pathway
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[Pathway], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)

@@ -8,7 +8,7 @@ class ReferencedItemDoesNotExistError(Exception):
         exist and cannot be found when it should
     """
 async def CreatePathway(
-    context=None,
+    context:dict=None,
     name:str=None
 ):
     if not context:

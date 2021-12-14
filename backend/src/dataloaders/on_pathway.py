@@ -1,6 +1,6 @@
 from aiodataloader import DataLoader
 from models import OnPathway
-from typing import List
+from typing import List, Union
 
 class OnPathwayByIdLoader(DataLoader):
     loader_name = "_on_pathway_loader"
@@ -31,7 +31,7 @@ class OnPathwayByIdLoader(DataLoader):
         return sortedList
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[OnPathway, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -39,13 +39,13 @@ class OnPathwayByIdLoader(DataLoader):
         return await context[cls.loader_name].load(id)
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[OnPathway], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
 class OnPathwaysByPatient:
-    async def load_from_id(context=None, id=None):
+    async def load_from_id(context=None, id=None)->Union[List[OnPathway], None]:
         if not context or not id:
             return None
         _gino=context['db']

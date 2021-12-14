@@ -1,6 +1,6 @@
 from aiodataloader import DataLoader
 from models import Patient
-from typing import List
+from typing import List, Union
 
 class PatientByIdLoader(DataLoader):
     loader_name = "_patient_by_id_loader"
@@ -31,7 +31,7 @@ class PatientByIdLoader(DataLoader):
         return sortedPatients
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[Patient, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -46,7 +46,7 @@ class PatientByIdLoader(DataLoader):
         return patient
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[Patient], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
@@ -79,7 +79,7 @@ class PatientByHospitalNumberLoader(DataLoader):
         return sortedPatients
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[Patient, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -94,7 +94,7 @@ class PatientByHospitalNumberLoader(DataLoader):
         return patient
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[Patient], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)

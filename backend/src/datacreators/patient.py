@@ -12,7 +12,7 @@ class ReferencedItemDoesNotExistError(Exception):
     """
 
 async def CreatePatient(
-    context=None,
+    context:dict=None,
     first_name:str=None,
     last_name:str=None,
     hospital_number:str=None,

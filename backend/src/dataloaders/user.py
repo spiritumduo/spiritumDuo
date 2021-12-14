@@ -1,6 +1,6 @@
 from aiodataloader import DataLoader
 from models import User
-from typing import List
+from typing import List, Union
 
 class UserByIdLoader(DataLoader):
     loader_name = "_user_by_id_loader"
@@ -31,7 +31,7 @@ class UserByIdLoader(DataLoader):
         return sortedUsers
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[User, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -44,7 +44,7 @@ class UserByIdLoader(DataLoader):
         return user
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[User], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
@@ -78,7 +78,7 @@ class UserByUsernameLoader(DataLoader):
         return sortedUsers
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[User, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -93,7 +93,7 @@ class UserByUsernameLoader(DataLoader):
         return user
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[User], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)

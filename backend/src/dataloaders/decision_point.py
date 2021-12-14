@@ -1,7 +1,7 @@
 from os import path
 from aiodataloader import DataLoader
 from models import DecisionPoint
-from typing import List
+from typing import List, Union
 
 class DecisionPointLoader(DataLoader):
     loader_name = "_decision_point_loader"
@@ -31,7 +31,7 @@ class DecisionPointLoader(DataLoader):
         return sortedData
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None):
+    async def load_from_id(cls, context=None, id=None)->Union[DecisionPoint, None]:
         if not id:
             return None
         if cls.loader_name not in context:
@@ -39,13 +39,13 @@ class DecisionPointLoader(DataLoader):
         return await context[cls.loader_name].load(id)
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None):
+    async def load_many_from_id(cls, context=None, ids=None)->Union[List[DecisionPoint], None]:
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
 class DecisionPointsByPatient:
-    async def load_from_id(context=None, id=None, pathwayId=None, decisionType=None, limit=None):
+    async def load_from_id(context=None, id=None, pathwayId=None, decisionType=None, limit=None)->Union[List[DecisionPoint], None]:
         if not context or not id:
             return None
 

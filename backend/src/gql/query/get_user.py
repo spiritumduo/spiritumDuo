@@ -4,7 +4,7 @@ from authentication.authentication import needsAuthorization
 
 @needsAuthorization(["authenticated"])
 @query.field("getUser")
-async def resolve_get_user(obj=None, info=None, id=None, username=None):
+async def resolve_get_user(obj=None, info=None, id:int=None, username:str=None):
     if id:
         return await UserByIdLoader.load_from_id(info.context, id)
     elif username:
