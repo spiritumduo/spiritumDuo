@@ -5,49 +5,23 @@ from authentication.authentication import needsAuthorization
 @mutation.field("createPatient")
 @needsAuthorization(["authenticated"])
 async def resolve_create_patient(_=None, info=None, input=None):
-    ret=None
-    if 'communicationMethod' not in input and 'awaitingDecisionType' not in input:
-        ret= await CreatePatient(
-            first_name=input["firstName"],
-            last_name=input["lastName"],
-            hospital_number=input["hospitalNumber"],
-            national_number=input["nationalNumber"],
-            date_of_birth=input["dateOfBirth"],
-            pathway=input["pathway"],
-            context=info.context
-        )
-    elif 'communicationMethod' in input:
-        ret= await CreatePatient(
-            first_name=input["firstName"],
-            last_name=input["lastName"],
-            hospital_number=input["hospitalNumber"],
-            national_number=input["nationalNumber"],
-            date_of_birth=input["dateOfBirth"],
-            pathway=input["pathway"],
-            context=info.context,
-            communication_method=input['communicationMethod'],
-        )
-    elif 'awaitingDecisionType' in input:
-        ret= await CreatePatient(
-            first_name=input["firstName"],
-            last_name=input["lastName"],
-            hospital_number=input["hospitalNumber"],
-            national_number=input["nationalNumber"],
-            date_of_birth=input["dateOfBirth"],
-            pathway=input["pathway"],
-            context=info.context,
-            awaiting_decision_type=input["awaitingDecisionType"],
-        )
-    else:
-        ret= await CreatePatient(
-            first_name=input["firstName"],
-            last_name=input["lastName"],
-            hospital_number=input["hospitalNumber"],
-            national_number=input["nationalNumber"],
-            date_of_birth=input["dateOfBirth"],
-            communication_method=input['communicationMethod'],
-            pathway=input["pathway"],
-            awaiting_decision_type=input["awaitingDecisionType"],
-            context=info.context
-        )
-    return ret
+
+    patientInfo={
+        "first_name":input["firstName"],
+        "last_name":input["lastName"],
+        "hospital_number":input["hospitalNumber"],
+        "national_number":input["nationalNumber"],
+        "date_of_birth":input["dateOfBirth"],
+        "pathway":input["pathway"],
+        "context":info.context
+    }
+    if 'communicationMethod' in input:
+        patientInfo['communication_method']=input['communicationMethod']
+    if 'awaitingDecisionType' in input:
+        patientInfo['awaiting_decision_type']=input['awaitingDecisionType']
+    if 'referredAt' in input:
+        patientInfo['referred_at']=input['referredAt']
+
+    return await CreatePatient(
+        **patientInfo
+    )

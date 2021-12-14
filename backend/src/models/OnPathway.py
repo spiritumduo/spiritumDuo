@@ -17,4 +17,4 @@ class OnPathway(db.Model):
     updated_at = db.Column(
         db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
     )
-
+    referred_at = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
