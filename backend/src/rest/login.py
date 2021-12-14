@@ -10,4 +10,5 @@ class LoginInput(BaseModel):
 @_FastAPI.post("/login/")
 async def login(request: Request):
     loginController=LoginController(model=await request.json())
-    return (await loginController.login()).body
+    res=await loginController.login()
+    return res
