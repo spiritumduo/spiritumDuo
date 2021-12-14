@@ -123,6 +123,7 @@ type OnPathway{
     awaitingDecisionType: DecisionType!
     addedAt: DateTime!
     updatedAt: DateTime!
+    referredAt: DateTime!
 }
 
 type User {
@@ -197,4 +198,5 @@ input PatientInput{
 
     pathway:Int!
     awaitingDecisionType: DecisionType
+    referredAt: DateTime
 }

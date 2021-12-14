@@ -1,5 +1,5 @@
 from models import Patient, OnPathway
-from datetime import date
+from datetime import date, datetime
 from gettext import gettext as _
 import re
 from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader
@@ -21,6 +21,7 @@ async def CreatePatient(
 
     pathway:int=None,
 
+    referred_at:datetime=None,
     awaiting_decision_type:Optional[str]="TRIAGE",
     communication_method:Optional[str]="LETTER",
 ):
@@ -103,11 +104,18 @@ async def CreatePatient(
             date_of_birth=date_of_birth,
             communication_method=communication_method
         )
+
+    onPathwayInformation={
+        'patient': _patient.id,
+        'pathway': _pathway.id,
+        'awaiting_decision_type': awaiting_decision_type,
+        'is_discharged': False,
+    }
+    if referred_at:
+        onPathwayInformation['referred_at']=referred_at
+        
     _pathwayInstance=await OnPathway.create(
-        patient=_patient.id,
-        pathway=_pathway.id,
-        awaiting_decision_type=awaiting_decision_type,
-        is_discharged=False
+        **onPathwayInformation
     )
     return{
         "patient":_patient
