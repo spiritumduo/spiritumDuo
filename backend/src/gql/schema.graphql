@@ -34,7 +34,6 @@ type Query {
 }
 
 type Mutation {
-    login(username: String!, password: String!): User
     createPatient(input:PatientInput!): AddPatientPayload!
     createPathway(input:PathwayInput!): AddPathwayPayload!
     createDecisionPoint(input:DecisionPointInput!): DecisionPoint

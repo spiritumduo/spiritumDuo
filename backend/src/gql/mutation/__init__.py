@@ -1,5 +1,4 @@
 from .mutation_type import mutation
-from .login import mutation
 from .create_patient import mutation
 from .create_pathway import mutation
 from .create_decision_point import mutation
