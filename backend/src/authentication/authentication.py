@@ -1,3 +1,4 @@
+from base64 import b64encode
 from starlette.authentication import (
     AuthenticationBackend, BaseUser,
     AuthCredentials, has_required_scope
@@ -12,6 +13,7 @@ from bcrypt import checkpw
 from random import getrandbits
 from datetime import datetime, timedelta
 from config import config
+import itsdangerous
 class PermissionsError(Exception):
     """
     Raised when a user is lacking a required 
@@ -53,7 +55,7 @@ class SDAuthentication(AuthenticationBackend):
         if "Authorization" not in request.headers:
             if request['session']:
                 async with db.acquire(reuse=False) as conn:
-                    session=db.select([User, Session]).where(Session.session_key==request['session']).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
+                    session=db.select([User, Session]).where(Session.session_key==str(request['session'])).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
                     user=await conn.one_or_none(session)
                 if user:
                     sdUser=SDUser(
@@ -74,17 +76,18 @@ class LoginController:
     WRONG_USERNAME_OR_PASSWORD_PROMPT="Incorrect username and/or password"
     NO_PERMISSIONS_PROMPT="This account is not authenticated for use in this system"
 
-    def __init__(self, model=None):
+    def __init__(self, model:HTTPConnection=None):
         self.model=model
 
     async def login(self):
-        if not self.model['username'] or not self.model['password']:
+        modelData=await self.model.json()
+        if not modelData['username'] or not modelData['password']:
             return JSONResponse({
                 "error":self.WRONG_USERNAME_OR_PASSWORD_PROMPT
             })
 
-        username=self.model['username']
-        password=self.model['password']
+        username=modelData['username']
+        password=modelData['password']
         async with db.acquire(reuse=False) as conn:
             user=await conn.one_or_none(
                 User.query.where(User.username==username)
@@ -113,14 +116,14 @@ class LoginController:
             while sessionKey==None:
                 tempKey=getrandbits(64)
                 result=await conn.one_or_none(
-                    Session.query.where(sessionKey==tempKey)
+                    Session.query.where(Session.session_key==str(tempKey))
                 )
                 if not result:
                     sessionKey=tempKey
                 
         sessionExpiry=datetime.now()+timedelta(seconds=int(config['SESSION_EXPIRY_LENGTH']))
         
-        sdSession=await Session.create(
+        sdSession:Session=await Session.create(
             session_key=str(sessionKey),
             expiry=sessionExpiry,
             user_id=sdUser.id
@@ -146,12 +149,29 @@ class LoginController:
             },
             "pathways": preparedPathways
         })
+        
+        signer=itsdangerous.TimestampSigner(str(config['SESSION_SECRET_KEY']))
+        cookieValue=b64encode(sdSession.session_key.encode("utf-8"))
+        cookieValue=signer.sign(cookieValue)
 
-        res.set_cookie(key="SESSION", value=sdSession.session_key, max_age=config['SESSION_EXPIRY_LENGTH'])
+        res.set_cookie(key="SDSESSION", value=cookieValue.decode("utf-8"), max_age=config['SESSION_EXPIRY_LENGTH'], path="/")
         return res
 
-    async def logout():
-        pass
+    async def logout(self):
+        print("LOGOUT",self.model['session'])
+        if self.model['session']:
+            async with db.acquire(reuse=False) as conn:
+                await conn.scalar(Session.delete.where(Session.session_key==str(self.model['session'])))
+                res=JSONResponse({
+                    "success":True
+                })
+                res.delete_cookie(key="SDSESSION")
+                self.model.scope['session']=None
+                return res
+        else:
+            return JSONResponse({
+                "error":"No valid session"
+            })
 
 
 
