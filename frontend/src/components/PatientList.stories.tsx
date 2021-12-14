@@ -45,7 +45,9 @@ const Template: ComponentStory<typeof PatientList> = ({ pageCount, isLoading, ..
   const updateData = (selectedItem: { selected: number; }) => {
     const start = selectedItem.selected * patientsPerPage;
     const end = start + patientsPerPage;
-    const newData: Patient[] = patientArray.slice(start, end);
+    const newData: JSX.Element[] = patientArray.slice(start, end).map(
+      (n) => <PatientLink key={ n.id } patient={ n } />,
+    );
     updateArgs({ data: newData });
   };
   return (

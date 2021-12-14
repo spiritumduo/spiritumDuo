@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
@@ -6,6 +7,7 @@ import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { MockedProvider } from '@apollo/client/testing';
 import { DefaultLayout } from 'components/PageLayout.stories';
 import { MemoryRouter } from 'react-router';
+import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import DecisionPointPage, { GET_PATIENT_QUERY } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
@@ -60,9 +62,13 @@ export default {
     (DecisionPointPageStory) => (
       <MemoryRouter>
         <MockedProvider mocks={ apolloMocks }>
-          <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-            <DecisionPointPageStory />
-          </PageLayout>
+          <MockAuthProvider>
+            <MockPathwayProvider>
+              <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+                <DecisionPointPageStory />
+              </PageLayout>
+            </MockPathwayProvider>
+          </MockAuthProvider>
         </MockedProvider>
       </MemoryRouter>
     ),

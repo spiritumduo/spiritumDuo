@@ -4,17 +4,22 @@ import { Story, Meta } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { DefaultLayout } from 'components/PageLayout.stories';
+import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import PatientPage, { PatientPageProps } from './Patient';
 
 export default {
   title: 'Pages/Patient',
   component: PatientPage,
   decorators: [
-    (DecisionPointPageStory) => (
+    (PatientPageStory) => (
       <MemoryRouter>
-        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-          <DecisionPointPageStory />
-        </PageLayout>
+        <MockAuthProvider>
+          <MockPathwayProvider>
+            <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+              <PatientPageStory />
+            </PageLayout>
+          </MockPathwayProvider>
+        </MockAuthProvider>
       </MemoryRouter>
     ),
   ],

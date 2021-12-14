@@ -8,6 +8,7 @@ import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'app/queries/UsePatients
 import { DecisionPointType } from 'types/DecisionPoint';
 import { currentPathwayIdVar } from 'app/cache';
 import { MemoryRouter } from 'react-router';
+import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import HomePage, { HomePageProps } from './HomePage';
 
 // Dummy data for display
@@ -40,9 +41,13 @@ export default {
   decorators: [
     (HomePageStory) => (
       <MemoryRouter>
-        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-          <HomePageStory />
-        </PageLayout>
+        <MockAuthProvider>
+          <MockPathwayProvider>
+            <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+              <HomePageStory />
+            </PageLayout>
+          </MockPathwayProvider>
+        </MockAuthProvider>
       </MemoryRouter>
     ),
   ],
