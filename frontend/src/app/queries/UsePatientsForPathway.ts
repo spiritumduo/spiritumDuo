@@ -30,14 +30,15 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  pathwayId: number, awaitingDecisionType: DecisionPointType,
-  first: number,
+  pathwayId: string, awaitingDecisionType: DecisionPointType,
+  first: number, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
       pathwayId: pathwayId,
       awaitingDecisionType: awaitingDecisionType,
       first: first,
+      after: cursor,
     },
   },
 );

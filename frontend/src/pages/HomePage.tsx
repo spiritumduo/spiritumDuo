@@ -7,7 +7,6 @@ import usePatientsForPathwayQuery from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { getPatientOnPathwayConnection } from 'app/queries/__generated__/getPatientOnPathwayConnection';
 import { PatientLink } from 'components/Link';
-import { currentPathwayIdVar } from 'app/cache';
 import { PathwayContext } from 'app/context';
 
 export interface HomePageProps {
@@ -47,7 +46,7 @@ const WrappedPatientList = ({
     error,
     data,
     fetchMore,
-  } = usePatientsForPathwayQuery(pathwayId, decisionPointType, patientsPerPage);
+  } = usePatientsForPathwayQuery(pathwayId.toString(), decisionPointType, patientsPerPage);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -83,7 +82,6 @@ const WrappedPatientList = ({
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
   const pathwayId = currentPathwayId || 1;
-  console.log(pathwayId);
 
   return (
     <div className="container text-center">

@@ -65,7 +65,7 @@ Default.parameters = {
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
           variables: {
-            pathwayId: 1,
+            pathwayId: '1',
             first: patientsPerPage,
             awaitingDecisionType: DecisionPointType.TRIAGE,
           },
@@ -87,7 +87,7 @@ Default.parameters = {
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
           variables: {
-            pathwayId: 1,
+            pathwayId: '1',
             first: patientsPerPage,
             awaitingDecisionType: DecisionPointType.TRIAGE,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
@@ -97,7 +97,7 @@ Default.parameters = {
           data: {
             getPatientOnPathwayConnection: {
               totalCount: edges.length,
-              edges: edges.slice(11, patientsPerPage),
+              edges: edges.slice(10, patientsPerPage + patientsPerPage),
               pageInfo: {
                 hasNextPage: false,
                 endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
@@ -110,7 +110,7 @@ Default.parameters = {
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
           variables: {
-            pathwayId: 1,
+            pathwayId: '1',
             first: patientsPerPage,
             awaitingDecisionType: DecisionPointType.CLINIC,
           },
@@ -132,7 +132,7 @@ Default.parameters = {
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
           variables: {
-            pathwayId: 1,
+            pathwayId: '1',
             first: patientsPerPage,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
             awaitingDecisionType: DecisionPointType.CLINIC,
