@@ -25,4 +25,10 @@ async def CreateUser(
             "error":"An account with this username already exists!"
         }
     else:
-        return newUser
+        return {
+            "username":newUser.username,
+            "first_name":newUser.first_name,
+            "last_name":newUser.last_name,
+            "department":newUser.department,
+            "is_active":newUser.is_active
+        }
