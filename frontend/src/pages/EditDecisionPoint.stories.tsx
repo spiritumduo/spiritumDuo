@@ -4,6 +4,7 @@ import { Story, Meta } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { DefaultLayout } from 'components/PageLayout.stories';
+import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import EditDecisionPointPage, { EditDecisionPointPageProps } from './EditDecisionPoint';
 
 export default {
@@ -12,9 +13,13 @@ export default {
   decorators: [
     (DecisionPointPageStory) => (
       <MemoryRouter>
-        <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-          <DecisionPointPageStory />
-        </PageLayout>
+        <MockAuthProvider>
+          <MockPathwayProvider>
+            <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
+              <DecisionPointPageStory />
+            </PageLayout>
+          </MockPathwayProvider>
+        </MockAuthProvider>
       </MemoryRouter>
     ),
   ],

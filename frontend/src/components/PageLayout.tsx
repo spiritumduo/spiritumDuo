@@ -7,7 +7,6 @@ import { AuthContext, PathwayContext } from 'app/context';
 
 export interface PageLayoutProps {
     headerProps: HeaderProps,
-    footerProps: FooterProps,
     children?: JSX.Element
 }
 
@@ -16,13 +15,11 @@ export interface PageLayoutProps {
  * a Header above and a Footer below.
  *
  * @param {HeaderProps} headerProps Header props
- * @param {FooterProps} footerProps Footer props
  * @param {JSX.Element?} children    Element to wrap
  * @returns {JSX.Element} Wrapped element with header and footer
  */
 const PageLayout = ({
   headerProps,
-  footerProps,
   children,
 }: PageLayoutProps): JSX.Element => {
   const { user } = useContext(AuthContext);
