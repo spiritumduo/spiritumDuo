@@ -94,17 +94,19 @@ const DecisionRoutes = () => (
 
 const App = (): JSX.Element => {
   const [user, updateUser] = useState<User | undefined>();
+  const [pathwayOptions, updatePathwayOptions] = useState<PathwayOption[]>([]);
+  const [currentPathwayId, updateCurrentPathwayId] = useState<number | undefined>();
+
   if (!user) {
     const localStorageUser = loggedInUserVar(); // user has refreshed browser?
     // this will trigger a single re-render
     if (localStorageUser) updateUser(localStorageUser);
   }
-  const [pathwayOptions, updatePathwayOptions] = useState<PathwayOption[]>([]);
   if (pathwayOptions.length === 0) {
     const localStoragePathwayOptions = pathwayOptionsVar();
-    if (localStoragePathwayOptions !== []) updatePathwayOptions(localStoragePathwayOptions);
+    if (localStoragePathwayOptions.length !== 0) updatePathwayOptions(localStoragePathwayOptions);
   }
-  const [currentPathwayId, updateCurrentPathwayId] = useState<number | undefined>();
+
   if (!currentPathwayId) {
     const localStorageCurrentPathwayId = currentPathwayIdVar();
     if (localStorageCurrentPathwayId) updateCurrentPathwayId(localStorageCurrentPathwayId);

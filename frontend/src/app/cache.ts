@@ -90,12 +90,13 @@ if (loggedInuserLocalStorage) {
     sanitisedUser.lastName = loggedInUser.lastName;
     sanitisedUser.department = loggedInUser.department;
     sanitisedUser.roles = loggedInUser.roles;
-    sanitisedUser = sanitisedUser.id === 0 ? null : sanitisedUser;
+    console.log('bro');
   } catch (err) {
     console.warn(err);
     sanitisedUser = null;
   }
 }
+sanitisedUser = sanitisedUser?.id === 0 ? null : sanitisedUser;
 export const loggedInUserVar: ReactiveVar<User | null> = makePersistantVar<User | null>(
   sanitisedUser,
   'loggedInUser',
