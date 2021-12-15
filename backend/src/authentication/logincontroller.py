@@ -36,13 +36,6 @@ class LoginController:
                 "error":self._WRONG_USERNAME_OR_PASSWORD_PROMPT
             })
         
-        if request['session']:
-            async with self._db.acquire(reuse=False) as conn:
-                session=self._db.select([User, Session]).where(Session.session_key==str(request['session'])).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
-                user=await conn.one_or_none(session)
-            if user:
-                return RedirectResponse(url="/")
-
         username=inputData['username']
         password=inputData['password']
         async with self._db.acquire(reuse=False) as conn:
@@ -91,7 +84,6 @@ class LoginController:
             pathways=await conn.all(
                 Pathway.query
             )
-
         preparedPathways=[]
         for pathway in pathways:
             preparedPathways.append(pathway.to_dict())
