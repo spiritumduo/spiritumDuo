@@ -27,6 +27,9 @@ class LoginController:
         self._db=context['db']
 
     async def login(self, request:Request=None):
+        if request['session']:
+            request.scope['session']=None
+            
         inputData=await request.json()
         if not inputData['username'] or not inputData['password']:
             return JSONResponse({
