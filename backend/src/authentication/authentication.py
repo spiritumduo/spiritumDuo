@@ -8,6 +8,7 @@ from models import User, Session
 from starlette.requests import HTTPConnection
 from typing import Callable, List
 from datetime import datetime
+from config import config
 class PermissionsError(Exception):
     """
     Raised when a user is lacking a required 
@@ -49,7 +50,7 @@ class SDAuthentication(AuthenticationBackend):
         if "Authorization" not in request.headers:
             if request['session']:
                 async with db.acquire(reuse=False) as conn:
-                    session=db.select([User, Session]).where(Session.session_key==str(request['session'])).where(Session.user_id==User.id).where(Session.expiry>datetime.now())
+                    session=db.select([User, Session]).where(Session.session_key==str(request['session'])).where(Session.user_id==User.id).where(Session.expiry>datetime.now()).where(User.is_active==True)
                     user=await conn.one_or_none(session)
                 if user:
                     sdUser=SDUser(
@@ -63,7 +64,7 @@ class SDAuthentication(AuthenticationBackend):
                         scopes=["authenticated"]
                     ), sdUser
             else:
-                return None
+                return AuthCredentials(scopes=[]), None
 
 DEBUG_DISABLE_PERMISSION_CHECKING=False
 def needsAuthorization(
@@ -81,13 +82,12 @@ def needsAuthorization(
 
         def wrapper(*args, **kwargs):
             request=args[1].context['request']
-            if DEBUG_DISABLE_PERMISSION_CHECKING:
+            if ("DEBUG_DISABLE_PERMISSION_CHECKING" in config) and (config["DEBUG_DISABLE_PERMISSION_CHECKING"]==True):
                 return func(*args, **kwargs)
 
             if has_required_scope(request, scopes):
                 return func(*args, **kwargs)
             else:
                 return PermissionsError("Missing one or many permissions:",scopes)
-                # return None
         return wrapper
     return decorator
