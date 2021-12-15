@@ -43,6 +43,7 @@ export function useLoginSubmit(): LoginSubmitHook {
           'content-type': 'application/json;charset=UTF-8',
         },
         body: JSON.stringify(variables),
+        credentials: 'include', // TODO: GET RID OF THIS! We need frontend and backend to be served from same port ASAP
       });
       if (!response.ok) {
         throw new Error(`Error: Response ${response.status} ${response.statusText}`);
@@ -64,6 +65,7 @@ export function useLoginSubmit(): LoginSubmitHook {
 function loginSuccess({ user, pathways }: LoginData) {
   // Here were going to cast to avoid the nulls because this will only be called
   // in success because that's what this function is named, right?
+  // TODO: Refactor this so that we just update values stored in context
   loggedInUserVar(user as User);
   const paths = pathways as PathwayOption[];
   pathwayOptionsVar(paths);
@@ -87,7 +89,6 @@ const LoginPage = (): JSX.Element => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   useEffect(() => {
-    if (user) navigate('/');
     if (data?.user && data?.pathways) {
       loginSuccess(data);
       navigate('/', { replace: true });
