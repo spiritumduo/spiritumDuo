@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { pathwayOptionsVar, loggedInUserVar, currentPathwayIdVar } from 'app/cache';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
-import { AuthContext } from 'app/context';
+import { AuthContext, PathwayContext } from 'app/context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
@@ -43,6 +43,7 @@ export function useLoginSubmit(): LoginSubmitHook {
           'content-type': 'application/json;charset=UTF-8',
         },
         body: JSON.stringify(variables),
+        // eslint-disable-next-line max-len
         credentials: 'include', // TODO: GET RID OF THIS! We need frontend and backend to be served from same port ASAP
       });
       if (!response.ok) {
@@ -62,16 +63,6 @@ export function useLoginSubmit(): LoginSubmitHook {
   return [loading, error, data, doLogin];
 }
 
-function loginSuccess({ user, pathways }: LoginData) {
-  // Here were going to cast to avoid the nulls because this will only be called
-  // in success because that's what this function is named, right?
-  // TODO: Refactor this so that we just update values stored in context
-  loggedInUserVar(user as User);
-  const paths = pathways as PathwayOption[];
-  pathwayOptionsVar(paths);
-  currentPathwayIdVar(paths[0].id);
-}
-
 const LoginPage = (): JSX.Element => {
   const [loading, error, data, doLogin] = useLoginSubmit();
 
@@ -87,10 +78,13 @@ const LoginPage = (): JSX.Element => {
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { updateUser } = useContext(AuthContext);
+  const { updatePathwayOptions, updateCurrentPathwayId } = useContext(PathwayContext);
   useEffect(() => {
     if (data?.user && data?.pathways) {
-      loginSuccess(data);
+      updateUser(data.user);
+      updatePathwayOptions(data.pathways);
+      updateCurrentPathwayId(data.pathways[0].id);
       navigate('/', { replace: true });
     }
   });
