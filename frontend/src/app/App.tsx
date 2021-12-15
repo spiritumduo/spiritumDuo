@@ -92,53 +92,30 @@ const DecisionRoutes = () => (
   </Routes>
 );
 
-const App = (): JSX.Element => {
-  const [user, updateUser] = useState<User | undefined>();
-  const [pathwayOptions, updatePathwayOptions] = useState<PathwayOption[]>([]);
-  const [currentPathwayId, updateCurrentPathwayId] = useState<number | undefined>();
-
-  if (!user) {
-    const localStorageUser = loggedInUserVar(); // user has refreshed browser?
-    // this will trigger a single re-render
-    if (localStorageUser) updateUser(localStorageUser);
-  }
-  if (pathwayOptions.length === 0) {
-    const localStoragePathwayOptions = pathwayOptionsVar();
-    if (localStoragePathwayOptions.length !== 0) updatePathwayOptions(localStoragePathwayOptions);
-  }
-
-  if (!currentPathwayId) {
-    const localStorageCurrentPathwayId = currentPathwayIdVar();
-    if (localStorageCurrentPathwayId) updateCurrentPathwayId(localStorageCurrentPathwayId);
-  }
-
-  return (
-    <AuthProvider value={ { user: user, updateUser: updateUser } }>
-      <PathwayProvider
-        value={ { pathwayOptions, updatePathwayOptions, currentPathwayId, updateCurrentPathwayId } }
-      >
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={ <LoginPage /> } />
-            <Route path="/logout" element={ <Logout /> } />
-            <Route path="/patient/*" element={ <PatientRoutes /> } />
-            <Route path="/decision/*" element={ <DecisionRoutes /> } />
-            <Route
-              path="/"
-              element={ (
-                <RequireAuth>
-                  <PageLayout headerProps={ headerProps }>
-                    <HomePage patientsPerPage={ 20 } />
-                  </PageLayout>
-                </RequireAuth>
-              ) }
-            />
-          </Routes>
-        </BrowserRouter>
-      </PathwayProvider>
-    </AuthProvider>
-  );
-};
+const App = (): JSX.Element => (
+  <AuthProvider>
+    <PathwayProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={ <LoginPage /> } />
+          <Route path="/logout" element={ <Logout /> } />
+          <Route path="/patient/*" element={ <PatientRoutes /> } />
+          <Route path="/decision/*" element={ <DecisionRoutes /> } />
+          <Route
+            path="/"
+            element={ (
+              <RequireAuth>
+                <PageLayout headerProps={ headerProps }>
+                  <HomePage patientsPerPage={ 20 } />
+                </PageLayout>
+              </RequireAuth>
+            ) }
+          />
+        </Routes>
+      </BrowserRouter>
+    </PathwayProvider>
+  </AuthProvider>
+);
 
 const Logout = (): JSX.Element => {
   const { updateUser } = useContext(AuthContext);
