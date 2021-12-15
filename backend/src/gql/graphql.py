@@ -24,4 +24,4 @@ def graphql(request:HTTPConnection):
     if "authenticated" in request.auth.scopes:
         return _graphql
     else:
-        return Response(status_code=404)
+        return Response(status_code=403)
