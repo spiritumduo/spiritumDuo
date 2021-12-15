@@ -24,4 +24,10 @@ def graphql(request:HTTPConnection):
     if "authenticated" in request.auth.scopes:
         return _graphql
     else:
-        return Response(status_code=403)
+        """
+        we'll return HTTP 401 here because the
+        user is lacking authentication credentials
+        (https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401)
+        """
+        return Response(status_code=401)
+        
