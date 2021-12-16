@@ -97,7 +97,7 @@ Default.parameters = {
           data: {
             getPatientOnPathwayConnection: {
               totalCount: edges.length,
-              edges: edges.slice(10, patientsPerPage + patientsPerPage),
+              edges: edges.slice(patientsPerPage, patientsPerPage + patientsPerPage),
               pageInfo: {
                 hasNextPage: false,
                 endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
@@ -142,7 +142,7 @@ Default.parameters = {
           data: {
             getPatientOnPathwayConnection: {
               totalCount: edges.length,
-              edges: edges.slice(5, patientsPerPage),
+              edges: edges.slice(patientsPerPage, patientsPerPage + patientsPerPage),
               pageInfo: {
                 hasNextPage: false,
                 endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
