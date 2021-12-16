@@ -1,43 +1,57 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import { AuthProvider, PathwayProvider } from 'app/context';
+import { AuthContext, PathwayContext } from 'app/context';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 
-const user: User = {
-  id: 1,
-  firstName: 'John',
-  lastName: 'Doe',
-  department: 'Respiratory',
-  roles: [],
-};
-
-const pathways: PathwayOption[] = [
-  {
-    id: 0,
-    name: 'Lung Cancer',
-  },
-  {
-    id: 1,
-    name: 'Bronchieactasis',
-  },
-];
-
 export const MockAuthProvider = (
   { children }: React.ComponentPropsWithRef<any>,
-): JSX.Element => (
-  <AuthProvider value={ { user: user, updateUser: () => { } } }>{ children }</AuthProvider>
-);
+  value?: { user: User, updateUser: () => void },
+): JSX.Element => {
+  const user: User = {
+    id: 1,
+    firstName: 'Test-John',
+    lastName: 'Test-Doe',
+    department: 'Respiratory',
+    roles: [],
+  };
+  const providerValue = value || {
+    user: user,
+    updateUser: () => { },
+  };
+  return (
+    <AuthContext.Provider value={ providerValue }>
+      { children }
+    </AuthContext.Provider>
+  );
+};
 
 export const MockPathwayProvider = (
   { children }: React.ComponentPropsWithRef<any>,
-): JSX.Element => (
-  <PathwayProvider value={ {
+  value?: {
+    pathwayOptions: PathwayOption[],
+    updateCurrentPathwayId: () => void,
+    updatePathwayOptions: () => void
+  },
+): JSX.Element => {
+  const pathways: PathwayOption[] = [
+    {
+      id: 1,
+      name: 'Lung Cancer Feet',
+    },
+    {
+      id: 2,
+      name: 'Bronchieactasis Deux',
+    },
+  ];
+  const providerValue = value || {
     pathwayOptions: pathways,
     updateCurrentPathwayId: () => { },
     updatePathwayOptions: () => { },
-  } }
-  >
-    { children }
-  </PathwayProvider>
-);
+  };
+  return (
+    <PathwayContext.Provider value={ providerValue }>
+      { children }
+    </PathwayContext.Provider>
+  );
+};
