@@ -7,17 +7,6 @@ import PathwayOption from 'types/PathwayOption';
 import { MemoryRouter } from 'react-router-dom';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 
-const pathways: PathwayOption[] = [
-  {
-    id: 0,
-    name: 'Lung Cancer',
-  },
-  {
-    id: 1,
-    name: 'Bronchieactasis',
-  },
-];
-
 export default {
   title: 'Components/Page Layout',
   component: PageLayout,
@@ -38,13 +27,3 @@ export default {
 const Template: ComponentStory<typeof PageLayout> = (args: PageLayoutProps) => <PageLayout { ...args } />;
 
 export const DefaultLayout = Template.bind({});
-DefaultLayout.args = {
-  headerProps: {
-    pathwayOptions: pathways,
-    currentPathwayId: pathways[0].id,
-    pathwayOnItemSelect: (name: string) => console.log(name),
-    searchOnSubmit: (e: React.FormEvent<EventTarget>) => {
-      e.preventDefault();
-    },
-  },
-};

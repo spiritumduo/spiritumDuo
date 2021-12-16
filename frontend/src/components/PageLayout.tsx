@@ -1,12 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 import Header, { HeaderProps } from 'components/Header';
-import Footer, { FooterProps } from 'components/Footer';
+import Footer from 'components/Footer';
 import './pagelayout.css';
 import { AuthContext, PathwayContext } from 'app/context';
 
 export interface PageLayoutProps {
-    headerProps: HeaderProps,
     children?: JSX.Element
 }
 
@@ -19,18 +18,18 @@ export interface PageLayoutProps {
  * @returns {JSX.Element} Wrapped element with header and footer
  */
 const PageLayout = ({
-  headerProps,
   children,
 }: PageLayoutProps): JSX.Element => {
   const { user } = useContext(AuthContext);
   const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
-  const actualCurrentPathwayId = currentPathwayId || headerProps.currentPathwayId;
+  const actualCurrentPathwayId = currentPathwayId || pathwayOptions[0].id;
   return (
     <div>
       <Header
-        { ...headerProps }
         pathwayOptions={ pathwayOptions }
         currentPathwayId={ actualCurrentPathwayId }
+        pathwayOnItemSelect={ () => console.log('item selected') }
+        searchOnSubmit={ () => console.log('search submit') }
       />
       {children}
       <Footer name={ `${user?.firstName} ${user?.lastName}` } />

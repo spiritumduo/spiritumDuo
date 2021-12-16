@@ -32,7 +32,7 @@ const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
   return (
     <RequireAuth>
-      <PageLayout headerProps={ headerProps }>
+      <PageLayout>
         <PreviousDecisionPoints hospitalNumber={ hospitalNumber as string } />
       </PageLayout>
     </RequireAuth>
@@ -45,7 +45,7 @@ const PatientRoutes = () => (
       path="add"
       element={ (
         <RequireAuth>
-          <PageLayout headerProps={ headerProps }>
+          <PageLayout>
             <NewPatientPage />
           </PageLayout>
         </RequireAuth>
@@ -68,7 +68,7 @@ const DecisionPointPageRoute = () => {
     return (
       <>
         <RequireAuth>
-          <PageLayout headerProps={ headerProps }>
+          <PageLayout>
             <DecisionPointPage
               decisionType={ decisionTypeEnum }
               hospitalNumber={ hospitalNumber as string }
@@ -79,7 +79,7 @@ const DecisionPointPageRoute = () => {
     );
   } catch (err) {
     return (
-      <PageLayout headerProps={ headerProps }>
+      <PageLayout>
         <h1>Error: Invalid decision type!</h1>
       </PageLayout>
     );
@@ -105,7 +105,7 @@ const App = (): JSX.Element => (
             path="/"
             element={ (
               <RequireAuth>
-                <PageLayout headerProps={ headerProps }>
+                <PageLayout>
                   <HomePage patientsPerPage={ 20 } />
                 </PageLayout>
               </RequireAuth>
