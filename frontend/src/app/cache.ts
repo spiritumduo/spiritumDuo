@@ -90,7 +90,6 @@ if (loggedInuserLocalStorage) {
     sanitisedUser.lastName = loggedInUser.lastName;
     sanitisedUser.department = loggedInUser.department;
     sanitisedUser.roles = loggedInUser.roles;
-    console.log('bro');
   } catch (err) {
     console.warn(err);
     sanitisedUser = null;
