@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
-import Header, { HeaderProps } from 'components/Header';
+import Header from 'components/Header';
 import Footer from 'components/Footer';
 import './pagelayout.css';
 import { AuthContext, PathwayContext } from 'app/context';
@@ -12,10 +12,6 @@ export interface PageLayoutProps {
 /**
  * This component takes an element and returns the element with
  * a Header above and a Footer below.
- *
- * @param {HeaderProps} headerProps Header props
- * @param {JSX.Element?} children    Element to wrap
- * @returns {JSX.Element} Wrapped element with header and footer
  */
 const PageLayout = ({
   children,
