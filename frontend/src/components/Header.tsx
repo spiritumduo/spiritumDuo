@@ -16,7 +16,7 @@ export interface HeaderProps {
 
 const Header = ({
   patient, pathwayOptions, currentPathwayId, pathwayOnItemSelect, searchOnSubmit,
-}: HeaderProps) => {
+}: HeaderProps): JSX.Element => {
   const currentOption = pathwayOptions.find((p) => p.id === currentPathwayId);
   return (
     <div>

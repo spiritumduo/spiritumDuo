@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/client';
 import { currentPathwayIdVar } from 'app/cache';
 import { enumKeys } from 'sdutils';
 
-const NewPatientPage = () => {
+const NewPatientPage = (): JSX.Element => {
   const newPatientSchema = yup.object({
     firstName: yup.string().required(),
     lastName: yup.string().required(),

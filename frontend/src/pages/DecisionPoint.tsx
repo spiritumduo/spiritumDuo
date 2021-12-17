@@ -9,7 +9,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { currentPathwayIdVar, loggedInUserVar } from 'app/cache';
 import { createDecisionPointVariables, createDecisionPoint } from 'pages/__generated__/createDecisionPoint';
-import { GetPatient, GetPatient_getPatient_decisionPoints } from 'pages/__generated__/GetPatient';
+import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import { DecisionType } from '../../__generated__/globalTypes';
 
