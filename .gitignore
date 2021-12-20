@@ -128,3 +128,7 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 socket/nginx_uwsgi.sock
+
+# Cryptographic keys and configurations #
+*.pem
+certbot/conf/renewal/*.conf
