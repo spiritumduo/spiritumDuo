@@ -95,7 +95,7 @@ const DecisionRoutes = () => (
 const App = (): JSX.Element => (
   <AuthProvider>
     <PathwayProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/app/">
         <Routes>
           <Route path="/login" element={ <LoginPage /> } />
           <Route path="/logout" element={ <Logout /> } />
