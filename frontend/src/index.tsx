@@ -10,7 +10,7 @@ import scalarLink from 'app/scalars';
 
 // TODO: Disable this for production! This is just because we are on a different port
 const link = new HttpLink({
-  uri: 'http://localhost:8080/graphql/',
+  uri: '/api/graphql/',
   credentials: 'include',
 });
 
