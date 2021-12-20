@@ -7,13 +7,15 @@ services:
     container_name: sd-postgres
     image: postgres:14.0-alpine
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=starlette
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - TZ=Europe/London
     volumes:
-      - sd-postgres_data:/var/lib/postgresql/data
+      - sd_postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -25,20 +27,14 @@ services:
     build:
       context: ./backend
       dockerfile: ./Dockerfile
-    env_file: .env
+    env_file: ./backend/.env
     volumes:
-      - ./backend:/app
-      - ./socket:/socket
-      - ./log:/log
-      - ./media:/media
-      - ./static:/static
-      - ./uwsgi/vassals:/etc/uwsgi/vassals
+      - ./backend/:/app
     ports:
       - "8080:8080"
+    command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
-    # command: python manage.py runserver 0.0.0.0:8080 # use this if standalone (listens on HTTP:8080)
-    command: uwsgi --emperor /etc/uwsgi/vassals # use this is part of full stack (listens on WSGI:8080)
 
     
   # ********** FRONTEND SERVICES ********** #
@@ -52,13 +48,11 @@ services:
       NODE_ENV: development
     volumes:
       - ./frontend/:/app
-      - ./media:/media
-      - ./static:/static
     ports:
       - 3000:3000
+    command: ["yarn", "start"]
     networks:
       - app-network
-    command: ["yarn", "start"]
 
   sd-frontend-sb:
     container_name: sd-frontend-sb
@@ -69,34 +63,41 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - ./frontend:/app
+      - ./frontend/:/app
     ports:
       - 6006:6006
+    command: ["yarn", "storybook"]    
     networks:
       - app-network
-    command: ["yarn", "storybook"] 
 
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
     depends_on:
       - sd-frontend
-      - sd-frontend-sb
       - sd-backend
+      - sd-certbot
+      - sd-wordpress
     container_name: sd-nginx
-    image: nginx:1.15-alpine
+    # image: nginx:1.21.4-alpine
+    image: sd-nginx
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
     restart: unless-stopped
     volumes:
       - ./media:/media
-      - ./nginxCertbot/nginx:/etc/nginx/conf.d
-      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
-      - ./nginxCertbot/data/certbot/www:/var/www/certbot
-      - ./socket:/socket
-      - ./static:/static
+      - sd_wordpress:/var/www/html
+      # - ./nginx:/etc/nginx
+      # - ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
     networks:
       - app-network
+      - wp-metwork
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   sd-certbot:
@@ -104,8 +105,10 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     volumes:
-      - ./nginxCertbot/data/certbot/conf:/etc/letsencrypt
-      - ./nginxCertbot/data/certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    networks:
+      - app-network
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 
@@ -114,40 +117,38 @@ services:
     container_name: sd-mysql
     image: mysql:8.0
     restart: unless-stopped
-    env_file: .env
     environment:
       - MYSQL_DATABASE=wordpress
-    security_opt:
-      - seccomp:unconfined
+    env_file: ./mysql/.env
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
-      - sd_mysql_data:/var/lib/mysql # Fixes some bind errors that were happening with mySQL
-    command: "--default-authentication-plugin=mysql_native_password"
+      - sd_mysql_data:/var/lib/mysql
     networks:
-      - app-network
+      - wp-metwork
+    ports:
+      - 3306:3306
 
   sd-wordpress:
     depends_on:
       - sd-mysql
-      - sd-backend
     container_name: sd-wordpress
-    image: wordpress:5.8.1-fpm-alpine
+    image: wordpress:5.8.2-fpm-alpine
     restart: unless-stopped
-    env_file: .env
     environment:
       - WORDPRESS_DB_HOST=sd-mysql:3306
-      - WORDPRESS_DB_USER=$MYSQL_USER
-      - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
-      - WORDPRESS_DB_NAME=wordpress
+    env_file: ./wordpress/.env
     volumes:
       - sd_wordpress:/var/www/html
     networks:
-      - app-network
+      - wp-metwork
 
 volumes:
-  sd-postgres_data:
+  sd_postgres_data:
   sd_wordpress:
   sd_mysql_data:
 
 networks:
   app-network:
+    driver: bridge
+  wp-metwork:
     driver: bridge
