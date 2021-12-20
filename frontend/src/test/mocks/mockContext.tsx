@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
-import { AuthContext, PathwayContext } from 'app/context';
+import { AuthContext, AuthContextInterface, PathwayContext, PathwayContextInterface } from 'app/context';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 
 interface MockAuthProviderProps {
   children: JSX.Element;
-  value?: { user: User, updateUser: () => void };
+  value?: AuthContextInterface;
 }
 
 export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JSX.Element => {
@@ -31,11 +31,7 @@ export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JS
 
 interface MockPathwayProviderProps {
   children: JSX.Element;
-  value?: {
-    pathwayOptions: PathwayOption[],
-    updateCurrentPathwayId: () => void,
-    updatePathwayOptions: () => void
-  }
+  value?: PathwayContextInterface;
 }
 
 export const MockPathwayProvider = ({
@@ -56,6 +52,7 @@ export const MockPathwayProvider = ({
     ? {
       pathwayOptions: pathways,
       updateCurrentPathwayId: () => { },
+      currentPathwayId: 1,
       updatePathwayOptions: () => { },
     }
     : value;
