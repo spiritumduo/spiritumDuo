@@ -20,7 +20,10 @@ starlette_middleware = [
     Middleware(CORSMiddleware, allow_origins=[
         'https://studio.apollographql.com',
         'http://localhost:3000'
-        ]
+        ],
+        allow_credentials=True,
+        allow_methods=["*"]
+
     ),
     Middleware(SessionMiddleware, secret_key=config['SESSION_SECRET_KEY'], session_cookie="SDSESSION", max_age=60*60*6),
     Middleware(AuthenticationMiddleware, backend=SDAuthentication()),
