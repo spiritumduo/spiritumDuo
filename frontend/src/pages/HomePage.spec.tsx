@@ -1,37 +1,59 @@
 /* eslint-disable comma-dangle */
 import React from 'react';
-import { act, waitFor, render, screen } from '@testing-library/react';
+import { waitFor, render, screen } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import '@testing-library/jest-dom';
-import { MockedProvider } from '@apollo/client/testing';
+import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
+import userEvent from '@testing-library/user-event';
 import * as stories from './HomePage.stories';
 
 const { Default } = composeStories(stories);
-
-test('Renders without error', () => {
+const renderDefault = () => {
   render(
-    <MockedProvider>
+    <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
-    </MockedProvider>
+    </MockSdApolloProvider>
   );
-});
+};
 
 test('Patient lists should display loading', () => {
-  render(
-    <MockedProvider>
-      <Default />
-    </MockedProvider>
-  );
-
+  renderDefault();
   expect(screen.getAllByText('Loading!').length).toEqual(2);
 });
 
 test('Patient lists should contain patients', async () => {
-  render(
-    <MockedProvider mocks={ Default.parameters.apolloClient.mocks }>
-      <Default />
-    </MockedProvider>
-  );
-  const { patientsPerPage } = Default.args;
-  await waitFor(() => expect(screen.getAllByText('MRN123456', { exact: false }).length).toEqual(2 * patientsPerPage));
+  const patientsPerPage = Default.args?.patientsPerPage;
+  if (patientsPerPage) {
+    renderDefault();
+    await waitFor(
+      () => expect(
+        screen.getAllByRole('link', {
+          name: (t, _) => /MRN123456/i.test(t)
+        }).length
+      ).toEqual(2 * patientsPerPage)
+    );
+  } else {
+    throw new Error('No patients per page specified in story');
+  }
+});
+
+test('Patient lists should paginate', async () => {
+  const patients = Default.parameters?.patients;
+  const patientsPerPage = Default.args?.patientsPerPage;
+  if (patients && patientsPerPage) {
+    renderDefault();
+    await waitFor(() => expect(screen.getAllByText('Loading!').length).toEqual(2));
+    const nextLinks = screen.getAllByRole('button', {
+      name: (t, _) => /next/i.test(t)
+    });
+    expect(nextLinks.length).toEqual(2);
+    userEvent.click(nextLinks[0]);
+    userEvent.click(nextLinks[1]);
+    await waitFor(() => {
+      const links = screen.getAllByRole('link', { name: (t, _) => /john\s+doe\s[12][0-9]/i.test(t) })
+      expect(links.length).toBe(2 * patientsPerPage);
+    });
+  } else {
+    throw new Error('No patients in story parameters');
+  }
 });

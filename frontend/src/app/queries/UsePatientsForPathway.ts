@@ -40,6 +40,7 @@ const usePatientsForPathwayQuery = (
       first: first,
       after: cursor,
     },
+    notifyOnNetworkStatusChange: true,
   },
 );
 

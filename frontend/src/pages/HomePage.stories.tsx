@@ -59,6 +59,7 @@ export const Default: Story<HomePageProps> = (args: HomePageProps) => {
 };
 Default.args = { patientsPerPage: patientsPerPage };
 Default.parameters = {
+  patients: patientArray,
   apolloClient: {
     mocks: [
       { // TRIAGE DATA
