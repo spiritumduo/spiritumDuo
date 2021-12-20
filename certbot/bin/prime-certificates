@@ -1,0 +1,4 @@
+#!/bin/bash
+# Run this from the root of the certbot directory!
+docker build -t sd-certbot .
+docker run --rm -it -p 80:80 -v ${PWD}/conf:/etc/letsencrypt -v ${PWD}/www:/var/www/certbot sd-certbot certonly --standalone -d foxtrot-titan.co.uk -d www.foxtrot-titan.co.uk -m jcf@foxtrot-titan.co.uk --agree-tos --no-eff-email
