@@ -65,7 +65,7 @@ describe('When page loads', () => {
     );
   });
 
-  it('Should submit form correctly', async () => {
+  it('Should report success on form submission', async () => {
     const clinicalHistoryText = '{selectall}New Clinic History';
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
