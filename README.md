@@ -10,14 +10,14 @@ i will add more detail soon.
 ## Installation (WIP)
 Before beginning, ensure .env files in each directory are populated from their examples (if appropriate)
 
-### Frontend
+### 1. Frontend
     The containers must not be running before you can initialise node modules. You can build node modules by running `./frontend/bin/update-node-modules` from the host while in the `/frontend` directory
 
-### Certbot
+### 2. Certbot
     An initial certificate must be generated. You can do this by running `./certbot/bin/prime-certificates` from the host when no other containers are running. This is necessary because the container has to listen on port 80 for verification
 
-### Backend
-    The containers must be running before you can initialise the database. When this is done, run `./backend/bin/migrate-alembic` from the host while in the `/backend` directory
+### 3. Start all containers
+    From the root directory, run `docker-compose up` and wait until completion
 
-### NGINX
-    - No further configuration is required outside of .env variables
+### 4. Backend
+    The containers must be running before you can initialise the database. When this is done, run `./backend/bin/migrate-alembic` from the host while in the `/backend` directory
