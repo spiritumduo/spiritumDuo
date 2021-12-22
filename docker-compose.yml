@@ -7,8 +7,8 @@ services:
     container_name: sd-postgres
     image: postgres:14.0-alpine
     restart: unless-stopped
-    ports:
-      - "5432:5432"
+    expose:
+      - 5432
     environment:
       - POSTGRES_DB=starlette
       - POSTGRES_USER=postgres
@@ -30,8 +30,8 @@ services:
     env_file: ./backend/.env
     volumes:
       - ./backend/:/app
-    ports:
-      - "8080:8080"
+    expose:
+      - 8080
     command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
@@ -48,8 +48,8 @@ services:
       NODE_ENV: development
     volumes:
       - ./frontend/:/app
-    ports:
-      - 3000:3000
+    expose:
+      - 3000
     command: ["yarn", "start"]
     networks:
       - app-network
