@@ -53,21 +53,21 @@ services:
     networks:
       - app-network
 
-  sd-frontend-sb:
-    container_name: sd-frontend-sb
-    image: sd-frontend-sb
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: development
-    volumes:
-      - ./frontend/:/app
-    ports:
-      - 6006:6006
-    command: ["yarn", "storybook"]    
-    networks:
-      - app-network
+  # sd-frontend-sb:
+  #   container_name: sd-frontend-sb
+  #   image: sd-frontend-sb
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     NODE_ENV: development
+  #   volumes:
+  #     - ./frontend/:/app
+  #   ports:
+  #     - 6006:6006
+  #   command: ["yarn", "storybook"]    
+  #   networks:
+  #     - app-network
 
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
