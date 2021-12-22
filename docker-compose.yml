@@ -36,6 +36,7 @@ services:
     networks:
       - app-network
 
+    
   # ********** FRONTEND SERVICES ********** #
   sd-frontend:
     container_name: sd-frontend
@@ -77,9 +78,12 @@ services:
       - sd-certbot
       - sd-wordpress
     container_name: sd-nginx
-    image: nginx:1.21.4-alpine
+    env_file: ./nginx/.env
+    image: sd-nginx
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
     restart: unless-stopped
-    env-file: ./nginx/.env
     volumes:
       - ./media:/media
       - ./certbot/conf:/etc/letsencrypt
@@ -92,7 +96,6 @@ services:
     networks:
       - app-network
       - wp-metwork
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   sd-certbot:
     container_name: sd-certbot
@@ -104,6 +107,7 @@ services:
     networks:
       - app-network
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
 
     # ********** LANDING PAGE ********** #
   sd-mysql:
