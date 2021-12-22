@@ -45,6 +45,7 @@ class OnPathwayByIdLoader(DataLoader):
         return await context[cls.loader_name].load_many(ids)
 
 class OnPathwaysByPatient:
+    @staticmethod
     async def load_from_id(context=None, id=None)->Union[List[OnPathway], None]:
         if not context or not id:
             return None
