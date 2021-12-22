@@ -1,6 +1,4 @@
 #!/bin/bash
-# Run this from the root of the certbot directory!
-docker build -t sd-certbot . # build the image
 
 # the below entries pull the relavent information from NGINX' env file
 # as certbot doesn't support env variables. This way it automatically
