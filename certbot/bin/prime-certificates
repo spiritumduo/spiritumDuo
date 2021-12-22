@@ -1,4 +1,14 @@
 #!/bin/bash
 # Run this from the root of the certbot directory!
-docker build -t sd-certbot .
-docker run --rm -it -p 80:80 --env-file ../nginx/.env -v ${PWD}/conf:/etc/letsencrypt -v ${PWD}/www:/var/www/certbot sd-certbot certonly --standalone -d $PRIMARY_HOSTNAME -d $ALTERNATIVE_HOSTNAME -m ${SSL_EMAIL} --agree-tos --no-eff-email
+docker build -t sd-certbot . # build the image
+
+# the below entries pull the relavent information from NGINX' env file
+# as certbot doesn't support env variables. This way it automatically
+# gets the correct data it needs without the user needing to edit
+# this file also
+
+PRIMARY_HOSTNAME=$(awk -F= '$1=="PRIMARY_HOSTNAME"{print $2;exit}' ../nginx/.env)
+ALTERNATIVE_HOSTNAME=$(awk -F= '$1=="ALTERNATIVE_HOSTNAME"{print $2;exit}' ../nginx/.env)
+SSL_EMAIL=$(awk -F= '$1=="SSL_EMAIL"{print $2;exit}' ../nginx/.env)
+
+docker run --rm -it -p 80:80 -v ${PWD}/conf:/etc/letsencrypt -v ${PWD}/www:/var/www/certbot sd-certbot certonly --standalone -d $PRIMARY_HOSTNAME -d $ALTERNATIVE_HOSTNAME -m $SSL_EMAIL --agree-tos --no-eff-email
