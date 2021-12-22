@@ -1,0 +1,76 @@
+server {
+    listen 80;
+    server_name ${ALTERNATIVE_HOSTNAME};
+
+    access_log off;
+    root /var/www/html;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://${PRIMARY_HOSTNAME}$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name ${PRIMARY_HOSTNAME} ${ALTERNATIVE_HOSTNAME};
+
+    ssl_certificate /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/privkey.pem;
+
+    access_log off;
+    root /var/www/html;
+
+    index index.php;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location /media  {
+        alias /media;
+    }
+
+    location /static {
+        alias /static;
+    }
+
+    location /app/ {
+        proxy_pass http://sd-frontend:3000;
+    }
+    location /app {
+        return 302 /app/;
+    }
+
+    
+    location /api/ {
+        proxy_pass http://sd-backend:8080/;
+    }
+    location /api {
+        return 302 /api/;
+    }
+
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ [^/]\.php(/|$) { 
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        if (!-f $document_root$fastcgi_script_name) {
+            return 404;
+        }
+
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+
+        fastcgi_pass   sd-wordpress:9000;
+        fastcgi_index  index.php; 
+    } 
+}
