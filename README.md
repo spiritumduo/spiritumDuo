@@ -19,5 +19,5 @@ Before beginning, ensure .env files in each directory are populated from their e
 ### 3. Start all containers
     From the root directory, run `docker-compose up` and wait until completion
 
-### 4. Backend
+### Backend
     The containers must be running before you can initialise the database. When this is done, run `./backend/bin/migrate-alembic` from the host while in the `/backend` directory
