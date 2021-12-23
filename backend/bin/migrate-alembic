@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # This needs to be run from the host whilst the containers are running
-docker exec -ti sd-backend bash -c "alembic revision --autogenerate -m 'initial migration' && alembic update head"
+docker exec -ti sd-backend bash -c "alembic revision --autogenerate -m 'initial migration' && alembic upgrade head"
