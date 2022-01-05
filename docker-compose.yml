@@ -35,29 +35,10 @@ services:
     command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
-
     
-  # ********** FRONTEND SERVICES ********** #
-  sd-frontend:
-    container_name: sd-frontend
-    image: sd-frontend
-    build:
-      context: ./frontend
-      dockerfile: ./Dockerfile
-    environment:
-      NODE_ENV: development
-    volumes:
-      - ./frontend/:/app
-    expose:
-      - 3000
-    command: ["yarn", "start"]
-    networks:
-      - app-network
-
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
     depends_on:
-      - sd-frontend
       - sd-backend
       - sd-certbot
       - sd-wordpress
