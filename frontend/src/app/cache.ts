@@ -91,7 +91,6 @@ if (loggedInuserLocalStorage) {
     sanitisedUser.department = loggedInUser.department;
     sanitisedUser.roles = loggedInUser.roles;
   } catch (err) {
-    console.warn(err);
     sanitisedUser = null;
   }
 }
