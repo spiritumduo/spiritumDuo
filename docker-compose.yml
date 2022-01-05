@@ -84,7 +84,7 @@ services:
     volumes:
       - sd_mysql_data:/var/lib/mysql
     networks:
-      - wp-metwork
+      - wp-network
     ports:
       - 3306:3306
 
