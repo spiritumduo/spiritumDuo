@@ -85,6 +85,7 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
 
+    milestones: [Milestone!]
     pathways: [OnPathway]
     decisionPoints(pathwayId:ID, decisionType:DecisionType, limit:Int):[DecisionPoint!]
     # testResults: [TestResult]
@@ -198,4 +199,28 @@ input PatientInput{
     pathway:Int!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
+}
+
+type MilestoneType {
+  id: ID!
+  refName: String!
+  name: String!
+}
+
+type Milestone {
+  id: ID!
+  patient: Patient!
+  milestoneType: MilestoneType!
+  onPathway: OnPathway!
+  addedAt: DateTime!
+  updatedAt: DateTime!
+  currentState: MilestoneState!
+}
+
+enum MilestoneState {
+  INIT
+  ACTIVE
+  WAITING
+  ERROR
+  COMPLETED
 }

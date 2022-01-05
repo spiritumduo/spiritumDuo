@@ -5,3 +5,5 @@ from .OnPathway import OnPathway
 from .User import User
 from .DecisionPoint import DecisionPoint
 from .Session import Session
+from .Milestone import Milestone
+from .MilestoneType import MilestoneType

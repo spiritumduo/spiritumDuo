@@ -2,31 +2,19 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter, Route, Routes, Navigate, useParams } from 'react-router-dom';
-import { pathwayOptionsVar, loggedInUserVar, currentPathwayIdVar } from 'app/cache';
+import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
 import LoginPage from 'pages/Login';
 import HomePage from 'pages/HomePage';
-import { FooterProps } from 'components/Footer';
-import { HeaderProps } from 'components/Header';
 import PageLayout from 'components/PageLayout';
-import PathwayOption from 'types/PathwayOption';
 import NewPatientPage from 'pages/NewPatient';
 import DecisionPointPage from 'pages/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
+import PathwayDemo from 'pages/PathwayDemo';
 import { DecisionPointType } from 'types/DecisionPoint';
-import { AuthContext, AuthProvider, PathwayContext, PathwayProvider } from 'app/context';
+import { AuthContext, AuthProvider, PathwayProvider } from 'app/context';
 import './App.css';
-import User from 'types/Users';
-
-const headerProps: HeaderProps = {
-  pathwayOptions: pathwayOptionsVar() as PathwayOption[],
-  currentPathwayId: currentPathwayIdVar(),
-  pathwayOnItemSelect: () => console.log('pathway select'),
-  searchOnSubmit: () => console.log('search submit'),
-};
-
-const footerProps: FooterProps = { name: `${loggedInUserVar()?.firstName} ${loggedInUserVar()?.lastName}` };
 
 const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
@@ -34,6 +22,17 @@ const PreviousDecisionPointsPageRoute = () => {
     <RequireAuth>
       <PageLayout>
         <PreviousDecisionPoints hospitalNumber={ hospitalNumber as string } />
+      </PageLayout>
+    </RequireAuth>
+  );
+};
+
+const PatientPathwayPageRoute = () => {
+  const { hospitalNumber } = useParams();
+  return (
+    <RequireAuth>
+      <PageLayout>
+        <PathwayDemo hospitalNumber={ hospitalNumber as string } />
       </PageLayout>
     </RequireAuth>
   );
@@ -54,6 +53,10 @@ const PatientRoutes = () => (
     <Route
       path=":hospitalNumber/decisions"
       element={ (<PreviousDecisionPointsPageRoute />) }
+    />
+    <Route
+      path=":hospitalNumber/pathway"
+      element={ (<PatientPathwayPageRoute />) }
     />
   </Routes>
 );

@@ -45,6 +45,7 @@ class DecisionPointLoader(DataLoader):
         return await context[cls.loader_name].load_many(ids)
 
 class DecisionPointsByPatient:
+    @staticmethod
     async def load_from_id(context=None, id=None, pathwayId=None, decisionType=None, limit=None)->Union[List[DecisionPoint], None]:
         if not context or not id:
             return None

@@ -1,24 +1,30 @@
 from starlette.responses import PlainTextResponse
-from models.User import User
-from models.Patient import Patient
-from models.Pathway import Pathway
-from models.OnPathway import OnPathway
-from models.DecisionPoint import DecisionPoint
+from models import User, Pathway, Patient, OnPathway, DecisionPoint, Milestone, MilestoneType
 from random import randint
 from datetime import date, datetime
-from SdTypes import DecisionTypes
+from SdTypes import DecisionTypes, MilestoneState
 
 
 async def generate_random(request):
+    await Milestone.delete.where(Milestone.id >= 0).gino.status()
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
     await Pathway.delete.where(Pathway.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
+    await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
 
     await Pathway.create(name="Lung Cancer")
     await Pathway.create(name="Bronchastasis")
 
-    for i in range(0, 200):
+    await MilestoneType.create(name="CT Thorax", ref_name="ref CT Thorax")
+    await MilestoneType.create(name="X-Ray Chest", ref_name="ref X-Ray Chest")
+    await MilestoneType.create(name="MRI Thorax", ref_name="ref MRI Thorax")
+    await MilestoneType.create(name="CT Head", ref_name="ref CT Head")
+    await MilestoneType.create(name="Bronchoscopy", ref_name="ref Bronchoscopy")
+
+    milestone_types = await MilestoneType.query.gino.all()
+
+    for i in range(0, 50):
         str_i = str(i)
         year = randint(1950, 1975)
         month = randint(1, 12)
@@ -47,26 +53,80 @@ async def generate_random(request):
     for p in patients:
         path = pathways[randint(0, 1)]
         d_t = d_types[randint(0, 1)]
-        await OnPathway.create(
+        referDay = randint(1, 10)
+        referMonth = randint(1, 10)
+        referYear = 2021
+        on_pathway = await OnPathway.create(
             patient=p.id,
             pathway=path.id,
-            awaiting_decision_type=d_t
+            awaiting_decision_type=d_t,
+            referred_at=date(referYear, referMonth, referDay)
         )
 
-        num_dp = randint(0, 5)
-        for i in range(1, num_dp):
-            d_t = d_types[randint(0, 3)]
-            await DecisionPoint.create(
+        num_decisions = randint(1, 2)
+
+        decisionDay = referDay + randint(1, 7)
+        decisionMonth = referMonth
+        decisionYear = referYear
+        dp = await DecisionPoint.create(
+            patient=p.id,
+            user=user.id,
+            pathway=path.id,
+            decision_type=DecisionTypes.TRIAGE.value,
+            clinic_history=lorem,
+            comorbidities=lorem,
+            requests_referrals='Some referrals',
+            added_at=date(decisionYear, decisionMonth, decisionDay)
+        )
+
+        num_milestones = randint(2, 5)
+        for i in range(0, num_milestones):
+            current_state = MilestoneState.WAITING.value
+            updated_at = date(decisionYear, decisionMonth, decisionDay)
+            if num_decisions == 2:
+                current_state = MilestoneState.COMPLETED.value
+                updated_at = date(decisionYear, decisionMonth, decisionDay + randint(1, 7))
+            elif randint(0, 1) == 1:
+                current_state = MilestoneState.COMPLETED.value
+                updated_at = date(decisionYear, decisionMonth, decisionDay + randint(1, 7))
+            await Milestone.create(
+                patient_id=p.id,
+                milestone_type_id=milestone_types[i].id,
+                decision_point_id=dp.id,
+                on_pathway_id=on_pathway.id,
+                added_at=date(decisionYear, decisionMonth, decisionDay),
+                current_state=current_state,
+                updated_at=updated_at
+            )
+
+        if num_decisions == 2:
+            decisionMonth += 1
+            dp = await DecisionPoint.create(
                 patient=p.id,
                 user=user.id,
                 pathway=path.id,
-                decision_type=d_t,
+                decision_type=DecisionTypes.CLINIC.value,
                 clinic_history=lorem,
                 comorbidities=lorem,
-                requests_referrals='Some referrals'
+                requests_referrals='Some referrals',
+                added_at=date(decisionYear, decisionMonth, decisionDay)
             )
 
-
-
+            num_milestones = randint(2, 5)
+            for i in range(0, num_milestones):
+                current_state = MilestoneState.WAITING.value
+                updated_at = date(decisionYear, decisionMonth, decisionDay)
+                if randint(0, 1) == 1:
+                    current_state = MilestoneState.COMPLETED.value
+                    updated_at = date(decisionYear, decisionMonth, decisionDay + randint(1, 7))
+                await Milestone.create(
+                    patient_id=p.id,
+                    milestone_type_id=milestone_types[i].id,
+                    decision_point_id=dp.id,
+                    on_pathway_id=on_pathway.id,
+                    added_at=date(decisionYear, decisionMonth, decisionDay),
+                    current_state=current_state,
+                    updated_at=updated_at
+                )
 
     return PlainTextResponse("OK")

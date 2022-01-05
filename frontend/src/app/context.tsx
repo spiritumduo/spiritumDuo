@@ -4,7 +4,7 @@ import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { currentPathwayIdVar, loggedInUserVar, pathwayOptionsVar } from 'app/cache';
 
-interface AuthContextInterface {
+export interface AuthContextInterface {
     user?: User;
     updateUser: (user: User | undefined) => void;
 }
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: React.ComponentPropsWithRef<any>): JS
   );
 };
 
-interface PathwayContextInterface {
+export interface PathwayContextInterface {
     pathwayOptions: PathwayOption[];
     updatePathwayOptions: (pathways: PathwayOption[]) => void;
     currentPathwayId?: number;

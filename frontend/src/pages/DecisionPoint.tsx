@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext, PathwayContext } from 'app/context';
 import { Link, useNavigate } from 'react-router-dom';
 import Patient from 'types/Patient';
 import { DecisionPointType } from 'types/DecisionPoint';
@@ -7,10 +8,10 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { enumKeys } from 'sdutils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { currentPathwayIdVar, loggedInUserVar } from 'app/cache';
 import { createDecisionPointVariables, createDecisionPoint } from 'pages/__generated__/createDecisionPoint';
 import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
+import User from 'types/Users';
 import { DecisionType } from '../../__generated__/globalTypes';
 
 export interface DecisionPointPageProps {
@@ -65,6 +66,11 @@ interface DecisionPointPageForm {
 const DecisionPointPage = (
   { hospitalNumber, decisionType }: DecisionPointPageProps,
 ): JSX.Element => {
+  // CONTEXT
+  const { currentPathwayId } = useContext(PathwayContext);
+  const { user: contextUser } = useContext(AuthContext);
+  const user = contextUser as User; // context can be undefined
+
   // GET PATIENT DATA QUERY
   const { loading, data, error } = useQuery<GetPatient>(
     GET_PATIENT_QUERY, {
@@ -99,6 +105,7 @@ const DecisionPointPage = (
     getValues,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
+  // Redirect to / after successful submission
   const [submittedState, setSubmittedState] = useState<boolean>(false);
   useEffect(() => {
     if (isSubmitted) setTimeout(() => setSubmittedState(true), 2000);
@@ -138,11 +145,6 @@ const DecisionPointPage = (
     ? data.getPatient.decisionPoints[0]
     : null;
 
-  const currentUser = loggedInUserVar();
-  // TODO: maybe not use these reactive vars in pages? It leads to stuff like this.
-  // Perhaps make a React context for current user and pathway options.
-  const currentUserId = currentUser ? currentUser.id : 0;
-
   const decisionKeys = enumKeys(DecisionPointType);
   const decisionSelectOptions = decisionKeys.map(
     (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
@@ -157,8 +159,8 @@ const DecisionPointPage = (
               <form className="card-body p-5" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
                 <fieldset disabled={ loading || mutateLoading || isSubmitted }>
                   <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
-                  <input type="hidden" value={ currentUserId } { ...register('clinicianId', { required: true }) } />
-                  <input type="hidden" value={ currentPathwayIdVar() } { ...register('pathwayId', { required: true }) } />
+                  <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
+                  <input type="hidden" value={ currentPathwayId } { ...register('pathwayId', { required: true }) } />
                   <div className="container">
 
                     <div className="text-center">
