@@ -54,22 +54,6 @@ services:
     networks:
       - app-network
 
-  # sd-frontend-sb:
-  #   container_name: sd-frontend-sb
-  #   image: sd-frontend-sb
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: ./Dockerfile
-  #   environment:
-  #     NODE_ENV: development
-  #   volumes:
-  #     - ./frontend/:/app
-  #   ports:
-  #     - 6006:6006
-  #   command: ["yarn", "storybook"]    
-  #   networks:
-  #     - app-network
-
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
     depends_on:
@@ -78,24 +62,22 @@ services:
       - sd-certbot
       - sd-wordpress
     container_name: sd-nginx
-    env_file: ./nginx/.env
+    env_file: ./frontend/nginx/.env
     image: sd-nginx
     build:
-      context: ./nginx
-      dockerfile: ./Dockerfile
+      context: ./frontend
+      dockerfile: ./frontend/Dockerfile
     restart: unless-stopped
     volumes:
       - ./media:/media
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - sd_wordpress:/var/www/html
-      - ./nginx:/etc/nginx/conf.d
     ports:
       - 80:80
       - 443:443
     networks:
       - app-network
-      - wp-metwork
+      - wp-network
 
   sd-certbot:
     container_name: sd-certbot
@@ -137,7 +119,7 @@ services:
     volumes:
       - sd_wordpress:/var/www/html
     networks:
-      - wp-metwork
+      - wp-network
 
 volumes:
   sd_postgres_data:
@@ -147,5 +129,5 @@ volumes:
 networks:
   app-network:
     driver: bridge
-  wp-metwork:
+  wp-network:
     driver: bridge

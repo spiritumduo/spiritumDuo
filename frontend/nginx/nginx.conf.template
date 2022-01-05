@@ -2,7 +2,7 @@ server {
     listen 80;
     server_name ${ALTERNATIVE_HOSTNAME};
 
-    access_log off;
+    access_log on;
     root /var/www/html;
 
     location /.well-known/acme-challenge/ {
@@ -21,7 +21,7 @@ server {
     ssl_certificate /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/privkey.pem;
 
-    access_log off;
+    access_log on;
     root /var/www/html;
 
     index index.php;
@@ -40,8 +40,9 @@ server {
     }
 
     location /app/ {
-        proxy_pass http://sd-frontend:3000;
+
     }
+
     location /app {
         return 302 /app/;
     }
