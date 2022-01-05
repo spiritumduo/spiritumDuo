@@ -47,7 +47,7 @@ services:
     image: sd-nginx
     build:
       context: ./frontend
-      dockerfile: ./frontend/Dockerfile
+      dockerfile: ./Dockerfile
     restart: unless-stopped
     volumes:
       - ./media:/media
