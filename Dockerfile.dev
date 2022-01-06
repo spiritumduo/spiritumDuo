@@ -1,6 +1,7 @@
 FROM nginx:1.21.4-alpine
 
-COPY docker-entrypoint /
+COPY nginx/docker-entrypoint /
+COPY nginx/nginx.conf.template.dev /etc/nginx/conf.d/nginx.conf.template
 RUN chmod +x ./docker-entrypoint
 ENTRYPOINT [ "/docker-entrypoint" ]
 CMD ["nginx", "-g", "daemon off;"]

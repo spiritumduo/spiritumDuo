@@ -9,9 +9,8 @@ import reportWebVitals from 'reportWebVitals';
 import scalarLink from 'app/scalars';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
-// TODO: Disable this for production! This is just because we are on a different port
 const link = new HttpLink({
-  uri: '/api/graphql/',
+  uri: `${window.location.protocol}//${window.location.host}/api/graphql`,
   credentials: 'include',
 });
 

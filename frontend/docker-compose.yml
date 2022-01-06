@@ -6,7 +6,7 @@ services:
     image: sd-frontend
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     environment:
       NODE_ENV: development
     volumes:
@@ -20,7 +20,7 @@ services:
     image: sd-frontend-sb
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     environment:
       NODE_ENV: development
     volumes:

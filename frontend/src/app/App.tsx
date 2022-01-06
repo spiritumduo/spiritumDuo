@@ -98,7 +98,7 @@ const DecisionRoutes = () => (
 const App = (): JSX.Element => (
   <AuthProvider>
     <PathwayProvider>
-      <BrowserRouter basename="/app/">
+      <BrowserRouter basename={ process.env.PUBLIC_URL }>
         <Routes>
           <Route path="/login" element={ <LoginPage /> } />
           <Route path="/logout" element={ <Logout /> } />

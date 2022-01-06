@@ -36,7 +36,9 @@ export function useLoginSubmit(): LoginSubmitHook {
   async function doLogin(variables: LoginFormInputs) {
     setLoading(true);
     try {
-      const response = await window.fetch('/api/rest/login', {
+      const { location } = window;
+      const uriPrefix = `${location.protocol}//${location.host}`;
+      const response = await window.fetch(`${uriPrefix}/api/rest/login`, {
         method: 'POST',
         headers: {
           'content-type': 'application/json;charset=UTF-8',

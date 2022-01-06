@@ -1,0 +1,54 @@
+server {
+    listen 80 default_server;
+    server_name ${PRIMARY_HOSTNAME} ${ALTERNATIVE_HOSTNAME};
+
+    access_log on;
+    root /var/www/html;
+
+    index index.php;
+    server_tokens off;
+
+    location /media  {
+        alias /media;
+    }
+
+    location /static {
+        alias /static;
+    }
+
+    location /app/ {
+        proxy_pass http://host.docker.internal:3000/app/;
+    }
+
+    location /app {
+        return 302 /app/;
+    }
+
+    
+    location /api/ {
+        proxy_pass http://host.docker.internal:8080/;
+    }
+    location /api {
+        return 302 /api/;
+    }
+
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ [^/]\.php(/|$) { 
+        fastcgi_split_path_info ^(.+?\.php)(/.*)$;
+        if (!-f $document_root$fastcgi_script_name) {
+            return 404;
+        }
+
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO       $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+
+        fastcgi_pass   sd-wordpress:9000;
+        fastcgi_index  index.php; 
+    } 
+}

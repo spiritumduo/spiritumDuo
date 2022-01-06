@@ -1,0 +1,142 @@
+version: "3.9"
+
+services:
+
+  # ********** BACKEND SERVICES ********** #
+  sd-postgres:
+    container_name: sd-postgres
+    image: postgres:14.0-alpine
+    restart: unless-stopped
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=starlette
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/London
+    volumes:
+      - sd_postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  sd-backend:
+    depends_on:
+      - sd-postgres
+    container_name: sd-backend
+    image: sd-backend
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    env_file: ./backend/.env
+    volumes:
+      - ./backend/:/app
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
+    networks:
+      - app-network
+
+    
+  # ********** FRONTEND SERVICES ********** #
+  sd-frontend:
+    container_name: sd-frontend
+    image: sd-frontend
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend/:/app
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    command: ["yarn", "start"]
+    networks:
+      - app-network
+
+  sd-frontend-sb:
+    container_name: sd-frontend-sb
+    image: sd-frontend-sb
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./frontend/:/app
+    ports:
+      - 6006:6006
+    command: ["yarn", "storybook"]    
+    networks:
+      - app-network
+
+  # ********** INTERMEDIATE SERVICES ********** #
+  sd-nginx:
+    depends_on:
+      - sd-frontend
+      - sd-backend
+      - sd-wordpress
+    container_name: sd-nginx-dev
+    env_file: ./nginx/.env
+    image: sd-nginx-dev
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    restart: unless-stopped
+    volumes:
+      - ./media:/media
+      - sd_wordpress:/var/www/html
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - app-network
+      - wp-network
+
+
+    # ********** LANDING PAGE ********** #
+  sd-mysql:
+    container_name: sd-mysql
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=wordpress
+    env_file: ./mysql/.env
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - sd_mysql_data:/var/lib/mysql
+    networks:
+      - wp-network
+    ports:
+      - 3306:3306
+
+  sd-wordpress:
+    depends_on:
+      - sd-mysql
+    container_name: sd-wordpress
+    image: wordpress:5.8.2-fpm-alpine
+    restart: unless-stopped
+    environment:
+      - WORDPRESS_DB_HOST=sd-mysql:3306
+    env_file: ./wordpress/.env
+    volumes:
+      - sd_wordpress:/var/www/html
+    networks:
+      - wp-network
+
+volumes:
+  sd_postgres_data:
+  sd_wordpress:
+  sd_mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
+  wp-network:
+    driver: bridge
