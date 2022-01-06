@@ -3,12 +3,15 @@ from starlette.authentication import (
     AuthCredentials, has_required_scope
 )
 import inspect
+
+from starlette.responses import Response
 from models.db import db
 from models import User, Session
 from starlette.requests import HTTPConnection
 from typing import Callable, List
 from datetime import datetime
 from config import config
+from functools import wraps
 class PermissionsError(Exception):
     """
     Raised when a user is lacking a required 
@@ -66,7 +69,6 @@ class SDAuthentication(AuthenticationBackend):
             else:
                 return AuthCredentials(scopes=[]), None
 
-DEBUG_DISABLE_PERMISSION_CHECKING=False
 def needsAuthorization(
     scopes:List[str]=None
 )-> Callable:
@@ -91,3 +93,30 @@ def needsAuthorization(
                 return PermissionsError("Missing one or many permissions:",scopes)
         return wrapper
     return decorator
+
+def needsAuthenticated(func:Callable)->Callable:
+    signature=inspect.signature(func)
+    requestIndex=None
+    for _,param in enumerate(signature.parameters.values()):
+        if param.name=="request":
+            requestIndex=_
+
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        if kwargs.get("request")!=None:
+            request=kwargs.get("request")
+        elif requestIndex!=None and args[requestIndex]:
+            request=args[requestIndex]
+        else:
+            raise Exception("Request parameter not found in args or kwargs")
+
+        if request is None:
+            raise Exception("Request parameter not found")
+        if not has_required_scope(request, ["authenticated"]):
+            return Response("User is not logged in", status_code=401)
+            
+        if inspect.iscoroutinefunction(func):
+            return await func(*args, **kwargs)
+        else:
+            return func(*args, **kwargs)
+    return wrapper
