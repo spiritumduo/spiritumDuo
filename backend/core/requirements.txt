@@ -14,4 +14,6 @@ pydantic==1.8.2
 itsdangerous==2.0.1
 bcrypt==3.2.0
 behave==1.2.6
+PyHamcrest==2.0.3
 requests==2.26.0
+sqlalchemy_utils==0.38.2
