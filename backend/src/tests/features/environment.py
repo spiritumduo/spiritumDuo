@@ -17,6 +17,7 @@ from sqlalchemy_utils import database_exists, create_database, drop_database
 @fixture
 def create_test_client(context):
     with TestClient(app) as client:
+        client.base_url="http://localhost:8080"
         context.client = client
         yield context.client
 
