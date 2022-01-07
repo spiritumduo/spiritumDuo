@@ -1,8 +1,4 @@
 Feature: all patient operations
-    Scenario: a clinician is logged in
-        Given a clinician has an account
-        When we login with the account
-        Then we get an authenticated session cookie
     Scenario: a new patient needs to be added into the system
         Given a pathway exists 
         When we run the GraphQL mutation to add the patient
