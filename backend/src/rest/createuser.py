@@ -1,6 +1,9 @@
 from .api import _FastAPI
+from fastapi import Request
 from pydantic import BaseModel
 from datacreators import CreateUser
+from authentication.authentication import needsAuthenticated
+
 class CreateUserInput(BaseModel):
     username:str
     password:str
@@ -8,8 +11,10 @@ class CreateUserInput(BaseModel):
     lastName:str
     department:str
 
+
 @_FastAPI.post("/createuser/")
-async def create_user(input:CreateUserInput):
+@needsAuthenticated
+async def create_user(request:Request, input:CreateUserInput):
     user=await CreateUser(
         username=input.username,
         password=input.password,
@@ -17,5 +22,4 @@ async def create_user(input:CreateUserInput):
         last_name=input.lastName,
         department=input.department
     )
-
     return user

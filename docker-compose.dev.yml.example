@@ -12,10 +12,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=starlette
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
       - TZ=Europe/London
+    env_file: ./postgres/.env
     volumes:
       - sd_postgres_data:/var/lib/postgresql/data
     networks:
