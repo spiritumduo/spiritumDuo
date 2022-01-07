@@ -26,6 +26,7 @@ async def CreateUser(
         }
     else:
         return {
+            "id":newUser.id,
             "username":newUser.username,
             "first_name":newUser.first_name,
             "last_name":newUser.last_name,
