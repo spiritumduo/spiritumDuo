@@ -1,5 +1,7 @@
 from behave import *
 import json
+from hamcrest import *
+import requests, json
 from random import randint
 from behave.runner import Context
 
@@ -25,7 +27,7 @@ def step_impl(context:Context):
             "department":NEW_CLINICIAN['department']
         }
     )
-    assert create_user_result.status_code==200
+    assert_that(create_user_result.status_code, equal_to(200))
     assert "error" not in json.loads(create_user_result.text)
     context.user_result=json.loads(create_user_result.text)
 

@@ -27,8 +27,9 @@ def db_start_transaction(context):
     conn = loop.run_until_complete(context.engine.acquire())
     tx = loop.run_until_complete(conn.transaction())
     context.conn = conn
+    context.tx = tx
     yield
-    loop.run_until_complete(tx.rollback())
+    loop.run_until_complete(context.tx.rollback())
 
 
 @fixture
@@ -46,7 +47,7 @@ def create_test_database(context):
 CLINICIAN = {
     "firstName": "MIKE",
     "lastName": "SMITH",
-    "username": f"MIKE.SMITH{randint(1000,9999)}",
+    "username": "MIKE.SMITH",
     "password": "VERYSECUREPASSWORD",
     "department": "CIH",
 }
@@ -54,7 +55,6 @@ CLINICIAN = {
 
 @fixture
 def add_test_user(context):
-    print('test user')
     loop = asyncio.get_event_loop()
     context.user = loop.run_until_complete(User.create(
         username=CLINICIAN['username'],
@@ -67,15 +67,13 @@ def add_test_user(context):
 
 @fixture
 def login_test_user(context):
-    print('login test')
     res = context.client.post(
-        url='/rest/login',
+        url='/rest/login/',
         json={
             "username": CLINICIAN['username'],
             "password": CLINICIAN['password']
         }
     )
-    context.user.cookies = res.cookies
 
 
 def before_feature(context, _):

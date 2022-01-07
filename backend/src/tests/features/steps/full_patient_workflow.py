@@ -1,7 +1,13 @@
+from typing import Text
 from behave import *
-import json
+from hamcrest import *
+import requests, json
 from random import randint
 
+
+GRAPHQL_ENDPOINT = "/graphql"
+CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
+LOGIN_REST_ENDPOINT="http://localhost:8080/rest/login/"
 GRAPHQL_ENDPOINT="graphql"
 PATIENT={
     "firstName": "JOHN",
@@ -20,6 +26,20 @@ DECISION_POINT={
     "requestsReferrals": "These are the requests and referrals"
 }
 
+##### SCENARIO: A CLINICIAN NEEDS TO BE LOGGED IN
+
+@step("a clinician has an account")
+async def step_async_impl1(context):
+    pass
+
+@when("we login with the account")
+def step_impl(context):
+    pass
+
+@then("we get an authenticated session cookie")
+def step_impl(context):
+    pass
+
 ##### SCENARIO: A NEW PATIENT NEEDS TO BE ADDED INTO THE SYSTEM #####
 @given("a pathway exists")
 def step_impl(context): 
@@ -29,9 +49,8 @@ def step_impl(context):
     Usually this would have been done prior to a
     patient being added to a pathway
     """
-    create_pathway_result=context.client.post(
+    create_pathway_result = context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies=context.user.cookies,
         json={
             "query": """
                 mutation createPathway($name: String!){
@@ -55,9 +74,11 @@ def step_impl(context):
         }
     )
 
-    assert create_pathway_result.status_code==200 # check that there are no HTTP errors
-    assert json.loads(create_pathway_result.text)['data']['createPathway']['userErrors']==None # check that there are no input errors
-    assert json.loads(create_pathway_result.text)['data']['createPathway']['pathway']['id']!=None # check that an ID has been returned
+    assert_that(create_pathway_result.status_code, equal_to(200))  # check that there are no HTTP errors
+    user_errors = json.loads(create_pathway_result.text)['data']['createPathway']['userErrors']
+    assert_that(user_errors, none())  # check that there are no input errors
+    pathway_id = json.loads(create_pathway_result.text)['data']['createPathway']['pathway']['id']
+    assert_that(pathway_id, not_none())  # check that an ID has been returned
 
     PATHWAY['id']=int(json.loads(create_pathway_result.text)['data']['createPathway']['pathway']['id']) # set the ID in context for future use
 
@@ -65,7 +86,6 @@ def step_impl(context):
 def step_impl(context): 
     create_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies=context.user.cookies,
         json={
             "query": """
                 mutation createPatient(
@@ -129,10 +149,9 @@ def step_impl(context):
 
 ##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
 @when("we run the GraphQL mutation to add the decision point")
-def step_impl(context): 
+def step_impl(context):
     create_decision_point_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies=context.user.cookies,
         json={
             "query": """
                 mutation createDecisionPoint(
@@ -203,7 +222,6 @@ def step_impl(context):
 def step_impl(context):
     get_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies=context.user.cookies,
         json={
             "query":"""
                 query getPatient($id:ID!){
