@@ -1,37 +1,14 @@
-from typing import Text
 from behave import *
-import requests, json
+import json
 from random import randint
-from sqlalchemy import text
-import os
-from behave.api.async_step import async_run_until_complete
-from sqlalchemy.engine import create_engine
-from bcrypt import hashpw, gensalt
-from models import User, db
 
-DSN = "postgresql://{user}:{password}@{host}:{port}/{database}".format(
-    host=os.getenv("DATABASE_HOSTNAME", "sd-postgres"),
-    port=os.getenv("DATABASE_PORT", 5432),
-    user=os.getenv("DATABASE_USERNAME", "postgres"),
-    password=os.getenv("DATABASE_PASSWORD", "postgres"),
-    database=os.getenv("DATABASE_NAME", "starlette"),
-)
-GRAPHQL_ENDPOINT="http://localhost:8080/graphql/"
-CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
-LOGIN_REST_ENDPOINT="http://localhost:8080/rest/login/"
+GRAPHQL_ENDPOINT="graphql"
 PATIENT={
     "firstName": "JOHN",
     "lastName": "DOE",
     "dateOfBirth": "2000-01-01",
     "hospitalNumber": f"MRN{randint(1000000,9999999)}",
     "nationalNumber": str(randint(1000000000,9999999999)),
-}
-CLINICIAN={
-    "firstName": "MIKE",
-    "lastName": "SMITH",
-    "username": f"MIKE.SMITH{randint(1000,9999)}",
-    "password": "VERYSECUREPASSWORD",
-    "department": "CIH",
 }
 PATHWAY={
     "name": f"BRONCHIECTASIS{randint(1000,9999)}"
@@ -43,39 +20,6 @@ DECISION_POINT={
     "requestsReferrals": "These are the requests and referrals"
 }
 
-##### SCENARIO: A CLINICIAN NEEDS TO BE LOGGED IN
-
-@step("a clinician has an account")
-@async_run_until_complete
-async def step_async_impl1(context):
-    await db.set_bind(DSN)
-    await User.create(
-        username=CLINICIAN['username'],
-        password=hashpw(CLINICIAN["password"].encode('utf-8'), gensalt()).decode('utf-8'),
-        first_name=CLINICIAN['firstName'],
-        last_name=CLINICIAN['lastName'],
-        department=CLINICIAN['department']
-    )
-
-@when("we login with the account")
-def step_impl(context):
-    login_result=requests.post(
-        url=LOGIN_REST_ENDPOINT,
-        json={
-            "username":CLINICIAN['username'],
-            "password":CLINICIAN['password']
-        }
-    )
-    assert login_result.status_code==200
-    context.login_result=login_result
-    
-@then("we get an authenticated session cookie")
-def step_impl(context):
-    assert context.login_result.cookies['SDSESSION'] is not None
-    CLINICIAN['sessionCookie']=context.login_result.cookies['SDSESSION']
-    CLINICIAN['id']=context.login_result.json()['user']['id']
-    
-
 ##### SCENARIO: A NEW PATIENT NEEDS TO BE ADDED INTO THE SYSTEM #####
 @given("a pathway exists")
 def step_impl(context): 
@@ -85,11 +29,9 @@ def step_impl(context):
     Usually this would have been done prior to a
     patient being added to a pathway
     """
-    create_pathway_result=requests.post(
+    create_pathway_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies={
-            "SDSESSION":CLINICIAN['sessionCookie']
-        },
+        cookies=context.user.cookies,
         json={
             "query": """
                 mutation createPathway($name: String!){
@@ -121,11 +63,9 @@ def step_impl(context):
 
 @when("we run the GraphQL mutation to add the patient")
 def step_impl(context): 
-    create_patient_result=requests.post(
+    create_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies={
-            "SDSESSION":CLINICIAN['sessionCookie']
-        },
+        cookies=context.user.cookies,
         json={
             "query": """
                 mutation createPatient(
@@ -190,11 +130,9 @@ def step_impl(context):
 ##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
 @when("we run the GraphQL mutation to add the decision point")
 def step_impl(context): 
-    create_decision_point_result=requests.post(
+    create_decision_point_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies={
-            "SDSESSION":CLINICIAN['sessionCookie']
-        },
+        cookies=context.user.cookies,
         json={
             "query": """
                 mutation createDecisionPoint(
@@ -237,7 +175,7 @@ def step_impl(context):
             """,
             "variables": {
                 "patientId":int(PATIENT['id']),
-                "clinicianId":int(CLINICIAN['id']),
+                "clinicianId":int(context.user.id),
                 "pathwayId":int(PATHWAY['id']),
                 "decisionType":DECISION_POINT['decisionType'],
                 "clinicHistory":DECISION_POINT['clinicHistory'],
@@ -263,11 +201,9 @@ def step_impl(context):
 
 @when("we run the query to search for the patient")
 def step_impl(context):
-    get_patient_result=requests.post(
+    get_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        cookies={
-            "SDSESSION":CLINICIAN['sessionCookie']
-        },
+        cookies=context.user.cookies,
         json={
             "query":"""
                 query getPatient($id:ID!){
@@ -319,8 +255,8 @@ def step_impl(context):
     assert context.get_patient_result!=None
     assert context.get_patient_result['decisionPoints']!=None
     assert context.get_patient_result['decisionPoints'][0]['clinician']!=None
-    assert int(context.get_patient_result['decisionPoints'][0]['clinician']['id'])==int(CLINICIAN['id'])
-    assert context.get_patient_result['decisionPoints'][0]['clinician']['username']==CLINICIAN['username']
+    assert int(context.get_patient_result['decisionPoints'][0]['clinician']['id'])==int(context.user.id)
+    assert context.get_patient_result['decisionPoints'][0]['clinician']['username']==context.user.username
     assert context.get_patient_result['decisionPoints'][0]['decisionType']==DECISION_POINT['decisionType']
     assert context.get_patient_result['decisionPoints'][0]['clinicHistory']==DECISION_POINT['clinicHistory']
     assert context.get_patient_result['decisionPoints'][0]['comorbidities']==DECISION_POINT['comorbidities']
