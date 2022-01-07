@@ -7,6 +7,7 @@ import os
 from behave.api.async_step import async_run_until_complete
 from sqlalchemy.engine import create_engine
 from bcrypt import hashpw, gensalt
+from models import User, db
 
 DSN = "postgresql://{user}:{password}@{host}:{port}/{database}".format(
     host=os.getenv("DATABASE_HOSTNAME", "sd-postgres"),
@@ -41,20 +42,19 @@ DECISION_POINT={
     "comorbidities": "These are the comorbidities",
     "requestsReferrals": "These are the requests and referrals"
 }
-engine=create_engine(DSN)
 
 ##### SCENARIO: A CLINICIAN NEEDS TO BE LOGGED IN
+
 @step("a clinician has an account")
 @async_run_until_complete
 async def step_async_impl1(context):
-    query=text('INSERT INTO "user" (username, password, first_name, last_name, department, is_active) VALUES (:username, :password, :first_name, :last_name, :department, true)')
-    res=engine.execute(
-        query,
-        username=CLINICIAN["username"],
+    await db.set_bind(DSN)
+    await User.create(
+        username=CLINICIAN['username'],
         password=hashpw(CLINICIAN["password"].encode('utf-8'), gensalt()).decode('utf-8'),
-        first_name=CLINICIAN["firstName"],
-        last_name=CLINICIAN["lastName"],
-        department=CLINICIAN["department"],
+        first_name=CLINICIAN['firstName'],
+        last_name=CLINICIAN['lastName'],
+        department=CLINICIAN['department']
     )
 
 @when("we login with the account")
