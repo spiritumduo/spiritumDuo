@@ -43,7 +43,7 @@ services:
       - sd-certbot
       - sd-wordpress
     container_name: sd-nginx
-    env_file: ./frontend/nginx/.env
+    env_file: ./nginx/.env
     image: sd-nginx
     build:
       context: ./frontend
