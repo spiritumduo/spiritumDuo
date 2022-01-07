@@ -1,26 +1,30 @@
 from behave import *
-import requests, json
+import json
 from random import randint
+from behave.runner import Context
 
-@given('we have valid user information')
-def step_impl(context):
-    context.rest_endpoint="http://localhost:8080/rest/createuser"
-    context.user_firstname="JOHN"
-    context.user_lastname="DOE"
-    context.user_password="VERYSECUREPASSWORD"
-    context.user_username=f"JOHN.DOE{randint(1,1000)}"
-    context.user_department="TEST DEPT"
+CREATE_USER_REST_ENDPOINT="/rest/createuser/"
+NEW_CLINICIAN={
+    "firstName": "JOHN",
+    "lastName": "SMITH",
+    "username": f"JOHN.SMITH{randint(1000,9999)}",
+    "password": "VERYSECUREPASSWORD",
+    "department": "ONCOLOGY",
+}
 
 @when('we create their user account')
-def step_impl(context):
-    create_user_result=requests.post(
-        url=context.rest_endpoint,
+def step_impl(context:Context):
+    create_user_result=context.client.post(
+        url=CREATE_USER_REST_ENDPOINT,
+        cookies={
+            "SDSESSION":context.user.cookies['SDSESSION']
+        },
         json={
-            "username":context.user_username,
-            "password":context.user_password,
-            "firstName":context.user_firstname,
-            "lastName":context.user_lastname,
-            "department":context.user_department
+            "username":NEW_CLINICIAN['username'],
+            "password":NEW_CLINICIAN['password'],
+            "firstName":NEW_CLINICIAN['firstName'],
+            "lastName":NEW_CLINICIAN['lastName'],
+            "department":NEW_CLINICIAN['department']
         }
     )
     assert create_user_result.status_code==200
@@ -30,4 +34,4 @@ def step_impl(context):
 @then('we get the user\'s ID')
 def step_impl(context):
     assert context.user_result['id'] is not None
-    assert context.user_result['username']==context.user_username
+    assert context.user_result['username']==NEW_CLINICIAN['username']
