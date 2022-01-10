@@ -267,7 +267,6 @@ def step_impl(context):
                                 id
                                 clinician{
                                     id
-                                    username
                                 }
                                 onPathway{
                                     id
@@ -297,33 +296,32 @@ def step_impl(context):
 
 @then("we get the patient's record with the decision point and pathway")
 def step_impl(context):
-    assert context.get_patient_result!=None
+    assert_that(context.get_patient_result, not_none())
 
-    pt=context.get_patient_result
+    patient=context.get_patient_result
 
-    assert_that(pt['firstName'], equal_to(PATIENT['firstName']))
-    assert_that(pt['lastName'], equal_to(PATIENT['lastName']))
-    assert_that(pt['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
-    assert_that(pt['nationalNumber'], equal_to(PATIENT['nationalNumber']))
-    assert_that(pt['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
+    assert_that(patient['firstName'], equal_to(PATIENT['firstName']))
+    assert_that(patient['lastName'], equal_to(PATIENT['lastName']))
+    assert_that(patient['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
+    assert_that(patient['nationalNumber'], equal_to(PATIENT['nationalNumber']))
+    assert_that(patient['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
 
-    oP=pt['onPathways'][0]
-    assert_that(onPathway, is_(not_none(oP)))
-    oP_pt=oP['patient']
+    onPathway=patient['onPathways'][0]
+    assert_that(onPathway, not_none())
+    onPathway_Patient=onPathway['patient']
 
-    assert_that(oP_pt['firstName'], equal_to(PATIENT['firstName']))
-    assert_that(oP_pt['lastName'], equal_to(PATIENT['lastName']))
-    assert_that(oP_pt['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
-    assert_that(oP_pt['nationalNumber'], equal_to(PATIENT['nationalNumber']))
-    assert_that(oP_pt['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
+    assert_that(onPathway_Patient['firstName'], equal_to(PATIENT['firstName']))
+    assert_that(onPathway_Patient['lastName'], equal_to(PATIENT['lastName']))
+    assert_that(onPathway_Patient['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
+    assert_that(onPathway_Patient['nationalNumber'], equal_to(PATIENT['nationalNumber']))
+    assert_that(onPathway_Patient['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
 
+    onPathway_Pathway=onPathway['pathway']
+    assert_that(onPathway_Pathway['name'], equal_to(PATHWAY['name']))
 
-    assert context.get_patient_result['onPathways'][0]['decisionPoints']!=None
-    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinician']!=None
-    assert int(context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinician']['id'])==int(context.user.id)
-    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinician']['username']==context.user.username
-    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['decisionType']==DECISION_POINT['decisionType']
-    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinicHistory']==DECISION_POINT['clinicHistory']
-    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['comorbidities']==DECISION_POINT['comorbidities']
-    assert context.get_patient_result['onPathways'][0]['pathway']!=None
-    assert context.get_patient_result['onPathways'][0]['pathway']['name']==PATHWAY['name']
+    onPathway_DecisionPoint=onPathway['decisionPoints'][0]
+    assert_that(onPathway_DecisionPoint, not_none())
+
+    assert_that(onPathway_DecisionPoint['decisionType'], equal_to(DECISION_POINT['decisionType']))
+    assert_that(onPathway_DecisionPoint['clinicHistory'], equal_to(DECISION_POINT['clinicHistory']))
+    assert_that(onPathway_DecisionPoint['comorbidities'], equal_to(DECISION_POINT['comorbidities']))
