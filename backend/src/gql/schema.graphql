@@ -87,6 +87,7 @@ type Patient {
 
     milestones: [Milestone!]
     pathways: [OnPathway]
+    # TODO: Move decision points to OnPathway
     decisionPoints(pathwayId:ID, decisionType:DecisionType, limit:Int):[DecisionPoint!]
     # testResults: [TestResult]
 }
@@ -109,13 +110,13 @@ type PatientEdge {
     cursor: String!
 }
 
-type Group{
+type Group {
     id: ID!
     name: String!
     permissions: [String]
 }
 
-type OnPathway{
+type OnPathway {
     id: ID!
     patient: Patient!
     pathway: Pathway!
@@ -153,8 +154,31 @@ type TestResult {
     patient: Patient!
     onPathway: OnPathway!
     description: String!
-    mediaUrls: [String]
+    mediaUrls: [String!]
     addedAt: DateTime!
+}
+
+type MilestoneType {
+  id: ID!
+  refName: String!
+  name: String!
+}
+
+type Milestone {
+  id: ID!
+  milestoneType: MilestoneType!
+  onPathway: OnPathway!
+  addedAt: DateTime!
+  updatedAt: DateTime!
+  currentState: MilestoneState!
+}
+
+enum MilestoneState {
+  INIT
+  ACTIVE
+  WAITING
+  ERROR
+  COMPLETED
 }
 
 #### INPUT TYPES
@@ -171,13 +195,12 @@ input AddUserToGroupInput{
 }
 
 input DecisionPointInput{
-    patientId: Int!
     clinicianId: Int!
-    pathwayId: Int!
+    onPathwayId: Int!
     decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String!
-    requestsReferrals: String!
+    milestoneRequests: [Milestone!]!
 }
 
 input PathwayInput{
@@ -199,28 +222,4 @@ input PatientInput{
     pathway:Int!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
-}
-
-type MilestoneType {
-  id: ID!
-  refName: String!
-  name: String!
-}
-
-type Milestone {
-  id: ID!
-  patient: Patient!
-  milestoneType: MilestoneType!
-  onPathway: OnPathway!
-  addedAt: DateTime!
-  updatedAt: DateTime!
-  currentState: MilestoneState!
-}
-
-enum MilestoneState {
-  INIT
-  ACTIVE
-  WAITING
-  ERROR
-  COMPLETED
 }
