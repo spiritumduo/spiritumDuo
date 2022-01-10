@@ -124,6 +124,7 @@ type OnPathway{
     addedAt: DateTime!
     updatedAt: DateTime!
     referredAt: DateTime!
+    decisionPoints: [DecisionPoint!]
 }
 
 type User {
@@ -137,15 +138,14 @@ type User {
 
 type DecisionPoint {
     id: ID!
-    patient: Patient!
     clinician: User!
-    pathway: Pathway!
+    onPathway: OnPathway!
     decisionType: DecisionType!
     addedAt: DateTime!
     updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
-    requestsReferrals: String!
+    milestones: [Milestone!]
 }
 
 type TestResult {

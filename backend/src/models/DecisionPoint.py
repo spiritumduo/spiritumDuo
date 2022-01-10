@@ -4,12 +4,11 @@ from SdTypes import DecisionTypes
 
 
 class DecisionPoint(db.Model):
-    __tablename__ = "decision_point"
+    __tablename__ = "tbl_decision_point"
 
     id = db.Column(db.Integer(), primary_key=True)
-    patient = db.Column(db.Integer(), db.ForeignKey('patient.id'), nullable=False)
-    user = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
-    pathway = db.Column(db.Integer(), db.ForeignKey('pathway.id'), nullable=False)
+    user = db.Column('user_id', db.Integer(), db.ForeignKey('tbl_user.id'), nullable=False)
+    on_pathway = db.Column('on_pathway_id', db.Integer(), db.ForeignKey('tbl_on_pathway.id'), nullable=False)
     decision_type = db.Column(
         Enum(DecisionTypes, native_enum=False), default=DecisionTypes.TRIAGE.value,
         server_default=DecisionTypes.TRIAGE.value, nullable=False, native_enum=False

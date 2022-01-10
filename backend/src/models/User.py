@@ -2,7 +2,7 @@ from .db import db
 from sqlalchemy.sql.expression import func
 
 class User(db.Model):
-    __tablename__ = "user"
+    __tablename__ = "tbl_user"
 
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(), nullable=False, unique=True)
