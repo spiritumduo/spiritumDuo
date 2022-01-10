@@ -18,7 +18,6 @@ NEW_CLINICIAN={
 def step_impl(context:Context):
     create_user_result=context.client.post(
         url=CREATE_USER_REST_ENDPOINT,
-        cookies=context.user.cookies,
         json={
             "username":NEW_CLINICIAN['username'],
             "password":NEW_CLINICIAN['password'],

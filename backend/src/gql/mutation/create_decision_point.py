@@ -7,11 +7,10 @@ from authentication.authentication import needsAuthorization
 async def resolve_create_decision(_=None, info=None, input:dict=None):
     return await CreateDecisionPoint(
         context=info.context,
-        patient_id=input['patientId'],
-        clinician_id=input['clinicianId'],
-        pathway_id=input['pathwayId'],
+        clinician_id=info.context['request']['user'].id,
+        on_pathway_id=input['onPathwayId'],
         decision_type=input['decisionType'],
         clinic_history=input['clinicHistory'],
         comorbidities=input['comorbidities'],
-        requests_referrals=input['requestsReferrals'],
+        # milestones=input['']
     )

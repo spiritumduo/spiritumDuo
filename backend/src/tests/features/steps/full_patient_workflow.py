@@ -94,7 +94,7 @@ def step_impl(context):
                     $hospitalNumber: String!
                     $nationalNumber: String!
                     $dateOfBirth: Date!
-                    $pathwayId: Int!
+                    $pathwayId: ID!
                 ){
                     createPatient(input: {
                         firstName: $firstName,
@@ -102,7 +102,7 @@ def step_impl(context):
                         hospitalNumber: $hospitalNumber,
                         nationalNumber: $nationalNumber,
                         dateOfBirth: $dateOfBirth,
-                        pathway: $pathwayId
+                        pathwayId: $pathwayId
                     }){
                         patient{
                             id
@@ -111,6 +111,9 @@ def step_impl(context):
                             hospitalNumber
                             nationalNumber
                             dateOfBirth
+                            onPathways{
+                                id
+                            }
                         }
                         userErrors{
                             field
@@ -130,12 +133,14 @@ def step_impl(context):
         }
     )
 
-    assert create_patient_result.status_code==200 # check the HTTP status for 200 OK
+    assert_that(create_patient_result.status_code, equal_to(200)) # check the HTTP status for 200 OK
     assert json.loads(create_patient_result.text)['data']['createPatient']['userErrors']==None # make sure there are no input errors
     assert json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']!=None # check that an id has been returned
     assert json.loads(create_patient_result.text)['data']['createPatient']['patient']['hospitalNumber']!=None # check that the hospital number has been returned
     context.patient_record=json.loads(create_patient_result.text)['data']['createPatient']['patient'] # save entire record for future use
     PATIENT['id']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']
+    print(json.loads(create_patient_result.text)['data']['createPatient']['patient'])
+    PATIENT['onPathwayId']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['onPathways'][0]['id']
 
 @then("we get the patient's record")
 def step_impl(context):
@@ -152,71 +157,76 @@ def step_impl(context):
 def step_impl(context):
     create_decision_point_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
+        # TODO: Add milestone requests to this mutation
         json={
             "query": """
                 mutation createDecisionPoint(
-                    $patientId: Int!
-                    $clinicianId: Int!
-                    $pathwayId: Int!
+                    $onPathwayId: ID!
                     $decisionType: DecisionType!
                     $clinicHistory: String!
                     $comorbidities: String!
-                    $requestsReferrals: String!
                 ){
                     createDecisionPoint(input: {
-                        patientId: $patientId,
-                        clinicianId: $clinicianId,
-                        pathwayId: $pathwayId,
+                        onPathwayId: $onPathwayId,
                         decisionType: $decisionType,
                         clinicHistory: $clinicHistory,
                         comorbidities: $comorbidities,
-                        requestsReferrals: $requestsReferrals,
-                    }){
-                        id
-                        patient{
+                    })
+                    {
+                        decisionPoint {
                             id
-                            hospitalNumber
+                            clinician{
+                                id
+                                username
+                            }
+                            onPathway{
+                                id
+                                pathway{
+                                    id
+                                    name
+                                }
+                            }
+                            milestones{
+                                id
+                                currentState
+                                milestoneType {
+                                    id
+                                    refName
+                                    name
+                                }
+                            }
+                            decisionType
+                            clinicHistory
+                            comorbidities
                         }
-                        clinician{
-                            id
-                            username
+                        
+                        userErrors {
+                            message
+                            field
                         }
-                        pathway{
-                            id
-                            name
-                        }
-                        decisionType
-                        clinicHistory
-                        comorbidities
-                        requestsReferrals
                     }
                 }
             """,
             "variables": {
-                "patientId":int(PATIENT['id']),
-                "clinicianId":int(context.user.id),
-                "pathwayId":int(PATHWAY['id']),
+                "onPathwayId":PATIENT['onPathwayId'],
                 "decisionType":DECISION_POINT['decisionType'],
                 "clinicHistory":DECISION_POINT['clinicHistory'],
                 "comorbidities":DECISION_POINT['comorbidities'],
-                "requestsReferrals":DECISION_POINT['requestsReferrals']
             }
         }
     )
 
-    assert create_decision_point_result.status_code==200 # check the HTTP status for 200 OK
-    
-    assert json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['id']!=None # check that an id has been returned
+    assert_that(create_decision_point_result.status_code, equal_to(200))
+    assert json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['id']!=None # check that an id has been returned
     context.patient_record_from_decision_point=json.loads(create_decision_point_result.text)['data']['createDecisionPoint'] # save entire record for future use
 
 @then("we get the decision point record")
 def step_impl(context):
-    assert context.patient_record_from_decision_point['id']!=None
-    assert context.patient_record_from_decision_point['decisionType']==DECISION_POINT['decisionType']
-    assert context.patient_record_from_decision_point['clinicHistory']==DECISION_POINT['clinicHistory']
-    assert context.patient_record_from_decision_point['comorbidities']==DECISION_POINT['comorbidities']
-    assert context.patient_record_from_decision_point['requestsReferrals']==DECISION_POINT['requestsReferrals']
-    DECISION_POINT['id']=context.patient_record_from_decision_point['id'] # save ID in decision point object
+    assert context.patient_record_from_decision_point['decisionPoint']['id']!=None
+    assert context.patient_record_from_decision_point['decisionPoint']['decisionType']==DECISION_POINT['decisionType']
+    assert context.patient_record_from_decision_point['decisionPoint']['clinicHistory']==DECISION_POINT['clinicHistory']
+    assert context.patient_record_from_decision_point['decisionPoint']['comorbidities']==DECISION_POINT['comorbidities']
+    DECISION_POINT['id']=context.patient_record_from_decision_point['decisionPoint']['id'] # save ID in decision point object
 
 @when("we run the query to search for the patient")
 def step_impl(context):
@@ -233,27 +243,43 @@ def step_impl(context):
                         nationalNumber
                         dateOfBirth
                         
-                        decisionPoints{
+                        onPathways{
                             id
-                            clinician{
+                            patient{
                                 id
-                                username
+                                firstName
+                                lastName
+                                hospitalNumber
+                                nationalNumber
+                                communicationMethod
+                                dateOfBirth
                             }
                             pathway{
                                 id
                                 name
                             }
-                            decisionType
-                            clinicHistory
-                            comorbidities
-                            requestsReferrals
-                        }
-
-                        pathways{
-                            id
-                            pathway{
+                            isDischarged
+                            awaitingDecisionType
+                            addedAt
+                            updatedAt
+                            referredAt
+                            decisionPoints{
                                 id
-                                name
+                                clinician{
+                                    id
+                                    username
+                                }
+                                onPathway{
+                                    id
+                                }
+                                decisionType
+                                addedAt
+                                updatedAt
+                                clinicHistory
+                                comorbidities
+                                milestones{
+                                    id
+                                }
                             }
                         }
                     }
@@ -264,22 +290,40 @@ def step_impl(context):
             }
         }
     )
-    assert get_patient_result.status_code==200
+    assert_that(get_patient_result.status_code, equal_to(200))
     assert json.loads(get_patient_result.text)['data']['getPatient']!=None
     context.get_patient_result=json.loads(get_patient_result.text)['data']['getPatient']
+    print(context.get_patient_result)
 
 @then("we get the patient's record with the decision point and pathway")
 def step_impl(context):
     assert context.get_patient_result!=None
-    assert context.get_patient_result['decisionPoints']!=None
-    assert context.get_patient_result['decisionPoints'][0]['clinician']!=None
-    assert int(context.get_patient_result['decisionPoints'][0]['clinician']['id'])==int(context.user.id)
-    assert context.get_patient_result['decisionPoints'][0]['clinician']['username']==context.user.username
-    assert context.get_patient_result['decisionPoints'][0]['decisionType']==DECISION_POINT['decisionType']
-    assert context.get_patient_result['decisionPoints'][0]['clinicHistory']==DECISION_POINT['clinicHistory']
-    assert context.get_patient_result['decisionPoints'][0]['comorbidities']==DECISION_POINT['comorbidities']
-    assert context.get_patient_result['decisionPoints'][0]['requestsReferrals']==DECISION_POINT['requestsReferrals']
-    assert context.get_patient_result['decisionPoints'][0]['pathway']!=None
-    assert context.get_patient_result['decisionPoints'][0]['pathway']['name']==PATHWAY['name']
-    assert context.get_patient_result['pathways']!=None
-    assert context.get_patient_result['pathways'][0]['pathway']['name']==PATHWAY['name']
+
+    pt=context.get_patient_result
+
+    assert_that(pt['firstName'], equal_to(PATIENT['firstName']))
+    assert_that(pt['lastName'], equal_to(PATIENT['lastName']))
+    assert_that(pt['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
+    assert_that(pt['nationalNumber'], equal_to(PATIENT['nationalNumber']))
+    assert_that(pt['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
+
+    oP=pt['onPathways'][0]
+    assert_that(onPathway, is_(not_none(oP)))
+    oP_pt=oP['patient']
+
+    assert_that(oP_pt['firstName'], equal_to(PATIENT['firstName']))
+    assert_that(oP_pt['lastName'], equal_to(PATIENT['lastName']))
+    assert_that(oP_pt['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
+    assert_that(oP_pt['nationalNumber'], equal_to(PATIENT['nationalNumber']))
+    assert_that(oP_pt['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
+
+
+    assert context.get_patient_result['onPathways'][0]['decisionPoints']!=None
+    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinician']!=None
+    assert int(context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinician']['id'])==int(context.user.id)
+    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinician']['username']==context.user.username
+    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['decisionType']==DECISION_POINT['decisionType']
+    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['clinicHistory']==DECISION_POINT['clinicHistory']
+    assert context.get_patient_result['onPathways'][0]['decisionPoints'][0]['comorbidities']==DECISION_POINT['comorbidities']
+    assert context.get_patient_result['onPathways'][0]['pathway']!=None
+    assert context.get_patient_result['onPathways'][0]['pathway']['name']==PATHWAY['name']

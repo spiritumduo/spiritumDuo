@@ -63,9 +63,9 @@ type AddPathwayPayload {
     pathway:Pathway
     userErrors:[UserError!]
 }
-type AddDecisionPointPayload{ # to implement
+type AddDecisionPointPayload{
     decisionPoint:DecisionPoint
-    userErrors:[UserErrors!]    
+    userErrors:[UserError!]    
 }
 
 #### DATA TYPES
@@ -180,6 +180,8 @@ type Milestone {
   currentState: MilestoneState!
 }
 
+
+
 enum MilestoneState {
   INIT
   ACTIVE
@@ -190,8 +192,8 @@ enum MilestoneState {
 
 #### INPUT TYPES
 input TestResultInput{
-    patient: Int!
-    pathway: Int!
+    patientId: ID!
+    pathwayId: ID!
     description: String!
     mediaUrls: [String]
 }
@@ -201,13 +203,17 @@ input AddUserToGroupInput{
     groupName: String!
 }
 
+input MilestoneInput {
+  milestoneTypeId: ID!
+  currentState: MilestoneState
+}
+
 input DecisionPointInput{
-    clinicianId: Int!
-    onPathwayId: Int!
+    onPathwayId: ID!
     decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String
-    milestoneRequests: [Milestone!]
+    milestoneRequests: [MilestoneInput!]
 }
 
 input PathwayInput{
@@ -226,7 +232,7 @@ input PatientInput{
     nationalNumber:String!
     dateOfBirth:Date!
 
-    pathway:Int!
+    pathwayId:ID!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
 }

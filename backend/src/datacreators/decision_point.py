@@ -9,24 +9,23 @@ class ReferencedItemDoesNotExistError(Exception):
     """
 async def CreateDecisionPoint(
     context:dict=None, 
-    patient_id:int=None,
+    on_pathway_id:int=None,
     clinician_id:int=None,
-    pathway_id:int=None,
     decision_type:DecisionTypes=None,
     clinic_history:str=None,
     comorbidities:str=None,
-    requests_referrals:str=""
 ):
     if context is None:
         raise ReferencedItemDoesNotExistError("Context is not provided")
-        
+
     _decisionPoint=await DecisionPoint.create(
-        patient=patient_id,
-        user=clinician_id,
-        pathway=pathway_id,
+        on_pathway_id=int(on_pathway_id),
+        clinician_id=int(clinician_id),
         decision_type=decision_type,
         clinic_history=clinic_history,
         comorbidities=comorbidities,
-        requests_referrals=requests_referrals,
     )
-    return _decisionPoint
+
+    return {
+        "decisionPoint":_decisionPoint
+    }

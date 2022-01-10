@@ -51,7 +51,7 @@ class OnPathwaysByPatient:
             return None
         _gino=context['db']
         async with _gino.acquire(reuse=False) as conn:
-            onPathways=await conn.all(OnPathway.query.where(OnPathway.patient==id))
+            onPathways=await conn.all(OnPathway.query.where(OnPathway.patient_id==id))
         if OnPathwayByIdLoader.loader_name not in context:
             context[OnPathwayByIdLoader.loader_name]=OnPathwayByIdLoader(db=context['db'])
         for oP in onPathways:

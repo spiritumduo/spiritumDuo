@@ -66,3 +66,22 @@ class DecisionPointsByPatient:
         for dP in decisionPoints:
             context[DecisionPointLoader.loader_name].prime(dP.id, dP)
         return decisionPoints
+
+
+
+class DecisionPointsByOnPathway:
+    @staticmethod
+    async def load_many_from_id(context=None, id=None)->Union[List[DecisionPoint], None]:
+        if not context or not id:
+            return None
+
+        query=DecisionPoint.query.where(DecisionPoint.on_pathway_id==id).order_by(DecisionPoint.added_at.desc())
+
+        _gino=context['db']
+        async with _gino.acquire(reuse=False) as conn:
+            decisionPoints=await conn.all(query)
+        if DecisionPointLoader.loader_name not in context:
+            context[DecisionPointLoader.loader_name]=DecisionPointLoader(db=context['db'])
+        for dP in decisionPoints:
+            context[DecisionPointLoader.loader_name].prime(dP.id, dP)
+        return decisionPoints

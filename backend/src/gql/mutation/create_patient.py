@@ -11,7 +11,7 @@ async def resolve_create_patient(_=None, info=None, input:dict=None):
         "hospital_number":input["hospitalNumber"],
         "national_number":input["nationalNumber"],
         "date_of_birth":input["dateOfBirth"],
-        "pathway":input["pathway"],
+        "pathwayId":input["pathwayId"],
         "context":info.context
     }
     if 'communicationMethod' in input:

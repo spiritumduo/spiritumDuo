@@ -6,6 +6,7 @@ from .on_pathway import OnPathwayObjectType
 from .decision_type import DecisionTypeEnumType
 from .add_patient_payload import AddPatientPayloadObjectType
 from .add_pathway_payload import AddPathwayPayloadObjectType
+from .add_decision_point_type import AddDecisionPointPayloadObjectType
 from .milestone import MilestoneObjectType
 from .milestone_state import MilestoneStateEnum
 
@@ -18,6 +19,7 @@ object_types_list=[
     DecisionTypeEnumType,
     AddPatientPayloadObjectType,
     AddPathwayPayloadObjectType,
+    AddDecisionPointPayloadObjectType,
     MilestoneObjectType,
     MilestoneStateEnum
 ]

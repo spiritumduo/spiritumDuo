@@ -19,7 +19,7 @@ async def CreatePatient(
     national_number:str=None,
     date_of_birth:date=None,
 
-    pathway:int=None,
+    pathwayId:int=None,
 
     referred_at:datetime=None,
     awaiting_decision_type:Optional[str]="TRIAGE",
@@ -48,9 +48,9 @@ async def CreatePatient(
             "userErrors": userErrors 
         }
 
-    if not pathway:
+    if not pathwayId:
         raise ReferencedItemDoesNotExistError("Pathway ID not provided. Could not add new patient.")
-    _pathway=await PathwayByIdLoader.load_from_id(context=context, id=pathway)
+    _pathway=await PathwayByIdLoader.load_from_id(context=context, id=pathwayId)
     if not _pathway:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
     
@@ -106,8 +106,8 @@ async def CreatePatient(
         )
 
     onPathwayInformation={
-        'patient': _patient.id,
-        'pathway': _pathway.id,
+        'patient_id': _patient.id,
+        'pathway_id': _pathway.id,
         'awaiting_decision_type': awaiting_decision_type,
         'is_discharged': False,
     }
