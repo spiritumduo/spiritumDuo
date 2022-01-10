@@ -36,7 +36,7 @@ type Query {
 type Mutation {
     createPatient(input:PatientInput!): AddPatientPayload!
     createPathway(input:PathwayInput!): AddPathwayPayload!
-    createDecisionPoint(input:DecisionPointInput!): DecisionPoint
+    createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 }
 
 enum PatientCommunicationMethods {
@@ -55,13 +55,17 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
-type AddPatientPayload{
+type AddPatientPayload {
     patient:Patient
     userErrors:[UserError!]
 }
-type AddPathwayPayload{
+type AddPathwayPayload {
     pathway:Pathway
     userErrors:[UserError!]
+}
+type AddDecisionPointPayload{ # to implement
+    decisionPoint:DecisionPoint
+    userErrors:[UserErrors!]    
 }
 
 #### DATA TYPES
@@ -85,11 +89,14 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
 
-    milestones: [Milestone!]
-    pathways: [OnPathway]
-    # TODO: Move decision points to OnPathway
-    decisionPoints(pathwayId:ID, decisionType:DecisionType, limit:Int):[DecisionPoint!]
-    # testResults: [TestResult]
+    onPathways(
+        pathwayId: ID,
+        isDischarged: Boolean = False,
+        awaitingDecisionType: DecisionType, 
+        limit: Int
+    ): [OnPathway!]
+
+    # testResults: [TestResult] # to implement
 }
 
 type PageInfo {
@@ -167,7 +174,7 @@ type MilestoneType {
 type Milestone {
   id: ID!
   milestoneType: MilestoneType!
-  onPathway: OnPathway!
+  decisionPoint: DecisionPoint!
   addedAt: DateTime!
   updatedAt: DateTime!
   currentState: MilestoneState!
@@ -199,8 +206,8 @@ input DecisionPointInput{
     onPathwayId: Int!
     decisionType: DecisionType!
     clinicHistory: String!
-    comorbidities: String!
-    milestoneRequests: [Milestone!]!
+    comorbidities: String
+    milestoneRequests: [Milestone!]
 }
 
 input PathwayInput{
