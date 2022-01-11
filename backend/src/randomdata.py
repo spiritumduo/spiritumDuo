@@ -57,8 +57,8 @@ async def generate_random(request):
         referMonth = randint(1, 10)
         referYear = 2021
         on_pathway = await OnPathway.create(
-            patient=p.id,
-            pathway=path.id,
+            patient_id=p.id,
+            pathway_id=path.id,
             awaiting_decision_type=d_t,
             referred_at=date(referYear, referMonth, referDay)
         )
@@ -69,13 +69,11 @@ async def generate_random(request):
         decisionMonth = referMonth
         decisionYear = referYear
         dp = await DecisionPoint.create(
-            patient=p.id,
-            user=user.id,
-            pathway=path.id,
+            clinician_id=user.id,
+            on_pathway_id=on_pathway.id,
             decision_type=DecisionTypes.TRIAGE.value,
             clinic_history=lorem,
             comorbidities=lorem,
-            requests_referrals='Some referrals',
             added_at=date(decisionYear, decisionMonth, decisionDay)
         )
 
@@ -90,10 +88,8 @@ async def generate_random(request):
                 current_state = MilestoneState.COMPLETED.value
                 updated_at = date(decisionYear, decisionMonth, decisionDay + randint(1, 7))
             await Milestone.create(
-                patient_id=p.id,
                 milestone_type_id=milestone_types[i].id,
                 decision_point_id=dp.id,
-                on_pathway_id=on_pathway.id,
                 added_at=date(decisionYear, decisionMonth, decisionDay),
                 current_state=current_state,
                 updated_at=updated_at
@@ -102,13 +98,11 @@ async def generate_random(request):
         if num_decisions == 2:
             decisionMonth += 1
             dp = await DecisionPoint.create(
-                patient=p.id,
-                user=user.id,
-                pathway=path.id,
+                clinician_id=user.id,
+                on_pathway_id=on_pathway.id,
                 decision_type=DecisionTypes.CLINIC.value,
                 clinic_history=lorem,
                 comorbidities=lorem,
-                requests_referrals='Some referrals',
                 added_at=date(decisionYear, decisionMonth, decisionDay)
             )
 
@@ -120,10 +114,8 @@ async def generate_random(request):
                     current_state = MilestoneState.COMPLETED.value
                     updated_at = date(decisionYear, decisionMonth, decisionDay + randint(1, 7))
                 await Milestone.create(
-                    patient_id=p.id,
                     milestone_type_id=milestone_types[i].id,
                     decision_point_id=dp.id,
-                    on_pathway_id=on_pathway.id,
                     added_at=date(decisionYear, decisionMonth, decisionDay),
                     current_state=current_state,
                     updated_at=updated_at
