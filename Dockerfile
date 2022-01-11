@@ -1,7 +1,7 @@
 # Initial build image
 FROM node:16.13-alpine as build
 WORKDIR /app
-COPY . .
+COPY ./frontend .
 RUN yarn install --silent && yarn build
 
 # Final target
