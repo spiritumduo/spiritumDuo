@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { waitFor, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
-import { AuthContext, PathwayContext } from 'app/context';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);

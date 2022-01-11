@@ -10,15 +10,13 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const apolloMocks = [
   {
     request: {
       query: GET_PATIENT_QUERY,
       variables: {
         hospitalNumber: patientHospitalNumber,
-        limit: 1,
+        pathwayId: 1, // this is a brittle, improve this
       },
     },
     result: {
@@ -30,22 +28,27 @@ const apolloMocks = [
           firstName: 'John 36',
           lastName: 'Doe 36',
           dateOfBirth: new Date('1970-06-12'),
-          decisionPoints: [
+          onPathways: [
             {
-              clinicHistory: 'Clinic History 1',
-              comorbidities: 'Comorbidities 1',
-            },
-            {
-              clinicHistory: 'Clinic History 2',
-              comorbidities: 'Comorbidities 2',
-            },
-            {
-              clinicHistory: 'Clinic History 3',
-              comorbidities: 'Comorbidities 3',
-            },
-            {
-              clinicHistory: 'Clinic History 4',
-              comorbidities: 'Comorbidities 4',
+              id: '1',
+              decisionPoints: [
+                {
+                  clinicHistory: 'Clinic History 1',
+                  comorbidities: 'Comorbidities 1',
+                },
+                {
+                  clinicHistory: 'Clinic History 2',
+                  comorbidities: 'Comorbidities 2',
+                },
+                {
+                  clinicHistory: 'Clinic History 3',
+                  comorbidities: 'Comorbidities 3',
+                },
+                {
+                  clinicHistory: 'Clinic History 4',
+                  comorbidities: 'Comorbidities 4',
+                },
+              ],
             },
           ],
         },
@@ -57,20 +60,20 @@ const apolloMocks = [
       query: CREATE_DECISION_POINT_MUTATION,
       variables: {
         input: {
-          patientId: '1637',
-          pathwayId: '1',
-          clinicianId: 1,
+          onPathwayId: '1',
           clinicHistory: 'New Clinic History',
           comorbidities: 'New Comorbidities',
           decisionType: DecisionPointType.TRIAGE.toString(),
-          requestsReferrals: 'Some referrals',
         },
       },
     },
     result: {
       data: {
         createDecisionPoint: {
-          id: '1',
+          decisionPoint: {
+            id: '1',
+          },
+          userErrors: null,
         },
       },
     },

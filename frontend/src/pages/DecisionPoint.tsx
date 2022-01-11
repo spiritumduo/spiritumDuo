@@ -20,7 +20,7 @@ export interface DecisionPointPageProps {
 }
 
 export const GET_PATIENT_QUERY = gql`
-    query GetPatient($hospitalNumber: String) {
+    query GetPatient($hospitalNumber: String, $pathwayId: ID) {
       getPatient(hospitalNumber: $hospitalNumber) {
         hospitalNumber
         id
@@ -29,9 +29,12 @@ export const GET_PATIENT_QUERY = gql`
         lastName
         dateOfBirth
 
-        decisionPoints(limit: 1) {
-          clinicHistory
-          comorbidities
+        onPathways(pathwayId: $pathwayId, isDischarged: false) {
+          id
+          decisionPoints {
+            clinicHistory
+            comorbidities
+          }
         }
       }
     }
@@ -40,7 +43,13 @@ export const GET_PATIENT_QUERY = gql`
 export const CREATE_DECISION_POINT_MUTATION = gql`
   mutation createDecisionPoint($input: DecisionPointInput!) {
     createDecisionPoint(input: $input) {
-      id
+      decisionPoint {
+        id
+      }
+      userErrors {
+        message
+        field
+      }
     }
   }
 `;
@@ -48,7 +57,7 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
 interface DecisionPointPageForm {
   patientId: number;
   clinicianId: number;
-  pathwayId: number;
+  onPathwayId: string;
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities: string;
@@ -76,7 +85,7 @@ const DecisionPointPage = (
     GET_PATIENT_QUERY, {
       variables: {
         hospitalNumber: hospitalNumber,
-        limit: 1,
+        pathwayId: currentPathwayId,
       },
     },
   );
@@ -85,7 +94,7 @@ const DecisionPointPage = (
   const [createDecision, {
     data: mutateData, loading: mutateLoading, error: mutateError,
   }] = useMutation<createDecisionPoint>(CREATE_DECISION_POINT_MUTATION);
-  const isSubmitted = mutateData?.createDecisionPoint?.id !== undefined;
+  const isSubmitted = mutateData?.createDecisionPoint?.decisionPoint?.id !== undefined;
 
   // FORM HOOK & VALIDATION
   const newDecisionPointSchema = yup.object({
@@ -93,10 +102,7 @@ const DecisionPointPage = (
     clinicHistory: yup.string().required(),
     comorbidities: yup.string().required(),
     patientId: yup.number().required().positive().integer(),
-    pathwayId: yup.number().required().positive().integer(),
-    clinicianId: yup.number().required().positive().integer(),
-    // TODO: we currently just send referrals as a string, change & validate when we get proper
-    // system in place
+    onPathwayId: yup.number().required().positive().integer(),
   });
   const {
     register,
@@ -123,32 +129,26 @@ const DecisionPointPage = (
   };
 
   const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
-    // for some reason this gets coerced into a string. Cast it back
-    const clinicianIdCast = values.clinicianId as unknown;
-    const clinicianId = parseInt(clinicianIdCast as string, 10);
     const variables: createDecisionPointVariables = {
       input: {
-        patientId: values.patientId,
-        pathwayId: values.pathwayId,
-        // pathwayId: 19,
-        clinicianId: clinicianId,
+        onPathwayId: values.onPathwayId,
         clinicHistory: values.clinicHistory,
         comorbidities: values.comorbidities,
         decisionType: values.decisionType,
-        requestsReferrals: 'Some referrals',
       },
     };
     mutation({ variables: variables });
   };
 
-  const previousDecisionPoint = data.getPatient.decisionPoints
-    ? data.getPatient.decisionPoints[0]
+  const previousDecisionPoint = data.getPatient?.onPathways?.[0].decisionPoints
+    ? data.getPatient.onPathways[0].decisionPoints[0]
     : null;
 
   const decisionKeys = enumKeys(DecisionPointType);
   const decisionSelectOptions = decisionKeys.map(
     (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
   );
+  const onPathwayId = data.getPatient.onPathways?.[0].id;
 
   return (
     <div>
@@ -160,7 +160,7 @@ const DecisionPointPage = (
                 <fieldset disabled={ loading || mutateLoading || isSubmitted }>
                   <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
                   <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
-                  <input type="hidden" value={ currentPathwayId } { ...register('pathwayId', { required: true }) } />
+                  <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
                   <div className="container">
 
                     <div className="text-center">
