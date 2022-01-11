@@ -26,7 +26,9 @@ async def get_patient_connection(
 
     all_patients_on_pathways = await OnPathway.query.where(OnPathway.pathway_id == int(pathwayId))\
         .where(OnPathway.is_discharged == isDischarged)\
-        .where(OnPathway.awaiting_decision_type == awaitingDecisionType).gino.all()
+        .where(OnPathway.awaiting_decision_type == awaitingDecisionType)\
+        .order_by(OnPathway.added_at.asc())\
+        .gino.all()
 
     patients_ids = []
 
