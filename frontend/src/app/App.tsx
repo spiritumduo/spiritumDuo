@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { BrowserRouter, Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
 import LoginPage from 'pages/Login';
@@ -15,7 +15,6 @@ import PathwayDemo from 'pages/PathwayDemo';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { AuthContext, AuthProvider, PathwayProvider } from 'app/context';
 import './App.css';
-import { useEffect } from '@storybook/addons';
 
 const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
