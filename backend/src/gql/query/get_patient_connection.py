@@ -24,14 +24,14 @@ async def get_patient_connection(
     if before is None and after is None and first is None:
         raise ValueError("Require first argument if no cursors present")
 
-    all_patients_on_pathways = await OnPathway.query.where(OnPathway.pathway == int(pathwayId))\
+    all_patients_on_pathways = await OnPathway.query.where(OnPathway.pathway_id == int(pathwayId))\
         .where(OnPathway.is_discharged == isDischarged)\
         .where(OnPathway.awaiting_decision_type == awaitingDecisionType).gino.all()
 
     patients_ids = []
 
     for pp in all_patients_on_pathways:
-        patients_ids.append(pp.patient)
+        patients_ids.append(pp.patient_id)
 
     patients = await PatientByIdLoader.load_many_from_id(info.context, patients_ids)
 
