@@ -9,10 +9,16 @@ import { PatientCommunicationMethods } from "./../../../__generated__/globalType
 // GraphQL query operation: GetPatient
 // ====================================================
 
-export interface GetPatient_getPatient_decisionPoints {
+export interface GetPatient_getPatient_onPathways_decisionPoints {
   __typename: "DecisionPoint";
   clinicHistory: string;
   comorbidities: string;
+}
+
+export interface GetPatient_getPatient_onPathways {
+  __typename: "OnPathway";
+  id: string;
+  decisionPoints: GetPatient_getPatient_onPathways_decisionPoints[] | null;
 }
 
 export interface GetPatient_getPatient {
@@ -23,7 +29,7 @@ export interface GetPatient_getPatient {
   firstName: string;
   lastName: string;
   dateOfBirth: any;
-  decisionPoints: GetPatient_getPatient_decisionPoints[] | null;
+  onPathways: GetPatient_getPatient_onPathways[] | null;
 }
 
 export interface GetPatient {
@@ -32,4 +38,5 @@ export interface GetPatient {
 
 export interface GetPatientVariables {
   hospitalNumber?: string | null;
+  pathwayId?: string | null;
 }

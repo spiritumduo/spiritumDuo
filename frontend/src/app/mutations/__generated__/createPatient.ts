@@ -32,5 +32,4 @@ export interface createPatient {
 
 export interface createPatientVariables {
   patient: PatientInput;
-  pathwayId: string;
 }

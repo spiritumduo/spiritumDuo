@@ -9,27 +9,31 @@ import { DecisionType } from "./../../../__generated__/globalTypes";
 // GraphQL query operation: previousDecisionPoints
 // ====================================================
 
-export interface previousDecisionPoints_getPatient_decisionPoints_clinician {
+export interface previousDecisionPoints_getPatient_onPathways_decisionPoints_clinician {
   __typename: "User";
   firstName: string;
   lastName: string;
 }
 
-export interface previousDecisionPoints_getPatient_decisionPoints {
+export interface previousDecisionPoints_getPatient_onPathways_decisionPoints {
   __typename: "DecisionPoint";
   id: string;
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities: string;
-  clinician: previousDecisionPoints_getPatient_decisionPoints_clinician;
+  clinician: previousDecisionPoints_getPatient_onPathways_decisionPoints_clinician;
   addedAt: any;
   updatedAt: any;
-  requestsReferrals: string;
+}
+
+export interface previousDecisionPoints_getPatient_onPathways {
+  __typename: "OnPathway";
+  decisionPoints: previousDecisionPoints_getPatient_onPathways_decisionPoints[] | null;
 }
 
 export interface previousDecisionPoints_getPatient {
   __typename: "Patient";
-  decisionPoints: previousDecisionPoints_getPatient_decisionPoints[] | null;
+  onPathways: previousDecisionPoints_getPatient_onPathways[] | null;
 }
 
 export interface previousDecisionPoints {

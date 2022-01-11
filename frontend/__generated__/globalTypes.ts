@@ -15,6 +15,14 @@ export enum DecisionType {
   TRIAGE = "TRIAGE",
 }
 
+export enum MilestoneState {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
+  INIT = "INIT",
+  WAITING = "WAITING",
+}
+
 export enum PatientCommunicationMethods {
   EMAIL = "EMAIL",
   LANDLINE = "LANDLINE",
@@ -23,13 +31,16 @@ export enum PatientCommunicationMethods {
 }
 
 export interface DecisionPointInput {
-  patientId: number;
-  clinicianId: number;
-  pathwayId: number;
+  onPathwayId: string;
   decisionType: DecisionType;
   clinicHistory: string;
-  comorbidities: string;
-  requestsReferrals: string;
+  comorbidities?: string | null;
+  milestoneRequests?: MilestoneInput[] | null;
+}
+
+export interface MilestoneInput {
+  milestoneTypeId: string;
+  currentState?: MilestoneState | null;
 }
 
 export interface PatientInput {
@@ -39,8 +50,9 @@ export interface PatientInput {
   hospitalNumber: string;
   nationalNumber: string;
   dateOfBirth: any;
-  pathway: number;
+  pathwayId: string;
   awaitingDecisionType?: DecisionType | null;
+  referredAt?: any | null;
 }
 
 //==============================================================
