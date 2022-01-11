@@ -11,18 +11,19 @@ export interface PreviousDecisionPointsProps {
 export const PREVIOUS_DECISION_POINTS_QUERY = gql`
   query previousDecisionPoints($hospitalNumber: String!, $pathwayId: ID!) {
     getPatient(hospitalNumber: $hospitalNumber) {
-      decisionPoints(pathwayId: $pathwayId) {
-        id
-        decisionType
-        clinicHistory
-        comorbidities
-        clinician {
-          firstName
-          lastName
+      onPathways(pathwayId: $pathwayId) {
+        decisionPoints {
+          id
+          decisionType
+          clinicHistory
+          comorbidities
+          clinician {
+            firstName
+            lastName
+          }
+          addedAt
+          updatedAt
         }
-        addedAt
-        updatedAt
-        requestsReferrals
       }
     }
   }
@@ -43,7 +44,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
   );
   if (loading) return <h1>Loading!</h1>;
 
-  const decisions = data?.getPatient?.decisionPoints;
+  const decisions = data?.getPatient?.onPathways?.[0].decisionPoints;
   return (
     <div>
       <div className="container previous-decision-points-container">
@@ -64,7 +65,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
                 <br />
                 Clinical History: {d.clinicHistory} <br />
                 Comormidities: {d.comorbidities} <br />
-                Requests / referrals made: {d.requestsReferrals}
+                Requests / referrals made: TODO: change this
               </p>
             </div>
           ))

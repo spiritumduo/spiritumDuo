@@ -8,16 +8,18 @@ query getPatientWithReferrals($hospitalNumber: String!) {
     lastName
     dateOfBirth
     hospitalNumber
-    pathways { 
+    onPathways { 
       referredAt
-    }
-    milestones {
-      milestoneType {
-        name
+      decisionPoints {
+        milestones {
+          milestoneType {
+            name
+          }
+          addedAt
+          updatedAt
+          currentState
+        }
       }
-      addedAt
-      updatedAt
-      currentState
     }
   }
 }`;

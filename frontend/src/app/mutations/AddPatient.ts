@@ -2,8 +2,8 @@ import { gql, useMutation } from '@apollo/client';
 import Patient from 'types/Patient';
 
 export const ADD_PATIENT_MUTATION = gql`
-  mutation createPatient($patient: PatientInput!, $pathwayId: ID!) {
-    createPatient(input: $patient, pathwayId: $pathwayId) {
+  mutation createPatient($patient: PatientInput!) {
+    createPatient(input: $patient) {
       userErrors {
         message
         field
@@ -21,7 +21,6 @@ const useAddPatientMutation = (
   ADD_PATIENT_MUTATION, {
     variables: {
       patient: patient,
-      pathwayId: pathwayId,
     },
   },
 );
