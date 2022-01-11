@@ -15,6 +15,7 @@ import PathwayDemo from 'pages/PathwayDemo';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { AuthContext, AuthProvider, PathwayProvider } from 'app/context';
 import './App.css';
+import { useEffect } from '@storybook/addons';
 
 const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
@@ -122,7 +123,9 @@ const App = (): JSX.Element => (
 
 const Logout = (): JSX.Element => {
   const { updateUser } = useContext(AuthContext);
-  updateUser(undefined);
+  useEffect(() => {
+    updateUser(undefined);
+  });
   loggedInUserVar(null);
   pathwayOptionsVar([]);
   return (<Navigate to="/login" />);
