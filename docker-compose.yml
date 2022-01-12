@@ -91,7 +91,7 @@ services:
     depends_on:
       - sd-mysql
     container_name: sd-wordpress
-    image: wordpress:5.8.2-fpm-alpine
+    image: wordpress:5.8.3-fpm-alpine
     restart: unless-stopped
     environment:
       - WORDPRESS_DB_HOST=sd-mysql:3306
