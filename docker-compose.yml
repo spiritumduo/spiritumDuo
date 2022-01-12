@@ -44,7 +44,7 @@ services:
     env_file: ./nginx/.env
     image: sd-nginx
     build:
-      context: ./frontend
+      context: .
       dockerfile: ./Dockerfile
     restart: unless-stopped
     volumes:
