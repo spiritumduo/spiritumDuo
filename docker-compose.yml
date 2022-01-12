@@ -33,7 +33,7 @@ services:
     command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
-    
+
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
     depends_on:
@@ -51,6 +51,7 @@ services:
       - ./media:/media
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+      - sd_wordpress:/var/www/html
     ports:
       - 80:80
       - 443:443
