@@ -39,10 +39,6 @@ server {
         alias /static;
     }
 
-    location /app/ {
-
-    }
-
     location /app {
         return 302 /app/;
     }
