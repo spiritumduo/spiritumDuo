@@ -46,6 +46,7 @@ server {
 
     location /app/ {
         index index.html;
+        try_files $uri /app/index.html
     }
 
     location /app {
