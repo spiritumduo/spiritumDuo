@@ -157,3 +157,5 @@ async def insert_test_data():
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
 loop.run_until_complete(insert_user())
+loop.run_until_complete(insert_test_data())
+
