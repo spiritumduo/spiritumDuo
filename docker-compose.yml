@@ -33,7 +33,7 @@ services:
     command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
-    
+
   # ********** INTERMEDIATE SERVICES ********** #
   sd-nginx:
     depends_on:
@@ -51,6 +51,7 @@ services:
       - ./media:/media
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+      - sd_wordpress:/var/www/wp
     ports:
       - 80:80
       - 443:443
@@ -90,7 +91,7 @@ services:
     depends_on:
       - sd-mysql
     container_name: sd-wordpress
-    image: wordpress:5.8.2-fpm-alpine
+    image: wordpress:5.8.3-fpm-alpine
     restart: unless-stopped
     environment:
       - WORDPRESS_DB_HOST=sd-mysql:3306
