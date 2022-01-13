@@ -13,7 +13,7 @@ import DecisionPointPage from 'pages/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import PathwayDemo from 'pages/PathwayDemo';
 import { DecisionPointType } from 'types/DecisionPoint';
-import { AuthContext, AuthProvider, PathwayProvider } from 'app/context';
+import { AuthContext, AuthProvider, PathwayContext, PathwayProvider } from 'app/context';
 import './App.css';
 
 const PreviousDecisionPointsPageRoute = () => {
@@ -96,28 +96,22 @@ const DecisionRoutes = () => (
 );
 
 const App = (): JSX.Element => (
-  <AuthProvider>
-    <PathwayProvider>
-      <BrowserRouter basename={ process.env.PUBLIC_URL }>
-        <Routes>
-          <Route path="/login" element={ <LoginPage /> } />
-          <Route path="/logout" element={ <Logout /> } />
-          <Route path="/patient/*" element={ <PatientRoutes /> } />
-          <Route path="/decision/*" element={ <DecisionRoutes /> } />
-          <Route
-            path="/"
-            element={ (
-              <RequireAuth>
-                <PageLayout>
-                  <HomePage patientsPerPage={ 20 } />
-                </PageLayout>
-              </RequireAuth>
-            ) }
-          />
-        </Routes>
-      </BrowserRouter>
-    </PathwayProvider>
-  </AuthProvider>
+  <Routes>
+    <Route path="/login" element={ <LoginPage /> } />
+    <Route path="/logout" element={ <Logout /> } />
+    <Route path="/patient/*" element={ <PatientRoutes /> } />
+    <Route path="/decision/*" element={ <DecisionRoutes /> } />
+    <Route
+      path="/"
+      element={ (
+        <RequireAuth>
+          <PageLayout>
+            <HomePage patientsPerPage={ 20 } />
+          </PageLayout>
+        </RequireAuth>
+      ) }
+    />
+  </Routes>
 );
 
 const Logout = (): JSX.Element => {
@@ -132,7 +126,11 @@ const Logout = (): JSX.Element => {
 
 const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): JSX.Element => {
   const { user } = useContext(AuthContext);
+  const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
   if (!user) return <Navigate to="/login" state={ { from: location } } />;
+  if ((!pathwayOptions) || (!currentPathwayId)) {
+    return <h1>No pathways. Application not configured!</h1>;
+  }
   return children;
 };
 

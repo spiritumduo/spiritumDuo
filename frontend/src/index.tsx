@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import { onError } from '@apollo/client/link/error';
 import { ApolloClient, ApolloProvider, HttpLink, from } from '@apollo/client';
 import { cache } from 'app/cache';
-import './index.css';
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
 import scalarLink from 'app/scalars';
+import { AuthProvider, PathwayProvider } from 'app/context';
+import './index.css';
+import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const link = new HttpLink({
@@ -33,7 +35,13 @@ const client = new ApolloClient({
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={ client }>
-      <App />
+      <AuthProvider>
+        <PathwayProvider>
+          <BrowserRouter basename={ process.env.PUBLIC_URL }>
+            <App />
+          </BrowserRouter>
+        </PathwayProvider>
+      </AuthProvider>
     </ApolloProvider>
   </React.StrictMode>,
   // eslint-disable-next-line no-undef
