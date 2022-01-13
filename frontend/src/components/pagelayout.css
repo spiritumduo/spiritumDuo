@@ -1,10 +1,7 @@
-:root {
-    --bs-body-bg: rgb(235, 242, 165);	
-}
-
 body {
     width: 100%;
     height: 100%;
+    background: rgb(232, 242, 155) !important;
 }
 
 .card {
