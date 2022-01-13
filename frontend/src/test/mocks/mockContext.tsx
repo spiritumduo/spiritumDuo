@@ -9,6 +9,14 @@ interface MockAuthProviderProps {
   value?: AuthContextInterface;
 }
 
+/**
+ * This mock sets a mock user so test can use it and not worry
+ * about it.
+ *
+ *
+ * @param props MockAuthProviderProps
+ * @returns AuthContext.Provider
+ */
 export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JSX.Element => {
   const user: User = {
     id: 1,
@@ -18,10 +26,9 @@ export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JS
     roles: [],
   };
   // eslint-disable-next-line no-unneeded-ternary
-  const providerValue = value !== undefined ? value : {
-    user: user,
-    updateUser: () => { },
-  };
+  const providerValue = value !== undefined
+    ? value
+    : { user: user, updateUser: () => { } };
   return (
     <AuthContext.Provider value={ providerValue }>
       { children }
@@ -34,6 +41,14 @@ interface MockPathwayProviderProps {
   value?: PathwayContextInterface;
 }
 
+/**
+ * This mock sets default pathways so tests can just use it and not worry
+ * about it.
+ *
+ *
+ * @param props MockPathwayProviderProps
+ * @returns PathwayContext.Provider
+ */
 export const MockPathwayProvider = ({
   children, value,
 }: MockPathwayProviderProps ): JSX.Element => {
