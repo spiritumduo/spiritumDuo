@@ -30,7 +30,6 @@ services:
       - ./backend/:/app
     expose:
       - 8080
-    command: uvicorn --host 0.0.0.0 --reload --port 8080 api:app
     networks:
       - app-network
 
