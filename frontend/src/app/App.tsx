@@ -3,7 +3,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 import React, { useContext, useEffect } from 'react';
-import { BrowserRouter, Route, Routes, Navigate, useParams } from 'react-router-dom';
+import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
 import LoginPage from 'pages/Login';
 import HomePage from 'pages/HomePage';
@@ -13,7 +13,7 @@ import DecisionPointPage from 'pages/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import PathwayDemo from 'pages/PathwayDemo';
 import { DecisionPointType } from 'types/DecisionPoint';
-import { AuthContext, AuthProvider, PathwayContext, PathwayProvider } from 'app/context';
+import { AuthContext, PathwayContext } from 'app/context';
 import './App.css';
 
 const PreviousDecisionPointsPageRoute = () => {
@@ -95,12 +95,25 @@ const DecisionRoutes = () => (
   </Routes>
 );
 
+const PathwayDemoRoute = () => {
+  const { hospitalNumber } = useParams();
+
+  return (
+    <RequireAuth>
+      <PageLayout>
+        <PathwayDemo hospitalNumber={ hospitalNumber || '' } />
+      </PageLayout>
+    </RequireAuth>
+  );
+};
+
 const App = (): JSX.Element => (
   <Routes>
     <Route path="/login" element={ <LoginPage /> } />
     <Route path="/logout" element={ <Logout /> } />
     <Route path="/patient/*" element={ <PatientRoutes /> } />
     <Route path="/decision/*" element={ <DecisionRoutes /> } />
+    <Route path="/pathwaydemo/:hospitalNumber" element={ <PathwayDemoRoute /> } />
     <Route
       path="/"
       element={ (
