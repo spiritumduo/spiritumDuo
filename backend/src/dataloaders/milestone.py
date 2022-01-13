@@ -3,8 +3,8 @@ from aiodataloader import DataLoader
 from models import Milestone
 
 
-class MilestoneByPatientLoader(DataLoader):
-    loader_name = "_milestone_loader"
+class MilestoneByDecisionPointLoader(DataLoader):
+    loader_name = "_milestone_by_decision_point_loader"
     _db = None
 
     def __init__(self, db):
@@ -12,20 +12,19 @@ class MilestoneByPatientLoader(DataLoader):
         self._db = db
 
     @classmethod
-    def _get_loader_from_context(cls, context) -> "MilestoneByPatientLoader":
+    def _get_loader_from_context(cls, context) -> "MilestoneByDecisionPointLoader":
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return context[cls.loader_name]
 
     async def fetch(self, keys) -> Dict[int, Milestone]:
-        result = None
         async with self._db.acquire(reuse=False) as conn:
-            query = Milestone.query.where(Milestone.patient_id.in_(keys))
+            query = Milestone.query.where(Milestone.decision_point_id.in_(keys))
             result = await conn.all(query)
 
         returnData = {}
         for patient_milestone in result:
-            returnData[patient_milestone.patient_id] = patient_milestone
+            returnData[patient_milestone.decision_point_id] = patient_milestone
 
         return returnData
 
@@ -49,5 +48,5 @@ class MilestoneByPatientLoader(DataLoader):
         return await cls._get_loader_from_context(context).load_many(ids)
 
     @classmethod
-    def prime_with_context(cls, context=None, id=None, value=None) -> "MilestoneByPatientLoader":
+    def prime_with_context(cls, context=None, id=None, value=None) -> "MilestoneByDecisionPointLoader":
         return cls._get_loader_from_context(context).prime(id, value)
