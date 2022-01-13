@@ -1,4 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
+import { getPatientWithReferrals } from 'pages/__generated__/getPatientWithReferrals';
 import React from 'react';
 
 const GET_PATIENT_WITH_REFERRALS_QUERY = gql`
@@ -9,9 +10,12 @@ query getPatientWithReferrals($hospitalNumber: String!) {
     dateOfBirth
     hospitalNumber
     onPathways { 
+      id
       referredAt
       decisionPoints {
+        id
         milestones {
+          id
           milestoneType {
             name
           }
@@ -29,7 +33,7 @@ interface PathwayDemoProps {
 }
 
 const PathwayDemo = ({ hospitalNumber }: PathwayDemoProps ): JSX.Element => {
-  const { loading, error, data } = useQuery(
+  const { loading, error, data } = useQuery<getPatientWithReferrals>(
     GET_PATIENT_WITH_REFERRALS_QUERY,
     { variables: { hospitalNumber } },
   );
