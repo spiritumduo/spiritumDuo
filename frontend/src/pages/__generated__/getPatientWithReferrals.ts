@@ -16,6 +16,7 @@ export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints_mi
 
 export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones {
   __typename: "Milestone";
+  id: string;
   milestoneType: getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones_milestoneType;
   addedAt: any;
   updatedAt: any;
@@ -24,11 +25,13 @@ export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints_mi
 
 export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints {
   __typename: "DecisionPoint";
+  id: string;
   milestones: getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones[] | null;
 }
 
 export interface getPatientWithReferrals_getPatient_onPathways {
   __typename: "OnPathway";
+  id: string;
   referredAt: any;
   decisionPoints: getPatientWithReferrals_getPatient_onPathways_decisionPoints[] | null;
 }
