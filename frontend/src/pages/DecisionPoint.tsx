@@ -111,13 +111,10 @@ const DecisionPointPage = (
     getValues,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
-  // Redirect to / after successful submission
-  const [submittedState, setSubmittedState] = useState<boolean>(false);
-  useEffect(() => {
-    if (isSubmitted) setTimeout(() => setSubmittedState(true), 2000);
-  });
   const navigate = useNavigate();
-  if (submittedState) navigate('/');
+  useEffect(() => {
+    if (isSubmitted) setTimeout(() => { navigate('/'); }, 2000);
+  });
   if (loading) return <h1>Loading!</h1>;
 
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
