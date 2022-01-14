@@ -13,14 +13,11 @@ Before beginning, ensure .env files in each directory are populated from their e
 ### Notice
     If you cannot run the scripts below, getting "Permission denied", you may need to set execution permission. You can do this by running `chmod +x [SCRIPTPATH]`.
 
-### 1. Frontend
-    The containers must not be running before you can initialise node modules. You can build node modules by running `./frontend/bin/update-node-modules` from the host while in the `/frontend` directory
-
-### 2. Certbot
+### 1. Certbot
     An initial certificate must be generated. You can do this by running `./certbot/bin/prime-certificates` from the host when no other containers are running. This is necessary because the container has to listen on port 80 for verification
 
-### 3. Start all containers
+### 2. Start all containers
     From the root directory, run `docker-compose up --build` and wait until completion
 
-### 4. Backend
+### 3. Backend
     The containers must be running before you can initialise the database. When this is done, run `./backend/bin/migrate-alembic` from the host while in the `/backend` directory
