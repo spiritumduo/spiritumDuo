@@ -76,7 +76,6 @@ describe('When page loads', () => {
       userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
-
-    await waitFor(() => expect(screen.getByText('Success!')).toBeInTheDocument());
+    expect(screen.getByText('Success!')).toBeInTheDocument();
   });
 });
