@@ -74,13 +74,6 @@ test('Should render login page with no user in context', () => {
   expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 });
 
-/*
-test('Should render login page with authState.loggedIn false', () => {
-  renderApp();
-  expect(screen.getByRole('textbox', { name: 'Username' })).toBeInTheDocument();
-  expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-});
-*/
 test('Should render home page with valid user and pathways', () => {
   renderApp();
   expect(screen.getByText(/patients needing triage/i)).toBeInTheDocument();
