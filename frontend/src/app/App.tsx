@@ -142,7 +142,6 @@ const Logout = (): JSX.Element => {
 
 const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): JSX.Element => {
   const session = Cookies.get('SDSESSION');
-  console.log(session);
   const { user } = useContext(AuthContext);
   const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
   // if no session cookie or for some reason we lost the user
