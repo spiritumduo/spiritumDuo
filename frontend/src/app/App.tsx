@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
 // APP IMPORTS
 import React, { useContext, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
 import { AuthContext, PathwayContext } from 'app/context';
@@ -141,11 +140,10 @@ const Logout = (): JSX.Element => {
 };
 
 const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): JSX.Element => {
-  const session = Cookies.get('SDSESSION');
   const { user } = useContext(AuthContext);
   const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
   // if no session cookie or for some reason we lost the user
-  if (!session || !user) return <Navigate to="/login" state={ { from: location } } />;
+  if (!user) return <Navigate to="/login" state={ { from: location } } />;
   if ((!pathwayOptions) || (!currentPathwayId)) {
     return <h1>No pathways. Application not configured!</h1>;
   }

@@ -7,7 +7,6 @@ import { render, screen } from '@testing-library/react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import fetchMock from 'fetch-mock';
 import { MockedProvider } from '@apollo/client/testing';
-import Cookies from 'js-cookie';
 import { AuthContext, AuthContextInterface, PathwayContext, PathwayContextInterface } from 'app/context';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
@@ -48,18 +47,9 @@ const mockPathwayProviderProps: PathwayContextInterface = {
 interface AppElementProps {
   authProviderProps?: AuthContextInterface,
   pathwayProviderProps?: PathwayContextInterface,
-  sessionCookie?: boolean,
 }
 
 const renderApp = (props?: AppElementProps) => {
-  const setCookie = props?.sessionCookie !== undefined
-    ? props.sessionCookie
-    : true;
-  if (setCookie) {
-    Cookies.set('SDSESSION', '1234567');
-  } else {
-    Cookies.remove('SDSESSION');
-  }
   render(
     <MockedProvider>
       <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
@@ -84,12 +74,13 @@ test('Should render login page with no user in context', () => {
   expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 });
 
-test('Should render login page with no session cookie', () => {
-  renderApp({ sessionCookie: false });
+/*
+test('Should render login page with authState.loggedIn false', () => {
+  renderApp();
   expect(screen.getByRole('textbox', { name: 'Username' })).toBeInTheDocument();
   expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 });
-
+*/
 test('Should render home page with valid user and pathways', () => {
   renderApp();
   expect(screen.getByText(/patients needing triage/i)).toBeInTheDocument();

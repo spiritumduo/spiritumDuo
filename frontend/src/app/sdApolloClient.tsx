@@ -1,7 +1,6 @@
 import { HttpLink, ApolloClient, from, ServerError } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import { cache } from 'app/cache';
-import Cookies from 'js-cookie';
+import { cache, loggedInUserVar } from 'app/cache';
 import scalarLink from 'app/scalars';
 
 const link = new HttpLink({
@@ -20,7 +19,7 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
     const e = networkError as ServerError;
     console.log(`[Network error]: ${e?.response?.status}`);
     if (e?.response?.status === 401) {
-      Cookies.remove('SDSESSION');
+      loggedInUserVar(null);
       window.location.reload();
     }
   }
