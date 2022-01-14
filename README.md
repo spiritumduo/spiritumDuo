@@ -1,5 +1,5 @@
 # Spiritum Duo
-I have decided to take the Spiritum Duo and put it in containers!
+A docker based web app for improving clinical pathways
 
 ## Overview
 Ongoing work, but this repo will hold all of the work for the modular and open-source digital pathway. Initial work will be on the Glouecestershire lung cancer pathway, but this work would implemented so that other disease sites and trusts can benefit from this work
