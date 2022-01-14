@@ -1,7 +1,7 @@
 import asyncio
 import secrets
 import string
-
+from faker import Faker
 from sqlalchemy.exc import IntegrityError
 
 from models.db import db, DATABASE_URL
@@ -55,18 +55,30 @@ async def insert_test_data():
     await MilestoneType.create(name="Bronchoscopy", ref_name="ref Bronchoscopy")
 
     milestone_types = await MilestoneType.query.gino.all()
-
+    _Faker=Faker()
     for i in range(0, 50):
-        str_i = str(i)
+        first_name=_Faker.first_name()
+        last_name=_Faker.last_name()
+
+        hospital_number="MRN" + str(randint(10000,99999))
+        if len(str(i))==1:
+            hospital_number+= "0"
+        hospital_number+=str(i)
+
+        national_number="NHS" + str(randint(10000,99999))
+        if len(str(i))==1:
+            national_number+= "0"
+        national_number+=str(i)
+
         year = randint(1950, 1975)
         month = randint(1, 12)
         day = randint(1, 28)
         dob = date(year, month, day)
         await Patient.create(
-            first_name="John " + str_i,
-            last_name="Doe " + str_i,
-            hospital_number="MRN1234567-" + str_i,
-            national_number="NHS1234567-" + str_i,
+            first_name=first_name,
+            last_name=last_name,
+            hospital_number=hospital_number,
+            national_number=national_number,
             date_of_birth=dob,
             communication_method="LETTER"
         )
