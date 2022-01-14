@@ -1,4 +1,4 @@
-# Spiritum Duo Docker
+# Spiritum Duo
 I have decided to take the Spiritum Duo and put it in containers!
 
 ## Overview
