@@ -1,19 +1,22 @@
-/* eslint-disable react/jsx-indent */
 /* eslint-disable react/jsx-props-no-spreading */
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap imports first so other modules can override
+// APP IMPORTS
 import React, { useContext, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import { Route, Routes, Navigate, useParams } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
-import LoginPage from 'pages/Login';
-import HomePage from 'pages/HomePage';
-import PageLayout from 'components/PageLayout';
-import NewPatientPage from 'pages/NewPatient';
-import DecisionPointPage from 'pages/DecisionPoint';
-import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
-import PathwayDemo from 'pages/PathwayDemo';
-import { DecisionPointType } from 'types/DecisionPoint';
 import { AuthContext, PathwayContext } from 'app/context';
+import { DecisionPointType } from 'types/DecisionPoint';
+
+// PAGES
+import DecisionPointPage from 'pages/DecisionPoint';
+import HomePage from 'pages/HomePage';
+import LoginPage from 'pages/Login';
+import NewPatientPage from 'pages/NewPatient';
+import PageLayout from 'components/PageLayout';
+import PathwayDemo from 'pages/PathwayDemo';
+import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import './App.css';
 
 const PreviousDecisionPointsPageRoute = () => {
@@ -138,9 +141,12 @@ const Logout = (): JSX.Element => {
 };
 
 const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): JSX.Element => {
+  const session = Cookies.get('SDSESSION');
+  console.log(session);
   const { user } = useContext(AuthContext);
   const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
-  if (!user) return <Navigate to="/login" state={ { from: location } } />;
+  // if no session cookie or for some reason we lost the user
+  if (!session || !user) return <Navigate to="/login" state={ { from: location } } />;
   if ((!pathwayOptions) || (!currentPathwayId)) {
     return <h1>No pathways. Application not configured!</h1>;
   }

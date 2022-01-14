@@ -4,7 +4,7 @@ from starlette.authentication import (
 )
 import inspect
 
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 from models.db import db
 from models import User, Session
 from starlette.requests import HTTPConnection
@@ -113,7 +113,7 @@ def needsAuthenticated(func:Callable)->Callable:
         if request is None:
             raise Exception("Request parameter not found")
         if not has_required_scope(request, ["authenticated"]):
-            return Response("User is not logged in", status_code=401)
+            return JSONResponse(status_code=401)
             
         if inspect.iscoroutinefunction(func):
             return await func(*args, **kwargs)

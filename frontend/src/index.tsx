@@ -1,36 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { onError } from '@apollo/client/link/error';
-import { ApolloClient, ApolloProvider, HttpLink, from } from '@apollo/client';
-import { cache } from 'app/cache';
+import { ApolloProvider } from '@apollo/client';
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
-import scalarLink from 'app/scalars';
+import client from 'app/sdApolloClient';
 import { AuthProvider, PathwayProvider } from 'app/context';
-import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-
-const link = new HttpLink({
-  uri: `${window.location.protocol}//${window.location.host}/api/graphql`,
-  credentials: 'include',
-});
-
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path }) => {
-      console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
-    });
-  }
-
-  if (networkError) console.log(`[Network error]: ${networkError}`);
-});
-
-const client = new ApolloClient({
-  link: from([scalarLink, errorLink, link]),
-  cache: cache,
-  connectToDevTools: true,
-});
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>

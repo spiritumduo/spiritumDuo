@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import fetchMock from 'fetch-mock';
 import { MockedProvider } from '@apollo/client/testing';
+import Cookies from 'js-cookie';
 import { AuthContext, AuthContextInterface, PathwayContext, PathwayContextInterface } from 'app/context';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
@@ -47,27 +48,44 @@ const mockPathwayProviderProps: PathwayContextInterface = {
 interface AppElementProps {
   authProviderProps?: AuthContextInterface,
   pathwayProviderProps?: PathwayContextInterface,
+  sessionCookie?: boolean,
 }
 
-const renderApp = (props?: AppElementProps) => render(
-  <MockedProvider>
-    <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
-      <PathwayContext.Provider value={ props?.pathwayProviderProps || mockPathwayProviderProps }>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
-      </PathwayContext.Provider>
-    </AuthContext.Provider>
-  </MockedProvider>,
-);
+const renderApp = (props?: AppElementProps) => {
+  const setCookie = props?.sessionCookie !== undefined
+    ? props.sessionCookie
+    : true;
+  if (setCookie) {
+    Cookies.set('SDSESSION', '1234567');
+  } else {
+    Cookies.remove('SDSESSION');
+  }
+  render(
+    <MockedProvider>
+      <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
+        <PathwayContext.Provider value={ props?.pathwayProviderProps || mockPathwayProviderProps }>
+          <MemoryRouter>
+            <App />
+          </MemoryRouter>
+        </PathwayContext.Provider>
+      </AuthContext.Provider>
+    </MockedProvider>,
+  );
+};
 
-test('Should render login page with no logged in user', () => {
+test('Should render login page with no user in context', () => {
   renderApp({
     authProviderProps: {
       user: undefined,
       updateUser: () => {},
     },
   });
+  expect(screen.getByRole('textbox', { name: 'Username' })).toBeInTheDocument();
+  expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+});
+
+test('Should render login page with no session cookie', () => {
+  renderApp({ sessionCookie: false });
   expect(screen.getByRole('textbox', { name: 'Username' })).toBeInTheDocument();
   expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 });
