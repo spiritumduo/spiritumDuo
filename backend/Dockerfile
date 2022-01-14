@@ -13,4 +13,5 @@ RUN ["chmod", "0644", "/etc/cron.d/container_cronjob"]
 RUN ["crontab", "/etc/cron.d/container_cronjob"]
 
 RUN ["chmod", "+x", "/app/core/entrypoint"]
+WORKDIR /app/src
 ENTRYPOINT [ "/app/core/entrypoint" ]
