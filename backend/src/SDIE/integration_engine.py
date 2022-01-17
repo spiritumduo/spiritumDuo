@@ -5,10 +5,16 @@ class IntegrationEngine:
     def __init__(self, authToken:str=None):
         self._authToken=authToken
     
-    def load_patient(self, recordId:str=None, hospitalNumber:int=None, nationalNumber:int=None):
+    def load_patient(self, recordId:str=None, hospitalNumber:str=None, nationalNumber:str=None):
         pass
 
     def load_many_patients(self, recordId:List=None, hospitalNumber:List=None, nationalNumber:List=None):
+        pass
+
+    def create_milestone(self, recordId:str=None):
+        pass
+
+    def load_milestone(self, recordId:str=None):
         pass
 
     def login(self, username:str=None, password:str=None):
