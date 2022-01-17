@@ -37,6 +37,22 @@ services:
     networks:
       - app-network
 
+  sd-pseudotie:
+    depends_on:
+      - sd-postgres
+    container_name: sd-pseudotie
+    image: sd-pseudotie
+    build:
+      context: ./pseudotie
+      dockerfile: ./Dockerfile
+    env_file: ./pseudotie/.env
+    volumes:
+      - ./pseudotie:/app
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network    
+
     
   # ********** FRONTEND SERVICES ********** #
   sd-frontend:
