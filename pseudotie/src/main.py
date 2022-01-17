@@ -1,13 +1,26 @@
 import json
 
+from starlette.middleware.sessions import SessionMiddleware
+
+from authentication import needs_authentication, PseudoAuth
 from fastapi import FastAPI, Request
 from datetime import date
 from models import Patient, db
 from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
+from starlette.middleware import Middleware
+from starlette.middleware.authentication import AuthenticationMiddleware
+import os
 
-app = FastAPI()
+SESSION_KEY = os.getenv("SESSION_SECRET_KEY")
+
+pseudotie_middleware = [
+    Middleware(SessionMiddleware, secret_key=SESSION_KEY, session_cookie="SDSESSION", max_age=60*60*6),
+    Middleware(AuthenticationMiddleware, backend=PseudoAuth())
+]
+
+app = FastAPI(middleware=pseudotie_middleware)
 
 
 @app.get("/")
@@ -30,7 +43,8 @@ class PatientInput(BaseModel):
 
 
 @app.post("/patient/")
-async def patient_post(_: Request, input: PatientInput):
+@needs_authentication
+async def patient_post(request: Request, input: PatientInput):
     """
     Create patient
     :param _: Request - ignored
@@ -52,7 +66,8 @@ async def patient_post(_: Request, input: PatientInput):
 
 
 @app.get("/patient/hospital/{id}")
-async def patient_hospital_id(id: str):
+@needs_authentication
+async def patient_hospital_id(request: Request, id: str):
     """
     Get patient by hospital number
     :param id: String ID
@@ -63,7 +78,8 @@ async def patient_hospital_id(id: str):
 
 
 @app.get("/patient/national/{id}")
-async def patient_national_id(id: str):
+@needs_authentication
+async def patient_national_id(request: Request, id: str):
     """
     Get patient by national number
     :param id: String ID
