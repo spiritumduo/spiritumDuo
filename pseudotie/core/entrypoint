@@ -1,5 +1,4 @@
 #!/bin/bash
 
-cron
 cd /app/src
 uvicorn --host 0.0.0.0 --reload --port 8080 api:app
