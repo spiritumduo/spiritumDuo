@@ -1,6 +1,7 @@
 import json
 import os
 
+from time import sleep
 from starlette.middleware.sessions import SessionMiddleware
 from authentication import needs_authentication, PseudoAuth
 from fastapi import FastAPI, Request
@@ -75,7 +76,14 @@ async def patient_hospital_id(request: Request, id: str):
     :returns JSONResponse containing Patient or null
     """
     patient = await Patient.query.where(Patient.hospital_number == str(id)).gino.first()
-    return patient
+    return {
+        "id":patient.id,
+        "hospital_number":patient.hospital_number,
+        "national_number":patient.national_number,
+        "communication_method":patient.communication_method,
+        "first_name":patient.first_name,
+        "last_name":patient.last_name,
+    }
 
 
 @app.get("/patient/national/{id}")
@@ -91,19 +99,19 @@ async def patient_national_id(request: Request, id: str):
 
 
 @app.post("/milestone")
-async def post_milestone(hospitalNumber:str=None, milestoneReference:str=None):
+async def post_milestone(hospitalNumber:str=None, milestoneTypeId:str=None):
     """
     Create Milestone
     :return: JSONResponse containing ID of created milestone or error data
     """
     data:Milestone = await Milestone.create(
         patient_hospital_number=hospitalNumber,
-        milestone_reference=milestoneReference
+        milestone_type_id=milestoneTypeId
     )
     return {
         "id":data.id,
         "patient_hospital_number":data.patient_hospital_number,
-        "milestone_reference":data.milestone_reference,
+        "milestone_type_id":data.milestone_type_id,
         "current_state":data.current_state,
         "added_at":data.added_at,
         "updated_at":data.updated_at,
@@ -122,41 +130,18 @@ async def milestone_id(id: str=None):
         id=int(id)
     except:
         pass
-
-    try:
-        id=json.loads(id)
-    except:
-        pass
-
-    if id is not int and id is not List:
-        raise TypeError
-
-
-    if id is int:
+    else:
         data:Milestone = await Milestone.query.where(Milestone.id==id).gino.one_or_none()
         if data:
             return {
                 "id":data.id,
                 "patient_hospital_number":data.patient_hospital_number,
-                "milestone_reference":data.milestone_reference,
+                "milestone_type_id":data.milestone_type_id,
                 "current_state":data.current_state,
                 "added_at":data.added_at,
                 "updated_at":data.updated_at,
             }
         else:
             return None
-    elif id is List:
-        data:Milestone = await Milestone.query.where(Milestone.id.in_(id)).gino.one_or_none()
-        returnData:List=[]
-        for entry in data:
-            returnData.append({
-                "id":entry.id,
-                "patient_hospital_number":entry.patient_hospital_number,
-                "milestone_reference":entry.milestone_reference,
-                "current_state":entry.current_state,
-                "added_at":entry.added_at,
-                "updated_at":entry.updated_at,
-            })
-        return returnData
 
 db.init_app(app)
