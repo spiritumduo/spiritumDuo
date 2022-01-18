@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 from aiodataloader import DataLoader
 from models import Milestone
-from SDIE import PseudoIntegrationEngine
+from SDIE import PseudoIntegrationEngine, IntegrationEngine
 
 class MilestoneByDecisionPointLoader(DataLoader):
     loader_name = "_milestone_by_decision_point_loader"
@@ -63,17 +63,14 @@ class ReferenceMilestone:
 
 class MilestoneByReferenceIdFromIELoader(DataLoader):
     loader_name = "_milestone_by_reference_id_from_ie_loader"
-    _authToken = None
-    _IntegrationEngine:PseudoIntegrationEngine = None
+    integration_engine:IntegrationEngine = None
 
-    def __init__(self):
+    def __init__(self, authToken=None):
         super().__init__()
-        self._IntegrationEngine=PseudoIntegrationEngine()
-
-
+        self.integration_engine=PseudoIntegrationEngine()
 
     async def fetch(self, keys) -> Dict[int, ReferenceMilestone]:
-        result=await self._IntegrationEngine.load_many_milestones(recordIds=keys)
+        result=await self.integration_engine.load_many_milestones(recordIds=keys)
         returnData={}
         for milestone in result:
             returnData[milestone.id] = milestone
@@ -97,12 +94,12 @@ class MilestoneByReferenceIdFromIELoader(DataLoader):
     async def load_from_id(cls, context=None, id=None) -> Optional[ReferenceMilestone]:
         if not id:
             return None
-
+        cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None) -> List[Optional[ReferenceMilestone]]:
         if not ids:
             return None
-
+        cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
         return await cls._get_loader_from_context(context).load_many(ids)

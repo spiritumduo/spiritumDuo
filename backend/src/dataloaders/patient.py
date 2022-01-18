@@ -3,7 +3,7 @@ from aiodataloader import DataLoader
 from models import Patient
 from datetime import date
 from typing import List, Union, Dict, Optional
-from SDIE import PseudoIntegrationEngine
+from SDIE import PseudoIntegrationEngine, IntegrationEngine
 
 class PatientByIdLoader(DataLoader):
     loader_name = "_patient_by_id_loader"
@@ -118,17 +118,15 @@ class ReferencePatient:
 
 class PatientByHospitalNumberFromIELoader(DataLoader):
     loader_name = "_patient_by_hospital_number_from_ie_loader"
-    _authToken = None
-    _IntegrationEngine:PseudoIntegrationEngine = None
+    integration_engine:IntegrationEngine = PseudoIntegrationEngine()
 
     def __init__(self):
         super().__init__()
-        self._IntegrationEngine=PseudoIntegrationEngine()
 
 
 
     async def fetch(self, keys)->Dict[str, ReferencePatient]:
-        result=await self._IntegrationEngine.load_many_patients(hospitalNumbers=keys)
+        result=await self.integration_engine.load_many_patients(hospitalNumbers=keys)
         returnData={}
         for patient in result:
             returnData[patient.hospital_number] = patient
@@ -153,12 +151,12 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
     async def load_from_id(cls, context=None, id=None)->Optional[ReferencePatient]:
         if not id:
             return None
-            
+        cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
         return await cls._get_loader_from_context(context=context).load(id)
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->List[Optional[ReferencePatient]]:
         if not ids:
             return None
-            
+        cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
         return await cls._get_loader_from_context(context=context).load_many(ids)
