@@ -171,13 +171,21 @@ type MilestoneType {
   name: String!
 }
 
+type DecisionPointTrustData {
+    id: ID!
+    patientHospitalNumber: String!
+    milestoneReference: String!
+    currentState: MilestoneState!
+    addedAt: DateTime!
+    updatedAt: DateTime!
+}
+
 type Milestone {
   id: ID!
+  referenceId: String!
   milestoneType: MilestoneType!
   decisionPoint: DecisionPoint!
-  addedAt: DateTime!
-  updatedAt: DateTime!
-  currentState: MilestoneState!
+  trustData: DecisionPointTrustData!
 }
 
 

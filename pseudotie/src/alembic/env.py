@@ -5,8 +5,8 @@ from sqlalchemy import pool, create_engine
 from sqlalchemy_utils import create_database, database_exists
 
 from alembic import context
-from models.migrations import db
-from models.db import DATABASE_URL
+# from models.migrations import db
+from models.db import DATABASE_URL, db
 
 from os import environ
 # this is the Alembic Config object, which provides

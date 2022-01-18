@@ -2,6 +2,7 @@ import requests
 from models import Milestone, Patient
 from abc import ABC, abstractmethod
 from typing import List, Optional
+import json
 
 
 class IntegrationEngine(ABC):
@@ -64,6 +65,8 @@ class PseudoIntegrationEngine(IntegrationEngine):
     This is the Integration Engine implementation for the pseudo-trust backend.
     """
 
+    TRUST_INTEGRATION_ENGINE_ENDPOINT = "http://localhost:8081/"
+
     def __init__(self, auth_token: str = None):
         """
         Constructor. Requires an authentication token.
@@ -81,7 +84,15 @@ class PseudoIntegrationEngine(IntegrationEngine):
         pass
 
     async def load_milestone(self, record_id: str = None) -> Optional[Milestone]:
-        pass
+        result = requests.get(TRUST_INTEGRATION_ENGINE_ENDPOINT + "milestone/" + recordId,
+                              cookies={"SDSESSION": self._authToken})
+        if result.status_code != 200:
+            raise Exception("HTTP" + result.status_code + " received")
+        return result
 
     async def load_many_milestones(self, record_ids: str = None) -> List[Optional[Milestone]]:
-        pass
+        result = requests.get(TRUST_INTEGRATION_ENGINE_ENDPOINT + "milestone/" + json.loads(recordIds),
+                              cookies={"SDSESSION": self._authToken})
+        if result.status_code != 200:
+            raise Exception("HTTP" + result.status_code + " received")
+        return result
