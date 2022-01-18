@@ -1,13 +1,31 @@
 from ariadne.objects import ObjectType
-from dataloaders import MilestoneTypeLoader
+from dataloaders import MilestoneTypeLoader, MilestoneByReferenceIdFromIELoader, DecisionPointLoader
 from models import MilestoneType, Milestone
-from SDIE import IntegrationEngine
+from SdTypes import MilestoneState
+from datetime import datetime
 MilestoneObjectType = ObjectType("Milestone")
 
-# @MilestoneObjectType.field("milestoneType")
-# async def resolve_milestone_type(obj: Milestone=None, info=None, *_) -> MilestoneType:
-#     return await MilestoneTypeLoader.load_from_id(context=info.context, id=obj.milestone_type_id)
+@MilestoneObjectType.field("decisionPoint")
+async def resolver(obj=None, info=None, *_):
+    record=await DecisionPointLoader.load_from_id(context=info.context, id=obj.decision_point_id)
+    return record.decision_point_id
 
-@MilestoneObjectType.field("trustData")
-def resolve_decision_point_trust_data(obj: Milestone = None, info = None, *_):
-    return IntegrationEngine(authToken=info.context['request'].cookies['SDSESSION']).load_milestone(obj.reference_id)
+@MilestoneObjectType.field("milestoneType")
+async def resolver(obj=None, info=None, *_):
+    record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
+    return await MilestoneTypeLoader.load_from_id(context=info.context, id=record.milestone_type_id)
+
+@MilestoneObjectType.field("currentState")
+async def resolver(obj=None, info=None, *_):
+    record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
+    return MilestoneState[record.current_state]
+
+@MilestoneObjectType.field("addedAt")
+async def resolver(obj=None, info=None, *_):
+    record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
+    return datetime.strptime(record.added_at, "%Y-%m-%dT%H:%M:%S.%f")
+
+@MilestoneObjectType.field("updatedAt")
+async def resolver(obj=None, info=None, *_):
+    record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
+    return datetime.strptime(record.updated_at, "%Y-%m-%dT%H:%M:%S.%f")
