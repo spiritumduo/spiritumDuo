@@ -100,11 +100,11 @@ class PseudoIntegrationEngine(IntegrationEngine):
         Constructor. Requires an authentication token.
         :param auth_token: String token to be supplied to pseudo-trust with each request
         """
-        self._authToken = auth_token
+        self.authToken = auth_token
         self.TRUST_INTEGRATION_ENGINE_ENDPOINT="http://sd-pseudotie:8081"
 
     async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient]:
-        result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber, cookies={"SDSESSION":self._authToken})
+        result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber, cookies={"SDSESSION":self.authToken})
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
@@ -121,7 +121,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
     async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient]]:
         retVal=[]
         for hospNo in hospitalNumbers:
-            result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospNo, cookies={"SDSESSION":self._authToken})
+            result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospNo, cookies={"SDSESSION":self.authToken})
             if result.status_code!=200:
                 raise Exception(f"HTTP{result.status_code} received")
             record=json.loads(result.text)
@@ -142,7 +142,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
         pass
 
     async def load_milestone(self, recordId: str = None) -> Optional[Milestone]:
-        result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self._authToken})
+        result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
@@ -158,12 +158,10 @@ class PseudoIntegrationEngine(IntegrationEngine):
     async def load_many_milestones(self, recordIds: List = None) -> List[Optional[Milestone]]:
         retVal=[]
         for recordId in recordIds:
-            print("SEARCHING FOR",recordId)
-            result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self._authToken})
+            result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
             if result.status_code!=200:
                 raise Exception(f"HTTP{result.status_code} received")
             record=json.loads(result.text)
-            print("RECORD IS",record)
             retVal.append(
                 Milestone_IE(
                     id=record['id'],
