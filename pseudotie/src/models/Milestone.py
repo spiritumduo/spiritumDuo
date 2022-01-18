@@ -8,7 +8,7 @@ class Milestone(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     patient_hospital_number = db.Column(db.String(), nullable=False)
-    milestone_reference = db.Column(db.String(), nullable=False)
+    milestone_type_id = db.Column(db.Integer(), nullable=False)
     current_state = db.Column(
         Enum(MilestoneState, native_enum=False), default=MilestoneState.INIT.value,
         server_default=MilestoneState.INIT.value, nullable=False, native_enum=False
