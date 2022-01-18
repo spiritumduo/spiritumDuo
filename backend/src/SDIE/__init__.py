@@ -1,1 +1,1 @@
-from .integration_engine import PseudoIntegrationEngine
+from .integration_engine import IntegrationEngine, PseudoIntegrationEngine
