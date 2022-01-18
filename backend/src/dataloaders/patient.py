@@ -1,6 +1,9 @@
+from ast import Str
 from aiodataloader import DataLoader
 from models import Patient
-from typing import List, Union
+from datetime import date
+from typing import List, Union, Dict, Optional
+from SDIE import PseudoIntegrationEngine
 
 class PatientByIdLoader(DataLoader):
     loader_name = "_patient_by_id_loader"
@@ -23,7 +26,7 @@ class PatientByIdLoader(DataLoader):
             
         return returnData
 
-    async def batch_load_fn(self, keys)->List[Patient]:
+    async def batch_load_fn(self, keys)->Dict[str, Patient]:
         patientDict=await self.fetch([int(i) for i in keys])
         sortedPatients=[]
         for key in keys:
@@ -51,7 +54,6 @@ class PatientByIdLoader(DataLoader):
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
-
 class PatientByHospitalNumberLoader(DataLoader):
     loader_name="_patient_by_hospital_number_loader"
     _db=None
@@ -60,7 +62,7 @@ class PatientByHospitalNumberLoader(DataLoader):
         super().__init__()
         self._db=db
 
-    async def fetch(self, keys)->List[Patient]:
+    async def fetch(self, keys)->Dict[str, Patient]:
         result=None
         async with self._db.acquire(reuse=False) as conn:
             query=Patient.query.where(Patient.hospital_number.in_(keys))
@@ -98,3 +100,65 @@ class PatientByHospitalNumberLoader(DataLoader):
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
+
+
+
+
+
+
+class ReferencePatient:
+    id:str=None
+    firstName:str=None
+    lastName:str=None
+    hospitalNumber:str=None
+    nationalNumber:str=None
+    dateOfBirth:date=None
+
+
+
+class PatientByHospitalNumberFromIELoader(DataLoader):
+    loader_name = "_patient_by_hospital_number_from_ie_loader"
+    _authToken = None
+    _IntegrationEngine:PseudoIntegrationEngine = None
+
+    def __init__(self):
+        super().__init__()
+        self._IntegrationEngine=PseudoIntegrationEngine()
+
+
+
+    async def fetch(self, keys)->Dict[str, ReferencePatient]:
+        result=await self._IntegrationEngine.load_many_patients(hospitalNumbers=keys)
+        returnData={}
+        for patient in result:
+            returnData[patient.hospital_number] = patient
+        return returnData
+
+    async def batch_load_fn(self, keys)->List[Patient]:
+        patientDict=await self.fetch(keys)
+        sortedPatients=[]
+        for key in keys:
+            sortedPatients.append(patientDict.get(key))
+        return sortedPatients
+
+
+
+    @classmethod
+    def _get_loader_from_context(cls, context) -> "PatientByHospitalNumberFromIELoader":
+        if cls.loader_name not in context:
+            context[cls.loader_name] = cls()
+        return context[cls.loader_name]
+
+    @classmethod
+    async def load_from_id(cls, context=None, id=None)->Optional[ReferencePatient]:
+        if not id:
+            return None
+            
+        return await cls._get_loader_from_context(context=context).load(id)
+
+    @classmethod
+    async def load_many_from_id(cls, context=None, ids=None)->List[Optional[ReferencePatient]]:
+        if not ids:
+            return None
+            
+        return await cls._get_loader_from_context(context=context).load_many(ids)
