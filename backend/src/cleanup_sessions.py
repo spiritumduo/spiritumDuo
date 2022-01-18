@@ -7,7 +7,7 @@ session_expiry=int(config['SESSION_EXPIRY_LENGTH'])
 
 async def cleanup():
     await db.set_bind(DATABASE_URL)
-    await Session.delete.where(Session.expiry<datetime.now()+timedelta(seconds=session_expiry)).gino.status()
+    await Session.delete.where(Session.expiry<datetime.now()-timedelta(seconds=session_expiry)).gino.status()
 
 loop=get_event_loop()
 loop.run_until_complete(cleanup())
