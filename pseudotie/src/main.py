@@ -83,6 +83,7 @@ async def patient_hospital_id(request: Request, id: str):
         "communication_method":patient.communication_method,
         "first_name":patient.first_name,
         "last_name":patient.last_name,
+        "date_of_birth":patient.date_of_birth
     }
 
 

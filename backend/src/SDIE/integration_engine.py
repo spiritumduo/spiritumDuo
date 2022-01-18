@@ -58,7 +58,8 @@ class Patient_IE:
         last_name:str=None, 
         hospital_number:str=None,
         national_number:str=None, 
-        communication_method:str=None
+        communication_method:str=None,
+        date_of_birth:date=None
     ):
         self.id=id
         self.first_name=first_name
@@ -66,6 +67,7 @@ class Patient_IE:
         self.hospital_number=hospital_number
         self.national_number=national_number
         self.communication_method=communication_method
+        self.date_of_birth=date_of_birth
 
 class Milestone_IE:
     def __init__(self, 
@@ -112,7 +114,8 @@ class PseudoIntegrationEngine(IntegrationEngine):
             last_name=record['last_name'], 
             hospital_number=record['hospital_number'], 
             national_number=record['national_number'], 
-            communication_method=record['communication_method']
+            communication_method=record['communication_method'],
+            date_of_birth=record['date_of_birth']
         )
 
     async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient]]:
@@ -129,7 +132,8 @@ class PseudoIntegrationEngine(IntegrationEngine):
                     last_name=record['last_name'], 
                     hospital_number=record['hospital_number'], 
                     national_number=record['national_number'], 
-                    communication_method=record['communication_method']
+                    communication_method=record['communication_method'],
+                    date_of_birth=record['date_of_birth']
                 )
             )
         return retVal

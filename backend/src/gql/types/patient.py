@@ -1,5 +1,6 @@
 from ariadne.objects import ObjectType
 from dataloaders import OnPathwaysByPatient, PatientByHospitalNumberFromIELoader
+from datetime import datetime
 
 PatientObjectType=ObjectType("Patient")
 
@@ -24,3 +25,8 @@ async def resolver(obj=None, info=None, *_):
 async def resolver(obj=None, info=None, *_):
     record=await PatientByHospitalNumberFromIELoader.load_from_id(context=info.context, id=obj.hospital_number)
     return record.communication_method
+
+@PatientObjectType.field("dateOfBirth")
+async def resolver(obj=None, info=None, *_):
+    record=await PatientByHospitalNumberFromIELoader.load_from_id(context=info.context, id=obj.hospital_number)
+    return datetime.strptime(record.date_of_birth, "%Y-%m-%d").date()
