@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 from aiodataloader import DataLoader
 from models import Milestone
-from SDIE import IntegrationEngine
+from SDIE import PseudoIntegrationEngine
 
 class MilestoneByDecisionPointLoader(DataLoader):
     loader_name = "_milestone_by_decision_point_loader"
@@ -61,27 +61,22 @@ class ReferenceMilestone:
     added_at:datetime=None
     updated_at:datetime=None
 
-class MilestoneByReferenceIdLoader(DataLoader):
-    loader_name = "_milestone_by_reference_id_loader"
+class MilestoneByReferenceIdFromIELoader(DataLoader):
+    loader_name = "_milestone_by_reference_id_from_ie_loader"
     _authToken = None
-    _IntegrationEngine:IntegrationEngine = None
+    _IntegrationEngine:PseudoIntegrationEngine = None
 
-    def __init__(self, authToken=None):
+    def __init__(self):
         super().__init__()
-        self._authToken = authToken
-        self._IntegrationEngine=IntegrationEngine(authToken=authToken)
+        self._IntegrationEngine=PseudoIntegrationEngine()
 
-    @classmethod
-    def _get_loader_from_context(cls, context) -> "MilestoneByReferenceIdLoader":
-        if cls.loader_name not in context:
-            context[cls.loader_name] = cls(authToken=context['request'].cookies['SDSESSION'])
-        return context[cls.loader_name]
+
 
     async def fetch(self, keys) -> Dict[int, ReferenceMilestone]:
-        result=self._IntegrationEngine.load_many_milestones(keys)
+        result=await self._IntegrationEngine.load_many_milestones(recordIds=keys)
         returnData={}
         for milestone in result:
-            returnData[milestone.reference_id] = milestone
+            returnData[milestone.id] = milestone
         return returnData
 
     async def batch_load_fn(self, keys):
@@ -91,18 +86,23 @@ class MilestoneByReferenceIdLoader(DataLoader):
             sortedData.append(fetchDict.get(key))
         return sortedData
 
+
+    @classmethod
+    def _get_loader_from_context(cls, context) -> "MilestoneByReferenceIdFromIELoader":
+        if cls.loader_name not in context:
+            context[cls.loader_name] = cls()
+        return context[cls.loader_name]
+
     @classmethod
     async def load_from_id(cls, context=None, id=None) -> Optional[ReferenceMilestone]:
         if not id:
             return None
+
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None) -> Optional[List[ReferenceMilestone]]:
+    async def load_many_from_id(cls, context=None, ids=None) -> List[Optional[ReferenceMilestone]]:
         if not ids:
             return None
-        return await cls._get_loader_from_context(context).load_many(ids)
 
-    @classmethod
-    def prime_with_context(cls, context=None, id=None, value=None) -> "MilestoneByDecisionPointLoader":
-        return cls._get_loader_from_context(context).prime(id, value)
+        return await cls._get_loader_from_context(context).load_many(ids)
