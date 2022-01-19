@@ -73,14 +73,12 @@ class Milestone_IE:
     def __init__(self, 
         id:int=None,
         patient_hospital_number:str=None, 
-        milestone_type_id:str=None, 
         current_state:str=None, 
         added_at:date=None, 
         updated_at:date=None
     ):
         self.id=id
         self.patient_hospital_number=patient_hospital_number
-        self.milestone_type_id=milestone_type_id
         self.current_state=current_state
         self.added_at=added_at
         self.updated_at=updated_at
@@ -149,7 +147,6 @@ class PseudoIntegrationEngine(IntegrationEngine):
         return Milestone_IE(
             id=record['id'],
             patient_hospital_number=record['patient_hospital_number'],
-            milestone_type_id=record['milestone_type_id'],
             current_state=record['current_state'],
             added_at=record['added_at'],
             updated_at=record['updated_at']
@@ -166,7 +163,6 @@ class PseudoIntegrationEngine(IntegrationEngine):
                 Milestone_IE(
                     id=record['id'],
                     patient_hospital_number=record['patient_hospital_number'],
-                    milestone_type_id=record['milestone_type_id'],
                     current_state=record['current_state'],
                     added_at=record['added_at'],
                     updated_at=record['updated_at']

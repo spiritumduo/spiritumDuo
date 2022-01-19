@@ -137,7 +137,6 @@ async def milestone_id(id: str=None):
             return {
                 "id":data.id,
                 "patient_hospital_number":data.patient_hospital_number,
-                "milestone_type_id":data.milestone_type_id,
                 "current_state":data.current_state,
                 "added_at":data.added_at,
                 "updated_at":data.updated_at,
