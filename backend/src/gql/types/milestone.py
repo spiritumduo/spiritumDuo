@@ -1,7 +1,5 @@
 from ariadne.objects import ObjectType
 from dataloaders import MilestoneTypeLoader, MilestoneByReferenceIdFromIELoader, DecisionPointLoader
-from models import MilestoneType, Milestone
-from SdTypes import MilestoneState
 from datetime import datetime
 MilestoneObjectType = ObjectType("Milestone")
 
@@ -12,13 +10,27 @@ async def resolver(obj=None, info=None, *_):
 
 @MilestoneObjectType.field("milestoneType")
 async def resolver(obj=None, info=None, *_):
-    record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
-    return await MilestoneTypeLoader.load_from_id(context=info.context, id=record.milestone_type_id)
+    return await MilestoneTypeLoader.load_from_id(context=info.context, id=obj.milestone_type_id)
+
+@MilestoneObjectType.field("internalCurrentState")
+async def resolver(obj=None, info=None, *_):
+    return obj.current_state
+
+@MilestoneObjectType.field("internalAddedAt")
+async def resolver(obj=None, info=None, *_):
+    return obj.added_at
+
+@MilestoneObjectType.field("internalUpdatedAt")
+async def resolver(obj=None, info=None, *_):
+    return obj.updated_at
+
+
+
 
 @MilestoneObjectType.field("currentState")
 async def resolver(obj=None, info=None, *_):
     record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
-    return MilestoneState[record.current_state]
+    return record.current_state
 
 @MilestoneObjectType.field("addedAt")
 async def resolver(obj=None, info=None, *_):
