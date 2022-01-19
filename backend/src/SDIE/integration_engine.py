@@ -1,6 +1,6 @@
 import requests
 import json
-from models import Milestone, Patient
+from models import Milestone, Patient, DecisionPoint
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from datetime import date
@@ -72,13 +72,13 @@ class Patient_IE:
 class Milestone_IE:
     def __init__(self, 
         id:int=None,
-        patient_hospital_number:str=None, 
+        hospital_number:str=None, 
         current_state:str=None, 
         added_at:date=None, 
         updated_at:date=None
     ):
         self.id=id
-        self.patient_hospital_number=patient_hospital_number
+        self.hospital_number=hospital_number
         self.current_state=current_state
         self.added_at=added_at
         self.updated_at=updated_at
@@ -137,6 +137,18 @@ class PseudoIntegrationEngine(IntegrationEngine):
         return retVal
 
     async def create_milestone(self, milestone: Milestone = None) -> str:
+        """
+        1. send create request to TIE
+        2. receive reference ID
+        3. create milestone in SD w/ reference ID
+        4. profit
+
+
+        1. send hospital number
+        2. get reference number
+        3. populate SD DB with other info w/ reference number
+        """
+        decision_point=
         pass
 
     async def load_milestone(self, recordId: str = None) -> Optional[Milestone]:
@@ -146,7 +158,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
         record=json.loads(result.text)
         return Milestone_IE(
             id=record['id'],
-            patient_hospital_number=record['patient_hospital_number'],
+            hospital_number=record['hospital_number'],
             current_state=record['current_state'],
             added_at=record['added_at'],
             updated_at=record['updated_at']
@@ -162,7 +174,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
             retVal.append(
                 Milestone_IE(
                     id=record['id'],
-                    patient_hospital_number=record['patient_hospital_number'],
+                    hospital_number=record['hospital_number'],
                     current_state=record['current_state'],
                     added_at=record['added_at'],
                     updated_at=record['updated_at']
