@@ -109,7 +109,7 @@ type PageInfo {
 type PatientConnection {
     totalCount: Int!
     pageInfo: PageInfo!
-    edges: [PatientEdge]
+    edges: [PatientEdge!]
 }
 
 type PatientEdge {
