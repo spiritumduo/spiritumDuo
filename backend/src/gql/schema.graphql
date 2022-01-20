@@ -176,10 +176,14 @@ type Milestone {
   id: ID!
   milestoneType: MilestoneType!
   decisionPoint: DecisionPoint!
-  referenceId: String!
-  addedAt: DateTime!
-  updatedAt: DateTime!
-  currentState: MilestoneState!
+
+  addedAt: DateTime!                        # from TIE                       
+  updatedAt: DateTime!                      # from TIE
+  currentState: String!                     # from TIE
+
+  internalCurrentState: MilestoneState!     # from SD
+  internalAddedAt: DateTime!                # from SD
+  internalUpdatedAt: DateTime!              # from SD
 }
 
 

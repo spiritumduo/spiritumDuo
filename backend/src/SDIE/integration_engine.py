@@ -1,8 +1,8 @@
 import requests
 import json
-from models import Milestone, Patient
+from models import Milestone, Patient, DecisionPoint, OnPathway
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Dict, List, Optional
 from datetime import date, datetime
 
 class IntegrationEngine(ABC):
@@ -72,15 +72,13 @@ class Patient_IE:
 class Milestone_IE:
     def __init__(self, 
         id:int=None,
-        patient_hospital_number:str=None, 
-        milestone_type_id:str=None, 
+        hospital_number:str=None, 
         current_state:str=None, 
         added_at:date=None, 
         updated_at:date=None
     ):
         self.id=id
-        self.patient_hospital_number=patient_hospital_number
-        self.milestone_type_id=milestone_type_id
+        self.hospital_number=hospital_number
         self.current_state=current_state
         self.added_at=added_at
         self.updated_at=updated_at
@@ -138,8 +136,29 @@ class PseudoIntegrationEngine(IntegrationEngine):
             )
         return retVal
 
-    async def create_milestone(self, milestone: Milestone = None) -> str:
-        pass
+    async def create_milestone(self, milestone: Milestone = None) -> Dict:
+        decision_point:DecisionPoint=await DecisionPoint.query.where(DecisionPoint.id==milestone.decision_point_id).gino.one()
+        on_pathway:OnPathway=await OnPathway.query.where(OnPathway.id==decision_point.on_pathway_id).gino.one()
+        patient:Patient=await Patient.query.where(Patient.id==on_pathway.patient_id).gino.one()
+        hospital_number:str=patient.hospital_number
+        if milestone.current_state:
+            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
+                "hospitalNumber":hospital_number,
+                "currentState":milestone.current_state
+            }, cookies={"SDSESSION":self.authToken})
+        else:
+            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
+                "hospitalNumber":hospital_number
+            }, cookies={"SDSESSION":self.authToken})
+        tie_milestone=json.loads(result.text)
+
+        return{
+            "id":tie_milestone['id'],
+            "hospital_number":tie_milestone['hospital_number'],
+            "current_state":tie_milestone['current_state'],
+            "added_at":tie_milestone['added_at'],
+            "updated_at":tie_milestone['updated_at']
+        }
 
     async def load_milestone(self, recordId: str = None) -> Optional[Milestone_IE]:
         result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
@@ -148,8 +167,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
         record=json.loads(result.text)
         return Milestone_IE(
             id=record['id'],
-            patient_hospital_number=record['patient_hospital_number'],
-            milestone_type_id=record['milestone_type_id'],
+            hospital_number=record['hospital_number'],
             current_state=record['current_state'],
             added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
             updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
@@ -165,8 +183,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
             retVal.append(
                 Milestone_IE(
                     id=record['id'],
-                    patient_hospital_number=record['patient_hospital_number'],
-                    milestone_type_id=record['milestone_type_id'],
+                    hospital_number=record['hospital_number'],
                     current_state=record['current_state'],
                     added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
                     updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
