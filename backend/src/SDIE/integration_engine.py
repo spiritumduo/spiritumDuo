@@ -1,8 +1,8 @@
 import requests
 import json
-from models import Milestone, Patient, DecisionPoint
+from models import Milestone, Patient, DecisionPoint, OnPathway
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Dict, List, Optional
 from datetime import date
 
 class IntegrationEngine(ABC):
@@ -136,20 +136,29 @@ class PseudoIntegrationEngine(IntegrationEngine):
             )
         return retVal
 
-    async def create_milestone(self, milestone: Milestone = None) -> str:
-        """
-        1. send create request to TIE
-        2. receive reference ID
-        3. create milestone in SD w/ reference ID
-        4. profit
+    async def create_milestone(self, milestone: Milestone = None) -> Dict:
+        decision_point:DecisionPoint=await DecisionPoint.query.where(DecisionPoint.id==milestone.decision_point_id).gino.one()
+        on_pathway:OnPathway=await OnPathway.query.where(OnPathway.id==decision_point.on_pathway_id).gino.one()
+        patient:Patient=await Patient.query.where(Patient.id==on_pathway.patient_id).gino.one()
+        hospital_number:str=patient.hospital_number
+        if milestone.current_state:
+            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
+                "hospitalNumber":hospital_number,
+                "currentState":milestone.current_state
+            }, cookies={"SDSESSION":self.authToken})
+        else:
+            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
+                "hospitalNumber":hospital_number
+            }, cookies={"SDSESSION":self.authToken})
+        tie_milestone=json.loads(result.text)
 
-
-        1. send hospital number
-        2. get reference number
-        3. populate SD DB with other info w/ reference number
-        """
-        # decision_point=DecisionPoint.query.where(DecisionPoint.)
-        pass
+        return{
+            "id":tie_milestone['id'],
+            "hospital_number":tie_milestone['hospital_number'],
+            "current_state":tie_milestone['current_state'],
+            "added_at":tie_milestone['added_at'],
+            "updated_at":tie_milestone['updated_at']
+        }
 
     async def load_milestone(self, recordId: str = None) -> Optional[Milestone]:
         result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})

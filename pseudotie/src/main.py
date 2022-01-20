@@ -100,19 +100,23 @@ async def patient_national_id(request: Request, id: str):
 
 
 @app.post("/milestone")
-async def post_milestone(hospitalNumber:str=None, milestoneTypeId:str=None):
+async def post_milestone(hospitalNumber:str=None, currentState:str=None):
     """
     Create Milestone
     :return: JSONResponse containing ID of created milestone or error data
     """
-    data:Milestone = await Milestone.create(
-        hospital_number=hospitalNumber,
-        milestone_type_id=milestoneTypeId
-    )
+    if currentState:
+        data:Milestone = await Milestone.create(
+            hospital_number=hospitalNumber,
+            current_state=currentState
+        )
+    else:
+        data:Milestone = await Milestone.create(
+            hospital_number=hospitalNumber
+        )
     return {
         "id":data.id,
         "hospital_number":data.hospital_number,
-        "milestone_type_id":data.milestone_type_id,
         "current_state":data.current_state,
         "added_at":data.added_at,
         "updated_at":data.updated_at,
