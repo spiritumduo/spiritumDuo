@@ -167,7 +167,6 @@ class PseudoIntegrationEngine(IntegrationEngine):
         record=json.loads(result.text)
         return Milestone_IE(
             id=record['id'],
-            hospital_number=record['hospital_number'],
             current_state=record['current_state'],
             added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
             updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
@@ -183,7 +182,6 @@ class PseudoIntegrationEngine(IntegrationEngine):
             retVal.append(
                 Milestone_IE(
                     id=record['id'],
-                    hospital_number=record['hospital_number'],
                     current_state=record['current_state'],
                     added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
                     updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")

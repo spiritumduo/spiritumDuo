@@ -116,7 +116,6 @@ async def post_milestone(hospitalNumber:str=None, currentState:str=None):
         )
     return {
         "id":data.id,
-        "hospital_number":data.hospital_number,
         "current_state":data.current_state,
         "added_at":data.added_at,
         "updated_at":data.updated_at,
@@ -140,7 +139,6 @@ async def milestone_id(id: str=None):
         if data:
             return {
                 "id":data.id,
-                "hospital_number":data.hospital_number,
                 "current_state":data.current_state,
                 "added_at":data.added_at,
                 "updated_at":data.updated_at,

@@ -7,7 +7,6 @@ class Milestone(db.Model):
     __tablename__ = "tbl_milestone"
 
     id = db.Column(db.Integer(), primary_key=True)
-    hospital_number = db.Column(db.String(), nullable=False)
     current_state = db.Column(
         Enum(MilestoneState, native_enum=False), default=MilestoneState.INIT.value,
         server_default=MilestoneState.INIT.value, nullable=False, native_enum=False
