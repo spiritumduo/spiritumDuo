@@ -23,9 +23,9 @@ async def resolver(obj=None, info=None, *_):
 @MilestoneObjectType.field("addedAt")
 async def resolver(obj=None, info=None, *_):
     record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
-    return datetime.strptime(record.added_at, "%Y-%m-%dT%H:%M:%S.%f")
+    return record.updated_at
 
 @MilestoneObjectType.field("updatedAt")
 async def resolver(obj=None, info=None, *_):
     record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
-    return datetime.strptime(record.updated_at, "%Y-%m-%dT%H:%M:%S.%f")
+    return record.updated_at

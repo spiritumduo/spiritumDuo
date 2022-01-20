@@ -3,7 +3,7 @@ import json
 from models import Milestone, Patient
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from datetime import date
+from datetime import date, datetime
 
 class IntegrationEngine(ABC):
     """
@@ -103,7 +103,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
         self.authToken = auth_token
         self.TRUST_INTEGRATION_ENGINE_ENDPOINT="http://sd-pseudotie:8081"
 
-    async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient]:
+    async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient_IE]:
         result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber, cookies={"SDSESSION":self.authToken})
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
@@ -115,7 +115,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
             hospital_number=record['hospital_number'], 
             national_number=record['national_number'], 
             communication_method=record['communication_method'],
-            date_of_birth=record['date_of_birth']
+            date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
         )
 
     async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient]]:
@@ -133,7 +133,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
                     hospital_number=record['hospital_number'], 
                     national_number=record['national_number'], 
                     communication_method=record['communication_method'],
-                    date_of_birth=record['date_of_birth']
+                    date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
                 )
             )
         return retVal
@@ -141,7 +141,7 @@ class PseudoIntegrationEngine(IntegrationEngine):
     async def create_milestone(self, milestone: Milestone = None) -> str:
         pass
 
-    async def load_milestone(self, recordId: str = None) -> Optional[Milestone]:
+    async def load_milestone(self, recordId: str = None) -> Optional[Milestone_IE]:
         result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
@@ -151,8 +151,8 @@ class PseudoIntegrationEngine(IntegrationEngine):
             patient_hospital_number=record['patient_hospital_number'],
             milestone_type_id=record['milestone_type_id'],
             current_state=record['current_state'],
-            added_at=record['added_at'],
-            updated_at=record['updated_at']
+            added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
+            updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
         )
 
     async def load_many_milestones(self, recordIds: List = None) -> List[Optional[Milestone]]:
@@ -168,8 +168,8 @@ class PseudoIntegrationEngine(IntegrationEngine):
                     patient_hospital_number=record['patient_hospital_number'],
                     milestone_type_id=record['milestone_type_id'],
                     current_state=record['current_state'],
-                    added_at=record['added_at'],
-                    updated_at=record['updated_at']
+                    added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
+                    updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
                 )
             )
         return retVal

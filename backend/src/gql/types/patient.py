@@ -29,4 +29,4 @@ async def resolver(obj=None, info=None, *_):
 @PatientObjectType.field("dateOfBirth")
 async def resolver(obj=None, info=None, *_):
     record=await PatientByHospitalNumberFromIELoader.load_from_id(context=info.context, id=obj.hospital_number)
-    return datetime.strptime(record.date_of_birth, "%Y-%m-%d").date()
+    return record.date_of_birth
