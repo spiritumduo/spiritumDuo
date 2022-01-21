@@ -2,13 +2,19 @@ from models import Patient, OnPathway
 from datetime import date, datetime
 from gettext import gettext as _
 import re
-from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader
+from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader, PatientByHospitalNumberFromIELoader
 from config import config as SdConfig
 from typing import Optional
+
 class ReferencedItemDoesNotExistError(Exception):
     """
-        This occurs when a referenced item does not 
-        exist and cannot be found when it should
+    This occurs when a referenced item does not 
+    exist and cannot be found when it should
+    """
+class PatientNotInIntegrationEngineError(Exception):
+    """
+    This is raised when a patient cannot be found
+    via the integration engine
     """
 
 async def CreatePatient(
@@ -23,7 +29,6 @@ async def CreatePatient(
 
     referred_at:datetime=None,
     awaiting_decision_type:Optional[str]="TRIAGE",
-    communication_method:Optional[str]="LETTER",
 ):
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
@@ -54,7 +59,7 @@ async def CreatePatient(
     if not _pathway:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
     
-    _patient=await PatientByHospitalNumberLoader.load_from_id(context=context, id=hospital_number)
+    _patient=await PatientByHospitalNumberFromIELoader.load_from_id(context=context, id=hospital_number)
     if _patient:
         if _patient.first_name!=first_name:
             userErrors.append({
@@ -83,7 +88,7 @@ async def CreatePatient(
             }
 
         # if the patient does already exist
-        existingOnPathwayQuery=OnPathway.query.where(OnPathway.patient==_patient.id).where(OnPathway.pathway==_pathway.id).where(OnPathway.is_discharged==False)
+        existingOnPathwayQuery=OnPathway.query.where(OnPathway.patient_id==_patient.id).where(OnPathway.pathway_id==_pathway.id).where(OnPathway.is_discharged==False)
         
         async with _db.acquire(reuse=False) as conn:
             existingOnPathway=await conn.one_or_none(existingOnPathwayQuery)
@@ -96,14 +101,13 @@ async def CreatePatient(
                 }
             ]}
     else:
-        _patient=await Patient.create(
-            first_name=first_name,
-            last_name=last_name,
-            hospital_number=hospital_number,
-            national_number=national_number,
-            date_of_birth=date_of_birth,
-            communication_method=communication_method
-        )
+        raise PatientNotInIntegrationEngineError(hospital_number, national_number)
+
+    await Patient.create(
+        hospital_number=_patient.hospital_number,
+        national_number=_patient.national_number
+    )
+
 
     onPathwayInformation={
         'patient_id': _patient.id,
