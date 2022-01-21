@@ -4,6 +4,7 @@ from models.OnPathway import OnPathway
 from .pagination import *
 from authentication.authentication import needsAuthorization
 
+
 @needsAuthorization(["authenticated"])
 @query.field("getPatientOnPathwayConnection")
 async def get_patient_connection(
@@ -24,11 +25,12 @@ async def get_patient_connection(
     if before is None and after is None and first is None:
         raise ValueError("Require first argument if no cursors present")
 
-    all_patients_on_pathways = await OnPathway.query.where(OnPathway.pathway_id == int(pathwayId))\
-        .where(OnPathway.is_discharged == isDischarged)\
-        .where(OnPathway.awaiting_decision_type == awaitingDecisionType)\
-        .order_by(OnPathway.added_at.asc())\
-        .gino.all()
+    db_query = OnPathway.query.where(OnPathway.pathway_id == int(pathwayId))\
+        .where(OnPathway.is_discharged == isDischarged)
+    if awaitingDecisionType is not None:
+        db_query = db_query.where(OnPathway.awaiting_decision_type == awaitingDecisionType)
+    db_query.order_by(OnPathway.added_at.asc())
+    all_patients_on_pathways = await db_query.gino.all()
 
     patients_ids = []
 

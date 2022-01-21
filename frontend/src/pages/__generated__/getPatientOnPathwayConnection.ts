@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { DecisionType } from "./../../../../__generated__/globalTypes";
+import { DecisionType, MilestoneState } from "./../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL query operation: getPatientOnPathwayConnection
@@ -15,12 +15,37 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_pag
   endCursor: string;
 }
 
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones_milestoneType {
+  __typename: "MilestoneType";
+  name: string;
+}
+
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones {
+  __typename: "Milestone";
+  id: string;
+  updatedAt: any;
+  currentState: MilestoneState;
+  milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones_milestoneType;
+}
+
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints {
+  __typename: "DecisionPoint";
+  milestones: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones[] | null;
+}
+
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways {
+  __typename: "OnPathway";
+  decisionPoints: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints[] | null;
+}
+
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node {
   __typename: "Patient";
   id: string;
   firstName: string;
   lastName: string;
   hospitalNumber: string;
+  dateOfBirth: any;
+  onPathways: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways[] | null;
 }
 
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges {

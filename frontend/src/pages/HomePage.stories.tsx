@@ -4,12 +4,11 @@ import { Story, Meta } from '@storybook/react';
 import Patient from 'types/Patient';
 import { DefaultLayout } from 'components/PageLayout.stories';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
-import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'app/queries/UsePatientsForPathway';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { currentPathwayIdVar } from 'app/cache';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
-import HomePage, { HomePageProps } from './HomePage';
+import HomePage, { HomePageProps, GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from './HomePage';
 
 // Dummy data for display
 const patientArray: Patient[] = [];
@@ -23,8 +22,27 @@ for (let i = 0; i < 20; ++i) {
   const newPatient = {
     id: i,
     hospitalNumber: `${patient.hospitalNumber}-${i + 1}`,
-    firstName: patient.firstName,
+    firstName: `${patient.firstName} ${i + 1}`,
     lastName: `${patient.lastName} ${i + 1}`,
+    dateOfBirth: new Date('1970-01-01'),
+    onPathways: [
+      {
+        decisionPoints: [
+          {
+            milestones: [
+              {
+                id: '1',
+                updatedAt: new Date(2020, 1, 5),
+                currentState: 'COMPLETED',
+                milestoneType: {
+                  name: 'Triage',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   };
   patientArray.push(newPatient);
 }
@@ -62,7 +80,7 @@ Default.parameters = {
   patients: patientArray,
   apolloClient: {
     mocks: [
-      { // TRIAGE DATA
+      { // PAGE 1
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
           variables: {
@@ -84,7 +102,7 @@ Default.parameters = {
           },
         },
       },
-      { // TRIAGE PAGE 2
+      { // PAGE 2
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
           variables: {
@@ -92,51 +110,6 @@ Default.parameters = {
             first: patientsPerPage,
             awaitingDecisionType: DecisionPointType.TRIAGE,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
-          },
-        },
-        result: {
-          data: {
-            getPatientOnPathwayConnection: {
-              totalCount: edges.length,
-              edges: edges.slice(patientsPerPage, patientsPerPage + patientsPerPage),
-              pageInfo: {
-                hasNextPage: false,
-                endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-              },
-            },
-          },
-        },
-      },
-      { // CLINIC DATA
-        request: {
-          query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
-          variables: {
-            pathwayId: '1',
-            first: patientsPerPage,
-            awaitingDecisionType: DecisionPointType.CLINIC,
-          },
-        },
-        result: {
-          data: {
-            getPatientOnPathwayConnection: {
-              totalCount: edges.length,
-              edges: edges.slice(0, patientsPerPage),
-              pageInfo: {
-                hasNextPage: true,
-                endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
-              },
-            },
-          },
-        },
-      },
-      { // CLINIC PAGE 2
-        request: {
-          query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
-          variables: {
-            pathwayId: '1',
-            first: patientsPerPage,
-            after: 'YXJyYXljb25uZWN0aW9uOjA=',
-            awaitingDecisionType: DecisionPointType.CLINIC,
           },
         },
         result: {

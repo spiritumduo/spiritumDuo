@@ -76,8 +76,7 @@ test('Should render login page with no user in context', () => {
 
 test('Should render home page with valid user and pathways', () => {
   renderApp();
-  expect(screen.getByText(/patients needing triage/i)).toBeInTheDocument();
-  expect(screen.getByText(/clinic patients/i)).toBeInTheDocument();
+  expect(screen.getByText(/oustanding decisions/i)).toBeInTheDocument();
 });
 
 test('Should display error if no pathways present while logged in', () => {

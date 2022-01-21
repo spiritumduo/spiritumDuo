@@ -18,7 +18,7 @@ const renderDefault = () => {
 
 test('Patient lists should display loading', () => {
   renderDefault();
-  expect(screen.getAllByText('Loading!').length).toEqual(2);
+  expect(screen.getByText('Loading!')).toBeInTheDocument();
 });
 
 test('Patient lists should contain patients', async () => {
@@ -28,9 +28,9 @@ test('Patient lists should contain patients', async () => {
     await waitFor(
       () => expect(
         screen.getAllByRole('link', {
-          name: (t, _) => /MRN123456/i.test(t)
+          name: (t) => /john\s[0-9]+\sdoe\s[0-9]+/i.test(t)
         }).length
-      ).toEqual(2 * patientsPerPage)
+      ).toEqual(patientsPerPage)
     );
   } else {
     throw new Error('No patients per page specified in story');
@@ -42,16 +42,15 @@ test('Patient lists should paginate', async () => {
   const patientsPerPage = Default.args?.patientsPerPage;
   if (patients && patientsPerPage) {
     renderDefault();
-    await waitFor(() => expect(screen.getAllByText('Loading!').length).toEqual(2));
+    await waitFor(() => expect(screen.getByText('Loading!')).toBeInTheDocument());
     const nextLinks = screen.getAllByRole('button', {
       name: (t, _) => /next/i.test(t)
     });
-    expect(nextLinks.length).toEqual(2);
+    expect(nextLinks.length).toEqual(1);
     userEvent.click(nextLinks[0]);
-    userEvent.click(nextLinks[1]);
     await waitFor(() => {
-      const links = screen.getAllByRole('link', { name: (t, _) => /john\s+doe\s[12][0-9]/i.test(t) })
-      expect(links.length).toBe(2 * patientsPerPage);
+      const links = screen.getAllByRole('link', { name: (t, _) => /john\s[0-9]+\sdoe\s[0-9]+/i.test(t) });
+      expect(links.length).toBe(patientsPerPage);
     });
   } else {
     throw new Error('No patients in story parameters');
