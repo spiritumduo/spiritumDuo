@@ -3,7 +3,7 @@ from aiodataloader import DataLoader
 from models import Patient
 from datetime import date
 from typing import List, Union, Dict, Optional
-from SDIE import PseudoIntegrationEngine, IntegrationEngine
+from trustadapter import PseudoTrustAdapter, TrustAdapter
 
 class PatientByIdLoader(DataLoader):
     loader_name = "_patient_by_id_loader"
@@ -118,7 +118,7 @@ class ReferencePatient:
 
 class PatientByHospitalNumberFromIELoader(DataLoader):
     loader_name = "_patient_by_hospital_number_from_ie_loader"
-    integration_engine:IntegrationEngine = PseudoIntegrationEngine()
+    integration_engine:TrustAdapter = PseudoTrustAdapter()
 
     def __init__(self):
         super().__init__()

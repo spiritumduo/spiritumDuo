@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 from aiodataloader import DataLoader
 from models import Milestone
-from SDIE import PseudoIntegrationEngine, IntegrationEngine
+from trustadapter import PseudoTrustAdapter, TrustAdapter
 
 class MilestoneByDecisionPointLoader(DataLoader):
     loader_name = "_milestone_by_decision_point_loader"
@@ -63,11 +63,11 @@ class ReferenceMilestone:
 
 class MilestoneByReferenceIdFromIELoader(DataLoader):
     loader_name = "_milestone_by_reference_id_from_ie_loader"
-    integration_engine:IntegrationEngine = None
+    integration_engine:TrustAdapter = None
 
     def __init__(self, authToken=None):
         super().__init__()
-        self.integration_engine=PseudoIntegrationEngine()
+        self.integration_engine=PseudoTrustAdapter()
 
     async def fetch(self, keys) -> Dict[int, ReferenceMilestone]:
         result=await self.integration_engine.load_many_milestones(recordIds=keys)

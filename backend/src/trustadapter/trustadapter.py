@@ -40,7 +40,7 @@ class Milestone_IE:
        
 
 
-class IntegrationEngine(ABC):
+class TrustAdapter(ABC):
     """
     Integration Engine Abstract Base Class
     This class represents the interface SD uses to communicate with a backend hospital system.
@@ -88,7 +88,7 @@ class IntegrationEngine(ABC):
     
 
 
-class PseudoIntegrationEngine(IntegrationEngine):
+class PseudoTrustAdapter(TrustAdapter):
     """
     Pseudo Integration Engine
 

@@ -2,7 +2,7 @@ from .mutation_type import mutation
 from datacreators import CreateDecisionPoint
 from models import DecisionPoint, Milestone
 from authentication.authentication import needsAuthorization
-from SDIE import PseudoIntegrationEngine, IntegrationEngine
+from trustadapter import PseudoTrustAdapter, TrustAdapter
 
 @mutation.field("createDecisionPoint")
 @needsAuthorization(["authenticated"])
@@ -20,7 +20,7 @@ async def resolve_create_decision(_=None, info=None, input:dict=None):
     _decision_point=decision_point['decisionPoint']
 
 
-    integration_engine:IntegrationEngine=PseudoIntegrationEngine()
+    integration_engine:TrustAdapter=PseudoTrustAdapter()
     integration_engine.authToken=info.context['request'].cookies['SDSESSION']
     if 'milestoneRequests' in input.keys():
         for milestone_entry in input['milestoneRequests']:
