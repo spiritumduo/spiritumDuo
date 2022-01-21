@@ -5,51 +5,6 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import date, datetime
 
-class IntegrationEngine(ABC):
-    """
-    Integration Engine Abstract Base Class
-    This class represents the interface SD uses to communicate with a backend hospital system.
-    """
-
-    @abstractmethod
-    async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient]:
-        """
-        Load single patient
-        :param record_id: String ID of patient
-        :return: Patient if found, null if not
-        """
-
-    async def load_many_patients(self, hospitalNumbers:List=None) -> List[Optional[Patient]]:
-        """
-        Load many patients
-        :param record_ids: List of patient ids to load
-        :return: List of patients, or empty list if none found
-        """
-
-    @abstractmethod
-    async def create_milestone(self, milestone: Milestone = None) -> Milestone:
-        """
-        Create a Milestone
-        :param milestone: Milestone to create
-        :return: String ID of created milestone
-        """
-
-    @abstractmethod
-    async def load_milestone(self, recordId: str = None) -> Optional[Milestone]:
-        """
-        Load a Milestone
-        :param record_id: ID of milestone to load
-        :return: Milestone, or null if milestone not found
-        """
-
-    @abstractmethod
-    async def load_many_milestones(self, recordIds: str = None) -> List[Optional[Milestone]]:
-        """
-        Load many milestones
-        :param record_ids: IDs of milestones to load
-        :return: List of milestones, or empty list if none found
-        """
-        
 
 class Patient_IE:
     def __init__(self, 
@@ -83,6 +38,53 @@ class Milestone_IE:
         self.added_at=added_at
         self.updated_at=updated_at
        
+
+
+class IntegrationEngine(ABC):
+    """
+    Integration Engine Abstract Base Class
+    This class represents the interface SD uses to communicate with a backend hospital system.
+    """
+
+    @abstractmethod
+    async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient_IE]:
+        """
+        Load single patient
+        :param record_id: String ID of patient
+        :return: Patient if found, null if not
+        """
+
+    async def load_many_patients(self, hospitalNumbers:List=None) -> List[Optional[Patient_IE]]:
+        """
+        Load many patients
+        :param record_ids: List of patient ids to load
+        :return: List of patients, or empty list if none found
+        """
+
+    @abstractmethod
+    async def create_milestone(self, milestone: Milestone = None) -> Milestone_IE:
+        """
+        Create a Milestone
+        :param milestone: Milestone to create
+        :return: String ID of created milestone
+        """
+
+    @abstractmethod
+    async def load_milestone(self, recordId: str = None) -> Optional[Milestone_IE]:
+        """
+        Load a Milestone
+        :param record_id: ID of milestone to load
+        :return: Milestone, or null if milestone not found
+        """
+
+    @abstractmethod
+    async def load_many_milestones(self, recordIds: str = None) -> List[Optional[Milestone_IE]]:
+        """
+        Load many milestones
+        :param record_ids: IDs of milestones to load
+        :return: List of milestones, or empty list if none found
+        """
+        
     
 
 
@@ -113,10 +115,10 @@ class PseudoIntegrationEngine(IntegrationEngine):
             hospital_number=record['hospital_number'], 
             national_number=record['national_number'], 
             communication_method=record['communication_method'],
-            date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
+            date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
         )
 
-    async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient]]:
+    async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient_IE]]:
         retVal=[]
         for hospNo in hospitalNumbers:
             result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospNo, cookies={"SDSESSION":self.authToken})
@@ -131,60 +133,76 @@ class PseudoIntegrationEngine(IntegrationEngine):
                     hospital_number=record['hospital_number'], 
                     national_number=record['national_number'], 
                     communication_method=record['communication_method'],
-                    date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
+                    date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
                 )
             )
         return retVal
 
-    async def create_milestone(self, milestone: Milestone = None) -> Dict:
+    async def create_milestone(self, milestone: Milestone = None) -> Milestone_IE:
         decision_point:DecisionPoint=await DecisionPoint.query.where(DecisionPoint.id==milestone.decision_point_id).gino.one()
         on_pathway:OnPathway=await OnPathway.query.where(OnPathway.id==decision_point.on_pathway_id).gino.one()
         patient:Patient=await Patient.query.where(Patient.id==on_pathway.patient_id).gino.one()
-        hospital_number:str=patient.hospital_number
         if milestone.current_state:
             result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
-                "hospitalNumber":hospital_number,
                 "currentState":milestone.current_state
             }, cookies={"SDSESSION":self.authToken})
         else:
-            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
-                "hospitalNumber":hospital_number
-            }, cookies={"SDSESSION":self.authToken})
+            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",cookies={"SDSESSION":self.authToken})
         tie_milestone=json.loads(result.text)
 
-        return{
-            "id":tie_milestone['id'],
-            "hospital_number":tie_milestone['hospital_number'],
-            "current_state":tie_milestone['current_state'],
-            "added_at":tie_milestone['added_at'],
-            "updated_at":tie_milestone['updated_at']
-        }
+        try:
+            _added_at=datetime.strptime(tie_milestone['added_at'], "%Y-%m-%dT%H:%M:%S")
+            _updated_at=datetime.strptime(tie_milestone['updated_at'], "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            _added_at=datetime.strptime(tie_milestone['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
+            _updated_at=datetime.strptime(tie_milestone['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
+        
+        return Milestone_IE(
+            id=tie_milestone['id'],
+            current_state=tie_milestone['current_state'],
+            added_at=_added_at,
+            updated_at=_updated_at
+        )
 
     async def load_milestone(self, recordId: str = None) -> Optional[Milestone_IE]:
         result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
+
+        try:
+            _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S")
+            _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
+            _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
+        
         return Milestone_IE(
             id=record['id'],
             current_state=record['current_state'],
-            added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
-            updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
+            added_at=_added_at,
+            updated_at=_updated_at
         )
 
-    async def load_many_milestones(self, recordIds: List = None) -> List[Optional[Milestone]]:
+    async def load_many_milestones(self, recordIds: List = None) -> List[Optional[Milestone_IE]]:
         retVal=[]
         for recordId in recordIds:
             result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
             if result.status_code!=200:
                 raise Exception(f"HTTP{result.status_code} received")
             record=json.loads(result.text)
+            try:
+                _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S")
+                _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
+            except ValueError:
+                _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
+                _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
             retVal.append(
                 Milestone_IE(
                     id=record['id'],
                     current_state=record['current_state'],
-                    added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S"),
-                    updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
+                    added_at=_added_at,
+                    updated_at=_updated_at
                 )
             )
         return retVal
