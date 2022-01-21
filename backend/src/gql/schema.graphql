@@ -24,7 +24,7 @@ type Query {
     """
     getPatientOnPathwayConnection(
         pathwayId: ID!
-        awaitingDecisionType: DecisionType!
+        awaitingDecisionType: DecisionType
         isDischarged: Boolean
         first: Int
         after: String
