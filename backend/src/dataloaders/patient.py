@@ -124,7 +124,6 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
         super().__init__()
 
 
-
     async def fetch(self, keys)->Dict[str, ReferencePatient]:
         result=await self.integration_engine.load_many_patients(hospitalNumbers=keys)
         returnData={}
@@ -152,11 +151,11 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
         if not id:
             return None
         cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
-        return await cls._get_loader_from_context(context=context).load(id)
+        return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->List[Optional[ReferencePatient]]:
         if not ids:
             return None
         cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
-        return await cls._get_loader_from_context(context=context).load_many(ids)
+        return await cls._get_loader_from_context(context).load_many(ids)
