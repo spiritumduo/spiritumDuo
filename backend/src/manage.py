@@ -9,6 +9,7 @@ from models import User, Pathway, Patient, OnPathway, DecisionPoint, Milestone, 
 from random import randint
 from datetime import date
 from SdTypes import DecisionTypes, MilestoneState
+from datacreators import CreatePatient
 
 from datacreators import CreateUser
 
@@ -59,22 +60,16 @@ async def insert_test_data():
     for i in range(0, 50):
         first_name=_Faker.first_name()
         last_name=_Faker.last_name()
-
-        hospital_number="MRN" + str(randint(10000,99999))
-        if len(str(i))==1:
-            hospital_number+= "0"
-        hospital_number+=str(i)
-
-        national_number="NHS" + str(randint(10000,99999))
-        if len(str(i))==1:
-            national_number+= "0"
-        national_number+=str(i)
+        hospital_number="FMRN12345" + str(i)
+        national_number="FNHS12345678" + str(i)
 
         year = randint(1950, 1975)
         month = randint(1, 12)
         day = randint(1, 28)
         dob = date(year, month, day)
-        await Patient.create(
+
+        await CreatePatient(
+            context={"db": db},
             first_name=first_name,
             last_name=last_name,
             hospital_number=hospital_number,
