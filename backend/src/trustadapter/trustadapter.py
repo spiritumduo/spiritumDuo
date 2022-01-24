@@ -4,7 +4,7 @@ from models import Milestone, Patient, DecisionPoint, OnPathway
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import date, datetime
-
+from config import config
 
 class Patient_IE:
     def __init__(self, 
@@ -86,7 +86,18 @@ class TrustAdapter(ABC):
         """
         
     
+class TrustAdapterNotFoundException(Exception):
+    """
+    This is raised when a specified trust adapter
+    cannot be found
+    """
 
+def GetTrustAdapter():
+    try:
+        return globals()[config['TRUST_ADAPTER_NAME']]
+    except KeyError:
+        raise TrustAdapterNotFoundException()
+        
 
 class PseudoTrustAdapter(TrustAdapter):
     """
