@@ -32,16 +32,7 @@ const Header = ({
                 <Link className="nav-link active" to="/">Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link active" to="/triage">Triage</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to="/clinic">Clinic</Link>
-              </li>
-              <li className="nav-item">
                 <Link className="nav-link active" to="/mdt">MDT</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link active" to="/refer">Refer</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link active" to="/patient/add">Add Patient</Link>
