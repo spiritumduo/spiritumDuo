@@ -5,6 +5,7 @@ import re
 from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader, PatientByHospitalNumberFromIELoader
 from config import config as SdConfig
 from typing import Optional
+from trustadapter.trustadapter import GetTrustAdapter, Patient_IE
 
 class ReferencedItemDoesNotExistError(Exception):
     """
@@ -24,7 +25,7 @@ async def CreatePatient(
     hospital_number:str=None,
     national_number:str=None,
     date_of_birth:date=None,
-
+    communication_method: str = None,
     pathwayId:int=None,
 
     referred_at:datetime=None,
@@ -34,6 +35,9 @@ async def CreatePatient(
         raise ReferencedItemDoesNotExistError("Context is not provided.")
     _db=context['db']
     userErrors=[]
+
+    trust_adapter = GetTrustAdapter()()
+    trust_adapter.authToken = context['request'].cookies['SDSESSION']
     
     # check if hospital number provided matches regex in configuration
     if re.search(SdConfig["HOSPITAL_NUMBER_REGEX"], hospital_number) is None: 
@@ -59,7 +63,7 @@ async def CreatePatient(
     if not _pathway:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
     
-    _patient=await PatientByHospitalNumberFromIELoader.load_from_id(context=context, id=hospital_number)
+    _patient = await trust_adapter.load_patient(hospitalNumber=hospital_number)
     if _patient:
         if _patient.first_name!=first_name:
             userErrors.append({
@@ -101,13 +105,23 @@ async def CreatePatient(
                 }
             ]}
     else:
-        raise PatientNotInIntegrationEngineError(hospital_number, national_number)
+        _patient = Patient_IE(
+            first_name=first_name,
+            last_name=last_name,
+            communication_method=communication_method,
+            hospital_number=hospital_number,
+            national_number=national_number,
+            date_of_birth=date_of_birth
+        )
+        _patient = await trust_adapter.create_patient(patient=_patient)
+        if _patient is None:
+            raise PatientNotInIntegrationEngineError(hospital_number, national_number)
 
-    await Patient.create(
+    patient = await Patient.create(
         hospital_number=_patient.hospital_number,
         national_number=_patient.national_number
     )
-
+    _patient.id = patient.id
 
     onPathwayInformation={
         'patient_id': _patient.id,
@@ -121,6 +135,7 @@ async def CreatePatient(
     _pathwayInstance=await OnPathway.create(
         **onPathwayInformation
     )
+
     return{
         "patient":_patient
     }

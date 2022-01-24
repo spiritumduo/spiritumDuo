@@ -1,28 +1,26 @@
+import dataclasses
+import logging
+
 import requests
+import httpx
 import json
 from models import Milestone, Patient, DecisionPoint, OnPathway
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 from datetime import date, datetime
 from config import config
+from dataclasses import dataclass
 
+
+@dataclass
 class Patient_IE:
-    def __init__(self, 
-        id:int=None, 
-        first_name:str=None, 
-        last_name:str=None, 
-        hospital_number:str=None,
-        national_number:str=None, 
-        communication_method:str=None,
-        date_of_birth:date=None
-    ):
-        self.id=id
-        self.first_name=first_name
-        self.last_name=last_name
-        self.hospital_number=hospital_number
-        self.national_number=national_number
-        self.communication_method=communication_method
-        self.date_of_birth=date_of_birth
+    id: int = None,
+    first_name: str = None,
+    last_name: str = None,
+    hospital_number: str = None,
+    national_number: str = None,
+    communication_method: str = None,
+    date_of_birth: date = None
 
 class Milestone_IE:
     def __init__(self, 
@@ -45,6 +43,14 @@ class TrustAdapter(ABC):
     Integration Engine Abstract Base Class
     This class represents the interface SD uses to communicate with a backend hospital system.
     """
+
+    @abstractmethod
+    async def create_patient(self, patient: Patient_IE):
+        """
+        Create a patient on the trust
+        :param patient: Patient to input
+        :return: String ID of created patient
+        """
 
     @abstractmethod
     async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient_IE]:
@@ -97,7 +103,7 @@ def GetTrustAdapter():
         return globals()[config['TRUST_ADAPTER_NAME']]
     except KeyError:
         raise TrustAdapterNotFoundException()
-        
+
 
 class PseudoTrustAdapter(TrustAdapter):
     """
@@ -114,20 +120,53 @@ class PseudoTrustAdapter(TrustAdapter):
         self.authToken = auth_token
         self.TRUST_INTEGRATION_ENGINE_ENDPOINT="http://sd-pseudotie:8081"
 
+    async def create_patient(self, patient: Patient_IE = None):
+        async with httpx.AsyncClient() as client:
+            res = await client.post(
+                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/',
+                cookies={"SDSESSION": self.authToken},
+                json={
+                    "hospital_number": patient.hospital_number,
+                    "national_number": patient.national_number,
+                    "communication_method": patient.communication_method,
+                    "first_name": patient.first_name,
+                    "last_name": patient.last_name,
+                    "date_of_birth": patient.date_of_birth.isoformat(),
+                }
+            )
+            res = res.json()['__values__']
+            try:
+                return Patient_IE(
+                    id=res['id'],
+                    first_name=res['first_name'],
+                    last_name=res['last_name'],
+                    hospital_number=res['hospital_number'],
+                    national_number=res['national_number'],
+                    communication_method=res['communication_method'],
+                    date_of_birth=res['date_of_birth'],
+                )
+            except KeyError:
+                logging.warning('ress')
+                logging.warning(res)
+                return None
+
     async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient_IE]:
         result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber, cookies={"SDSESSION":self.authToken})
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
-        return Patient_IE(
-            id=record['id'],
-            first_name=record['first_name'], 
-            last_name=record['last_name'], 
-            hospital_number=record['hospital_number'], 
-            national_number=record['national_number'], 
-            communication_method=record['communication_method'],
-            date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
-        )
+        if record is not None:
+            return Patient_IE(
+                id=record['id'],
+                first_name=record['first_name'],
+                last_name=record['last_name'],
+                hospital_number=record['hospital_number'],
+                national_number=record['national_number'],
+                communication_method=record['communication_method'],
+                date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+            )
+        else:
+            return None
 
     async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient_IE]]:
         retVal=[]
@@ -151,9 +190,6 @@ class PseudoTrustAdapter(TrustAdapter):
         return retVal
 
     async def create_milestone(self, milestone: Milestone = None) -> Milestone_IE:
-        decision_point:DecisionPoint=await DecisionPoint.query.where(DecisionPoint.id==milestone.decision_point_id).gino.one()
-        on_pathway:OnPathway=await OnPathway.query.where(OnPathway.id==decision_point.on_pathway_id).gino.one()
-        patient:Patient=await Patient.query.where(Patient.id==on_pathway.patient_id).gino.one()
         if milestone.current_state:
             result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
                 "currentState":milestone.current_state
