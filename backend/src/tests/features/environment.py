@@ -1,17 +1,16 @@
-import asyncio
-from random import randint
-
-from bcrypt import hashpw, gensalt
-from behave.api.async_step import async_run_until_complete
 from starlette.config import environ
 environ['TESTING'] = "True"
 
+import asyncio
+from unittest.mock import AsyncMock
+from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
 from models import User
 from api import app
 from behave import fixture, use_fixture
 from starlette.testclient import TestClient
 from sqlalchemy_utils import database_exists, create_database, drop_database
+from trustadapter import TrustAdapter
 
 
 @fixture
@@ -77,10 +76,18 @@ def login_test_user(context):
     )
 
 
+@fixture
+def mock_trust_adapter(context):
+    trust_adapter_mock = AsyncMock(spec=TrustAdapter)
+    context.trust_adapter_mock = trust_adapter_mock
+    with app.container.trust_adapter_client.override(trust_adapter_mock):
+        yield
+
+
 def before_feature(context, _):
     use_fixture(create_test_database, context)
     use_fixture(db_start_transaction, context)
     use_fixture(add_test_user, context)
     use_fixture(create_test_client, context)
+    use_fixture(mock_trust_adapter, context)
     use_fixture(login_test_user, context)
-
