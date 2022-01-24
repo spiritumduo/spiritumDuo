@@ -136,17 +136,18 @@ class PseudoTrustAdapter(TrustAdapter):
             if result.status_code!=200:
                 raise Exception(f"HTTP{result.status_code} received")
             record=json.loads(result.text)
-            retVal.append(
-                Patient_IE(
-                    id=record['id'],
-                    first_name=record['first_name'], 
-                    last_name=record['last_name'], 
-                    hospital_number=record['hospital_number'], 
-                    national_number=record['national_number'], 
-                    communication_method=record['communication_method'],
-                    date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+            if record is not None:
+                retVal.append(
+                    Patient_IE(
+                        id=record['id'],
+                        first_name=record['first_name'],
+                        last_name=record['last_name'],
+                        hospital_number=record['hospital_number'],
+                        national_number=record['national_number'],
+                        communication_method=record['communication_method'],
+                        date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+                    )
                 )
-            )
         return retVal
 
     async def create_milestone(self, milestone: Milestone = None) -> Milestone_IE:
@@ -217,3 +218,4 @@ class PseudoTrustAdapter(TrustAdapter):
                 )
             )
         return retVal
+

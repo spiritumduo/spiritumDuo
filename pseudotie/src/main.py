@@ -76,15 +76,18 @@ async def patient_hospital_id(request: Request, id: str):
     :returns JSONResponse containing Patient or null
     """
     patient = await Patient.query.where(Patient.hospital_number == str(id)).gino.first()
-    return {
-        "id":patient.id,
-        "hospital_number":patient.hospital_number,
-        "national_number":patient.national_number,
-        "communication_method":patient.communication_method,
-        "first_name":patient.first_name,
-        "last_name":patient.last_name,
-        "date_of_birth":patient.date_of_birth
-    }
+    if patient is not None:
+        return {
+            "id":patient.id,
+            "hospital_number":patient.hospital_number,
+            "national_number":patient.national_number,
+            "communication_method":patient.communication_method,
+            "first_name":patient.first_name,
+            "last_name":patient.last_name,
+            "date_of_birth":patient.date_of_birth
+        }
+    else:
+        return None
 
 
 @app.get("/patient/national/{id}")
