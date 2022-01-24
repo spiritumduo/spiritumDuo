@@ -45,49 +45,55 @@ class TrustAdapter(ABC):
     """
 
     @abstractmethod
-    async def create_patient(self, patient: Patient_IE):
+    async def create_patient(self, patient: Patient_IE, auth_token: str = None):
         """
         Create a patient on the trust
+        :param auth_token: Auth token string to pass to backend
         :param patient: Patient to input
         :return: String ID of created patient
         """
 
     @abstractmethod
-    async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient_IE]:
+    async def load_patient(self, hospitalNumber: str = None, auth_token: str = None) -> Optional[Patient_IE]:
         """
         Load single patient
-        :param record_id: String ID of patient
+        :param auth_token: Auth token string to pass to backend
+        :param hospitalNumber: String ID of patient
         :return: Patient if found, null if not
         """
 
-    async def load_many_patients(self, hospitalNumbers:List=None) -> List[Optional[Patient_IE]]:
+    async def load_many_patients(self, hospitalNumbers:List=None, auth_token: str = None) -> List[Optional[Patient_IE]]:
         """
         Load many patients
-        :param record_ids: List of patient ids to load
+        :param auth_token: Auth token string to pass to backend
+        :param hospitalNumbers: List of patient ids to load
         :return: List of patients, or empty list if none found
         """
 
     @abstractmethod
-    async def create_milestone(self, milestone: Milestone = None) -> Milestone_IE:
+    async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
         """
         Create a Milestone
+        :param auth_token: Auth token string to pass to backend
         :param milestone: Milestone to create
         :return: String ID of created milestone
         """
 
     @abstractmethod
-    async def load_milestone(self, recordId: str = None) -> Optional[Milestone_IE]:
+    async def load_milestone(self, recordId: str = None, auth_token: str = None) -> Optional[Milestone_IE]:
         """
         Load a Milestone
-        :param record_id: ID of milestone to load
+        :param auth_token: Auth token string to pass to backend
+        :param recordId: ID of milestone to load
         :return: Milestone, or null if milestone not found
         """
 
     @abstractmethod
-    async def load_many_milestones(self, recordIds: str = None) -> List[Optional[Milestone_IE]]:
+    async def load_many_milestones(self, recordIds: str = None, auth_token: str = None) -> List[Optional[Milestone_IE]]:
         """
         Load many milestones
-        :param record_ids: IDs of milestones to load
+        :param auth_token: Auth token string to pass to backend
+        :param recordIds: IDs of milestones to load
         :return: List of milestones, or empty list if none found
         """
         
@@ -98,7 +104,7 @@ class TrustAdapterNotFoundException(Exception):
     cannot be found
     """
 
-def GetTrustAdapter():
+def GetTrustAdapter(adapter = None):
     try:
         return globals()[config['TRUST_ADAPTER_NAME']]
     except KeyError:
@@ -112,19 +118,17 @@ class PseudoTrustAdapter(TrustAdapter):
     This is the Integration Engine implementation for the pseudo-trust backend.
     """
 
-    def __init__(self, auth_token: str = None):
+    def __init__(self):
         """
-        Constructor. Requires an authentication token.
-        :param auth_token: String token to be supplied to pseudo-trust with each request
+        Constructor
         """
-        self.authToken = auth_token
         self.TRUST_INTEGRATION_ENGINE_ENDPOINT="http://sd-pseudotie:8081"
 
-    async def create_patient(self, patient: Patient_IE = None):
+    async def create_patient(self, patient: Patient_IE = None, auth_token: str = None):
         async with httpx.AsyncClient() as client:
             res = await client.post(
                 f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/',
-                cookies={"SDSESSION": self.authToken},
+                cookies={"SDSESSION": auth_token},
                 json={
                     "hospital_number": patient.hospital_number,
                     "national_number": patient.national_number,
@@ -150,8 +154,11 @@ class PseudoTrustAdapter(TrustAdapter):
                 logging.warning(res)
                 return None
 
-    async def load_patient(self, hospitalNumber: str = None) -> Optional[Patient_IE]:
-        result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber, cookies={"SDSESSION":self.authToken})
+    async def load_patient(self, hospitalNumber: str = None, auth_token: str = None) -> Optional[Patient_IE]:
+        result = requests.get(
+            self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber,
+            cookies={"SDSESSION": auth_token}
+        )
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
@@ -168,10 +175,13 @@ class PseudoTrustAdapter(TrustAdapter):
         else:
             return None
 
-    async def load_many_patients(self, hospitalNumbers: List = None) -> List[Optional[Patient_IE]]:
+    async def load_many_patients(self, hospitalNumbers: List = None, auth_token: str = None) -> List[Optional[Patient_IE]]:
         retVal=[]
         for hospNo in hospitalNumbers:
-            result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospNo, cookies={"SDSESSION":self.authToken})
+            result = requests.get(
+                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospNo,
+                cookies={"SDSESSION": auth_token}
+            )
             if result.status_code!=200:
                 raise Exception(f"HTTP{result.status_code} received")
             record=json.loads(result.text)
@@ -189,13 +199,18 @@ class PseudoTrustAdapter(TrustAdapter):
                 )
         return retVal
 
-    async def create_milestone(self, milestone: Milestone = None) -> Milestone_IE:
+    async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
         if milestone.current_state:
-            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone", params={
-                "currentState":milestone.current_state
-            }, cookies={"SDSESSION":self.authToken})
+            result = requests.post(
+                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
+                params={"currentState": milestone.current_state},
+                cookies={"SDSESSION": auth_token}
+            )
         else:
-            result = requests.post(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",cookies={"SDSESSION":self.authToken})
+            result = requests.post(
+                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
+                cookies={"SDSESSION": auth_token}
+            )
         tie_milestone=json.loads(result.text)
 
         try:
@@ -212,8 +227,11 @@ class PseudoTrustAdapter(TrustAdapter):
             updated_at=_updated_at
         )
 
-    async def load_milestone(self, recordId: str = None) -> Optional[Milestone_IE]:
-        result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
+    async def load_milestone(self, recordId: str = None, auth_token: str = None) -> Optional[Milestone_IE]:
+        result = requests.get(
+            self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId),
+            cookies={"SDSESSION": auth_token}
+        )
         if result.status_code!=200:
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
@@ -232,10 +250,13 @@ class PseudoTrustAdapter(TrustAdapter):
             updated_at=_updated_at
         )
 
-    async def load_many_milestones(self, recordIds: List = None) -> List[Optional[Milestone_IE]]:
+    async def load_many_milestones(self, recordIds: List = None, auth_token: str = None) -> List[Optional[Milestone_IE]]:
         retVal=[]
         for recordId in recordIds:
-            result = requests.get(self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId), cookies={"SDSESSION":self.authToken})
+            result = requests.get(
+                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId),
+                cookies={"SDSESSION": auth_token}
+            )
             if result.status_code!=200:
                 raise Exception(f"HTTP{result.status_code} received")
             record=json.loads(result.text)

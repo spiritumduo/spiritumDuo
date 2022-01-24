@@ -1,5 +1,8 @@
 from ast import Str
 from aiodataloader import DataLoader
+from dependency_injector.wiring import Provide, inject
+
+from containers import SDContainer
 from models import Patient
 from datetime import date
 from typing import List, Union, Dict, Optional
@@ -102,10 +105,6 @@ class PatientByHospitalNumberLoader(DataLoader):
         return await context[cls.loader_name].load_many(ids)
 
 
-
-
-
-
 class ReferencePatient:
     id:str=None
     firstName:str=None
@@ -115,19 +114,22 @@ class ReferencePatient:
     dateOfBirth:date=None
 
 
-
 class PatientByHospitalNumberFromIELoader(DataLoader):
     loader_name = "_patient_by_hospital_number_from_ie_loader"
 
-
-    def __init__(self):
+    def __init__(self, context=None):
         super().__init__()
-        self.integration_engine:TrustAdapter = GetTrustAdapter()()
+        self._context = context
 
-
-    async def fetch(self, keys)->Dict[str, ReferencePatient]:
-        result=await self.integration_engine.load_many_patients(hospitalNumbers=keys)
-        returnData={}
+    @inject
+    async def fetch(
+            self, keys, trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
+    ) -> Dict[str, ReferencePatient]:
+        result = await trust_adapter.load_many_patients(
+            hospitalNumbers=keys,
+            auth_token=self._context['request'].cookies['SDSESSION']
+        )
+        returnData = {}
         for patient in result:
             returnData[patient.hospital_number] = patient
         return returnData
@@ -144,19 +146,17 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
     @classmethod
     def _get_loader_from_context(cls, context) -> "PatientByHospitalNumberFromIELoader":
         if cls.loader_name not in context:
-            context[cls.loader_name] = cls()
+            context[cls.loader_name] = cls(context=context)
         return context[cls.loader_name]
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Optional[ReferencePatient]:
         if not id:
             return None
-        cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->List[Optional[ReferencePatient]]:
         if not ids:
             return None
-        cls._get_loader_from_context(context).integration_engine.authToken=context['request'].cookies['SDSESSION']
         return await cls._get_loader_from_context(context).load_many(ids)

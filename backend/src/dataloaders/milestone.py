@@ -3,6 +3,8 @@ from typing import List, Dict, Optional
 from aiodataloader import DataLoader
 from models import Milestone
 from trustadapter import GetTrustAdapter, TrustAdapter
+from dependency_injector.wiring import Provide, inject
+from containers import SDContainer
 
 class MilestoneByDecisionPointLoader(DataLoader):
     loader_name = "_milestone_by_decision_point_loader"
@@ -68,9 +70,12 @@ class MilestoneByReferenceIdFromIELoader(DataLoader):
         super().__init__()
         self.integration_engine: TrustAdapter = GetTrustAdapter()()
 
-    async def fetch(self, keys) -> Dict[int, ReferenceMilestone]:
-        result=await self.integration_engine.load_many_milestones(recordIds=keys)
-        returnData={}
+    @inject
+    async def fetch(
+            self, keys, trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
+    ) -> Dict[int, ReferenceMilestone]:
+        result = await trust_adapter.load_many_milestones(recordIds=keys)
+        returnData = {}
         for milestone in result:
             returnData[milestone.id] = milestone
         return returnData

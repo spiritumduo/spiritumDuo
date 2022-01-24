@@ -1,3 +1,6 @@
+from dependency_injector.wiring import Provide, inject
+
+from containers import SDContainer
 from models import Patient, OnPathway
 from datetime import date, datetime
 from gettext import gettext as _
@@ -5,7 +8,8 @@ import re
 from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader, PatientByHospitalNumberFromIELoader
 from config import config as SdConfig
 from typing import Optional
-from trustadapter.trustadapter import GetTrustAdapter, Patient_IE
+from trustadapter.trustadapter import GetTrustAdapter, Patient_IE, TrustAdapter
+
 
 class ReferencedItemDoesNotExistError(Exception):
     """
@@ -18,6 +22,7 @@ class PatientNotInIntegrationEngineError(Exception):
     via the integration engine
     """
 
+@inject
 async def CreatePatient(
     context:dict=None,
     first_name:str=None,
@@ -30,14 +35,14 @@ async def CreatePatient(
 
     referred_at:datetime=None,
     awaiting_decision_type:Optional[str]="TRIAGE",
+    trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
     _db=context['db']
     userErrors=[]
 
-    trust_adapter = GetTrustAdapter()()
-    trust_adapter.authToken = context['request'].cookies['SDSESSION']
+    auth_token = context['request'].cookies['SDSESSION']
     
     # check if hospital number provided matches regex in configuration
     if re.search(SdConfig["HOSPITAL_NUMBER_REGEX"], hospital_number) is None: 
@@ -63,7 +68,7 @@ async def CreatePatient(
     if not _pathway:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
     
-    _patient = await trust_adapter.load_patient(hospitalNumber=hospital_number)
+    _patient = await trust_adapter.load_patient(hospitalNumber=hospital_number, auth_token=auth_token)
     if _patient:
         if _patient.first_name!=first_name:
             userErrors.append({
@@ -113,7 +118,7 @@ async def CreatePatient(
             national_number=national_number,
             date_of_birth=date_of_birth
         )
-        _patient = await trust_adapter.create_patient(patient=_patient)
+        _patient = await trust_adapter.create_patient(patient=_patient, auth_token=auth_token)
         if _patient is None:
             raise PatientNotInIntegrationEngineError(hospital_number, national_number)
 
