@@ -118,10 +118,11 @@ class ReferencePatient:
 
 class PatientByHospitalNumberFromIELoader(DataLoader):
     loader_name = "_patient_by_hospital_number_from_ie_loader"
-    integration_engine:TrustAdapter = GetTrustAdapter()()
+
 
     def __init__(self):
         super().__init__()
+        self.integration_engine:TrustAdapter = GetTrustAdapter()()
 
 
     async def fetch(self, keys)->Dict[str, ReferencePatient]:
