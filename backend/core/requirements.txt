@@ -18,3 +18,4 @@ PyHamcrest==2.0.3
 requests==2.26.0
 sqlalchemy_utils==0.38.2
 Faker==11.3.0
+httpx==0.21.3
