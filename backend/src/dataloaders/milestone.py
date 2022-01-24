@@ -63,11 +63,10 @@ class ReferenceMilestone:
 
 class MilestoneByReferenceIdFromIELoader(DataLoader):
     loader_name = "_milestone_by_reference_id_from_ie_loader"
-    integration_engine:TrustAdapter = None
 
     def __init__(self, authToken=None):
         super().__init__()
-        self.integration_engine=GetTrustAdapter()()
+        self.integration_engine: TrustAdapter = GetTrustAdapter()()
 
     async def fetch(self, keys) -> Dict[int, ReferenceMilestone]:
         result=await self.integration_engine.load_many_milestones(recordIds=keys)
