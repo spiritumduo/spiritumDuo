@@ -47,3 +47,10 @@ class MilestoneTypeLoader(DataLoader):
         if not ids:
             return None
         return await cls._get_loader_from_context(context).load_many(ids)
+
+    @classmethod
+    async def load_all(cls, context=None):
+        milestone_types = await MilestoneType.query.gino.all()
+        for t in milestone_types:
+            cls._get_loader_from_context(context).prime(t.id, t)
+        return milestone_types

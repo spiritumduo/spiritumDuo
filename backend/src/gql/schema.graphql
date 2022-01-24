@@ -12,6 +12,7 @@ type Query {
     getPathways: [Pathway]
     getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
+    getMilestoneTypes: [MilestoneType!]
 
     """
     getPatentOnPathwayConnection:
