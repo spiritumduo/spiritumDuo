@@ -8,12 +8,17 @@ from fastapi import FastAPI, Request
 from datetime import date
 from models import Patient, db
 from asyncpg.exceptions import UniqueViolationError
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from starlette.responses import JSONResponse
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from models import Milestone
-from typing import List
+from typing import List, Union
+
+import logging
+
+log = logging.getLogger("uvicorn")
+log.setLevel(logging.DEBUG)
 
 SESSION_KEY = os.getenv("SESSION_SECRET_KEY")
 
@@ -22,8 +27,7 @@ pseudotie_middleware = [
     Middleware(AuthenticationMiddleware, backend=PseudoAuth())
 ]
 
-app = FastAPI(middleware=pseudotie_middleware)
-
+app = FastAPI(middleware=pseudotie_middleware, debug=True)
 
 @app.get("/")
 async def root():

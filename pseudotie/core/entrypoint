@@ -1,4 +1,4 @@
 #!/bin/bash
 
 cd /app/src
-uvicorn --host 0.0.0.0 --reload --port 8081 main:app
+uvicorn --host 0.0.0.0 --reload --port 8081 --log-level 'debug' main:app
