@@ -25,13 +25,11 @@ class Patient_IE:
 class Milestone_IE:
     def __init__(self, 
         id:int=None,
-        hospital_number:str=None, 
         current_state:str=None, 
         added_at:date=None, 
         updated_at:date=None
     ):
         self.id=id
-        self.hospital_number=hospital_number
         self.current_state=current_state
         self.added_at=added_at
         self.updated_at=updated_at
