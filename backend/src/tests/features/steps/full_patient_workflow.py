@@ -9,11 +9,13 @@ CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
 LOGIN_REST_ENDPOINT="http://localhost:8080/rest/login/"
 GRAPHQL_ENDPOINT="graphql"
 PATIENT={
+    "id": 1,
     "firstName": "JOHN",
     "lastName": "DOE",
-    "dateOfBirth": "2000-01-01",
+    "dateOfBirth": datetime(year=2000, month=1, day=1).date(),
     "hospitalNumber": f"MRN{randint(1000000,9999999)}",
     "nationalNumber": str(randint(1000000000,9999999999)),
+    "communicationMethod": "LETTER"
 }
 PATHWAY={
     "name": f"BRONCHIECTASIS{randint(1000,9999)}"
@@ -143,7 +145,7 @@ def step_impl(context):
                 "lastName": PATIENT['lastName'],
                 "hospitalNumber": PATIENT['hospitalNumber'],
                 "nationalNumber": PATIENT['nationalNumber'],
-                "dateOfBirth": PATIENT['dateOfBirth'],
+                "dateOfBirth": PATIENT['dateOfBirth'].isoformat(),
                 "pathwayId": PATHWAY['id']
             }
         }
@@ -163,7 +165,7 @@ def step_impl(context):
     assert context.patient_record['lastName']==PATIENT['lastName']
     assert context.patient_record['hospitalNumber']==PATIENT['hospitalNumber']
     assert context.patient_record['nationalNumber']==PATIENT['nationalNumber']
-    assert context.patient_record['dateOfBirth']==PATIENT['dateOfBirth']
+    assert context.patient_record['dateOfBirth']==PATIENT['dateOfBirth'].isoformat()
 
 
 ##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
@@ -318,7 +320,7 @@ def step_impl(context):
     assert_that(patient['lastName'], equal_to(PATIENT['lastName']))
     assert_that(patient['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
     assert_that(patient['nationalNumber'], equal_to(PATIENT['nationalNumber']))
-    assert_that(patient['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
+    assert_that(str(patient['dateOfBirth']), equal_to(PATIENT['dateOfBirth'].isoformat()))
 
     onPathway=patient['onPathways'][0]
     assert_that(onPathway, not_none())
@@ -328,7 +330,7 @@ def step_impl(context):
     assert_that(onPathway_Patient['lastName'], equal_to(PATIENT['lastName']))
     assert_that(onPathway_Patient['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
     assert_that(onPathway_Patient['nationalNumber'], equal_to(PATIENT['nationalNumber']))
-    assert_that(onPathway_Patient['dateOfBirth'], equal_to(PATIENT['dateOfBirth']))
+    assert_that(str(onPathway_Patient['dateOfBirth']), equal_to(PATIENT['dateOfBirth'].isoformat()))
 
     onPathway_Pathway=onPathway['pathway']
     assert_that(onPathway_Pathway['name'], equal_to(PATHWAY['name']))
