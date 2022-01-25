@@ -26,20 +26,6 @@ DECISION_POINT={
     "requestsReferrals": "These are the requests and referrals"
 }
 
-##### SCENARIO: A CLINICIAN NEEDS TO BE LOGGED IN
-
-@step("a clinician has an account")
-async def step_async_impl1(context):
-    pass
-
-@when("we login with the account")
-def step_impl(context):
-    pass
-
-@then("we get an authenticated session cookie")
-def step_impl(context):
-    pass
-
 ##### SCENARIO: A NEW PATIENT NEEDS TO BE ADDED INTO THE SYSTEM #####
 @given("a pathway exists")
 def step_impl(context): 
