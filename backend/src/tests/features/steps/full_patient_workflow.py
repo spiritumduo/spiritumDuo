@@ -70,6 +70,26 @@ def step_impl(context):
 
 @when("we run the GraphQL mutation to add the patient")
 def step_impl(context): 
+
+    context.trust_adapter_mock.load_patient.return_value=Patient_IE(
+        first_name = PATIENT['firstName'],
+        last_name = PATIENT['lastName'],
+        date_of_birth = PATIENT['dateOfBirth'],
+        hospital_number = PATIENT['hospitalNumber'],
+        national_number = PATIENT['nationalNumber'],
+        communication_method = PATIENT["communicationMethod"],
+        id = PATIENT['id']
+    )
+        
+    context.trust_adapter_mock.load_many_patients.return_value=[Patient_IE(
+        first_name = PATIENT['firstName'],
+        last_name = PATIENT['lastName'],
+        date_of_birth = PATIENT['dateOfBirth'],
+        hospital_number = PATIENT['hospitalNumber'],
+        national_number = PATIENT['nationalNumber'],
+        communication_method = PATIENT["communicationMethod"],
+        id = PATIENT['id']
+    )]
     create_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
         json={
