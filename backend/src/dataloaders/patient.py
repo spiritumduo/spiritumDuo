@@ -117,8 +117,9 @@ class ReferencePatient:
 class PatientByHospitalNumberFromIELoader(DataLoader):
     loader_name = "_patient_by_hospital_number_from_ie_loader"
 
-    def __init__(self):
+    def __init__(self, context=None):
         super().__init__()
+        self._context=context
 
     @inject
     async def fetch(
@@ -145,8 +146,7 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
     @classmethod
     def _get_loader_from_context(cls, context) -> "PatientByHospitalNumberFromIELoader":
         if cls.loader_name not in context:
-            context[cls.loader_name] = cls()
-        context[cls.loader_name]._context=context
+            context[cls.loader_name] = cls(context=context)
         return context[cls.loader_name]
 
     @classmethod
