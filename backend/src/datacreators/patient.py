@@ -30,7 +30,7 @@ async def CreatePatient(
     hospital_number:str=None,
     national_number:str=None,
     date_of_birth:date=None,
-    communication_method: str = None,
+    communication_method: Optional[str] = "LETTER",
     pathwayId:int=None,
 
     referred_at:datetime=None,
