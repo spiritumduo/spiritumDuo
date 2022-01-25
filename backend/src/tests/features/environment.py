@@ -5,7 +5,7 @@ import asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
-from models import User
+from models import User, MilestoneType
 from api import app
 from behave import fixture, use_fixture
 from starlette.testclient import TestClient
@@ -54,7 +54,7 @@ CLINICIAN = {
 
 
 @fixture
-def add_test_user(context):
+def add_test_data(context):
     loop = asyncio.get_event_loop()
     context.user = loop.run_until_complete(User.create(
         username=CLINICIAN['username'],
@@ -63,7 +63,10 @@ def add_test_user(context):
         last_name=CLINICIAN['lastName'],
         department=CLINICIAN['department']
     ))
-
+    context.milestone_one=loop.run_until_complete(MilestoneType.create(
+        name="Test Milestone One",
+        ref_name="test_milestone_one"
+    ))
 
 @fixture
 def login_test_user(context):
@@ -74,7 +77,6 @@ def login_test_user(context):
             "password": CLINICIAN['password']
         }
     )
-
 
 @fixture
 def mock_trust_adapter(context):
@@ -87,7 +89,7 @@ def mock_trust_adapter(context):
 def before_feature(context, _):
     use_fixture(create_test_database, context)
     use_fixture(db_start_transaction, context)
-    use_fixture(add_test_user, context)
+    use_fixture(add_test_data, context)
     use_fixture(create_test_client, context)
     use_fixture(mock_trust_adapter, context)
     use_fixture(login_test_user, context)
