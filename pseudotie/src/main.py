@@ -66,7 +66,15 @@ async def patient_post(request: Request, input: PatientInput):
             last_name=input.last_name,
             date_of_birth=input.date_of_birth,
         )
-        return patient
+        return {
+            "id":patient.id,
+            "hospital_number":patient.hospital_number,
+            "national_number":patient.national_number,
+            "communication_method":patient.communication_method,
+            "first_name":patient.first_name,
+            "last_name":patient.last_name,
+            "date_of_birth":patient.date_of_birth
+        }
     except UniqueViolationError:
         return JSONResponse(status_code=409)
 

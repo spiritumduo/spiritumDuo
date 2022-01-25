@@ -138,7 +138,7 @@ class PseudoTrustAdapter(TrustAdapter):
                     "date_of_birth": patient.date_of_birth.isoformat(),
                 }
             )
-            res = res.json()['__values__']
+            res = res.json()
             try:
                 return Patient_IE(
                     id=res['id'],
