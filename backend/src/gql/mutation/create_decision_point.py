@@ -32,7 +32,7 @@ async def resolve_create_decision(_=None, info=None, input:dict=None):
                 ))
                 await Milestone.create(
                     decision_point_id=int(_decision_point.id),
-                    reference_id=int(tie_milestone['id']),
+                    reference_id=int(tie_milestone.id),
                     milestone_type_id=int(milestone_entry['milestoneTypeId']),
                     current_state=milestone_entry['currentState'].value
                 )
@@ -43,7 +43,7 @@ async def resolve_create_decision(_=None, info=None, input:dict=None):
                 ))
                 await Milestone.create(
                     decision_point_id=int(_decision_point.id),
-                    reference_id=int(tie_milestone['id']),
+                    reference_id=int(tie_milestone.id),
                     milestone_type_id=int(milestone_entry['milestoneTypeId']),
                 )
             
