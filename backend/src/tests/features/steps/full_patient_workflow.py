@@ -3,7 +3,7 @@ from hamcrest import *
 import json
 from datetime import datetime
 from random import randint
-from trustadapter.trustadapter import Patient_IE
+from trustadapter.trustadapter import Patient_IE, Milestone_IE
 
 CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
 LOGIN_REST_ENDPOINT="http://localhost:8080/rest/login/"
@@ -25,6 +25,9 @@ DECISION_POINT={
     "clinicHistory": "This is the clinical history",
     "comorbidities": "These are the comorbidities",
     "requestsReferrals": "These are the requests and referrals"
+}
+MILESTONE={
+    "milestoneState":"INIT"
 }
 
 ##### SCENARIO: A NEW PATIENT NEEDS TO BE ADDED INTO THE SYSTEM #####
@@ -171,9 +174,36 @@ def step_impl(context):
 ##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
 @when("we run the GraphQL mutation to add the decision point")
 def step_impl(context):
+    context.trust_adapter_mock.create_milestone=lambda milestone: Milestone_IE(
+        id=milestone,
+        current_state=milestone.milestoneState,
+        added_at=datetime.now().isoformat(),
+        updated_at=datetime.now().isoformat()
+    )
+
+    async def load_many_milestones(recordIds, auth_token):
+        data=[]
+        for key in recordIds:
+            data.append(Milestone_IE(
+                id=key,
+                current_state=MILESTONE['milestoneState'],
+                added_at=datetime.now().isoformat(),
+                updated_at=datetime.now().isoformat()
+            ))
+        return data
+
+    context.trust_adapter_mock.load_many_milestones=load_many_milestones
+
+    context.trust_adapter_mock.load_milestone.return_value=Milestone_IE(
+        id=1,
+        current_state=MILESTONE['milestoneState'],
+        added_at=datetime.now().isoformat(),
+        updated_at=datetime.now().isoformat()
+    )
+    
+
     create_decision_point_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
-        # TODO: Add milestone requests to this mutation
         json={
             "query": """
                 mutation createDecisionPoint(
@@ -181,12 +211,18 @@ def step_impl(context):
                     $decisionType: DecisionType!
                     $clinicHistory: String!
                     $comorbidities: String!
+                    $milestoneOneId: ID!
                 ){
                     createDecisionPoint(input: {
                         onPathwayId: $onPathwayId,
                         decisionType: $decisionType,
                         clinicHistory: $clinicHistory,
                         comorbidities: $comorbidities,
+                        milestoneRequests:[
+                            {
+                                milestoneTypeId: $milestoneOneId
+                            }
+                        ]
                     })
                     {
                         decisionPoint {
@@ -205,11 +241,6 @@ def step_impl(context):
                             milestones{
                                 id
                                 currentState
-                                milestoneType {
-                                    id
-                                    refName
-                                    name
-                                }
                             }
                             decisionType
                             clinicHistory
@@ -228,6 +259,7 @@ def step_impl(context):
                 "decisionType":DECISION_POINT['decisionType'],
                 "clinicHistory":DECISION_POINT['clinicHistory'],
                 "comorbidities":DECISION_POINT['comorbidities'],
+                "milestoneOneId":context.milestone_one.id,
             }
         }
     )
@@ -242,6 +274,10 @@ def step_impl(context):
     assert context.patient_record_from_decision_point['decisionPoint']['decisionType']==DECISION_POINT['decisionType']
     assert context.patient_record_from_decision_point['decisionPoint']['clinicHistory']==DECISION_POINT['clinicHistory']
     assert context.patient_record_from_decision_point['decisionPoint']['comorbidities']==DECISION_POINT['comorbidities']
+
+    assert context.patient_record_from_decision_point['decisionPoint']['milestones']!=None
+    assert context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['currentState']==MILESTONE['milestoneState']
+
     DECISION_POINT['id']=context.patient_record_from_decision_point['decisionPoint']['id'] # save ID in decision point object
 
 @when("we run the query to search for the patient")
@@ -294,6 +330,11 @@ def step_impl(context):
                                 comorbidities
                                 milestones{
                                     id
+                                    milestoneType{
+                                        id
+                                        name
+                                    }
+                                    currentState
                                 }
                             }
                         }
@@ -308,7 +349,7 @@ def step_impl(context):
     assert_that(get_patient_result.status_code, equal_to(200))
     assert json.loads(get_patient_result.text)['data']['getPatient']!=None
     context.get_patient_result=json.loads(get_patient_result.text)['data']['getPatient']
-    print(context.get_patient_result)
+    # print(context.get_patient_result)
 
 @then("we get the patient's record with the decision point and pathway")
 def step_impl(context):
