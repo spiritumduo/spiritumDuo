@@ -1,7 +1,6 @@
 import logging.config
 from dependency_injector import containers, providers
 
-
 import services
 import trustadapter
 from config import config as SDConfig
@@ -9,7 +8,9 @@ from config import config as SDConfig
 
 class SDContainer(containers.DeclarativeContainer):
 
-    wiring_config = containers.WiringConfiguration(modules=["dataloaders", "datacreators"])
+    wiring_config = containers.WiringConfiguration(
+        modules=["dataloaders", "datacreators", "gql.mutation.create_decision_point", "gql.query"]
+    )
     config = providers.Configuration()
     config.from_dict(SDConfig)
 
