@@ -64,7 +64,7 @@ describe('When page loads', () => {
     );
   });
 
-  it('Should report success on form submission', async () => {
+  it('Should report success on form submission without milestones', async () => {
     const clinicalHistoryText = '{selectall}New Clinic History';
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
@@ -74,6 +74,23 @@ describe('When page loads', () => {
     await waitFor(() => {
       userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
       userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
+      userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    });
+    expect(screen.getByText('Success!')).toBeInTheDocument();
+  });
+
+  it('Should report success on form submission with milestones', async () => {
+    const clinicalHistoryText = '{selectall}New Clinic History';
+    const comorbiditiesText = '{selectall}New Comorbidities';
+    // wait for page to render fully
+    await waitFor(() => expect(
+      screen.getByText((t) => /edit patient record/i.test(t)),
+    ).toBeInTheDocument());
+    await waitFor(() => {
+      userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
+      userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
+      const requestCheckboxes = screen.getAllByRole('checkbox');
+      requestCheckboxes.forEach((cb) => userEvent.click(cb));
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
     expect(screen.getByText('Success!')).toBeInTheDocument();

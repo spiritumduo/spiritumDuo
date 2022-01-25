@@ -7,12 +7,12 @@ import PatientInfoLonghand from 'components/PatientInfoLonghand';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { enumKeys } from 'sdutils';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { createDecisionPointVariables, createDecisionPoint } from 'pages/__generated__/createDecisionPoint';
 import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
-import { DecisionType } from '../../__generated__/globalTypes';
+import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -37,6 +37,10 @@ export const GET_PATIENT_QUERY = gql`
           }
         }
       }
+      getMilestoneTypes {
+        id
+        name
+      }
     }
 `;
 
@@ -54,27 +58,25 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
   }
 `;
 
-interface DecisionPointPageForm {
+type DecisionPointPageForm = {
   patientId: number;
   clinicianId: number;
   onPathwayId: string;
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities: string;
-  referCtHead: boolean;
-  referMRIHead: boolean;
-  referCTThorax: boolean;
-  referPhysiotherapy: boolean;
-  referXRay: boolean;
-  referDietician: boolean;
-  referBronchoscopy: boolean;
-  referSmokingCessation: boolean;
-  referMDT: boolean;
-}
+  milestoneRequests: {
+    id: string;
+    milestoneTypeId: string;
+    name: string;
+    checked: boolean;
+  }[];
+};
 
 const DecisionPointPage = (
   { hospitalNumber, decisionType }: DecisionPointPageProps,
 ): JSX.Element => {
+  // START HOOKS
   // CONTEXT
   const { currentPathwayId } = useContext(PathwayContext);
   const { user: contextUser } = useContext(AuthContext);
@@ -109,15 +111,43 @@ const DecisionPointPage = (
     handleSubmit,
     formState: { errors: formErrors },
     getValues,
+    control,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
+  const { fields, append } = useFieldArray({
+    name: 'milestoneRequests',
+    control: control,
+  });
+
+  const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
+    ? data?.getMilestoneTypes?.map((milestoneType) => ({
+      id: '',
+      milestoneTypeId: milestoneType.id,
+      name: milestoneType.name,
+      checked: false,
+    }))
+    : [];
+
+  // This seems kind of gnarly, but every other way I tried resulted in infinite loops
+  const [hasRenderedCheckboxes, updateHasRenderedCheckboxes] = useState(false);
+  useEffect(() => {
+    if (fieldProps.length !== 0 && !hasRenderedCheckboxes) {
+      updateHasRenderedCheckboxes(true);
+      append(fieldProps);
+    }
+  });
+
+  // NAVIGATE AFTER FORM SUBMISSION
   const navigate = useNavigate();
   useEffect(() => {
     if (isSubmitted) setTimeout(() => { navigate('/'); }, 2000);
   });
-  if (loading) return <h1>Loading!</h1>;
 
+  // DO NOT PUT HOOKS AFTER HERE
+
+  if (loading) return <h1>Loading!</h1>;
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
+
   const patient: Patient = {
     id: parseInt(data.getPatient.id, 10),
     firstName: data.getPatient.firstName,
@@ -125,18 +155,30 @@ const DecisionPointPage = (
     hospitalNumber: data.getPatient.hospitalNumber,
   };
 
+  // FORM SUBMISSION
   const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
+    const milestoneRequests: MilestoneInput[] = values.milestoneRequests.filter(
+      (m) => (m.checked !== false),
+    ).map((m) => ({
+      // The value of 'checked' will be anything we supply in the tag, but the
+      // form expects it to be boolean and breaks if it's not - so we do this cast
+      milestoneTypeId: m.checked as unknown as string,
+    }));
+
     const variables: createDecisionPointVariables = {
       input: {
         onPathwayId: values.onPathwayId,
         clinicHistory: values.clinicHistory,
         comorbidities: values.comorbidities,
         decisionType: values.decisionType,
+        milestoneRequests: milestoneRequests,
       },
     };
+
     mutation({ variables: variables });
   };
 
+  // IF PATIENT HAS PRIOR DECISION
   const previousDecisionPoint = data.getPatient?.onPathways?.[0].decisionPoints
     ? data.getPatient.onPathways[0].decisionPoints[0]
     : null;
@@ -184,104 +226,30 @@ const DecisionPointPage = (
                           <p>{ formErrors.comorbidities?.message }</p>
                         </label>
                       </div>
+                      {
+                        fields.map((field, index) => (
+                          <div className="row" key={ `ms-check-${field.id}` }>
+                            <div className="col">
+                              <div className="form-check">
+                                <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+                                  <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
+                                  { field.name }
+                                </label>
+                              </div>
+                            </div>
+                            <div className="col" />
+                          </div>
+                        ))
+                      }
+                      <div className="container mt-4">
+                        <button type="submit" name="submitBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Submit</button>
+                      </div>
 
-                      <div className="row">
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referCTHead">
-                              <input className="form-check-input" type="checkbox" value="" id="referCtHead" { ...register('referCtHead') } />
-                              CT-head
-                            </label>
-                          </div>
-                        </div>
-                        <div className="col" />
-                      </div>
-                      <div className="row">
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referMRIHead">
-                              <input className="form-check-input" type="checkbox" value="" id="referMRIHead" { ...register('referMRIHead') } />
-                              MRI-head
-                            </label>
-                          </div>
-                        </div>
-                        <div className="col" />
-                      </div>
-                      <div className="row">
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referCTThorax">
-                              <input className="form-check-input" type="checkbox" value="" id="referCTThorax" { ...register('referCTThorax') } />
-                              CT-thorax
-                            </label>
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referPhysiotherapy">
-                              <input className="form-check-input" type="checkbox" value="" id="referPhysiotherapy" { ...register('referPhysiotherapy') } />
-                              Refer to physiotherapy
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referXRay">
-                              <input className="form-check-input" type="checkbox" value="" id="referXRay" { ...register('referXRay') } />
-                              Chest x-ray
-                            </label>
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referDietician">
-                              <input className="form-check-input" type="checkbox" value="" id="referDietician" { ...register('referDietician') } />
-                              Refer to dietician
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referBronchoscopy">
-                              <input className="form-check-input" type="checkbox" value="" id="referBronchoscopy" { ...register('referBronchoscopy') } />
-                              Bronchoscopy
-                            </label>
-                          </div>
-                        </div>
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referSmokingCessation">
-                              <input className="form-check-input" type="checkbox" value="" id="referSmokingCessation" { ...register('referSmokingCessation') } />
-                              Refer to smoking cessation
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col">
-                          <div className="form-check">
-                            <label className="form-check-label pull-right" htmlFor="referMDT">
-                              <input className="form-check-input" type="checkbox" value="" id="referMDT" { ...register('referMDT') } />
-                              Add to MDT
-                            </label>
-                          </div>
-                        </div>
-                      </div>
+                      <p>{ mutateLoading ? 'Submitting...' : '' }</p>
+                      <p>{ isSubmitted ? 'Success!' : '' }</p>
+                      <p>{ mutateError?.message }</p>
 
                     </div>
-
-                    <div className="container mt-4">
-                      <button type="submit" name="submitBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Submit</button>
-                    </div>
-
-                    <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-                    <p>{ isSubmitted ? 'Success!' : '' }</p>
-                    <p>{ mutateError?.message }</p>
-
                   </div>
                 </fieldset>
               </form>

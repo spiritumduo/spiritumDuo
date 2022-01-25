@@ -10,6 +10,28 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
+const milestoneTypes = [
+  {
+    id: '1',
+    name: 'Milestone Request',
+  },
+  {
+    id: '2',
+    name: 'X-Ray',
+  },
+  {
+    id: '3',
+    name: 'Other Request',
+  },
+  {
+    id: '4',
+    name: 'Refer Somewhere',
+  },
+  {
+    id: '5',
+    name: 'MRI Head',
+  },
+];
 const apolloMocks = [
   {
     request: {
@@ -52,10 +74,12 @@ const apolloMocks = [
             },
           ],
         },
+        getMilestoneTypes: milestoneTypes,
       },
     },
   },
   {
+    // CREATE DECISION - NO MILESTONES
     request: {
       query: CREATE_DECISION_POINT_MUTATION,
       variables: {
@@ -64,6 +88,48 @@ const apolloMocks = [
           clinicHistory: 'New Clinic History',
           comorbidities: 'New Comorbidities',
           decisionType: DecisionPointType.TRIAGE.toString(),
+          milestoneRequests: [],
+        },
+      },
+    },
+    result: {
+      data: {
+        createDecisionPoint: {
+          decisionPoint: {
+            id: '1',
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // CREATE DECISION - WITH MILESTONES
+    request: {
+      query: CREATE_DECISION_POINT_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+          clinicHistory: 'New Clinic History',
+          comorbidities: 'New Comorbidities',
+          decisionType: DecisionPointType.TRIAGE.toString(),
+          milestoneRequests: [
+            {
+              milestoneTypeId: milestoneTypes[0].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[1].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[2].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[3].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[4].id,
+            },
+          ],
         },
       },
     },

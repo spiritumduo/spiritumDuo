@@ -32,8 +32,15 @@ export interface GetPatient_getPatient {
   onPathways: GetPatient_getPatient_onPathways[] | null;
 }
 
+export interface GetPatient_getMilestoneTypes {
+  __typename: "MilestoneType";
+  id: string;
+  name: string;
+}
+
 export interface GetPatient {
   getPatient: GetPatient_getPatient | null;
+  getMilestoneTypes: GetPatient_getMilestoneTypes[] | null;
 }
 
 export interface GetPatientVariables {

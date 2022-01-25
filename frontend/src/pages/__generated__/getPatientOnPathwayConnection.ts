@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { DecisionType, MilestoneState } from "./../../../__generated__/globalTypes";
+import { DecisionType } from "./../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL query operation: getPatientOnPathwayConnection
@@ -24,7 +24,7 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edg
   __typename: "Milestone";
   id: string;
   updatedAt: any;
-  currentState: MilestoneState;
+  currentState: string;
   milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones_milestoneType;
 }
 
@@ -58,7 +58,7 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection {
   __typename: "PatientConnection";
   totalCount: number;
   pageInfo: getPatientOnPathwayConnection_getPatientOnPathwayConnection_pageInfo;
-  edges: (getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges | null)[] | null;
+  edges: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges[] | null;
 }
 
 export interface getPatientOnPathwayConnection {

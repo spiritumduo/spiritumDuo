@@ -3,8 +3,6 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { MilestoneState } from "./../../../__generated__/globalTypes";
-
 // ====================================================
 // GraphQL query operation: getPatientWithReferrals
 // ====================================================
@@ -20,7 +18,7 @@ export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints_mi
   milestoneType: getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones_milestoneType;
   addedAt: any;
   updatedAt: any;
-  currentState: MilestoneState;
+  currentState: string;
 }
 
 export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints {
