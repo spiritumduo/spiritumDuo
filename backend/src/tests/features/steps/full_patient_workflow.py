@@ -1,3 +1,4 @@
+from operator import eq
 from behave import *
 from hamcrest import *
 import json
@@ -154,21 +155,22 @@ def step_impl(context):
         }
     )
     assert_that(create_patient_result.status_code, equal_to(200)) # check the HTTP status for 200 OK
-    assert json.loads(create_patient_result.text)['data']['createPatient']['userErrors']==None # make sure there are no input errors
-    assert json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']!=None # check that an id has been returned
-    assert json.loads(create_patient_result.text)['data']['createPatient']['patient']['hospitalNumber']!=None # check that the hospital number has been returned
+    assert_that(json.loads(create_patient_result.text)['data']['createPatient']['userErrors'], none()) # make sure there are no input errors
+    assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['id'], not_none()) # check that an id has been returned
+    assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['hospitalNumber'], not_none()) # check that the hospital number has been returned
+    
     context.patient_record=json.loads(create_patient_result.text)['data']['createPatient']['patient'] # save entire record for future use
     PATIENT['id']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']
     PATIENT['onPathwayId']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['onPathways'][0]['id']
 
 @then("we get the patient's record")
 def step_impl(context):
-    assert context.patient_record['id']!=None
-    assert context.patient_record['firstName']==PATIENT['firstName']
-    assert context.patient_record['lastName']==PATIENT['lastName']
-    assert context.patient_record['hospitalNumber']==PATIENT['hospitalNumber']
-    assert context.patient_record['nationalNumber']==PATIENT['nationalNumber']
-    assert context.patient_record['dateOfBirth']==PATIENT['dateOfBirth'].isoformat()
+    assert_that(context.patient_record['id'],not_none())
+    assert_that(context.patient_record['firstName'], equal_to(PATIENT['firstName']))
+    assert_that(context.patient_record['lastName'], equal_to(PATIENT['lastName']))
+    assert_that(context.patient_record['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
+    assert_that(context.patient_record['nationalNumber'], equal_to(PATIENT['nationalNumber']))
+    assert_that(context.patient_record['dateOfBirth'], equal_to(PATIENT['dateOfBirth'].isoformat()))
 
 
 ##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
@@ -187,8 +189,8 @@ def step_impl(context):
             data.append(Milestone_IE(
                 id=key,
                 current_state=MILESTONE['milestoneState'],
-                added_at=datetime.now().isoformat(),
-                updated_at=datetime.now().isoformat()
+                added_at=datetime.now(),
+                updated_at=datetime.now()
             ))
         return data
 
@@ -197,8 +199,8 @@ def step_impl(context):
     context.trust_adapter_mock.load_milestone.return_value=Milestone_IE(
         id=1,
         current_state=MILESTONE['milestoneState'],
-        added_at=datetime.now().isoformat(),
-        updated_at=datetime.now().isoformat()
+        added_at=datetime.now(),
+        updated_at=datetime.now()
     )
     
 
@@ -240,7 +242,18 @@ def step_impl(context):
                             }
                             milestones{
                                 id
+                                addedAt
+                                updatedAt
                                 currentState
+                                
+                                internalAddedAt
+                                internalUpdatedAt
+                                internalCurrentState
+
+                                milestoneType{
+                                    id
+                                    name
+                                }
                             }
                             decisionType
                             clinicHistory
@@ -265,19 +278,34 @@ def step_impl(context):
     )
 
     assert_that(create_decision_point_result.status_code, equal_to(200))
-    assert json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['id']!=None # check that an id has been returned
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['id'], not_none()) # check that an id has been returned
     context.patient_record_from_decision_point=json.loads(create_decision_point_result.text)['data']['createDecisionPoint'] # save entire record for future use
 
 @then("we get the decision point record")
 def step_impl(context):
-    assert context.patient_record_from_decision_point['decisionPoint']['id']!=None
-    assert context.patient_record_from_decision_point['decisionPoint']['decisionType']==DECISION_POINT['decisionType']
-    assert context.patient_record_from_decision_point['decisionPoint']['clinicHistory']==DECISION_POINT['clinicHistory']
-    assert context.patient_record_from_decision_point['decisionPoint']['comorbidities']==DECISION_POINT['comorbidities']
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['id'], not_none())
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['decisionType'], equal_to(DECISION_POINT['decisionType']))
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['clinicHistory'], equal_to(DECISION_POINT['clinicHistory']))
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['comorbidities'], equal_to(DECISION_POINT['comorbidities']))
 
-    assert context.patient_record_from_decision_point['decisionPoint']['milestones']!=None
-    assert context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['currentState']==MILESTONE['milestoneState']
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'], not_none())
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['currentState'], equal_to(MILESTONE['milestoneState']))
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['milestoneType']['name'], equal_to(context.milestone_one.name))
 
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['addedAt'], not_none())
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['updatedAt'], not_none())
+
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['internalAddedAt'], not_none())
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['internalUpdatedAt'], not_none())
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['internalCurrentState'], not_none())
+
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['clinician']['id'], equal_to(str(context.user.id)))
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['clinician']['username'], equal_to(context.user.username))
+
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['onPathway'], not_none())
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['onPathway']['pathway']['id'], equal_to(str(PATHWAY['id'])))
+    assert_that(context.patient_record_from_decision_point['decisionPoint']['onPathway']['pathway']['name'], equal_to(PATHWAY['name']))
+    
     DECISION_POINT['id']=context.patient_record_from_decision_point['decisionPoint']['id'] # save ID in decision point object
 
 @when("we run the query to search for the patient")
@@ -294,7 +322,7 @@ def step_impl(context):
                         hospitalNumber
                         nationalNumber
                         dateOfBirth
-                        
+                        communicationMethod
                         onPathways{
                             id
                             patient{
@@ -315,13 +343,21 @@ def step_impl(context):
                             addedAt
                             updatedAt
                             referredAt
+
+
+
                             decisionPoints{
                                 id
                                 clinician{
                                     id
+                                    username
                                 }
                                 onPathway{
                                     id
+                                    pathway{
+                                        id
+                                        name
+                                    }
                                 }
                                 decisionType
                                 addedAt
@@ -330,11 +366,17 @@ def step_impl(context):
                                 comorbidities
                                 milestones{
                                     id
+                                    addedAt
+                                    updatedAt
+                                    currentState
+                                    internalAddedAt
+                                    internalUpdatedAt
+                                    internalCurrentState
                                     milestoneType{
                                         id
                                         name
+                                        refName
                                     }
-                                    currentState
                                 }
                             }
                         }
@@ -349,7 +391,6 @@ def step_impl(context):
     assert_that(get_patient_result.status_code, equal_to(200))
     assert json.loads(get_patient_result.text)['data']['getPatient']!=None
     context.get_patient_result=json.loads(get_patient_result.text)['data']['getPatient']
-    # print(context.get_patient_result)
 
 @then("we get the patient's record with the decision point and pathway")
 def step_impl(context):
@@ -357,28 +398,65 @@ def step_impl(context):
 
     patient=context.get_patient_result
 
+    assert_that(patient['id'], not_none())
     assert_that(patient['firstName'], equal_to(PATIENT['firstName']))
     assert_that(patient['lastName'], equal_to(PATIENT['lastName']))
     assert_that(patient['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
     assert_that(patient['nationalNumber'], equal_to(PATIENT['nationalNumber']))
-    assert_that(str(patient['dateOfBirth']), equal_to(PATIENT['dateOfBirth'].isoformat()))
+    assert_that(patient['dateOfBirth'], equal_to(PATIENT['dateOfBirth'].isoformat()))
+    assert_that(patient['communicationMethod'], equal_to(PATIENT['communicationMethod']))
+
 
     onPathway=patient['onPathways'][0]
     assert_that(onPathway, not_none())
     onPathway_Patient=onPathway['patient']
 
+    assert_that(onPathway['isDischarged'], equal_to(False))
+    assert_that(onPathway['awaitingDecisionType'], equal_to(DECISION_POINT['decisionType']))
+    assert_that(onPathway['addedAt'], not_none())
+    assert_that(onPathway['updatedAt'], not_none())
+    assert_that(onPathway['referredAt'], not_none())
+
+    assert_that(onPathway_Patient['id'], not_none())
     assert_that(onPathway_Patient['firstName'], equal_to(PATIENT['firstName']))
     assert_that(onPathway_Patient['lastName'], equal_to(PATIENT['lastName']))
     assert_that(onPathway_Patient['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
     assert_that(onPathway_Patient['nationalNumber'], equal_to(PATIENT['nationalNumber']))
-    assert_that(str(onPathway_Patient['dateOfBirth']), equal_to(PATIENT['dateOfBirth'].isoformat()))
+    assert_that(onPathway_Patient['dateOfBirth'], equal_to(PATIENT['dateOfBirth'].isoformat()))
+    assert_that(onPathway_Patient['communicationMethod'], equal_to(PATIENT['communicationMethod']))
 
     onPathway_Pathway=onPathway['pathway']
+    assert_that(onPathway_Pathway['id'], not_none())
     assert_that(onPathway_Pathway['name'], equal_to(PATHWAY['name']))
 
     onPathway_DecisionPoint=onPathway['decisionPoints'][0]
     assert_that(onPathway_DecisionPoint, not_none())
 
+    assert_that(onPathway_DecisionPoint['clinician'], not_none())
+    assert_that(onPathway_DecisionPoint['clinician']['id'], equal_to(str(context.user.id)))
+    assert_that(onPathway_DecisionPoint['clinician']['username'], equal_to(context.user.username))
+
+    assert_that(onPathway_DecisionPoint['onPathway'], not_none())
+    assert_that(onPathway_DecisionPoint['onPathway']['id'], not_none())
+    assert_that(onPathway_DecisionPoint['onPathway']['pathway']['id'], PATHWAY['id'])
+    assert_that(onPathway_DecisionPoint['onPathway']['pathway']['name'], PATHWAY['name'])
+
     assert_that(onPathway_DecisionPoint['decisionType'], equal_to(DECISION_POINT['decisionType']))
     assert_that(onPathway_DecisionPoint['clinicHistory'], equal_to(DECISION_POINT['clinicHistory']))
     assert_that(onPathway_DecisionPoint['comorbidities'], equal_to(DECISION_POINT['comorbidities']))
+    assert_that(onPathway_DecisionPoint['addedAt'], not_none())
+    assert_that(onPathway_DecisionPoint['updatedAt'], not_none())
+
+    milestone=onPathway_DecisionPoint['milestones'][0]
+    assert_that(milestone, not_none())
+    assert_that(milestone['id'], not_none())
+    assert_that(milestone['addedAt'], not_none())
+    assert_that(milestone['updatedAt'], not_none())
+    assert_that(milestone['internalAddedAt'], not_none())
+    assert_that(milestone['internalUpdatedAt'], not_none())
+    assert_that(milestone['currentState'], MILESTONE['milestoneState'])
+    assert_that(milestone['milestoneType'], not_none())
+    assert_that(milestone['milestoneType']['id'], not_none())
+    assert_that(milestone['milestoneType']['name'], equal_to(context.milestone_one.name))
+    assert_that(milestone['milestoneType']['refName'], equal_to(context.milestone_one.ref_name))
+
