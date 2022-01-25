@@ -102,12 +102,6 @@ class TrustAdapterNotFoundException(Exception):
     cannot be found
     """
 
-def GetTrustAdapter(adapter = None):
-    try:
-        return globals()[config['TRUST_ADAPTER_NAME']]
-    except KeyError:
-        raise TrustAdapterNotFoundException()
-
 
 class PseudoTrustAdapter(TrustAdapter):
     """

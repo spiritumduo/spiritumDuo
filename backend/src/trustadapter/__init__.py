@@ -1,1 +1,1 @@
-from .trustadapter import TrustAdapter, GetTrustAdapter, PseudoTrustAdapter
+from .trustadapter import TrustAdapter, PseudoTrustAdapter

@@ -6,7 +6,7 @@ from containers import SDContainer
 from models import Patient
 from datetime import date
 from typing import List, Union, Dict, Optional
-from trustadapter import GetTrustAdapter, TrustAdapter
+from trustadapter import TrustAdapter
 
 class PatientByIdLoader(DataLoader):
     loader_name = "_patient_by_id_loader"

@@ -8,7 +8,7 @@ import re
 from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader, PatientByHospitalNumberFromIELoader
 from config import config as SdConfig
 from typing import Optional
-from trustadapter.trustadapter import GetTrustAdapter, Patient_IE, TrustAdapter
+from trustadapter.trustadapter import Patient_IE, TrustAdapter
 
 
 class ReferencedItemDoesNotExistError(Exception):

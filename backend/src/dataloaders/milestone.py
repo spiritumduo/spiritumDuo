@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Dict, Optional
 from aiodataloader import DataLoader
 from models import Milestone
-from trustadapter import GetTrustAdapter, TrustAdapter
+from trustadapter import TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
 
