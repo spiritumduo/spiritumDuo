@@ -1,9 +1,9 @@
-from typing import Text
 from behave import *
 from hamcrest import *
-import requests, json
+import json
+from datetime import datetime
 from random import randint
-
+from trustadapter.trustadapter import Patient_IE
 
 GRAPHQL_ENDPOINT = "/graphql"
 CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
