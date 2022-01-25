@@ -26,7 +26,6 @@ async def resolve_create_decision(_=None, info=None, input:dict=None):
         for milestone_entry in input['milestoneRequests']:
             if "currentState" in milestone_entry:
                 tie_milestone=await integration_engine.create_milestone(milestone=Milestone(
-                    decision_point_id=int(_decision_point.id),
                     milestone_type_id=milestone_entry['milestoneTypeId'],
                     current_state=milestone_entry['currentState'].value
                 ))
@@ -38,7 +37,6 @@ async def resolve_create_decision(_=None, info=None, input:dict=None):
                 )
             else:
                 tie_milestone=await integration_engine.create_milestone(milestone=Milestone(
-                    decision_point_id=_decision_point.id,
                     milestone_type_id=milestone_entry['milestoneTypeId']
                 ))
                 await Milestone.create(
