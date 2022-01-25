@@ -5,7 +5,6 @@ from datetime import datetime
 from random import randint
 from trustadapter.trustadapter import Patient_IE
 
-GRAPHQL_ENDPOINT = "/graphql"
 CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
 LOGIN_REST_ENDPOINT="http://localhost:8080/rest/login/"
 GRAPHQL_ENDPOINT="graphql"
@@ -138,14 +137,12 @@ def step_impl(context):
             }
         }
     )
-
     assert_that(create_patient_result.status_code, equal_to(200)) # check the HTTP status for 200 OK
     assert json.loads(create_patient_result.text)['data']['createPatient']['userErrors']==None # make sure there are no input errors
     assert json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']!=None # check that an id has been returned
     assert json.loads(create_patient_result.text)['data']['createPatient']['patient']['hospitalNumber']!=None # check that the hospital number has been returned
     context.patient_record=json.loads(create_patient_result.text)['data']['createPatient']['patient'] # save entire record for future use
     PATIENT['id']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']
-    print(json.loads(create_patient_result.text)['data']['createPatient']['patient'])
     PATIENT['onPathwayId']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['onPathways'][0]['id']
 
 @then("we get the patient's record")
