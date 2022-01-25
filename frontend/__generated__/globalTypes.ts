@@ -13,6 +13,7 @@ export enum DecisionType {
   FOLLOW_UP = "FOLLOW_UP",
   MDT = "MDT",
   TRIAGE = "TRIAGE",
+  POST_REQUEST = "POST_REQUEST"
 }
 
 export enum MilestoneState {

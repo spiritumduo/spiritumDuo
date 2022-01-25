@@ -7,6 +7,7 @@ class DecisionTypes(enum.Enum):
     MDT = "MDT"
     AD_HOC = "AD_HOC"
     FOLLOW_UP = "FOLLOW_UP"
+    POST_REQUEST = "POST_REQUEST"
 
 
 class MilestoneState(enum.Enum):

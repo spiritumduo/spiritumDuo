@@ -53,6 +53,7 @@ enum DecisionType{
     MDT
     AD_HOC
     FOLLOW_UP
+    POST_REQUEST
 }
 
 #### RETURN TYPES

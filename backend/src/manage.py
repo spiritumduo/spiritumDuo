@@ -85,6 +85,7 @@ async def insert_test_data():
         DecisionTypes.CLINIC.value,
         DecisionTypes.AD_HOC.value,
         DecisionTypes.MDT.value,
+        DecisionTypes.POST_REQUEST.value,
     ]
 
     lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed gravida, arcu at tempus consequat, metus felis ornare tortor, et consectetur ipsum ipsum eget ex. Pellentesque molestie est ut magna tristique, in sollicitudin odio malesuada. Sed viverra, massa vitae imperdiet faucibus, ligula dui tristique turpis, eget efficitur elit erat nec ante."

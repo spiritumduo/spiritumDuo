@@ -57,6 +57,7 @@ enum DecisionPointType {
     MDT
     AD_HOC
     FOLLOW_UP
+    POST_REQUEST
 }
 
 enum PatientCommunicationMethods{
