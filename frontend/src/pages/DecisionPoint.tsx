@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
 import { AuthContext, PathwayContext } from 'app/context';
 import { Link, useNavigate } from 'react-router-dom';
 import Patient from 'types/Patient';
@@ -49,6 +50,12 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
     createDecisionPoint(input: $input) {
       decisionPoint {
         id
+        milestones {
+          id
+          milestoneType {
+            name
+          }
+        }
       }
       userErrors {
         message
@@ -147,6 +154,7 @@ const DecisionPointPage = (
 
   if (loading) return <h1>Loading!</h1>;
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
+  if (isSubmitted) return <DecisionSubmissionSuccess />;
 
   const patient: Patient = {
     id: parseInt(data.getPatient.id, 10),
@@ -246,7 +254,6 @@ const DecisionPointPage = (
                       </div>
 
                       <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-                      <p>{ isSubmitted ? 'Success!' : '' }</p>
                       <p>{ mutateError?.message }</p>
 
                     </div>
