@@ -16,13 +16,19 @@ async def resolve_create_decision(
         _=None, info=None, input: dict=None,
         trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
+    decision_point_details={
+        "context": info.context,
+        "clinician_id": info.context['request']['user'].id,
+        "on_pathway_id": input['onPathwayId'],
+        "decision_type": input['decisionType'],
+        "clinic_history": input['clinicHistory'],
+        "comorbidities": input['comorbidities'],
+    }
+    if "milestoneResolutions" in input:
+        decision_point_details['milestone_resolutions']=input['milestoneResolutions']
+
     decision_point:DecisionPoint=(await CreateDecisionPoint(
-        context=info.context,
-        clinician_id=info.context['request']['user'].id,
-        on_pathway_id=input['onPathwayId'],
-        decision_type=input['decisionType'],
-        clinic_history=input['clinicHistory'],
-        comorbidities=input['comorbidities'],
+        **decision_point_details
     ))
     if "userErrors" in decision_point:
         return decision_point
@@ -37,7 +43,7 @@ async def resolve_create_decision(
                 milestone_type_id=int(milestone_entry['milestoneTypeId']),
             )
             if "currentState" in milestone_entry:
-                milestone.current_state = milestone_entry["currentState"]
+                milestone.current_state = milestone_entry["currentState"].value
             tie_milestone = await trust_adapter.create_milestone(
                 milestone=milestone,
                 auth_token=auth_token

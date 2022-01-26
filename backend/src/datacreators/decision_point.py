@@ -1,7 +1,7 @@
-from models import DecisionPoint
+from models import DecisionPoint, Milestone
 from gettext import gettext as _
 from SdTypes import DecisionTypes
-
+from typing import List
 class ReferencedItemDoesNotExistError(Exception):
     """
         This occurs when a referenced item does not 
@@ -14,6 +14,7 @@ async def CreateDecisionPoint(
     decision_type:DecisionTypes=None,
     clinic_history:str=None,
     comorbidities:str=None,
+    milestone_resolutions:List[int]=None
 ):
     if context is None:
         raise ReferencedItemDoesNotExistError("Context is not provided")
@@ -25,6 +26,10 @@ async def CreateDecisionPoint(
         clinic_history=clinic_history,
         comorbidities=comorbidities,
     )
+
+    if milestone_resolutions is not None:
+        for milestoneId in milestone_resolutions:
+            await Milestone.update.values(fwd_decision_point_id=int(_decisionPoint.id)).where(Milestone.id==int(milestoneId)).gino.status()
 
     return {
         "decisionPoint":_decisionPoint
