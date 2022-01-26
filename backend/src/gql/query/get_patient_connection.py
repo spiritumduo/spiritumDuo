@@ -1,6 +1,10 @@
+import logging
+
+from sqlalchemy import or_, and_, outerjoin, join
+
 from dataloaders import PatientByIdLoader
 from .query_type import query
-from models import OnPathway, DecisionPoint, Milestone
+from models import OnPathway, DecisionPoint, Milestone, db
 from SdTypes import MilestoneState
 from .pagination import *
 from authentication.authentication import needsAuthorization
@@ -30,37 +34,21 @@ async def get_patient_connection(
         .where(OnPathway.is_discharged == isDischarged)
     if awaitingDecisionType is not None:
         db_query = db_query.where(OnPathway.awaiting_decision_type == awaitingDecisionType)
+
+    if outstanding is True:
+        subquery = db_query.alias(name="on_pathway_alias")
+        join_query = subquery\
+            .outerjoin(DecisionPoint, subquery.columns.id == DecisionPoint.on_pathway_id)\
+            .outerjoin(Milestone, DecisionPoint.id == Milestone.decision_point_id)
+        db_query = db.select([join_query])\
+            .where(or_(
+                and_(Milestone.fwd_decision_point_id.is_(None), Milestone.current_state == MilestoneState.COMPLETED),
+                DecisionPoint.id.is_(None)
+            ))
+
     db_query.order_by(OnPathway.added_at.asc())
     all_patients_on_pathways = await db_query.gino.all()
-
-    patients_ids = []
-    patients = None
-    if outstanding:
-        """
-        this is the logic behind showing patients up on the homepage
-        this checks to see if the patient has an outstanding 
-        decision point left. it checks if there are decision points,
-        if there are milestones associated with that decision point,
-        and if the milestones are complete and have not been used 
-        in a further decision point
-        """
-        for onPathwayRecord in all_patients_on_pathways:
-            _isRecordOutstanding=False
-            decisionPoints=await DecisionPoint.query.where(DecisionPoint.on_pathway_id==onPathwayRecord.id).gino.all()
-            if not decisionPoints: _isRecordOutstanding=True
-            for decisionPoint in decisionPoints:
-                milestones=await Milestone.query.where(Milestone.decision_point_id==decisionPoint.id)\
-                    .where(Milestone.current_state==MilestoneState.COMPLETED)\
-                    .where(Milestone.fwd_decision_point_id==None)\
-                    .gino.all()
-                if milestones: _isRecordOutstanding=True; break
-                if not await Milestone.query.where(Milestone.decision_point_id==decisionPoint.id).gino.all(): _isRecordOutstanding=True; break
-                        
-            if _isRecordOutstanding:
-                patients_ids.append(onPathwayRecord.patient_id)
-    else:
-        for pp in all_patients_on_pathways:
-            patients_ids.append(pp.patient_id)
-
+    patients_ids = [pp.patient_id for pp in all_patients_on_pathways]
     patients = await PatientByIdLoader.load_many_from_id(info.context, patients_ids)
+
     return make_connection(patients, before, after, first, last)
