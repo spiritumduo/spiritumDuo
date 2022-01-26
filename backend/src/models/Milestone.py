@@ -13,6 +13,6 @@ class Milestone(db.Model):
         Enum(MilestoneState, native_enum=False), default=MilestoneState.INIT.value,
         server_default=MilestoneState.INIT.value, nullable=False, native_enum=False
     )
-    milestone_type_id = db.Column(db.Integer(), nullable=False)
+    milestone_type_id = db.Column(db.Integer(), db.ForeignKey('tbl_milestone_type.id'), nullable=False)
     added_at = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
     updated_at = db.Column(db.DateTime(), server_default=func.now(), onupdate=func.now(), nullable=False)
