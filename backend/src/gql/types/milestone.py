@@ -6,7 +6,12 @@ MilestoneObjectType = ObjectType("Milestone")
 @MilestoneObjectType.field("decisionPoint")
 async def resolver(obj=None, info=None, *_):
     record=await DecisionPointLoader.load_from_id(context=info.context, id=obj.decision_point_id)
-    return record.decision_point_id
+    return record
+
+@MilestoneObjectType.field("forwardDecisionPoint")
+async def resolver(obj=None, info=None, *_):
+    record=await DecisionPointLoader.load_from_id(context=info.context, id=obj.fwd_decision_point_id)
+    return record or None
 
 @MilestoneObjectType.field("milestoneType")
 async def resolver(obj=None, info=None, *_):

@@ -178,6 +178,7 @@ type Milestone {
   id: ID!
   milestoneType: MilestoneType!
   decisionPoint: DecisionPoint!
+  forwardDecisionPoint: DecisionPoint
 
   addedAt: DateTime!                        # from TIE                       
   updatedAt: DateTime!                      # from TIE
