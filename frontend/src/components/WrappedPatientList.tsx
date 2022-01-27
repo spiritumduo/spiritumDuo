@@ -1,16 +1,16 @@
 /* eslint-disable camelcase */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import client from 'app/sdApolloClient';
 import { gql, useQuery } from '@apollo/client';
-import { Link } from 'react-router-dom';
 import PatientList from 'components/PatientList';
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
-    $pathwayId:ID!, $first:Int, $after: String
+    $pathwayId:ID!, $first:Int, $after: String, $outstanding: Boolean
   ){
     getPatientOnPathwayConnection(
-      pathwayId:$pathwayId, first:$first, after: $after
+      pathwayId:$pathwayId, first:$first, after: $after, outstanding: $outstanding
     ) {
       totalCount
       pageInfo {
@@ -44,15 +44,17 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  pathwayId: string, first: number, cursor?: string,
+  pathwayId: string, first: number, outstanding: boolean, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
       pathwayId: pathwayId,
       first: first,
       after: cursor,
+      outstanding: outstanding,
     },
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'no-cache',
   },
 );
 
@@ -79,24 +81,26 @@ export interface WrappedPatientListProps {
   pathwayId: string;
   patientsToDisplay: number;
   linkFactory: (patient: QueryPatient) => JSX.Element;
+  outstanding?: boolean;
 }
 
 const WrappedPatientList = ({
   pathwayId,
   patientsToDisplay,
   linkFactory,
+  outstanding = true,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
     error,
     data,
     fetchMore,
-  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay);
+  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, outstanding);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  let listElements: JSX.Element[];
 
   const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsToDisplay);
-  let listElements: JSX.Element[];
   if (nodes) {
     listElements = nodes.flatMap(
       (n) => {

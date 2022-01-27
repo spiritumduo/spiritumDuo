@@ -35,6 +35,9 @@ const Header = ({
                 <Link className="nav-link active" to="/mdt">MDT</Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link active" to="/patients">All Patients</Link>
+              </li>
+              <li className="nav-item">
                 <Link className="nav-link active" to="/patient/add">Add Patient</Link>
               </li>
             </ul>
