@@ -17,8 +17,8 @@ PATIENT={
     "firstName": "JOHN",
     "lastName": "DOE",
     "dateOfBirth": datetime(year=2000, month=1, day=1).date(),
-    "hospitalNumber": f"MRN{randint(1000000,9999999)}",
-    "nationalNumber": str(randint(1000000000,9999999999)),
+    "hospitalNumber": f"fMRN{randint(1000000,9999999)}",
+    "nationalNumber": f"fNHS{randint(1000000000,9999999999)}",
     "communicationMethod": "LETTER"
 }
 PATHWAY={
@@ -161,6 +161,7 @@ def step_impl(context):
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['userErrors'], none()) # make sure there are no input errors
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['id'], not_none()) # check that an id has been returned
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['hospitalNumber'], not_none()) # check that the hospital number has been returned
+    assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['onPathways'][0]['id'], not_none())
     
     context.patient_record=json.loads(create_patient_result.text)['data']['createPatient']['patient'] # save entire record for future use
     PATIENT['id']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']

@@ -5,7 +5,7 @@ from time import sleep
 from starlette.middleware.sessions import SessionMiddleware
 from authentication import needs_authentication, PseudoAuth
 from fastapi import FastAPI, Request
-from datetime import date
+from datetime import date, datetime
 from models import Patient, db
 from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel, ValidationError
@@ -143,24 +143,28 @@ async def patient_national_id(request: Request, id: str):
 
 
 @app.post("/milestone")
-@needs_authentication
-async def post_milestone(request: Request, currentState:str=None):
+async def post_milestone(currentState:str=None, addedAt:datetime=None, updatedAt:datetime=None):
     """
     Create Milestone
     :return: JSONResponse containing ID of created milestone or error data
     """
+    milestoneData={}
     if currentState:
-        data:Milestone = await Milestone.create(
-            current_state=currentState
-        )
-    else:
-        data:Milestone = await Milestone.create(
-        )
+        milestoneData["current_state"]=currentState
+    if addedAt:
+        milestoneData["added_at"]=addedAt
+    if updatedAt:
+        milestoneData["updated_at"]=updatedAt
+
+    milestone:Milestone = await Milestone.create(
+        **milestoneData
+    )
+
     return {
-        "id":data.id,
-        "current_state":data.current_state,
-        "added_at":data.added_at,
-        "updated_at":data.updated_at,
+        "id":milestone.id,
+        "current_state":milestone.current_state,
+        "added_at":milestone.added_at,
+        "updated_at":milestone.updated_at,
     }
 
 
