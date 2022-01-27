@@ -15,6 +15,18 @@ export interface previousDecisionPoints_getPatient_onPathways_decisionPoints_cli
   lastName: string;
 }
 
+export interface previousDecisionPoints_getPatient_onPathways_decisionPoints_milestones_milestoneType {
+  __typename: "MilestoneType";
+  name: string;
+}
+
+export interface previousDecisionPoints_getPatient_onPathways_decisionPoints_milestones {
+  __typename: "Milestone";
+  id: string;
+  currentState: string;
+  milestoneType: previousDecisionPoints_getPatient_onPathways_decisionPoints_milestones_milestoneType;
+}
+
 export interface previousDecisionPoints_getPatient_onPathways_decisionPoints {
   __typename: "DecisionPoint";
   id: string;
@@ -22,6 +34,7 @@ export interface previousDecisionPoints_getPatient_onPathways_decisionPoints {
   clinicHistory: string;
   comorbidities: string;
   clinician: previousDecisionPoints_getPatient_onPathways_decisionPoints_clinician;
+  milestones: previousDecisionPoints_getPatient_onPathways_decisionPoints_milestones[] | null;
   addedAt: any;
   updatedAt: any;
 }

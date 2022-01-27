@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './previousdecisionpoints.css';
 import { gql, useQuery } from '@apollo/client';
 import { currentPathwayIdVar } from 'app/cache';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
+import { PathwayContext } from 'app/context';
 
 export interface PreviousDecisionPointsProps {
   hospitalNumber: string;
@@ -21,6 +22,13 @@ export const PREVIOUS_DECISION_POINTS_QUERY = gql`
             firstName
             lastName
           }
+          milestones {
+            id
+            currentState
+            milestoneType {
+              name
+            }
+          }
           addedAt
           updatedAt
         }
@@ -30,13 +38,11 @@ export const PREVIOUS_DECISION_POINTS_QUERY = gql`
 `;
 
 const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps): JSX.Element => {
-  // TODO: FIX THIS WITH LOGIN!
-  // const pathwayId = currentPathwayId();
-  const pathwayId = currentPathwayIdVar();
+  const { currentPathwayId } = useContext(PathwayContext);
   const { loading, error, data } = useQuery<previousDecisionPoints>(
     PREVIOUS_DECISION_POINTS_QUERY, {
       variables: {
-        pathwayId: pathwayId,
+        pathwayId: currentPathwayId,
         hospitalNumber: hospitalNumber,
         limit: 5,
       },
@@ -54,19 +60,54 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
         </div>
         {
           decisions?.map((d) => (
-            <div className="previous-decision-points-row" key={ d.id }>
-              <p>
-                <strong>
+            <div className="row row-cols-3 p-2" key={ d.id }>
+              <div className="col-9">
+                <strong className="row p-1">
                   Decision for {d.decisionType}
                   , {d.addedAt.toLocaleString()}
                   , Dr {d.clinician.firstName}
                   , {d.clinician.lastName}
                 </strong>
-                <br />
-                Clinical History: {d.clinicHistory} <br />
-                Comormidities: {d.comorbidities} <br />
-                Requests / referrals made: TODO: change this
-              </p>
+                <div className="row p-1">
+                  <p><strong>Clinical History:</strong> {d.clinicHistory}</p>
+                </div>
+                <div className="row p-1">
+                  <p><strong>Comormidities:</strong> {d.comorbidities}</p>
+                </div>
+                {
+                  d.milestones?.length !== 0
+                    ? (
+                      <div className="row">
+                        <div className="col" id={ `request-tbl-${d.id}` }>
+                          <b>Requests / referrals made:</b>
+                        </div>
+                        <div className="col" role="table" aria-label="Milestone Requests" aria-describedby={ `request-tbl-${d.id}` }>
+                          <div className="row" role="row">
+                            <div className="col" role="columnheader">
+                              <strong>Milestone</strong>
+                            </div>
+                            <div className="col" role="columnheader">
+                              <strong>Status</strong>
+                            </div>
+                          </div>
+                          {
+                            d.milestones?.map((m) => (
+                              <div key={ `m-id-${m.id}` } className="row" role="row">
+                                <div className="col" role="cell">
+                                  {m.milestoneType.name}
+                                </div>
+                                <div className="col" role="cell">
+                                  {m.currentState}
+                                </div>
+                              </div>
+                            ))
+                          }
+                        </div>
+                      </div>
+                    )
+                    : null
+                }
+              </div>
             </div>
           ))
         }
