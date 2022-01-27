@@ -12,8 +12,8 @@ export enum DecisionType {
   CLINIC = "CLINIC",
   FOLLOW_UP = "FOLLOW_UP",
   MDT = "MDT",
+  POST_REQUEST = "POST_REQUEST",
   TRIAGE = "TRIAGE",
-  POST_REQUEST = "POST_REQUEST"
 }
 
 export enum MilestoneState {
