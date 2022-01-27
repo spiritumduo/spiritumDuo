@@ -3,8 +3,6 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { DecisionType } from "./../../../__generated__/globalTypes";
-
 // ====================================================
 // GraphQL query operation: getPatientOnPathwayConnection
 // ====================================================
@@ -76,7 +74,6 @@ export interface getPatientOnPathwayConnection {
 
 export interface getPatientOnPathwayConnectionVariables {
   pathwayId: string;
-  awaitingDecisionType: DecisionType;
   first?: number | null;
   after?: string | null;
 }
