@@ -20,7 +20,7 @@ const Header = ({
   const currentOption = pathwayOptions.find((p) => p.id === currentPathwayId);
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <nav className="navbar navbar-expand-md navbar-light bg-light">
         <div className="container-fluid">
           <form className="d-flex" onSubmit={ searchOnSubmit }>
             <input disabled className="form-control me-2" type="search" name="hospitalNumberSearch" placeholder="Hospital number" aria-label="Hospital number" />
