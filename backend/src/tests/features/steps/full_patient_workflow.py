@@ -161,6 +161,7 @@ def step_impl(context):
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['userErrors'], none()) # make sure there are no input errors
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['id'], not_none()) # check that an id has been returned
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['hospitalNumber'], not_none()) # check that the hospital number has been returned
+    assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['onPathways'][0]['id'], not_none())
     
     context.patient_record=json.loads(create_patient_result.text)['data']['createPatient']['patient'] # save entire record for future use
     PATIENT['id']=json.loads(create_patient_result.text)['data']['createPatient']['patient']['id']
