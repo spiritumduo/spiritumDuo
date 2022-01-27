@@ -17,8 +17,8 @@ PATIENT={
     "firstName": "JOHN",
     "lastName": "DOE",
     "dateOfBirth": datetime(year=2000, month=1, day=1).date(),
-    "hospitalNumber": f"MRN{randint(1000000,9999999)}",
-    "nationalNumber": str(randint(1000000000,9999999999)),
+    "hospitalNumber": f"fMRN{randint(1000000,9999999)}",
+    "nationalNumber": f"fNHS{randint(1000000000,9999999999)}",
     "communicationMethod": "LETTER"
 }
 PATHWAY={
