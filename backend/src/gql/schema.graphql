@@ -156,6 +156,7 @@ type DecisionPoint {
     clinicHistory: String!
     comorbidities: String!
     milestones: [Milestone!]
+    milestoneResolutions: [Milestone!]
 }
 
 type TestResult {
@@ -222,6 +223,7 @@ input DecisionPointInput{
     clinicHistory: String!
     comorbidities: String
     milestoneRequests: [MilestoneInput!]
+    milestoneResolutions: [ID!]
 }
 
 input PathwayInput{
