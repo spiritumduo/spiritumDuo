@@ -86,7 +86,6 @@ Default.parameters = {
           variables: {
             pathwayId: '1',
             first: patientsPerPage,
-            awaitingDecisionType: DecisionPointType.TRIAGE,
           },
         },
         result: {
@@ -108,7 +107,6 @@ Default.parameters = {
           variables: {
             pathwayId: '1',
             first: patientsPerPage,
-            awaitingDecisionType: DecisionPointType.TRIAGE,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
           },
         },

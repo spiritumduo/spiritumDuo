@@ -1,23 +1,18 @@
 /* eslint-disable camelcase */
 import React, { useContext, useState } from 'react';
 import './homepage.css';
-import Patient from 'types/Patient';
 import PatientList from 'components/PatientList';
-import { DecisionPointType } from 'types/DecisionPoint';
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'pages/__generated__/getPatientOnPathwayConnection';
-import { PatientLink } from 'components/Link';
 import { PathwayContext } from 'app/context';
 import { gql, useQuery } from '@apollo/client';
 import { Link } from 'react-router-dom';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
-    $pathwayId:ID!, $awaitingDecisionType:DecisionType!,
-    $first:Int, $after: String
+    $pathwayId:ID!, $first:Int, $after: String
   ){
     getPatientOnPathwayConnection(
-      pathwayId:$pathwayId, awaitingDecisionType:$awaitingDecisionType,
-      first:$first, after: $after
+      pathwayId:$pathwayId, first:$first, after: $after
     ) {
       totalCount
       pageInfo {
@@ -51,13 +46,11 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  pathwayId: string, awaitingDecisionType: DecisionPointType,
-  first: number, cursor?: string,
+  pathwayId: string, first: number, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
       pathwayId: pathwayId,
-      awaitingDecisionType: awaitingDecisionType,
       first: first,
       after: cursor,
     },
@@ -89,18 +82,16 @@ function edgesToNodes(
 const WrappedPatientList = ({
   pathwayId,
   patientsPerPage,
-  decisionPointType,
 }: {
   pathwayId: number,
   patientsPerPage: number,
-  decisionPointType: DecisionPointType,
 }): JSX.Element => {
   const {
     loading,
     error,
     data,
     fetchMore,
-  } = usePatientsForPathwayQuery(pathwayId.toString(), decisionPointType, patientsPerPage);
+  } = usePatientsForPathwayQuery(pathwayId.toString(), patientsPerPage);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -189,7 +180,6 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
           <WrappedPatientList
             pathwayId={ pathwayId }
             patientsPerPage={ patientsPerPage }
-            decisionPointType={ DecisionPointType.TRIAGE }
           />
         </div>
       </div>
