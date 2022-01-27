@@ -102,6 +102,34 @@ async def patient_hospital_id(request: Request, id: str):
         return None
 
 
+@app.post("/patient/hospital/")
+@needs_authentication
+async def patient_hospital_id(request: Request, input: list[str]):
+    """
+    Get patient by hospital number
+    :param _: Request
+    :param input: List of hospital numbers
+    :returns JSONResponse containing Patient or null
+    """
+    patients = await Patient.query.where(Patient.hospital_number.in_(input)).gino.all()
+
+    if patients is not None:
+        res = []
+        for patient in patients:
+            res.append({
+                "id": patient.id,
+                "hospital_number": patient.hospital_number,
+                "national_number": patient.national_number,
+                "communication_method": patient.communication_method,
+                "first_name": patient.first_name,
+                "last_name": patient.last_name,
+                "date_of_birth": patient.date_of_birth
+            })
+        return res
+    else:
+        return None
+
+
 @app.get("/patient/national/{id}")
 @needs_authentication
 async def patient_national_id(request: Request, id: str):
@@ -115,7 +143,8 @@ async def patient_national_id(request: Request, id: str):
 
 
 @app.post("/milestone")
-async def post_milestone(currentState:str=None):
+@needs_authentication
+async def post_milestone(request: Request, currentState:str=None):
     """
     Create Milestone
     :return: JSONResponse containing ID of created milestone or error data
@@ -135,8 +164,34 @@ async def post_milestone(currentState:str=None):
     }
 
 
+@app.post("/milestones/get/")
+@needs_authentication
+async def milestones(request: Request, input: list[str]):
+    """
+    Get many milestones via post request
+    :param request:
+    :param input:
+    :return:
+    """
+    integer_ids = [int(i) for i in input]
+    m_stones = await Milestone.query.where(Milestone.id.in_(integer_ids)).gino.all()
+    if m_stones is not None:
+        res = []
+        for data in m_stones:
+            res.append({
+                "id": data.id,
+                "current_state": data.current_state,
+                "added_at": data.added_at,
+                "updated_at": data.updated_at,
+            })
+        return res
+    else:
+        return None
+
+
 @app.get("/milestone/{id}")
-async def milestone_id(id: str=None):
+@needs_authentication
+async def milestone_id(request: Request, id: str=None):
     """
     Get milestone by ID
     :param id: String ID

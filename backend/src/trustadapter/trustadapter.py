@@ -168,28 +168,32 @@ class PseudoTrustAdapter(TrustAdapter):
             return None
 
     async def load_many_patients(self, hospitalNumbers: List = None, auth_token: str = None) -> List[Optional[Patient_IE]]:
-        retVal=[]
-        for hospNo in hospitalNumbers:
-            result = requests.get(
-                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospNo,
-                cookies={"SDSESSION": auth_token}
+        return_list = []
+        async with httpx.AsyncClient() as client:
+            res = await client.post(
+                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/',
+                cookies={"SDSESSION": auth_token},
+                json=hospitalNumbers
             )
-            if result.status_code!=200:
-                raise Exception(f"HTTP{result.status_code} received")
-            record=json.loads(result.text)
-            if record is not None:
-                retVal.append(
-                    Patient_IE(
-                        id=record['id'],
-                        first_name=record['first_name'],
-                        last_name=record['last_name'],
-                        hospital_number=record['hospital_number'],
-                        national_number=record['national_number'],
-                        communication_method=record['communication_method'],
-                        date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+
+            if res.status_code != 200:
+                raise Exception(f"HTTP{res.status_code} received")
+
+            if res is not None:
+                res_data = json.loads(res.text)
+                for record in res_data:
+                    return_list.append(
+                        Patient_IE(
+                            id=record['id'],
+                            first_name=record['first_name'],
+                            last_name=record['last_name'],
+                            hospital_number=record['hospital_number'],
+                            national_number=record['national_number'],
+                            communication_method=record['communication_method'],
+                            date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+                        )
                     )
-                )
-        return retVal
+        return return_list
 
     async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
         if milestone.current_state:
@@ -243,28 +247,33 @@ class PseudoTrustAdapter(TrustAdapter):
         )
 
     async def load_many_milestones(self, recordIds: List = None, auth_token: str = None) -> List[Optional[Milestone_IE]]:
-        retVal=[]
-        for recordId in recordIds:
-            result = requests.get(
-                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId),
-                cookies={"SDSESSION": auth_token}
+        return_list = []
+        logging.warning(recordIds)
+        async with httpx.AsyncClient() as client:
+            res = await client.post(
+                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/milestones/get/',
+                cookies={"SDSESSION": auth_token},
+                json=recordIds
             )
-            if result.status_code!=200:
-                raise Exception(f"HTTP{result.status_code} received")
-            record=json.loads(result.text)
-            try:
-                _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S")
-                _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
-            except ValueError:
-                _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
-                _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
-            retVal.append(
-                Milestone_IE(
-                    id=record['id'],
-                    current_state=record['current_state'],
-                    added_at=_added_at,
-                    updated_at=_updated_at
-                )
-            )
-        return retVal
 
+            if res.status_code != 200:
+                raise Exception(f"HTTP{res.status_code} received")
+
+            if res is not None:
+                res_data = json.loads(res.text)
+                for record in res_data:
+                    try:
+                        _added_at = datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S")
+                        _updated_at = datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
+                    except ValueError:
+                        _added_at = datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
+                        _updated_at = datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
+                    return_list.append(
+                        Milestone_IE(
+                            id=record['id'],
+                            current_state=record['current_state'],
+                            added_at=_added_at,
+                            updated_at=_updated_at
+                        )
+                    )
+        return return_list
