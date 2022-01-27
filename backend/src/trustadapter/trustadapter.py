@@ -192,19 +192,21 @@ class PseudoTrustAdapter(TrustAdapter):
         return retVal
 
     async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
+        params={}
         if milestone.current_state:
-            result = requests.post(
-                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
-                params={"currentState": milestone.current_state},
-                cookies={"SDSESSION": auth_token}
-            )
-        else:
-            result = requests.post(
-                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
-                cookies={"SDSESSION": auth_token}
-            )
-        tie_milestone=json.loads(result.text)
+            params['currentState'] = milestone.current_state
+        if milestone.added_at:
+            params['addedAt'] = milestone.added_at
+        if milestone.updated_at:
+            params['updatedAt'] = milestone.updated_at
 
+        result = requests.post(
+            self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
+            params=params,
+            cookies={"SDSESSION": auth_token}
+        )
+
+        tie_milestone=json.loads(result.text)
         try:
             _added_at=datetime.strptime(tie_milestone['added_at'], "%Y-%m-%dT%H:%M:%S")
             _updated_at=datetime.strptime(tie_milestone['updated_at'], "%Y-%m-%dT%H:%M:%S")
