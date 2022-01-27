@@ -30,7 +30,7 @@ const PathwaySelector = ({
 
   return (
     <div className="dropdown">
-      <button className="btn btn-outline-secondary dropdown-toggle" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button className="btn btn-outline-secondary dropdown-toggle disabled" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {currentOption.name}
       </button>
       <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">

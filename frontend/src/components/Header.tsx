@@ -23,7 +23,7 @@ const Header = ({
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container-fluid">
           <form className="d-flex" onSubmit={ searchOnSubmit }>
-            <input className="form-control me-2" type="search" name="hospitalNumberSearch" placeholder="Hospital number" aria-label="Hospital number" />
+            <input disabled className="form-control me-2" type="search" name="hospitalNumberSearch" placeholder="Hospital number" aria-label="Hospital number" />
           </form>
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
