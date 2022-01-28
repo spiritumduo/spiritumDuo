@@ -76,4 +76,5 @@ export interface getPatientOnPathwayConnectionVariables {
   pathwayId: string;
   first?: number | null;
   after?: string | null;
+  outstanding?: boolean | null;
 }
