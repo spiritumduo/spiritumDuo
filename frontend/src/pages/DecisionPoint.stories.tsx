@@ -97,14 +97,7 @@ const apolloMocks = [
         createDecisionPoint: {
           decisionPoint: {
             id: '1',
-            milestones: [
-              {
-                id: '1',
-                milestoneType: {
-                  name: 'TypeName',
-                },
-              },
-            ],
+            milestones: null,
           },
           userErrors: null,
         },
@@ -146,6 +139,14 @@ const apolloMocks = [
         createDecisionPoint: {
           decisionPoint: {
             id: '1',
+            milestones: [
+              {
+                id: '1',
+                milestoneType: {
+                  name: 'TypeName',
+                },
+              },
+            ],
           },
           userErrors: null,
         },
