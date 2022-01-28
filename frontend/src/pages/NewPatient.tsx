@@ -57,7 +57,6 @@ const NewPatientPage = (): JSX.Element => {
       dateOfBirth: new Date(values.dateOfBirth),
       pathwayId: currentPathwayId?.toString(),
     };
-    console.log(ourValues);
     mutation({
       variables: {
         patient: ourValues,
@@ -73,8 +72,6 @@ const NewPatientPage = (): JSX.Element => {
   const errorElements: JSX.Element[] = data?.userErrors?.map(
     (e: any) => <p key={ e.field }>{ `Field: ${e.field} Message: ${e.message}` }</p>,
   );
-
-  console.log(data?.userErrors);
 
   return (
     <div>
