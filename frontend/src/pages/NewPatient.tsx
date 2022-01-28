@@ -1,19 +1,43 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
-import Patient, { PatientCommunicationMethods } from 'types/Patient';
-import { ADD_PATIENT_MUTATION } from 'app/mutations/AddPatient';
-import { useMutation } from '@apollo/client';
-import { currentPathwayIdVar } from 'app/cache';
+import { PatientCommunicationMethods } from 'types/Patient';
+import { gql, useMutation } from '@apollo/client';
 import { enumKeys } from 'sdutils';
+import { PathwayContext } from 'app/context';
+
+export const ADD_PATIENT_MUTATION = gql`
+  mutation createPatient($patient: PatientInput!) {
+    createPatient(input: $patient) {
+      userErrors {
+        message
+        field
+      }
+      patient {
+        id
+      }
+    }
+  }
+`;
+
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  hospitalNumber: string;
+  nationalNumber: string;
+  communicationMethod: string;
+  dateOfBirth: Date;
+}
 
 const NewPatientPage = (): JSX.Element => {
   const newPatientSchema = yup.object({
     firstName: yup.string().required(),
     lastName: yup.string().required(),
     hospitalNumber: yup.string().required(),
+    nationalNumber: yup.string().required(),
+    communicationMethod: yup.string().required(),
     dateOfBirth: yup.date().required(),
   });
 
@@ -22,15 +46,21 @@ const NewPatientPage = (): JSX.Element => {
     handleSubmit,
     formState: { errors: formErrors },
     getValues,
-  } = useForm<Patient>({ resolver: yupResolver(newPatientSchema) });
+  } = useForm<FormValues>({ resolver: yupResolver(newPatientSchema) });
 
   const [addPatient, { data, loading, error }] = useMutation(ADD_PATIENT_MUTATION);
+  const { currentPathwayId } = useContext(PathwayContext);
 
-  const useSubmit = (mutation: typeof addPatient, values: Patient) => {
+  const useSubmit = (mutation: typeof addPatient, values: FormValues) => {
+    const ourValues = {
+      ...values,
+      dateOfBirth: new Date(values.dateOfBirth),
+      pathwayId: currentPathwayId?.toString(),
+    };
+    console.log(ourValues);
     mutation({
       variables: {
-        pathwayId: currentPathwayIdVar(),
-        patient: values,
+        patient: ourValues,
       },
     });
   };
@@ -40,11 +70,11 @@ const NewPatientPage = (): JSX.Element => {
     (k) => <option value={ k } key={ `commMethod-${k}` }>{ PatientCommunicationMethods[k] }</option>,
   );
 
-  const errorElements: JSX.Element[] = [];
+  const errorElements: JSX.Element[] = data?.userErrors?.map(
+    (e: any) => <p key={ e.field }>{ `Field: ${e.field} Message: ${e.message}` }</p>,
+  );
 
-  if (data?.userErrors) {
-    data.userErrors.forEach((e: any) => errorElements.push(<p>{ `Field: ${e.field} Message: ${e.message}` }</p>));
-  }
+  console.log(data?.userErrors);
 
   return (
     <div>
@@ -112,6 +142,11 @@ const NewPatientPage = (): JSX.Element => {
                         : ''
                     }
                     { errorElements }
+                    {
+                      data
+                        ? 'Success!'
+                        : ''
+                    }
                   </div>
                   <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Register patient</button>
                   <Link to="/home" className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
