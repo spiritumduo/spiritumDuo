@@ -144,12 +144,6 @@ const DecisionPointPage = (
     }
   });
 
-  // NAVIGATE AFTER FORM SUBMISSION
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (isSubmitted) setTimeout(() => { navigate('/'); }, 2000);
-  });
-
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
