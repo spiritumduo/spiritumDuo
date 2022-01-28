@@ -144,17 +144,17 @@ const DecisionPointPage = (
     }
   });
 
-  // NAVIGATE AFTER FORM SUBMISSION
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (isSubmitted) setTimeout(() => { navigate('/'); }, 2000);
-  });
-
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
-  if (isSubmitted) return <DecisionSubmissionSuccess />;
+  if (isSubmitted) {
+    const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
+      id: ms.id,
+      name: ms.milestoneType.name,
+    }));
+    return <DecisionSubmissionSuccess milestones={ _milestones } />;
+  }
 
   const patient: Patient = {
     id: parseInt(data.getPatient.id, 10),
