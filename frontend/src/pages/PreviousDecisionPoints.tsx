@@ -64,7 +64,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
               <div className="col-9">
                 <strong className="row p-1">
                   Decision for {d.decisionType}
-                  , {d.addedAt.toLocaleString()}
+                  , {d.addedAt.toLocaleString([], { year: 'numeric', month: 'numeric', day: 'numeric' })}
                   , Dr {d.clinician.firstName}
                   , {d.clinician.lastName}
                 </strong>
