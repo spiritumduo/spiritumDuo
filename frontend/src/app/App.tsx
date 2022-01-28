@@ -54,7 +54,7 @@ const PatientRoutes = () => (
       ) }
     />
     <Route
-      path=":hospitalNumber/decisions"
+      path=":hospitalNumber"
       element={ (<PreviousDecisionPointsPageRoute />) }
     />
     <Route
