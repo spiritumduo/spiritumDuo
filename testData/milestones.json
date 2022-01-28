@@ -1,0 +1,28 @@
+{
+  [
+    {
+      "name": "referral letter",
+      "result": "Some result text to use",
+    },
+    {
+      "name": "chest X-Ray",
+      "result": "Some result text to use",
+    },    
+    {
+      "name": "CT thorax",
+      "result": "Some result text to use",
+    },
+    {
+        "name": "X-Ray",
+        "result": "Some result text to use",
+    },
+    {
+        "name": "X-Ray",
+        "result": "Some result text to use",
+    },
+    {
+        "name": "X-Ray",
+        "result": "Some result text to use",
+    },
+  ]
+}
