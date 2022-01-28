@@ -7,11 +7,12 @@ schema {
 }
 
 type Query {
-    getPathways(id:ID): [Pathway]
-    getPatient(id: ID, hospitalNumber: String): Patient
-    getUser(id: ID!): User
-    getGroups: [Group]
-    getPatientsOnPathway(id: ID!, filter: DecisionPointType, discharged: Boolean = False): [Patient]
+    getPatient(id:ID, hospitalNumber:String): Patient
+    getPathway(id:ID!): Pathway
+    getPathways: [Pathway]
+    getUser(id:ID, username:String): User
+    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
+    getMilestoneTypes: [MilestoneType!]
 
     """
     getPatentOnPathwayConnection:
@@ -19,39 +20,35 @@ type Query {
     If neither before or after is present, it requires a first argument to
     limit the number of results returned
 
-    TODO: This returns a PatientConnection. It should return a PatientPathwayInstance connection
+    TODO: This returns a PatientConnection. It should return a OnPathway connection
     That requires new schema work
     """
     getPatientOnPathwayConnection(
         pathwayId: ID!
-        awaitingDecisionType: DecisionPointType!
+        awaitingDecisionType: DecisionType
         isDischarged: Boolean
         first: Int
         after: String
         last: Int
         before: String
+        outstanding: Boolean
     ): PatientConnection!
-
-    testError: String
 }
 
 type Mutation {
-    createDecisionPoint(input:DecisionPointInput!): DecisionPoint!
-    createTestResult(input:TestResultInput!): TestResult!
-    createPathway(input:PathwayInput!): Pathway!
-    createPatient(input:PatientInput!): Patient!
-    createUser(input:UserInput!): User!
-    createPatientPathwayInstance(input:PatientPathwayInstanceInput!): PatientPathwayInstance!
-
-    addPatient(input:PatientInput!, pathwayId: ID!): Patient
-    addUserToGroup(input:AddUserToGroupInput!): User
-
-    login(username: String!, password: String!): User
+    createPatient(input:PatientInput!): AddPatientPayload!
+    createPathway(input:PathwayInput!): AddPathwayPayload!
+    createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 }
 
+enum PatientCommunicationMethods {
+    LETTER
+    EMAIL
+    LANDLINE
+    MOBILE
+}
 
-#### ENUMS
-enum DecisionPointType {
+enum DecisionType{
     TRIAGE
     CLINIC
     MDT
@@ -60,18 +57,29 @@ enum DecisionPointType {
     POST_REQUEST
 }
 
-enum PatientCommunicationMethods{
-    LETTER
-    EMAIL
-    LANDLINE
-    MOBILE
+#### RETURN TYPES
+type AddPatientPayload {
+    patient:Patient
+    userErrors:[UserError!]
+}
+type AddPathwayPayload {
+    pathway:Pathway
+    userErrors:[UserError!]
+}
+type AddDecisionPointPayload{
+    decisionPoint:DecisionPoint
+    userErrors:[UserError!]    
 }
 
-#### OUTPUT TYPES
+#### DATA TYPES
+type UserError{
+    message:String!
+    field:String!
+}
+
 type Pathway {
     id: ID!
     name: String!
-
     patients:[Patient]
 }
 
@@ -84,9 +92,14 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
 
-    decisionPoints:[DecisionPoint]
-    pathways: [PatientPathwayInstance]
-    testResults: [TestResult]
+    onPathways(
+        pathwayId: ID,
+        isDischarged: Boolean = False,
+        awaitingDecisionType: DecisionType, 
+        limit: Int
+    ): [OnPathway!]
+
+    # testResults: [TestResult] # to implement
 }
 
 type PageInfo {
@@ -99,7 +112,7 @@ type PageInfo {
 type PatientConnection {
     totalCount: Int!
     pageInfo: PageInfo!
-    edges: [PatientEdge]
+    edges: [PatientEdge!]
 }
 
 type PatientEdge {
@@ -107,10 +120,22 @@ type PatientEdge {
     cursor: String!
 }
 
-type Group{
+type Group {
     id: ID!
     name: String!
     permissions: [String]
+}
+
+type OnPathway {
+    id: ID!
+    patient: Patient!
+    pathway: Pathway!
+    isDischarged: Boolean!
+    awaitingDecisionType: DecisionType!
+    addedAt: DateTime!
+    updatedAt: DateTime!
+    referredAt: DateTime!
+    decisionPoints: [DecisionPoint!]
 }
 
 type User {
@@ -118,48 +143,67 @@ type User {
     firstName: String!
     lastName: String!
     username: String!
-    password: String
     lastLogin: DateTime
-
     department: String!
-    groups: [Group]
 }
 
 type DecisionPoint {
     id: ID!
-    patient: Patient!
     clinician: User!
-    pathway: Pathway!
-    addedAt: Date!
-    updatedAt: Date
-    decisionType: DecisionPointType!
+    onPathway: OnPathway!
+    decisionType: DecisionType!
+    addedAt: DateTime!
+    updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
-    requestsReferrals: String!
+    milestones: [Milestone!]
+    milestoneResolutions: [Milestone!]
 }
 
 type TestResult {
     id: ID!
     patient: Patient!
-    patientPathwayInstance: PatientPathwayInstance!
-    addedAt: Date!
+    onPathway: OnPathway!
     description: String!
-    mediaUrls: [String]
+    mediaUrls: [String!]
+    addedAt: DateTime!
 }
 
-type PatientPathwayInstance{
-    id: ID!
-    isDischarged: Boolean!
-    awaitingDecisionType: String!
-    pathway: Pathway!
-    patient: Patient!
+type MilestoneType {
+  id: ID!
+  refName: String!
+  name: String!
+}
+
+
+type Milestone {
+  id: ID!
+  milestoneType: MilestoneType!
+  decisionPoint: DecisionPoint!
+  forwardDecisionPoint: DecisionPoint
+
+  addedAt: DateTime!                        # from TIE                       
+  updatedAt: DateTime!                      # from TIE
+  currentState: String!                     # from TIE
+
+  internalCurrentState: MilestoneState!     # from SD
+  internalAddedAt: DateTime!                # from SD
+  internalUpdatedAt: DateTime!              # from SD
+}
+
+
+enum MilestoneState {
+  INIT
+  ACTIVE
+  WAITING
+  ERROR
+  COMPLETED
 }
 
 #### INPUT TYPES
-
 input TestResultInput{
-    patient: Int!
-    patientPathwayInstance: Int!
+    patientId: ID!
+    pathwayId: ID!
     description: String!
     mediaUrls: [String]
 }
@@ -169,14 +213,18 @@ input AddUserToGroupInput{
     groupName: String!
 }
 
+input MilestoneInput {
+  milestoneTypeId: ID!
+  currentState: MilestoneState
+}
+
 input DecisionPointInput{
-    patientId: Int!
-    clinicianID: Int!
-    pathwayId: Int!
-    decisionType: DecisionPointType!
+    onPathwayId: ID!
+    decisionType: DecisionType!
     clinicHistory: String!
-    comorbidities: String!
-    requestsReferrals: [String]!
+    comorbidities: String
+    milestoneRequests: [MilestoneInput!]
+    milestoneResolutions: [ID!]
 }
 
 input PathwayInput{
@@ -190,26 +238,12 @@ input GroupInput{
 input PatientInput{
     firstName:String!
     lastName:String!
-    communicationMethod:PatientCommunicationMethods!
+    communicationMethod:PatientCommunicationMethods
     hospitalNumber:String!
     nationalNumber:String!
     dateOfBirth:Date!
-}
 
-input PatientPathwayInstanceInput{
-    patient:Int!
-    pathway:Int!
-    isDischarged:Boolean!
-    awaitingDecisionType:String!
-}
-
-input UserInput{
-    firstName:String!
-    lastName:String!
-    username:String!
-    password:String!
-    isStaff:Boolean!
-    isSuperuser:Boolean!
-    
-    department:String!
+    pathwayId:ID!
+    awaitingDecisionType: DecisionType
+    referredAt: DateTime
 }

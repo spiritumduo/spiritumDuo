@@ -13,6 +13,13 @@ const typesMap = {
     serialize: (parsed: any) => parsed?.toISOString(),
     parseValue: (raw: any): Date => new Date(raw),
   }),
+
+  DateTime: new GraphQLScalarType<Date, string>({
+    name: 'DateTime',
+    // any here because GraphQL-js doesn't have full typing for this
+    serialize: (parsed: any) => parsed?.toISOString(),
+    parseValue: (raw: any): Date => new Date(raw),
+  }),
 };
 
 const scalarLink = ApolloLink.from([withScalars({ schema, typesMap })]);
