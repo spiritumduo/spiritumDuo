@@ -1,28 +1,84 @@
 {
   [
     {
-      "name": "referral letter",
-      "result": "Some result text to use",
+      "name": "referraLetter",
+      "result": "Many thanks for seeing this patient. They have a 3-month history of increased shortness of breath on exertion. Otherwise, the patient has no other complaints and is working full time managing a supermarket. They are an ex-smoker having stopped 2 years ago. Chest X-ray showed a 12mm right lung nodule. CT scan has confirmed a right apical lesion and this is felt to be a probable neoplasm. The patient's father unfortunately passed away from lung cancer. The patient themselves has chronic obstructive pulmonary disease, osteoporosis and a previous cardioversion 2 years ago for atrial fibrillation. Current medications include a Spiriva inhaler, bisoprolol, aspirin, omeprazole, atorvastatin and alendronic acid. ",
     },
     {
       "name": "chest X-Ray",
-      "result": "Some result text to use",
+      "result": "There is a nodule projected over the right lung apex measuring 12 mm diameter. This requires further investigation with a contrast CT scan. This will be arranged directly by the Radiology department. Please inform the patient. Further management depends on CT results - no referral required at present. ",
     },    
     {
       "name": "CT thorax",
-      "result": "Some result text to use",
+      "result": "Likely 15 mm primary right upper lobe neoplasm. Provisional staging T1b N0 M0/1C (equivocal adrenal nodules). Significant background emphysema. Please initiate a 2 week wait lung cancer referral with a view to PET-CT and percutaneous biopsy as required.",
     },
     {
-        "name": "X-Ray",
-        "result": "Some result text to use",
+      "name": "PET-CT",
+      "result": "In the lateral aspect of the right upper lobe there is a 15 mm spiculated nodule which is avid (maximum SUV 11.7). Background moderate emphysema changes are noted and there is some mild scarring in the right lung apex. No significant hilar or mediastinal nodes were seen. Liver and adrenal glands appear normal.  ",
     },
     {
-        "name": "X-Ray",
-        "result": "Some result text to use",
+      "name": "CT head - contrast",
+      "result": "No intracranial changes seen",
     },
     {
-        "name": "X-Ray",
-        "result": "Some result text to use",
+      "name": "MRI head",
+      "result": "No intracranial changes seen",
+    },
+    {
+      "name": "Lung function tests",
+      "result": "Moderate obstructive picture seen and a moderately reduce gas transfer. FEV1 1.44 (60% predicted), FVC 3.01 (106% predicted), FEV1/FVC ratio of 48, TLCO 3.29 (49% predicted) and KCO 0.73 (49% predicted).",
+    },
+    {
+      "name": "Echocardiogram",
+      "result": "Normal left ventricular cavity size and good systolic function. Visual ejection fracture = 60-65%. Normal right ventricular size and systolic function. Moderately dilated left atrium. Beginning of aortic sclerosis, but no stenosis and only mild regurgitation. ",
+    },
+    {
+      "name": "Echocardiogram",
+      "result": "Normal left ventricular cavity size and good systolic function. Visual ejection fracture = 60-65%. Normal right ventricular size and systolic function. Moderately dilated left atrium. Beginning of aortic sclerosis, but no stenosis and only mild regurgitation. ",
+    },
+    {
+      "name": "CT Guided biopsy thorax",
+      "result": "Right anterior intercostal approach. 10 mL 1% Lidocaine used. Single pass 18 gauge cutting needle yielded a small / adequate core. No immediate complication. Lesion diameter 11 mm, lesion depth 11 mm.",
+    },
+    {
+      "name": "Pathology",
+      "result": "Adenocarcinoma",
+    },
+    {
+      "name": "EBUS",
+      "result": "We have reviewed the images and there is no mass accessible via EBUS. We would recommend a CT guided biopsy instead.",
+    },
+    {
+      "name": "ECG",
+      "result": "Normal sinus rhythm.",
+    },
+    {
+      "name": "Prehad referral",
+      "result": "Many thanks for referring this patient to physiotherapy for prehab. We have now accessed the patient and have given them an exercise routine to help build up their muscle strength.",
+    },
+    {
+      "name": "Dietician referral",
+      "result": "Many thanks for referring this patient to us for a dietetic assessment. We have now assessed the patient and have provided them with some high energy drinks to build them up.",
+    },
+    {
+      "name": "Thoracoscopy",
+      "result": "We have looked at the CT and PET-CT for this patient. There is no pleural involvement and so a thoracoscopy would not be indicated. This request has been cancelled.",
+    },
+    {
+      "name": "Bronchoscopy",
+      "result": "We have looked at the CT and PET-CT for this patient. There is nodule disease that would be accessible via transbronchial biopsy. Hence, bronchoscopy is not indicated and we have cancelled the request.",
+    },
+    {
+      "name": "Pleural tap",
+      "result": "We have looked at the CT and PET-CT for this patient. There is no pleural involvement and no pleural fluid. Hence, we have cancelled this request.",
+    },
+    {
+      "name": "Cardiopulmonary excercise testing (CPET)",
+      "result": "Satisfactory results. Patient fit enough for surgery.",
+    },
+    {
+      "name": "Smoking cessation referral",
+      "result": "Many thanks for a referral for this patient. We have called them to assess their smoking status, and they inform us that they have not smoked in 2 years. Hence, we will no get involved further with this patient.",
     },
   ]
 }
