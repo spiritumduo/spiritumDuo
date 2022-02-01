@@ -6,4 +6,4 @@ class MilestoneType(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False)
     ref_name = db.Column(db.String(), nullable=False)
-    # ref_ID = db.Column(db.String(), nullable=False)
+    ref_id = db.Column(db.String(), nullable=False)
