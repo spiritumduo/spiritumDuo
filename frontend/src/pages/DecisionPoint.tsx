@@ -137,14 +137,18 @@ const DecisionPointPage = (
     control: control,
   });
 
-  const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-    ? data?.getMilestoneTypes?.map((milestoneType) => ({
-      id: '',
-      milestoneTypeId: milestoneType.id,
-      name: milestoneType.name,
-      checked: false,
-    }))
-    : [];
+  useEffect(() => {
+    const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
+      ? data?.getMilestoneTypes?.map((milestoneType) => ({
+        id: '',
+        milestoneTypeId: milestoneType.id,
+        name: milestoneType.name,
+        checked: false,
+      }))
+      : [];
+    append(fieldProps);
+    // }
+  }, [data, append]);
 
   // This seems kind of gnarly, but every other way I tried resulted in infinite loops
   const [hasRenderedCheckboxes, updateHasRenderedCheckboxes] = useState(false);
