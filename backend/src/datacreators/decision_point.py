@@ -44,11 +44,11 @@ async def CreateDecisionPoint(
 
     if milestone_requests is not None:
         for milestone in milestone_requests:
-
             _milestone=Milestone_IE()
             _milestone.added_at=datetime.now()
             _milestone.updated_at=datetime.now()
-
+            _milestone.milestone_type_id=milestone['milestoneTypeId']
+            # TODO: batch these
             if "currentState" in milestone:
                 _milestone.current_state=milestone['currentState'].value
             if "addedAt" in milestone:
