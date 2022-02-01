@@ -136,6 +136,7 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
+    testResults: [TestResult!]
 }
 
 type User {
@@ -162,7 +163,6 @@ type DecisionPoint {
 
 type TestResult {
     id: ID!
-    milestone: Milestone!
     description: String!
     addedAt: DateTime!
 }
@@ -179,6 +179,7 @@ type Milestone {
   milestoneType: MilestoneType!
   decisionPoint: DecisionPoint!
   forwardDecisionPoint: DecisionPoint
+  testResult: TestResult
 
   addedAt: DateTime!                        # from TIE                       
   updatedAt: DateTime!                      # from TIE
