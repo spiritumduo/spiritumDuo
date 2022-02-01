@@ -18,6 +18,7 @@ from models import Milestone, TestResult
 from typing import List, Optional
 from RecordTypes import MilestoneState
 from placeholder_data import TEST_RESULT_DATA
+import httpx
 
 log = logging.getLogger("uvicorn")
 log.setLevel(logging.DEBUG)
@@ -164,6 +165,16 @@ async def updateMilestoneAtRandomTime(milestoneId:int=None):
         milestone_id=milestone.id,
         description=testResultDescription
     )
+
+    async with httpx.AsyncClient() as client:
+        await client.post(
+            url="http://sd-backend:8080/rest/testresult/update",
+            json={
+                "id":milestone.id,
+                "new_state":MilestoneState.COMPLETED.value
+            }
+        )
+
 
 class MilestoneInput(BaseModel):
     currentState: Optional[str]
