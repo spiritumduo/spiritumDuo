@@ -162,10 +162,8 @@ type DecisionPoint {
 
 type TestResult {
     id: ID!
-    patient: Patient!
-    onPathway: OnPathway!
+    milestone: Milestone!
     description: String!
-    mediaUrls: [String!]
     addedAt: DateTime!
 }
 
