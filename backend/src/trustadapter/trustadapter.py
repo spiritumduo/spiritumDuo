@@ -198,8 +198,8 @@ class PseudoTrustAdapter(TrustAdapter):
     async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
         params={}
         milestoneType:MilestoneType=await MilestoneType.get(int(milestone.milestone_type_id))
-        typeReferenceId=milestoneType.ref_id
-        params['typeReferenceId'] = typeReferenceId
+        typeReferenceName=milestoneType.ref_name
+        params['typeReferenceName'] = typeReferenceName
         
         if milestone.current_state:
             params['currentState'] = milestone.current_state

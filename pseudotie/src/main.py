@@ -155,8 +155,8 @@ async def updateMilestoneAtRandomTime(milestoneId:int=None):
 
     # Generate test results
     testResultDescription=""
-    if milestone.type_reference_id in TEST_RESULT_DATA:
-        testResultDescription=TEST_RESULT_DATA[milestone.type_reference_id]['result']
+    if milestone.type_reference_name in TEST_RESULT_DATA:
+        testResultDescription=TEST_RESULT_DATA[milestone.type_reference_name]['result']
     else:
         testResultDescription="Lorem ipsum doner kebab"
 
@@ -167,7 +167,7 @@ async def updateMilestoneAtRandomTime(milestoneId:int=None):
 
 class MilestoneInput(BaseModel):
     currentState: Optional[str]
-    typeReferenceId: str
+    typeReferenceName: str
     addedAt: Optional[datetime]
     updatedAt: Optional[datetime]
 
@@ -179,7 +179,7 @@ async def post_milestone(request: Request, my_input: MilestoneInput):
     :return: JSONResponse containing ID of created milestone or error data
     """
     milestoneData={
-        "type_reference_id": my_input.typeReferenceId
+        "type_reference_name": my_input.typeReferenceName
     }
     if my_input.currentState is not None:
         milestoneData["current_state"] = my_input.currentState
@@ -197,7 +197,7 @@ async def post_milestone(request: Request, my_input: MilestoneInput):
 
     return JSONResponse({
         "id":milestone.id,
-        "type_reference_id":milestone.type_reference_id,
+        "type_reference_name":milestone.type_reference_name,
         "current_state":milestone.current_state.value,
         "added_at":milestone.added_at.isoformat(),
         "updated_at":milestone.updated_at.isoformat(),
