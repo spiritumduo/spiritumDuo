@@ -85,11 +85,11 @@ async def insert_test_data():
         await Pathway.create(name="Bronchastasis")
     ]
 
-    await MilestoneType.create(name="CT Thorax", ref_name="ref CT Thorax")
-    await MilestoneType.create(name="X-Ray Chest", ref_name="ref X-Ray Chest")
-    await MilestoneType.create(name="MRI Thorax", ref_name="ref MRI Thorax")
-    await MilestoneType.create(name="CT Head", ref_name="ref CT Head")
-    await MilestoneType.create(name="Bronchoscopy", ref_name="ref Bronchoscopy")
+    await MilestoneType.create(name="CT Thorax", ref_name="ref CT Thorax", ref_id="169069000")
+    await MilestoneType.create(name="X-Ray Chest", ref_name="ref X-Ray Chest", ref_id="399208008")
+    await MilestoneType.create(name="MRI Thorax", ref_name="ref MRI Thorax", ref_id="6007000")
+    await MilestoneType.create(name="CT Head", ref_name="ref CT Head", ref_id="303653007")
+    await MilestoneType.create(name="Bronchoscopy", ref_name="ref Bronchoscopy", ref_id="10847001")
 
     milestone_types = await MilestoneType.query.gino.all()
     _Faker=Faker()
