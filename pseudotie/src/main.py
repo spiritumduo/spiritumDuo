@@ -24,6 +24,7 @@ log = logging.getLogger("uvicorn")
 log.setLevel(logging.DEBUG)
 
 SESSION_KEY = os.getenv("SESSION_SECRET_KEY")
+UPDATE_ENDPOINT_KEY = os.getenv("UPDATE_ENDPOINT_KEY")
 
 pseudotie_middleware = [
     Middleware(SessionMiddleware, secret_key=SESSION_KEY, session_cookie="SDSESSION", max_age=60*60*6),
@@ -172,6 +173,9 @@ async def updateMilestoneAtRandomTime(milestoneId:int=None):
             json={
                 "id":milestone.id,
                 "new_state":MilestoneState.COMPLETED.value
+            },
+            cookies={
+                "SDTIEKEY": UPDATE_ENDPOINT_KEY
             }
         )
 
