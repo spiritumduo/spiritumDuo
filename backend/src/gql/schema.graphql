@@ -168,7 +168,6 @@ type TestResult {
 type MilestoneType {
   id: ID!
   refName: String!
-  refId: String!
   name: String!
 }
 
