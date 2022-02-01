@@ -37,6 +37,7 @@ export interface DecisionPointInput {
   clinicHistory: string;
   comorbidities?: string | null;
   milestoneRequests?: MilestoneInput[] | null;
+  milestoneResolutions?: string[] | null;
 }
 
 export interface MilestoneInput {
