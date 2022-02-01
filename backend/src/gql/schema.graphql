@@ -98,8 +98,6 @@ type Patient {
         awaitingDecisionType: DecisionType, 
         limit: Int
     ): [OnPathway!]
-
-    # testResults: [TestResult] # to implement
 }
 
 type PageInfo {
@@ -162,16 +160,15 @@ type DecisionPoint {
 
 type TestResult {
     id: ID!
-    patient: Patient!
-    onPathway: OnPathway!
+    milestone: Milestone!
     description: String!
-    mediaUrls: [String!]
     addedAt: DateTime!
 }
 
 type MilestoneType {
   id: ID!
   refName: String!
+  refId: String!
   name: String!
 }
 
@@ -181,6 +178,7 @@ type Milestone {
   milestoneType: MilestoneType!
   decisionPoint: DecisionPoint!
   forwardDecisionPoint: DecisionPoint
+  testResult: TestResult
 
   addedAt: DateTime!                        # from TIE                       
   updatedAt: DateTime!                      # from TIE
@@ -202,10 +200,8 @@ enum MilestoneState {
 
 #### INPUT TYPES
 input TestResultInput{
-    patientId: ID!
-    pathwayId: ID!
+    milestoneId: ID!
     description: String!
-    mediaUrls: [String]
 }
 
 input AddUserToGroupInput{
