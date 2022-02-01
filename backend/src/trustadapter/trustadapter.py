@@ -1,16 +1,13 @@
-import dataclasses
 import logging
-
 import requests
 import httpx
 import json
-from models import Milestone, Patient, DecisionPoint, OnPathway
+from models import Milestone, MilestoneType
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 from datetime import date, datetime
-from config import config
 from dataclasses import dataclass
-
+from common import DateStringToDateObject
 
 @dataclass
 class Patient_IE:
@@ -27,12 +24,15 @@ class Milestone_IE:
         id:int=None,
         current_state:str=None, 
         added_at:date=None, 
-        updated_at:date=None
+        updated_at:date=None,
+
+        test_result:Dict[str, Union[str, int, datetime]]=None
     ):
         self.id=id
         self.current_state=current_state
         self.added_at=added_at
         self.updated_at=updated_at
+        self.test_result=test_result
        
 
 
@@ -197,19 +197,25 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
         params={}
+        milestoneType:MilestoneType=await MilestoneType.get(int(milestone.milestone_type_id))
+        typeReferenceId=milestoneType.ref_id
+        params['typeReferenceId'] = typeReferenceId
+        
         if milestone.current_state:
             params['currentState'] = milestone.current_state
         if milestone.added_at:
-            params['addedAt'] = milestone.added_at
+            params['addedAt'] = milestone.added_at.isoformat()
         if milestone.updated_at:
-            params['updatedAt'] = milestone.updated_at
+            params['updatedAt'] = milestone.updated_at.isoformat()
 
-        result = requests.post(
-            self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
-            params=params,
-            cookies={"SDSESSION": auth_token}
-        )
+        async with httpx.AsyncClient() as client:
+            result = await client.post(
+                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
+                json=params,
+                cookies={"SDSESSION": auth_token}
+            )
 
+        
         tie_milestone=json.loads(result.text)
         
         _added_at=DateStringToDateObject(tie_milestone['added_at'])
