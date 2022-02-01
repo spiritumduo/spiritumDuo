@@ -228,7 +228,6 @@ const DecisionPointPage = (
     ),
   );
   previousTestResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
-  console.log(previousTestResults);
   return (
     <div>
       <section>
