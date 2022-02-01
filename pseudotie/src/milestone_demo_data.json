@@ -1,102 +1,83 @@
 {
-    "25611000000107": {
+    "Referral letter (record artifact)": {
         "name": "Referral letter",
-        "ref_name": "Referral letter (record artifact)",
         "result": "Many thanks for seeing this patient. They have a 3-month history of increased shortness of breath on exertion. Otherwise, the patient has no other complaints and is working full time managing a supermarket. They are an ex-smoker having stopped 2 years ago. Chest X-ray showed a 12 mm right lung nodule. CT scan has confirmed a right apical lesion and this is felt to be consistent with a neoplasm. The patient's father unfortunately passed away from lung cancer. The patient themselves has chronic obstructive pulmonary disease, osteoporosis and a previous cardioversion 2 years ago for atrial fibrillation. Current medications include a Spiriva inhaler, bisoprolol, aspirin, omeprazole, atorvastatin and alendronic acid."
     },
-    "399208008": {
+    "Plain chest X-ray (procedure)": {
         "name": "Chest X-ray",
-        "ref_name": "Plain chest X-ray (procedure)",
         "result": "There is a nodule projected over the right lung apex measuring 12 mm in diameter. This requires further investigation with a contrast CT scan. This will be arranged directly by the Radiology department. Please inform the patient. Further management depends on CT results - no referral required at present."
     },    
-    "169069000": {
+    "Computed tomography of chest (procedure)": {
         "name": "CT chest",
-        "ref_name": "Computed tomography of chest (procedure)",
         "result": "Likely 15 mm primary right upper lobe neoplasm. Provisional staging T1b N0 M0/1C (equivocal adrenal nodules). Moderate background emphysema. Please initiate a 2 week wait lung cancer referral with a view to PET-CT and percutaneous biopsy as required."
     },
-    "450436003": {
+    "Positron emission tomography with computed tomography (procedure)": {
         "name": "PET-CT",
-        "ref_name": "Positron emission tomography with computed tomography (procedure)",
         "result": "In the lateral aspect of the right upper lobe there is a 15 mm spiculated nodule which is avid (maximum SUV 11.7). Background moderate emphysema changes are noted and there is some mild scarring in the right lung apex. No significant hilar or mediastinal nodes were seen. Liver and adrenal glands appear normal."
     },
-    "711232001": {
+    "Computed tomography of head with contrast (procedure)": {
         "name": "CT head - contrast",
-        "ref_name": "Computed tomography of head with contrast (procedure)",
         "result": "No intracranial changes seen"
     },
-    "241601008": {
+    "Magnetic resonance imaging of head (procedure)": {
         "name": "MRI head",
-        "ref_name": "Magnetic resonance imaging of head (procedure)",
         "result": "No intracranial changes seen"
     },
-    "23426006": {
+    "Measurement of respiratory function (procedure)": {
         "name": "Lung function tests",
-        "ref_name": "Measurement of respiratory function (procedure)",
         "result": "Moderate obstructive picture seen with a moderately reduce gas transfer. FEV1 1.44 (60% predicted), FVC 3.01 (106% predicted), FEV1/FVC ratio of 48, TLCO 3.29 (49% predicted) and KCO 0.73 (49% predicted)."
     },
-    "40701008": {
+    "Echocardiography (procedure)": {
         "name": "ECHO",
-        "ref_name": "Echocardiography (procedure)",
         "result": "Normal left ventricular cavity size and good systolic function. Visual ejection fracture = 60-65%. Normal right ventricular size and systolic function. Moderately dilated left atrium. Beginning of aortic sclerosis, but no stenosis and only mild regurgitation."
     },
-    "440491000": {
+    "Biopsy of thorax using computed tomography guidance (procedure)": {
         "name": "CT guided biopsy thorax",
-        "ref_name": "Biopsy of thorax using computed tomography guidance (procedure)",
         "result": "Right anterior intercostal approach. 10 mL 1% lidocaine used. Single pass 18 gauge cutting needle yielded a small / adequate core. No immediate complication. Lesion diameter 11 mm, lesion depth 11 mm."
     },
-    "371528001": {
+    "Pathology report (record artifact)": {
         "name": "Pathology",
-        "ref_name": "Pathology report (record artifact)",
         "result": "Adenocarcinoma"
     },
-    "844061000000101": {
+    "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
         "name": "EBUS",
-        "ref_name": "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)",
         "result": "We have reviewed the images and there is no mass accessible via EBUS. We would recommend a CT guided biopsy instead."
     },
-    "258181008": {
+    "Electrocardiogram analysis (qualifier value)": {
         "name": "ECG",
-        "ref_name": "Electrocardiogram analysis (qualifier value)",
         "result": "Normal sinus rhythm."
     },
-    "786455008": {
+    "Prehabilitation (regime/therapy)": {
         "name": "Prehad referral",
-        "ref_name": "Prehabilitation (regime/therapy)",
         "result": "Many thanks for referring this patient to physiotherapy for prehab. We have now accessed the patient and have given them an exercise routine to help build up their muscle strength."
     },
-    "103699006": {
+    "Patient referral to dietitian (procedure)": {
         "name": "Dietician referral",
-        "ref_name": "Patient referral to dietitian (procedure)",
         "result": "Many thanks for referring this patient to us for a dietetic assessment. We have now assessed the patient and have provided them with some high energy drinks."
     },
-    "14671001": {
+    "Thoracoscopy (procedure)": {
         "name": "Thoracoscopy",
-        "ref_name": "Thoracoscopy (procedure)",
         "result": "We have looked at the CT and PET-CT for this patient. There is no pleural involvement and so a thoracoscopy would not be indicated. This request has been cancelled."
     },
-    "10847001": {
+    "Bronchoscopy (procedure)": {
         "name": "Bronchoscopy",
-        "ref_name": "Bronchoscopy (procedure)",
         "result": "We have looked at the CT and PET-CT for this patient. There is no nodular disease that would be accessible via transbronchial biopsy. Hence, bronchoscopy is not indicated and we have cancelled this request."
     },
-    "91602002": {
+    "Thoracentesis (procedure)": {
         "name": "Pleural tap",
-        "ref_name": "Thoracentesis (procedure)",
         "result": "We have looked at the CT and PET-CT for this patient. There is no pleural involvement and no pleural fluid. Hence, we have cancelled this request."
     },
-    "447346005": {
+    "Cardiopulmonary exercise test (procedure)": {
         "name": "CPET",
-        "ref_name": " Cardiopulmonary exercise test (procedure)",
+        "ref_name": " ",
         "result": "Satisfactory results. Patient fit enough for surgery."
     },
-    "871661000000106": {
+    "Referral to smoking cessation service (procedure)": {
         "name": "Smoking cessation referral",
-        "ref_name": "Referral to smoking cessation service (procedure)",
         "result": "Many thanks for a referral for this patient. We have called them to assess their smoking status, and they inform us that they have not smoked in 2 years. Hence, we will no get involved further with this patient."
     },
-    "396550006": {
+    "Blood test (procedure)": {
         "name": "Bloods",
-        "ref_name": "Blood test (procedure)",
         "result": "Urea & electrolytes, liver function tests, bone profile, full blood count and clotting were all normal."
     }
 }
