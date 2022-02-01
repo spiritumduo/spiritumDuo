@@ -207,6 +207,8 @@ const DecisionPointPage = (
     (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
   );
   const onPathwayId = data.getPatient.onPathways?.[0].id;
+
+  // PREVIOUS TEST RESULTS
   const previousTestResults = data.getPatient.onPathways?.[0].decisionPoints?.flatMap(
     (dp) => (
       dp.milestones
@@ -217,6 +219,7 @@ const DecisionPointPage = (
                 id: ms.testResult?.id,
                 milestoneName: ms.milestoneType.name,
                 description: ms.testResult?.description,
+                addedAt: ms.testResult.addedAt,
               }
               : []
           ),
@@ -224,7 +227,7 @@ const DecisionPointPage = (
         : []
     ),
   );
-
+  previousTestResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
   console.log(previousTestResults);
   return (
     <div>

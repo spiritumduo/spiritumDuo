@@ -54,7 +54,7 @@ const milestones = [
     testResult: {
       id: '2',
       description: 'CT Thorax description from CH1',
-      addedAt: new Date('2021-12-14'),
+      addedAt: new Date('2022-01-07'),
     },
     milestoneType: {
       name: 'CT Thorax',
@@ -80,7 +80,7 @@ const milestones = [
     testResult: {
       id: '4',
       description: 'Lung function description from CH3',
-      addedAt: new Date('2022-01-06'),
+      addedAt: new Date('2022-01-16'),
     },
     milestoneType: {
       name: 'Lung function',
