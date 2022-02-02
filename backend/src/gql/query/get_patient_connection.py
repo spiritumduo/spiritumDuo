@@ -1,7 +1,6 @@
 import logging
 
-from sqlalchemy import or_, and_, outerjoin, join
-
+from sqlalchemy import or_, and_, outerjoin, join, distinct, not_, exists, select
 from dataloaders import PatientByIdLoader
 from .query_type import query
 from models import OnPathway, DecisionPoint, Milestone, db
@@ -30,25 +29,38 @@ async def get_patient_connection(
     if before is None and after is None and first is None:
         raise ValueError("Require first argument if no cursors present")
 
-    db_query = OnPathway.query.where(OnPathway.pathway_id == int(pathwayId))\
+    db_query=db.select([OnPathway.patient_id.label("patient_id")], distinct=True)\
+        .where(OnPathway.pathway_id == int(pathwayId))\
         .where(OnPathway.is_discharged == isDischarged)
-    if awaitingDecisionType is not None:
-        db_query = db_query.where(OnPathway.awaiting_decision_type == awaitingDecisionType)
+    if outstanding:
+        db_query.select_from(
+            db.join(OnPathway, DecisionPoint, OnPathway.id == DecisionPoint.on_pathway_id, isouter=True)\
+            .join(Milestone, DecisionPoint.id == Milestone.decision_point_id, isouter=True)
+        )\
+            .where(
+                or_(
+                    and_(
+                        Milestone.fwd_decision_point_id.is_(None), 
+                        Milestone.current_state == MilestoneState.COMPLETED
+                    ),
+                    DecisionPoint.id.is_(None)
+                )
+            )
+    if awaitingDecisionType is not None: db_query=db_query.where(OnPathway.awaiting_decision_type == awaitingDecisionType)
+            
 
-    if outstanding is True:
-        subquery = db_query.alias(name="on_pathway_alias")
-        join_query = subquery\
-            .outerjoin(DecisionPoint, subquery.columns.id == DecisionPoint.on_pathway_id)\
-            .outerjoin(Milestone, DecisionPoint.id == Milestone.decision_point_id)
-        db_query = db.select([join_query])\
-            .where(or_(
-                and_(Milestone.fwd_decision_point_id.is_(None), Milestone.current_state == MilestoneState.COMPLETED),
-                DecisionPoint.id.is_(None)
-            ))
-
-    db_query.order_by(OnPathway.added_at.asc())
     all_patients_on_pathways = await db_query.gino.all()
     patients_ids = [pp.patient_id for pp in all_patients_on_pathways]
+    unique={}
+    dups=[]
+    for id in patients_ids:
+        if id in unique:
+            if id not in dups:
+                dups.append(id)
+        unique[id]=True
+    print(dups)
+
+    # print(patients_ids)
     patients = await PatientByIdLoader.load_many_from_id(info.context, patients_ids)
 
     return make_connection(patients, before, after, first, last)
