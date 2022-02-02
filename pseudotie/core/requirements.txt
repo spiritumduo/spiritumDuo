@@ -1,6 +1,6 @@
 typing_extensions==3.10.0.2
 uvicorn==0.15.0
-starlette==0.18.0
+starlette==0.16.0
 gino==1.0.1
 alembic==1.7.5
 psycopg2==2.9.2
