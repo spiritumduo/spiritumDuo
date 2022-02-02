@@ -211,12 +211,8 @@ class PseudoTrustAdapter(TrustAdapter):
         )
 
         tie_milestone=json.loads(result.text)
-        try:
-            _added_at=datetime.strptime(tie_milestone['added_at'], "%Y-%m-%dT%H:%M:%S")
-            _updated_at=datetime.strptime(tie_milestone['updated_at'], "%Y-%m-%dT%H:%M:%S")
-        except ValueError:
-            _added_at=datetime.strptime(tie_milestone['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
-            _updated_at=datetime.strptime(tie_milestone['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
+        _added_at = datetime.fromisoformat(tie_milestone['added_at'])
+        _updated_at = datetime.fromisoformat(tie_milestone['updated_at'])
         
         return Milestone_IE(
             id=tie_milestone['id'],
@@ -234,12 +230,8 @@ class PseudoTrustAdapter(TrustAdapter):
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
 
-        try:
-            _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S")
-            _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
-        except ValueError:
-            _added_at=datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
-            _updated_at=datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
+        _added_at = datetime.fromisoformat(record['added_at'])
+        _updated_at = datetime.fromisoformat(record['updated_at'])
         
         return Milestone_IE(
             id=record['id'],
@@ -264,12 +256,8 @@ class PseudoTrustAdapter(TrustAdapter):
             if res is not None:
                 res_data = json.loads(res.text)
                 for record in res_data:
-                    try:
-                        _added_at = datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S")
-                        _updated_at = datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S")
-                    except ValueError:
-                        _added_at = datetime.strptime(record['added_at'], "%Y-%m-%dT%H:%M:%S.%f")
-                        _updated_at = datetime.strptime(record['updated_at'], "%Y-%m-%dT%H:%M:%S.%f")
+                    _added_at = datetime.fromisoformat(record['added_at'])
+                    _updated_at = datetime.fromisoformat(record['updated_at'])
                     return_list.append(
                         Milestone_IE(
                             id=record['id'],
