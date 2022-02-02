@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
 import { AuthContext, PathwayContext } from 'app/context';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Patient from 'types/Patient';
 import { DecisionPointType } from 'types/DecisionPoint';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
@@ -14,6 +14,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
 import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
+import './decisionpoint.css';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -35,6 +36,16 @@ export const GET_PATIENT_QUERY = gql`
           decisionPoints {
             clinicHistory
             comorbidities
+            milestones {
+              testResult {
+                id
+                description
+                addedAt
+              }
+              milestoneType {
+                name
+              }
+            }
           }
         }
       }
@@ -197,6 +208,26 @@ const DecisionPointPage = (
   );
   const onPathwayId = data.getPatient.onPathways?.[0].id;
 
+  // PREVIOUS TEST RESULTS
+  const previousTestResults = data.getPatient.onPathways?.[0].decisionPoints?.flatMap(
+    (dp) => (
+      dp.milestones
+        ? dp.milestones?.flatMap(
+          (ms) => (
+            ms.testResult?.description
+              ? {
+                id: ms.testResult?.id,
+                milestoneName: ms.milestoneType.name,
+                description: ms.testResult?.description,
+                addedAt: ms.testResult.addedAt,
+              }
+              : []
+          ),
+        )
+        : []
+    ),
+  );
+  previousTestResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
   return (
     <div>
       <section>
@@ -221,6 +252,14 @@ const DecisionPointPage = (
                       <div className="form-outline mb-4">
                         <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
                       </div>
+                      {
+                        previousTestResults?.map((result) => (
+                          <div className="row" key={ `tr-${result.id}` }>
+                            <div className="col-3"><p className="text-right">{ result.milestoneName }:</p></div>
+                            <div className="col">{ result.description }</div>
+                          </div>
+                        ))
+                      }
 
                       <div className="form-outline mb-4">
                         <label className="form-label" htmlFor="clinicHistory">Clinical history

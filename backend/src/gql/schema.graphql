@@ -134,6 +134,7 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
+    testResults: [TestResult!]
 }
 
 type User {

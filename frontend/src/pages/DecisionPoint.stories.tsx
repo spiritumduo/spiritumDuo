@@ -32,6 +32,71 @@ const milestoneTypes = [
     name: 'MRI Head',
   },
 ];
+
+const milestones = [
+  {
+    testResult: null,
+    milestoneType: {
+      name: 'MRI Head',
+    },
+  },
+  {
+    testResult: {
+      id: '1',
+      description: 'X-Ray description from CH1',
+      addedAt: new Date('2021-12-12'),
+    },
+    milestoneType: {
+      name: 'X-Ray',
+    },
+  },
+  {
+    testResult: {
+      id: '2',
+      description: 'CT Thorax description from CH1',
+      addedAt: new Date('2022-01-07'),
+    },
+    milestoneType: {
+      name: 'CT Thorax',
+    },
+  },
+  {
+    testResult: {
+      id: '3',
+      description: 'EBUS description from CH2',
+      addedAt: new Date('2022-01-02'),
+    },
+    milestoneType: {
+      name: 'EBUS',
+    },
+  },
+  {
+    testResult: null,
+    milestoneType: {
+      name: 'MRI Head',
+    },
+  },
+  {
+    testResult: {
+      id: '4',
+      description: 'Lung function description from CH3',
+      addedAt: new Date('2022-01-16'),
+    },
+    milestoneType: {
+      name: 'Lung function',
+    },
+  },
+  {
+    testResult: {
+      id: '5',
+      description: 'PET-CT description from CH3',
+      addedAt: new Date('2022-01-06'),
+    },
+    milestoneType: {
+      name: 'PET-CT',
+    },
+  },
+];
 const apolloMocks = [
   {
     request: {
@@ -57,18 +122,32 @@ const apolloMocks = [
                 {
                   clinicHistory: 'Clinic History 1',
                   comorbidities: 'Comorbidities 1',
+                  milestones: [
+                    milestones[0],
+                    milestones[1],
+                    milestones[2],
+                  ],
                 },
                 {
                   clinicHistory: 'Clinic History 2',
                   comorbidities: 'Comorbidities 2',
+                  milestones: [
+                    milestones[3],
+                    milestones[4],
+                  ],
                 },
                 {
                   clinicHistory: 'Clinic History 3',
                   comorbidities: 'Comorbidities 3',
+                  milestones: [
+                    milestones[5],
+                    milestones[6],
+                  ],
                 },
                 {
                   clinicHistory: 'Clinic History 4',
                   comorbidities: 'Comorbidities 4',
+                  milestones: null,
                 },
               ],
             },
@@ -182,6 +261,7 @@ Default.args = {
   decisionType: DecisionPointType.TRIAGE,
 };
 Default.parameters = {
+  milestones: milestones,
   apolloClient: {
     mocks: apolloMocks,
   },

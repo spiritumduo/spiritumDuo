@@ -64,6 +64,22 @@ describe('When page loads', () => {
     );
   });
 
+  it('Should display previous test results', async () => {
+    const testResultPromises = Default.parameters?.milestones.flatMap(
+      (ms: any) => waitFor(
+        () => (
+          ms.testResult
+            ? [
+              expect(screen.getAllByText(new RegExp(ms.milestoneType.name, 'i')).length).toBeGreaterThan(0),
+              expect(screen.getByText(new RegExp(ms.testResult.description, 'i'))).toBeInTheDocument(),
+            ]
+            : []
+        ),
+      ),
+    );
+    await Promise.all(testResultPromises);
+  });
+
   it('Should report success on form submission without milestones', async () => {
     const clinicalHistoryText = '{selectall}New Clinic History';
     const comorbiditiesText = '{selectall}New Comorbidities';

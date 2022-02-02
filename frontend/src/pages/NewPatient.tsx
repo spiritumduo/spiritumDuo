@@ -51,7 +51,7 @@ const NewPatientPage = (): JSX.Element => {
   const [addPatient, { data, loading, error }] = useMutation(ADD_PATIENT_MUTATION);
   const { currentPathwayId } = useContext(PathwayContext);
 
-  const useSubmit = (mutation: typeof addPatient, values: FormValues) => {
+  const doSubmit = (mutation: typeof addPatient, values: FormValues) => {
     const ourValues = {
       ...values,
       dateOfBirth: new Date(values.dateOfBirth),
@@ -80,7 +80,7 @@ const NewPatientPage = (): JSX.Element => {
           <div className="container py-5 h-100">
             <div className="row d-flex justify-content-center align-items-center h-100">
               <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
-                <form className="card-body p-5" onSubmit={ handleSubmit(() => { useSubmit(addPatient, getValues()); }) }>
+                <form className="card-body p-5" onSubmit={ handleSubmit(() => { doSubmit(addPatient, getValues()); }) }>
                   <div className="form-group mb-2">
                     <h5>Please enter details below to add a new patient</h5>
                   </div>
