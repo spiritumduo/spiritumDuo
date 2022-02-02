@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Union
 from datetime import date, datetime
 from dataclasses import dataclass
-from common import DateStringToDateObject
+
 
 @dataclass
 class Patient_IE:
@@ -33,7 +33,7 @@ class Milestone_IE:
         self.added_at=added_at
         self.updated_at=updated_at
         self.test_result=test_result
-       
+
 
 
 class TrustAdapter(ABC):
@@ -200,7 +200,7 @@ class PseudoTrustAdapter(TrustAdapter):
         milestoneType:MilestoneType=await MilestoneType.get(int(milestone.milestone_type_id))
         typeReferenceName=milestoneType.ref_name
         params['typeReferenceName'] = typeReferenceName
-        
+
         if milestone.current_state:
             params['currentState'] = milestone.current_state
         if milestone.added_at:
@@ -215,12 +215,10 @@ class PseudoTrustAdapter(TrustAdapter):
                 cookies={"SDSESSION": auth_token}
             )
 
-        
         tie_milestone=json.loads(result.text)
+        _added_at = datetime.fromisoformat(tie_milestone['added_at'])
+        _updated_at = datetime.fromisoformat(tie_milestone['updated_at'])
         
-        _added_at=DateStringToDateObject(tie_milestone['added_at'])
-        _updated_at=DateStringToDateObject(tie_milestone['updated_at'])
-
         return Milestone_IE(
             id=tie_milestone['id'],
             current_state=tie_milestone['current_state'],
@@ -237,8 +235,8 @@ class PseudoTrustAdapter(TrustAdapter):
             raise Exception(f"HTTP{result.status_code} received")
         record=json.loads(result.text)
 
-        _added_at=DateStringToDateObject(record['added_at'])
-        _updated_at=DateStringToDateObject(record['updated_at'])
+        _added_at = datetime.fromisoformat(record['added_at'])
+        _updated_at = datetime.fromisoformat(record['updated_at'])
         
         return Milestone_IE(
             id=record['id'],
@@ -263,10 +261,10 @@ class PseudoTrustAdapter(TrustAdapter):
             if res is not None:
                 res_data = json.loads(res.text)
                 for record in res_data:
-                    _added_at=DateStringToDateObject(record['added_at'])
-                    _updated_at=DateStringToDateObject(record['updated_at'])
+                    _added_at = datetime.fromisoformat(record['added_at'])
+                    _updated_at = datetime.fromisoformat(record['updated_at'])
                     if record['test_result']['added_at']:
-                        record['test_result']['added_at']=DateStringToDateObject(record['test_result']['added_at'])
+                        record['test_result']['added_at'] = datetime.fromisoformat(record['test_result']['added_at'])
 
                     return_list.append(
                         Milestone_IE(

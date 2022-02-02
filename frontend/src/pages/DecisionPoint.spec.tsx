@@ -64,20 +64,24 @@ describe('When page loads', () => {
     );
   });
 
+  /**
+   * @jest-environment jsdom
+   */
   it('Should display previous test results', async () => {
-    const testResultPromises = Default.parameters?.milestones.flatMap(
-      (ms: any) => waitFor(
-        () => (
-          ms.testResult
-            ? [
-              expect(screen.getAllByText(new RegExp(ms.milestoneType.name, 'i')).length).toBeGreaterThan(0),
-              expect(screen.getByText(new RegExp(ms.testResult.description, 'i'))).toBeInTheDocument(),
-            ]
-            : []
-        ),
-      ),
-    );
-    await Promise.all(testResultPromises);
+    await waitFor(() => {
+      Default.parameters?.milestones.forEach((ms) => {
+        if (ms.testResult) {
+          expect(screen.getAllByText(new RegExp(ms.milestoneType.name, 'i')).length).toBeGreaterThan(0);
+          expect(screen.getByText(new RegExp(ms.testResult.description, 'i'))).toBeVisible();
+        }
+      });
+    });
+  });
+
+  it('Should open test results when clicked', async () => {
+    // This probably requires visual regression testing, because getting computed CSS
+    // in jest-dom is hard
+    expect(false).toBeTruthy();
   });
 
   it('Should report success on form submission without milestones', async () => {
