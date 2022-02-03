@@ -135,6 +135,7 @@ type OnPathway {
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
     testResults: [TestResult!]
+    underCareOf: User
 }
 
 type User {
