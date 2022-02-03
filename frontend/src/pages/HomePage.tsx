@@ -29,6 +29,8 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
             pathwayId={ pathwayId.toString() }
             patientsToDisplay={ patientsPerPage }
             linkFactory={ linkFactory }
+            outstanding
+            underCareOf
           />
         </div>
       </div>

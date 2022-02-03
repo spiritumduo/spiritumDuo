@@ -29,6 +29,7 @@ const AllPatients = ({ patientsPerPage }: AllPatientsProps): JSX.Element => {
             patientsToDisplay={ patientsPerPage }
             linkFactory={ linkFactory }
             outstanding={ false }
+            underCareOf={ false }
           />
         </div>
       </div>
