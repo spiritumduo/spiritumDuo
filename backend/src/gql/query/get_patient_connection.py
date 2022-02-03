@@ -33,7 +33,7 @@ async def get_patient_connection(
         .where(OnPathway.pathway_id == int(pathwayId))\
         .where(OnPathway.is_discharged == isDischarged)
     if outstanding:
-        db_query.select_from(
+        db_query=db_query.select_from(
             db.join(OnPathway, DecisionPoint, OnPathway.id == DecisionPoint.on_pathway_id, isouter=True)\
             .join(Milestone, DecisionPoint.id == Milestone.decision_point_id, isouter=True)
         )
