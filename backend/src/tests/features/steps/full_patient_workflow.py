@@ -294,7 +294,8 @@ def step_impl(context):
 
     async def updateMilestonesToCompleted():
         Milestone.update.values(current_state=MilestoneState.COMPLETED)\
-        .where(Milestone.id==context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['id']).gino.status()
+            .where(Milestone.id==context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['id'])\
+            .gino.status()
 
 
     loop = asyncio.get_event_loop()
@@ -434,6 +435,10 @@ def step_impl(context):
                             addedAt
                             updatedAt
                             referredAt
+                            underCareOf {
+                                id
+                                username
+                            }
                             decisionPoints{
                                 id
                                 clinician{
@@ -511,6 +516,8 @@ def step_impl(context):
     assert_that(onPathway['addedAt'], not_none())
     assert_that(onPathway['updatedAt'], not_none())
     assert_that(onPathway['referredAt'], not_none())
+    assert_that(onPathway['underCareOf']['id'], equal_to(str(context.user.id)))
+    assert_that(onPathway['underCareOf']['username'], equal_to(context.user.username))
 
     assert_that(onPathway_Patient['id'], not_none())
     assert_that(onPathway_Patient['firstName'], equal_to(PATIENT['firstName']))
