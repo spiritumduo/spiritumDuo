@@ -265,7 +265,8 @@ class PseudoTrustAdapter(TrustAdapter):
                 for record in res_data:
                     _added_at=DateStringToDateObject(record['added_at'])
                     _updated_at=DateStringToDateObject(record['updated_at'])
-                    if record['test_result']['added_at']:
+
+                    if record['test_result']:
                         record['test_result']['added_at']=DateStringToDateObject(record['test_result']['added_at'])
 
                     return_list.append(
