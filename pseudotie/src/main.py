@@ -216,7 +216,7 @@ async def post_milestone(request: Request, my_input: MilestoneInput):
         "current_state":milestone.current_state.value,
         "added_at":milestone.added_at.isoformat(),
         "updated_at":milestone.updated_at.isoformat(),
-        "test_result":{}
+        "test_result":None
     }, background=bg)
 
 
@@ -241,16 +241,19 @@ async def milestones(request: Request, input: List[str]):
     if milestones is not None:
         res = []
         for milestone in milestones:
+            test_result=None
+            if milestone.test_result_id is not None:
+                test_result={
+                    "id": milestone.test_result_id,
+                    "added_at": milestone.test_result_added_at,
+                    "description": milestone.test_result_description
+                }
             res.append({
                 "id": milestone.id,
                 "current_state": milestone.current_state,
                 "added_at": milestone.added_at,
                 "updated_at": milestone.updated_at,
-                "test_result":{
-                    "id": milestone.test_result_id,
-                    "added_at": milestone.test_result_added_at,
-                    "description": milestone.test_result_description
-                }
+                "test_result":test_result
             })
         return res
     else:
@@ -280,16 +283,19 @@ async def milestone_id(request: Request, id: str=None):
             .where(Milestone.id==id)\
             .gino.all()
         if milestone:
+            test_result=None
+            if milestone.test_result_id is not None:
+                test_result={
+                    "id": milestone.test_result_id,
+                    "added_at": milestone.test_result_added_at,
+                    "description": milestone.test_result_description
+                }
             return {
                 "id":milestone.id,
                 "current_state":milestone.current_state,
                 "added_at":milestone.added_at,
                 "updated_at":milestone.updated_at,
-                "test_result":{
-                    "id": milestone.test_result_id,
-                    "added_at": milestone.test_result_added_at,
-                    "description": milestone.test_result_description
-                }
+                "test_result":test_result
             }
         else:
             return None

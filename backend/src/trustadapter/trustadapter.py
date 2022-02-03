@@ -263,7 +263,7 @@ class PseudoTrustAdapter(TrustAdapter):
                 for record in res_data:
                     _added_at = datetime.fromisoformat(record['added_at'])
                     _updated_at = datetime.fromisoformat(record['updated_at'])
-                    if record['test_result']['added_at']:
+                    if record['test_result']:
                         record['test_result']['added_at'] = datetime.fromisoformat(record['test_result']['added_at'])
 
                     return_list.append(
