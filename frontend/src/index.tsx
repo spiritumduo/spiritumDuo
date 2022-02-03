@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+// Bootstrap imports first so other modules can override
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/client';

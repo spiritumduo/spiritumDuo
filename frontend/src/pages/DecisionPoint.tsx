@@ -13,6 +13,7 @@ import { createDecisionPointVariables, createDecisionPoint } from 'pages/__gener
 import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
+import { Button, Collapse } from 'react-bootstrap';
 import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
 import './decisionpoint.css';
 
@@ -91,6 +92,56 @@ type DecisionPointPageForm = {
   }[];
 };
 
+const usePreviousTestResults = (data: GetPatient | undefined ) => {
+  interface CollapseState {
+    [elementId: string]: boolean;
+  }
+  const [testResultCollapseStates, setTestResultCollapseStates] = useState<CollapseState>({});
+  interface TestResultData {
+    id: string;
+    key: string;
+    elementId: string;
+    milestoneName: string;
+    description: string;
+    addedAt: Date;
+  }
+  const [previousTestResults, setPreviousTestResults] = useState<TestResultData[]>([]);
+
+  useEffect(() => {
+    // we could do this transformation outside of the effect hook, but then we'd have to silence the
+    // linter and lie in our dependancy array.
+    const testResults = data?.getPatient?.onPathways?.[0].decisionPoints?.flatMap(
+      (dp) => (
+        dp.milestones
+          ? dp.milestones?.flatMap(
+            (ms) => (
+              ms.testResult?.description
+                ? {
+                  id: ms.testResult.id,
+                  key: `tr-${ms.testResult.id}`,
+                  elementId: `tr-href-${ms.testResult.id}`,
+                  milestoneName: ms.milestoneType.name,
+                  description: ms.testResult?.description,
+                  addedAt: ms.testResult.addedAt,
+                }
+                : []
+            ),
+          )
+          : []
+      ),
+    );
+    testResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
+    const collapseStates: CollapseState = {};
+    testResults?.forEach((tr) => {
+      collapseStates[tr.elementId] = false;
+    });
+    if (testResults) setPreviousTestResults(testResults);
+    if (collapseStates) setTestResultCollapseStates(collapseStates);
+  }, [data]);
+
+  return { testResultCollapseStates, setTestResultCollapseStates, previousTestResults };
+};
+
 const DecisionPointPage = (
   { hospitalNumber, decisionType }: DecisionPointPageProps,
 ): JSX.Element => {
@@ -137,24 +188,25 @@ const DecisionPointPage = (
     control: control,
   });
 
-  const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-    ? data?.getMilestoneTypes?.map((milestoneType) => ({
-      id: '',
-      milestoneTypeId: milestoneType.id,
-      name: milestoneType.name,
-      checked: false,
-    }))
-    : [];
-
-  // This seems kind of gnarly, but every other way I tried resulted in infinite loops
-  const [hasRenderedCheckboxes, updateHasRenderedCheckboxes] = useState(false);
   useEffect(() => {
-    if (fieldProps.length !== 0 && !hasRenderedCheckboxes) {
-      updateHasRenderedCheckboxes(true);
-      append(fieldProps);
-    }
-  });
+    const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
+      ? data?.getMilestoneTypes?.map((milestoneType) => ({
+        id: '',
+        milestoneTypeId: milestoneType.id,
+        name: milestoneType.name,
+        checked: false,
+      }))
+      : [];
+    append(fieldProps);
+    // }
+  }, [data, append]);
 
+  // PREVIOUS TEST RESULTS
+  const {
+    testResultCollapseStates,
+    setTestResultCollapseStates,
+    previousTestResults,
+  } = usePreviousTestResults(data);
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
@@ -208,26 +260,6 @@ const DecisionPointPage = (
   );
   const onPathwayId = data.getPatient.onPathways?.[0].id;
 
-  // PREVIOUS TEST RESULTS
-  const previousTestResults = data.getPatient.onPathways?.[0].decisionPoints?.flatMap(
-    (dp) => (
-      dp.milestones
-        ? dp.milestones?.flatMap(
-          (ms) => (
-            ms.testResult?.description
-              ? {
-                id: ms.testResult?.id,
-                milestoneName: ms.milestoneType.name,
-                description: ms.testResult?.description,
-                addedAt: ms.testResult.addedAt,
-              }
-              : []
-          ),
-        )
-        : []
-    ),
-  );
-  previousTestResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
   return (
     <div>
       <section>
@@ -254,9 +286,29 @@ const DecisionPointPage = (
                       </div>
                       {
                         previousTestResults?.map((result) => (
-                          <div className="row" key={ `tr-${result.id}` }>
-                            <div className="col-3"><p className="text-right">{ result.milestoneName }:</p></div>
-                            <div className="col">{ result.description }</div>
+                          <div className="row" key={ result.key }>
+                            <div className="col-3">
+                              <p className="text-right">
+                                <Button
+                                  onClick={ () => {
+                                    const newCollapseStates = { ...testResultCollapseStates };
+                                    newCollapseStates[
+                                      result.elementId
+                                    ] = !testResultCollapseStates[result.elementId];
+                                    setTestResultCollapseStates(newCollapseStates);
+                                  } }
+                                  aria-controls="example-collapse-text"
+                                  aria-expanded={ testResultCollapseStates[result.elementId] }
+                                >
+                                  { result.milestoneName }:
+                                </Button>
+                              </p>
+                            </div>
+                            <div className="col" id={ result.elementId }>
+                              <Collapse in={ testResultCollapseStates[result.elementId] }>
+                                <div>{ result.description }</div>
+                              </Collapse>
+                            </div>
                           </div>
                         ))
                       }
