@@ -51,15 +51,6 @@ async def get_patient_connection(
 
     all_patients_on_pathways = await db_query.gino.all()
     patients_ids = [pp.patient_id for pp in all_patients_on_pathways]
-    unique={}
-    dups=[]
-    for id in patients_ids:
-        if id in unique:
-            if id not in dups:
-                dups.append(id)
-        unique[id]=True
-    print(dups)
-
     patients = await PatientByIdLoader.load_many_from_id(info.context, patients_ids)
 
     return make_connection(patients, before, after, first, last)
