@@ -7,10 +7,10 @@ import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatient
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
-    $pathwayId:ID!, $first:Int, $after: String, $outstanding: Boolean
+    $pathwayId:ID!, $first:Int, $after: String, $outstanding: Boolean, $underCareOf: Boolean
   ){
     getPatientOnPathwayConnection(
-      pathwayId:$pathwayId, first:$first, after: $after, outstanding: $outstanding
+      pathwayId:$pathwayId, first:$first, after: $after, outstanding: $outstanding, underCareOf: $underCareOf
     ) {
       totalCount
       pageInfo {
@@ -44,7 +44,7 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  pathwayId: string, first: number, outstanding: boolean, cursor?: string,
+  pathwayId: string, first: number, outstanding: boolean, underCareOf: boolean, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
@@ -52,6 +52,7 @@ const usePatientsForPathwayQuery = (
       first: first,
       after: cursor,
       outstanding: outstanding,
+      underCareOf: underCareOf,
     },
     notifyOnNetworkStatusChange: true,
     fetchPolicy: 'no-cache',
@@ -82,6 +83,7 @@ export interface WrappedPatientListProps {
   patientsToDisplay: number;
   linkFactory: (patient: QueryPatient) => JSX.Element;
   outstanding?: boolean;
+  underCareOf?: boolean;
 }
 
 const WrappedPatientList = ({
@@ -89,13 +91,14 @@ const WrappedPatientList = ({
   patientsToDisplay,
   linkFactory,
   outstanding = true,
+  underCareOf = false,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
     error,
     data,
     fetchMore,
-  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, outstanding);
+  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, outstanding, underCareOf);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   let listElements: JSX.Element[];
