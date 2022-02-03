@@ -9,6 +9,12 @@ import { PatientCommunicationMethods } from "./../../../__generated__/globalType
 // GraphQL query operation: GetPatient
 // ====================================================
 
+export interface GetPatient_getPatient_onPathways_underCareOf {
+  __typename: "User";
+  firstName: string;
+  lastName: string;
+}
+
 export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult {
   __typename: "TestResult";
   id: string;
@@ -37,6 +43,7 @@ export interface GetPatient_getPatient_onPathways_decisionPoints {
 export interface GetPatient_getPatient_onPathways {
   __typename: "OnPathway";
   id: string;
+  underCareOf: GetPatient_getPatient_onPathways_underCareOf | null;
   decisionPoints: GetPatient_getPatient_onPathways_decisionPoints[] | null;
 }
 

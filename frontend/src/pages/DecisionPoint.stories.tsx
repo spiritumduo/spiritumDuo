@@ -118,6 +118,10 @@ const apolloMocks = [
           onPathways: [
             {
               id: '1',
+              underCareOf: {
+                firstName: 'John',
+                lastName: 'Doe',
+              },
               decisionPoints: [
                 {
                   clinicHistory: 'Clinic History 1',
