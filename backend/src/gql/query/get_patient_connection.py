@@ -36,8 +36,8 @@ async def get_patient_connection(
         db_query.select_from(
             db.join(OnPathway, DecisionPoint, OnPathway.id == DecisionPoint.on_pathway_id, isouter=True)\
             .join(Milestone, DecisionPoint.id == Milestone.decision_point_id, isouter=True)
-        )\
-            .where(
+        )
+        db_query=db_query.where(
                 or_(
                     and_(
                         Milestone.fwd_decision_point_id.is_(None), 
@@ -60,7 +60,6 @@ async def get_patient_connection(
         unique[id]=True
     print(dups)
 
-    # print(patients_ids)
     patients = await PatientByIdLoader.load_many_from_id(info.context, patients_ids)
 
     return make_connection(patients, before, after, first, last)
