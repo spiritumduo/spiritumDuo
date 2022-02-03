@@ -34,6 +34,10 @@ export const GET_PATIENT_QUERY = gql`
 
         onPathways(pathwayId: $pathwayId, isDischarged: false) {
           id
+          underCareOf {
+            firstName
+            lastName
+          }
           decisionPoints {
             clinicHistory
             comorbidities
@@ -259,6 +263,7 @@ const DecisionPointPage = (
     (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
   );
   const onPathwayId = data.getPatient.onPathways?.[0].id;
+  const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
   return (
     <div>
@@ -281,8 +286,19 @@ const DecisionPointPage = (
                     <p>{ error?.message }</p>
 
                     <div className="container pt-1">
-                      <div className="form-outline mb-4">
-                        <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
+                      <div className="form-outline mb-4 row">
+                        <div className="col">
+                          <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
+                        </div>
+                        <div className="col">
+                          {
+                            underCareOf
+                              ? (
+                                <>Under Care Of: {`${underCareOf.firstName} ${underCareOf.lastName}`}</>
+                              )
+                              : ''
+                          }
+                        </div>
                       </div>
                       {
                         previousTestResults?.map((result) => (

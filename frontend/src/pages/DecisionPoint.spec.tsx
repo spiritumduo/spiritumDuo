@@ -64,9 +64,6 @@ describe('When page loads', () => {
     );
   });
 
-  /**
-   * @jest-environment jsdom
-   */
   it('Should display previous test results', async () => {
     await waitFor(() => {
       Default.parameters?.milestones.forEach((ms) => {
@@ -78,10 +75,19 @@ describe('When page loads', () => {
     });
   });
 
-  it('Should open test results when clicked', async () => {
+  it('Should open test results when clicked', () => {
     // This probably requires visual regression testing, because getting computed CSS
     // in jest-dom is hard
     expect(false).toBeTruthy();
+  });
+
+  it('Should show clinician under care of', async () => {
+    const clinician = Default
+      .parameters?.apolloClient.mocks[0]
+      .result.data.getPatient.onPathways?.[0].underCareOf;
+    await waitFor(() => {
+      expect(screen.getByText(new RegExp(`under care of:\\s${clinician.firstName}\\s${clinician.lastName}`, 'i')));
+    });
   });
 
   it('Should report success on form submission without milestones', async () => {
