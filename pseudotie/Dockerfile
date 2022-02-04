@@ -5,7 +5,7 @@ RUN apt update && apt install -y gcc libpq-dev cron
 WORKDIR /app
 COPY . .
 
-RUN python -m pip install --upgrade pip && pip install -r requirements.txt
+RUN python -m pip install --upgrade pip && pip install -r core/requirements.txt
 
 RUN ["chmod", "+x", "/app/core/entrypoint"]
 WORKDIR /app/src
