@@ -14,6 +14,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse } from 'react-bootstrap';
+import { ArrowDownShort } from 'react-bootstrap-icons';
 import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
 import './decisionpoint.css';
 
@@ -270,7 +271,7 @@ const DecisionPointPage = (
       <section>
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
+            <div className="card shadow-2-strong col-12 col-md-10">
               <form className="card-body p-5" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
                 <fieldset disabled={ loading || mutateLoading || isSubmitted }>
                   <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
@@ -305,25 +306,45 @@ const DecisionPointPage = (
                           <div className="row" key={ result.key }>
                             <div className="col-3">
                               <p className="text-right">
-                                <Button
-                                  onClick={ () => {
-                                    const newCollapseStates = { ...testResultCollapseStates };
-                                    newCollapseStates[
-                                      result.elementId
-                                    ] = !testResultCollapseStates[result.elementId];
-                                    setTestResultCollapseStates(newCollapseStates);
-                                  } }
-                                  aria-controls="example-collapse-text"
-                                  aria-expanded={ testResultCollapseStates[result.elementId] }
-                                >
-                                  { result.milestoneName }:
-                                </Button>
+                                { result.milestoneName }:
                               </p>
                             </div>
                             <div className="col" id={ result.elementId }>
-                              <Collapse in={ testResultCollapseStates[result.elementId] }>
-                                <div>{ result.description }</div>
-                              </Collapse>
+                              {
+                                result.description.length < 30
+                                  ? <>{result.description}</>
+                                  : (
+                                    <>
+                                      { result.description.slice(0, 30) }
+                                      <Collapse in={ testResultCollapseStates[result.elementId] }>
+                                        <div>
+                                          {result.description.slice(30, result.description.length)}
+                                        </div>
+                                      </Collapse>
+                                    </>
+                                  )
+                            }
+                            </div>
+                            <div className="col">
+                              {
+                                result.description.length < 30
+                                  ? ''
+                                  : (
+                                    <Button
+                                      onClick={ () => {
+                                        const newCollapseStates = { ...testResultCollapseStates };
+                                        newCollapseStates[
+                                          result.elementId
+                                        ] = !testResultCollapseStates[result.elementId];
+                                        setTestResultCollapseStates(newCollapseStates);
+                                      } }
+                                      aria-controls="example-collapse-text"
+                                      aria-expanded={ testResultCollapseStates[result.elementId] }
+                                    >
+                                      <ArrowDownShort size="2em" />
+                                    </Button>
+                                  )
+                              }
                             </div>
                           </div>
                         ))
