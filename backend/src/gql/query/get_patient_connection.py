@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import or_, and_, outerjoin, join, distinct, not_, exists, select
+from sqlalchemy import or_, and_
 from dataloaders import PatientByIdLoader
 from .query_type import query
 from models import OnPathway, DecisionPoint, Milestone, db
@@ -13,7 +13,7 @@ from authentication.authentication import needsAuthorization
 @query.field("getPatientOnPathwayConnection")
 async def get_patient_connection(
         _, info, pathwayId=None, awaitingDecisionType=None, isDischarged=False,
-        first=None, after=None, last=None, before=None, outstanding=True
+        first=None, after=None, last=None, before=None, outstanding=True, underCareOf=False
 ):
     #  We only want to do forward OR backward pagination. Never both!
     if after is not None and before is not None:
@@ -47,7 +47,12 @@ async def get_patient_connection(
                 )
             )
     if awaitingDecisionType is not None: db_query=db_query.where(OnPathway.awaiting_decision_type == awaitingDecisionType)
-            
+    if underCareOf: db_query=db_query.where(
+        or_(
+            OnPathway.under_care_of_id == int(info.context['request']['user'].id),
+            OnPathway.under_care_of_id.is_(None)
+        ))
+        
 
     all_patients_on_pathways = await db_query.gino.all()
     patients_ids = [pp.patient_id for pp in all_patients_on_pathways]
