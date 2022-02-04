@@ -4,6 +4,7 @@ RUN apt update && apt install -y gcc libpq-dev cron
 
 WORKDIR /app
 COPY . .
+COPY core/cronjob /etc/cron.d/container_cronjob
 
 RUN python -m pip install --upgrade pip && pip install -r /app/core/requirements.txt
 
