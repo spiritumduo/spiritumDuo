@@ -3,9 +3,7 @@ FROM python:3.9-slim-bullseye
 RUN apt update && apt install -y gcc libpq-dev cron
 
 WORKDIR /app
-COPY core/requirements.txt core/entrypoint /app/core/
-COPY core/cronjob /etc/cron.d/container_cronjob
-COPY . /app
+COPY . .
 
 RUN python -m pip install --upgrade pip && pip install -r /app/core/requirements.txt
 
