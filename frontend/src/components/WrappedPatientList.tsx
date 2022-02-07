@@ -7,11 +7,15 @@ import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatient
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
-    $pathwayId:ID!, $first:Int, $after: String, $outstanding: Boolean, $underCareOf: Boolean
-  ){
+    $outstanding: Boolean, $pathwayId:ID!, $first:Int, $after: String, $underCareOf: Boolean
+  ) {
     getPatientOnPathwayConnection(
-      pathwayId:$pathwayId, first:$first, after: $after, outstanding: $outstanding, underCareOf: $underCareOf
-    ) {
+      outstanding: $outstanding, pathwayId:$pathwayId, first:$first, after: $after, underCareOf: $underCareOf
+    ) @connection(
+        key: "getPatientOnPathwayConnection",
+        filter: ["outstanding", "pathwayId", "underCareOf"]
+        )
+      {
       totalCount
       pageInfo {
         hasNextPage
@@ -48,14 +52,13 @@ const usePatientsForPathwayQuery = (
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
+      outstanding: outstanding,
       pathwayId: pathwayId,
       first: first,
       after: cursor,
-      outstanding: outstanding,
       underCareOf: underCareOf,
     },
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'no-cache',
   },
 );
 
