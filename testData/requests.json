@@ -1,0 +1,124 @@
+{
+  [
+    {
+      "name": "Chest X-ray",
+      "ref_name": "Plain chest X-ray (procedure)",
+      "ref_ID": "399208008",
+    },    
+    {
+      "name": "CT chest",
+      "ref_name": "Computed tomography of chest (procedure)",
+      "ref_ID": "169069000",
+    },
+    {
+      "name": "PET-CT",
+      "ref_name": "Positron emission tomography with computed tomography (procedure)",
+      "ref_ID": "450436003",
+    },
+    {
+      "name": "CT head - contrast",
+      "ref_name": "Computed tomography of head with contrast (procedure)",
+      "ref_ID": "711232001",
+    },
+    {
+      "name": "MRI head",
+      "ref_name": "Magnetic resonance imaging of head (procedure)",
+      "ref_ID": "241601008",
+    },
+    {
+      "name": "Lung function tests",
+      "ref_name": "Measurement of respiratory function (procedure)",
+      "ref_ID": "23426006",
+    },
+    {
+      "name": "ECHO",
+      "ref_name": "Echocardiography (procedure)",
+      "ref_ID": "40701008",
+    },
+    {
+      "name": "CT guided biopsy thorax",
+      "ref_name": "Biopsy of thorax using computed tomography guidance (procedure)",
+      "ref_ID": "440491000",
+      },
+    {
+      "name": "EBUS",
+      "ref_name": "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)",
+      "ref_ID": "844061000000101",
+    },
+    {
+      "name": "ECG",
+      "ref_name": "Electrocardiogram analysis (qualifier value)",
+      "ref_ID": "258181008",
+    },
+    {
+      "name": "Prehad referral",
+      "ref_name": "Prehabilitation (regime/therapy)",
+      "ref_ID": "786455008",
+    },
+    {
+      "name": "Dietician referral",
+      "ref_name": "Patient referral to dietitian (procedure)",
+      "ref_ID": "103699006",
+    },
+    {
+      "name": "Thoracoscopy",
+      "ref_name": "Thoracoscopy (procedure)",
+      "ref_ID": "14671001",
+    },
+    {
+      "name": "Bronchoscopy",
+      "ref_name": "Bronchoscopy (procedure)",
+      "ref_ID": "10847001",
+    },
+    {
+      "name": "Pleural tap",
+      "ref_name": "Thoracentesis (procedure)",
+      "ref_ID": "91602002",
+    },
+    {
+      "name": "CPET",
+      "ref_name": " Cardiopulmonary exercise test (procedure)",
+      "ref_ID": "447346005",
+    },
+    {
+      "name": "Smoking cessation referral",
+      "ref_name": "Referral to smoking cessation service (procedure)",
+      "ref_ID": "871661000000106",
+    },
+    {
+      "name": "Bloods",
+      "ref_name": "Blood test (procedure)",
+      "ref_ID": "396550006",
+    },
+    {
+      "name": "Refer to thoracic surgeons",
+      "ref_name": "",
+      "ref_ID": "",
+    },
+    {
+      "name": "Refer to oncology",
+      "ref_name": "",
+      "ref_ID": "",
+    },
+    {
+      "name": "Refer to palliative care",
+      "ref_name": "",
+      "ref_ID": "",
+    },
+    {
+      "name": "Refer to other speciality",
+      "ref_name": "",
+      "ref_ID": "",
+    },
+    {
+      "name": "Discharge",
+      "ref_name": "",
+      "ref_ID": "",
+    },
+    {
+      "name": "Acknowledge new tests only",
+      "ref_name": "",
+      "ref_ID": "",
+    },
+  ]
+}
