@@ -1,4 +1,4 @@
-from models import DecisionPoint, Milestone
+from models import DecisionPoint, Milestone, OnPathway
 from gettext import gettext as _
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -27,10 +27,12 @@ async def CreateDecisionPoint(
 ):
     if context is None:
         raise ReferencedItemDoesNotExistError("Context is not provided")
+    on_pathway_id = int(on_pathway_id)
+    clinician_id = int(clinician_id)
 
     decision_point_details={
-        "on_pathway_id": int(on_pathway_id),
-        "clinician_id": int(clinician_id),
+        "on_pathway_id": on_pathway_id,
+        "clinician_id": clinician_id,
         "decision_type": decision_type,
         "clinic_history": clinic_history,
         "comorbidities": comorbidities,
@@ -44,11 +46,11 @@ async def CreateDecisionPoint(
 
     if milestone_requests is not None:
         for milestone in milestone_requests:
-
             _milestone=Milestone_IE()
             _milestone.added_at=datetime.now()
             _milestone.updated_at=datetime.now()
-
+            _milestone.milestone_type_id=milestone['milestoneTypeId']
+            # TODO: batch these
             if "currentState" in milestone:
                 _milestone.current_state=milestone['currentState'].value
             if "addedAt" in milestone:
@@ -69,6 +71,12 @@ async def CreateDecisionPoint(
     if milestone_resolutions is not None:
         for milestoneId in milestone_resolutions:
             await Milestone.update.values(fwd_decision_point_id=int(_decisionPoint.id)).where(Milestone.id==int(milestoneId)).gino.status()
+
+    on_pathway = await OnPathway.update\
+        .where(OnPathway.id == on_pathway_id)\
+        .where(OnPathway.under_care_of_id == None)\
+        .values(under_care_of_id=context['request']['user'].id)\
+        .gino.scalar()
 
     return {
         "decisionPoint":_decisionPoint

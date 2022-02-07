@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
 import { AuthContext, PathwayContext } from 'app/context';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Patient from 'types/Patient';
 import { DecisionPointType } from 'types/DecisionPoint';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
@@ -13,7 +13,10 @@ import { createDecisionPointVariables, createDecisionPoint } from 'pages/__gener
 import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
+import { Button, Collapse } from 'react-bootstrap';
+import { ArrowDownShort } from 'react-bootstrap-icons';
 import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
+import './decisionpoint.css';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -32,9 +35,23 @@ export const GET_PATIENT_QUERY = gql`
 
         onPathways(pathwayId: $pathwayId, isDischarged: false) {
           id
+          underCareOf {
+            firstName
+            lastName
+          }
           decisionPoints {
             clinicHistory
             comorbidities
+            milestones {
+              testResult {
+                id
+                description
+                addedAt
+              }
+              milestoneType {
+                name
+              }
+            }
           }
         }
       }
@@ -78,6 +95,56 @@ type DecisionPointPageForm = {
     name: string;
     checked: boolean;
   }[];
+};
+
+const usePreviousTestResults = (data: GetPatient | undefined ) => {
+  interface CollapseState {
+    [elementId: string]: boolean;
+  }
+  const [testResultCollapseStates, setTestResultCollapseStates] = useState<CollapseState>({});
+  interface TestResultData {
+    id: string;
+    key: string;
+    elementId: string;
+    milestoneName: string;
+    description: string;
+    addedAt: Date;
+  }
+  const [previousTestResults, setPreviousTestResults] = useState<TestResultData[]>([]);
+
+  useEffect(() => {
+    // we could do this transformation outside of the effect hook, but then we'd have to silence the
+    // linter and lie in our dependancy array.
+    const testResults = data?.getPatient?.onPathways?.[0].decisionPoints?.flatMap(
+      (dp) => (
+        dp.milestones
+          ? dp.milestones?.flatMap(
+            (ms) => (
+              ms.testResult?.description
+                ? {
+                  id: ms.testResult.id,
+                  key: `tr-${ms.testResult.id}`,
+                  elementId: `tr-href-${ms.testResult.id}`,
+                  milestoneName: ms.milestoneType.name,
+                  description: ms.testResult?.description,
+                  addedAt: ms.testResult.addedAt,
+                }
+                : []
+            ),
+          )
+          : []
+      ),
+    );
+    testResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
+    const collapseStates: CollapseState = {};
+    testResults?.forEach((tr) => {
+      collapseStates[tr.elementId] = false;
+    });
+    if (testResults) setPreviousTestResults(testResults);
+    if (collapseStates) setTestResultCollapseStates(collapseStates);
+  }, [data]);
+
+  return { testResultCollapseStates, setTestResultCollapseStates, previousTestResults };
 };
 
 const DecisionPointPage = (
@@ -126,24 +193,25 @@ const DecisionPointPage = (
     control: control,
   });
 
-  const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-    ? data?.getMilestoneTypes?.map((milestoneType) => ({
-      id: '',
-      milestoneTypeId: milestoneType.id,
-      name: milestoneType.name,
-      checked: false,
-    }))
-    : [];
-
-  // This seems kind of gnarly, but every other way I tried resulted in infinite loops
-  const [hasRenderedCheckboxes, updateHasRenderedCheckboxes] = useState(false);
   useEffect(() => {
-    if (fieldProps.length !== 0 && !hasRenderedCheckboxes) {
-      updateHasRenderedCheckboxes(true);
-      append(fieldProps);
-    }
-  });
+    const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
+      ? data?.getMilestoneTypes?.map((milestoneType) => ({
+        id: '',
+        milestoneTypeId: milestoneType.id,
+        name: milestoneType.name,
+        checked: false,
+      }))
+      : [];
+    append(fieldProps);
+    // }
+  }, [data, append]);
 
+  // PREVIOUS TEST RESULTS
+  const {
+    testResultCollapseStates,
+    setTestResultCollapseStates,
+    previousTestResults,
+  } = usePreviousTestResults(data);
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
@@ -196,13 +264,14 @@ const DecisionPointPage = (
     (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
   );
   const onPathwayId = data.getPatient.onPathways?.[0].id;
+  const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
   return (
     <div>
       <section>
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="card shadow-2-strong col-12 col-md-10 col-lg-9 col-xl-7">
+            <div className="card shadow-2-strong col-12 col-md-10">
               <form className="card-body p-5" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
                 <fieldset disabled={ loading || mutateLoading || isSubmitted }>
                   <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
@@ -218,9 +287,68 @@ const DecisionPointPage = (
                     <p>{ error?.message }</p>
 
                     <div className="container pt-1">
-                      <div className="form-outline mb-4">
-                        <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
+                      <div className="form-outline mb-4 row">
+                        <div className="col">
+                          <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
+                        </div>
+                        <div className="col">
+                          {
+                            underCareOf
+                              ? (
+                                <>Under Care Of: {`${underCareOf.firstName} ${underCareOf.lastName}`}</>
+                              )
+                              : ''
+                          }
+                        </div>
                       </div>
+                      {
+                        previousTestResults?.map((result) => (
+                          <div className="row" key={ result.key }>
+                            <div className="col-3">
+                              <p className="text-right">
+                                { result.milestoneName }:
+                              </p>
+                            </div>
+                            <div className="col" id={ result.elementId }>
+                              {
+                                result.description.length < 30
+                                  ? <>{result.description}</>
+                                  : (
+                                    <>
+                                      { result.description.slice(0, 30) }
+                                      <Collapse in={ testResultCollapseStates[result.elementId] }>
+                                        <div>
+                                          {result.description.slice(30, result.description.length)}
+                                        </div>
+                                      </Collapse>
+                                    </>
+                                  )
+                            }
+                            </div>
+                            <div className="col">
+                              {
+                                result.description.length < 30
+                                  ? ''
+                                  : (
+                                    <Button
+                                      onClick={ () => {
+                                        const newCollapseStates = { ...testResultCollapseStates };
+                                        newCollapseStates[
+                                          result.elementId
+                                        ] = !testResultCollapseStates[result.elementId];
+                                        setTestResultCollapseStates(newCollapseStates);
+                                      } }
+                                      aria-controls="example-collapse-text"
+                                      aria-expanded={ testResultCollapseStates[result.elementId] }
+                                    >
+                                      <ArrowDownShort size="2em" />
+                                    </Button>
+                                  )
+                              }
+                            </div>
+                          </div>
+                        ))
+                      }
 
                       <div className="form-outline mb-4">
                         <label className="form-label" htmlFor="clinicHistory">Clinical history

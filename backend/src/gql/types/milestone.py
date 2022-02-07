@@ -46,3 +46,8 @@ async def resolver(obj=None, info=None, *_):
 async def resolver(obj=None, info=None, *_):
     record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
     return record.updated_at
+
+@MilestoneObjectType.field("testResult")
+async def resolver(obj=None, info=None, *_):
+    record=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.reference_id)
+    return record.test_result

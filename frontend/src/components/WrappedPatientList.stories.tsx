@@ -77,10 +77,12 @@ export const Default = Template.bind({});
 Default.args = {
   pathwayId: '1',
   patientsToDisplay: 10,
+  outstanding: false,
   linkFactory: linkFactory,
 };
 Default.parameters = {
   patients: patientArray,
+  edges: edges,
   apolloClient: {
     mocks: [
       { // PAGE 1
@@ -89,6 +91,8 @@ Default.parameters = {
           variables: {
             pathwayId: '1',
             first: patientsPerPage,
+            after: undefined,
+            outstanding: false,
           },
         },
         result: {
@@ -111,6 +115,7 @@ Default.parameters = {
             pathwayId: '1',
             first: patientsPerPage,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
+            outstanding: false,
           },
         },
         result: {

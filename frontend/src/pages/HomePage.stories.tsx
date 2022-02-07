@@ -7,6 +7,7 @@ import { currentPathwayIdVar } from 'app/cache';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Default as WrappedListDefault } from 'components/WrappedPatientList.stories';
+import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'components/WrappedPatientList';
 import HomePage, { HomePageProps } from './HomePage';
 
 const patientsPerPage = 10;
@@ -33,5 +34,62 @@ export const Default: Story<HomePageProps> = (args: HomePageProps) => {
   currentPathwayIdVar(1);
   return <HomePage { ...args } />;
 };
+
+// This is kind of messy, but it lets us reuse this test data without a deep copy
+const patientArray = WrappedListDefault.parameters?.patientArray;
+const edges = WrappedListDefault.parameters?.edges;
+
 Default.args = { patientsPerPage: patientsPerPage };
-Default.parameters = WrappedListDefault.parameters;
+Default.parameters = {
+  patients: patientArray,
+  apolloClient: {
+    mocks: [
+      { // PAGE 1
+        request: {
+          query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
+          variables: {
+            pathwayId: '1',
+            first: patientsPerPage,
+            after: undefined,
+            outstanding: true,
+          },
+        },
+        result: {
+          data: {
+            getPatientOnPathwayConnection: {
+              totalCount: edges.length,
+              edges: edges.slice(0, patientsPerPage),
+              pageInfo: {
+                hasNextPage: true,
+                endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              },
+            },
+          },
+        },
+      },
+      { // PAGE 2
+        request: {
+          query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
+          variables: {
+            pathwayId: '1',
+            first: patientsPerPage,
+            after: 'YXJyYXljb25uZWN0aW9uOjA=',
+            outstanding: true,
+          },
+        },
+        result: {
+          data: {
+            getPatientOnPathwayConnection: {
+              totalCount: edges.length,
+              edges: edges.slice(patientsPerPage, patientsPerPage + patientsPerPage),
+              pageInfo: {
+                hasNextPage: false,
+                endCursor: 'YXJyYXljb25uZWN0aW9uOjA=',
+              },
+            },
+          },
+        },
+      },
+    ],
+  },
+};

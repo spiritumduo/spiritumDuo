@@ -65,7 +65,7 @@ def add_test_data(context):
     ))
     context.milestone_one=loop.run_until_complete(MilestoneType.create(
         name="Test Milestone One",
-        ref_name="test_milestone_one"
+        ref_name="test_milestone_one",
     ))
 
 @fixture

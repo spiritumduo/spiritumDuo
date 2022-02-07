@@ -18,3 +18,4 @@ class OnPathway(db.Model):
         db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
     )
     referred_at = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
+    under_care_of_id = db.Column(db.Integer(), db.ForeignKey('tbl_user.id'), nullable=True)

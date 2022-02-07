@@ -1,6 +1,4 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import 'bootstrap/dist/css/bootstrap.min.css';
-// Bootstrap imports first so other modules can override
 // APP IMPORTS
 import React, { useContext, useEffect } from 'react';
 import { Route, Routes, Navigate, useParams } from 'react-router-dom';

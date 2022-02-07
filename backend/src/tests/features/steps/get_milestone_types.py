@@ -24,9 +24,13 @@ async def step_impl(context):
             ref_name="MilestoneRef" + str(i)
         )
 
-        milestone_types.append(mt)
+        milestone_types.append({
+            "id": str(mt.id),
+            "name": mt.name,
+            "refName": mt.ref_name
+        })
 
-    context.milestone_types = milestone_types
+    context.inserted_milestone_types = milestone_types
 
 
 @when("We run getMilestoneTypes query")
@@ -50,19 +54,10 @@ def step_impl(context):
 
     assert_that(res.status_code, equal_to(200))
     milestone_type_data = json.loads(res.text)['data']['getMilestoneTypes']
-    context.milestone_type_data = milestone_type_data
+    context.received_milestone_types = milestone_type_data
 
 
 @then("We get the MilestoneTypes in the system")
 def step_impl(context):
-    print(context.milestone_type_data)
-    print(context.milestone_types)
-    for i in range(0, 4):
-        assert_that(
-            context.milestone_type_data[0]['name'],
-            equal_to(context.milestone_types[0].name)
-        )
-        assert_that(
-            context.milestone_type_data[0]['refName'],
-            equal_to(context.milestone_types[0].ref_name)
-        )
+    for mst in context.inserted_milestone_types:
+        assert_that(context.received_milestone_types, has_items(has_entries(mst)))
