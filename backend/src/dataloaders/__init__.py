@@ -3,6 +3,6 @@ from .pathway import PathwayByIdLoader, PathwayByNameLoader
 from .user import UserByIdLoader, UserByUsernameLoader
 from .decision_point import DecisionPointLoader, DecisionPointsByPatient, DecisionPointsByOnPathway
 from .on_pathway import OnPathwayByIdLoader, OnPathwaysByPatient
-from .milestone import MilestoneByDecisionPointLoader, MilestoneByReferenceIdFromIELoader
+from .milestone import MilestoneByDecisionPointLoader, MilestoneByOnPathway
 from .milestone_type import MilestoneTypeLoader
 from .test_result import TestResultByReferenceIdFromIELoader
