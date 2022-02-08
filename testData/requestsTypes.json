@@ -1,3 +1,6 @@
+# Types for lung cancer
+# Take from https://termbrowser.nhs.uk/?
+
 {
   [
     {
@@ -9,6 +12,11 @@
       "name": "CT chest",
       "ref_name": "Computed tomography of chest (procedure)",
       "ref_ID": "169069000",
+    },
+    {
+      "name": "Book clinic",
+      "ref_name": "Walk-in clinic (environment)",
+      "ref_ID": "81234003",
     },
     {
       "name": "PET-CT",
@@ -46,21 +54,6 @@
       "ref_ID": "844061000000101",
     },
     {
-      "name": "ECG",
-      "ref_name": "Electrocardiogram analysis (qualifier value)",
-      "ref_ID": "258181008",
-    },
-    {
-      "name": "Prehad referral",
-      "ref_name": "Prehabilitation (regime/therapy)",
-      "ref_ID": "786455008",
-    },
-    {
-      "name": "Dietician referral",
-      "ref_name": "Patient referral to dietitian (procedure)",
-      "ref_ID": "103699006",
-    },
-    {
       "name": "Thoracoscopy",
       "ref_name": "Thoracoscopy (procedure)",
       "ref_ID": "14671001",
@@ -74,6 +67,21 @@
       "name": "Pleural tap",
       "ref_name": "Thoracentesis (procedure)",
       "ref_ID": "91602002",
+    },
+    {
+      "name": "ECG",
+      "ref_name": "Electrocardiogram analysis (qualifier value)",
+      "ref_ID": "258181008",
+    },
+    {
+      "name": "Prehad referral",
+      "ref_name": "Prehabilitation (regime/therapy)",
+      "ref_ID": "786455008",
+    },
+    {
+      "name": "Dietician referral",
+      "ref_name": "Patient referral to dietitian (procedure)",
+      "ref_ID": "103699006",
     },
     {
       "name": "CPET",
@@ -91,29 +99,35 @@
       "ref_ID": "396550006",
     },
     {
+      "name": "Add to next MDT",
+      "ref_name": "Assessment by multidisciplinary team (procedure)",
+      "ref_ID": "231611000000102",
+    },
+    {
       "name": "Refer to thoracic surgeons",
-      "ref_name": "",
-      "ref_ID": "",
+      "ref_name": "Referral to surgeon (procedure)",
+      "ref_ID": "183541002",
     },
     {
       "name": "Refer to oncology",
-      "ref_name": "",
-      "ref_ID": "",
+      "ref_name": "Referral to oncologist (procedure)",
+      "ref_ID": "183529009",
     },
     {
       "name": "Refer to palliative care",
-      "ref_name": "",
-      "ref_ID": "",
+      "ref_name": "Referral to palliative care physician (procedure)",
+      "ref_ID": "306288008",
     },
     {
-      "name": "Refer to other speciality",
-      "ref_name": "",
-      "ref_ID": "",
+      "name": "Refer to other speciality MDT",
+      # Note: same ref_name and ref_ID as "Add to next MDT"
+      "ref_name": "Assessment by multidisciplinary team (procedure)", 
+      "ref_ID": "231611000000102",
     },
     {
       "name": "Discharge",
-      "ref_name": "",
-      "ref_ID": "",
+      "ref_name": "Discharge from care (procedure)",
+      "ref_ID": "25241000000106",
     },
     {
       "name": "Acknowledge new tests only",
