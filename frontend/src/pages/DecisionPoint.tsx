@@ -147,6 +147,29 @@ const usePreviousTestResults = (data: GetPatient | undefined ) => {
   return { testResultCollapseStates, setTestResultCollapseStates, previousTestResults };
 };
 
+interface ConfirmNoMilestonesProps {
+  confirmFn: (value: boolean) => void;
+  submitFn: () => void;
+  cancelFn: (value: boolean) => void;
+}
+
+const ConfirmNoMilestones = ({ confirmFn, submitFn, cancelFn }: ConfirmNoMilestonesProps) => (
+  <div className="no-milestones-confirmation">
+    <h1>No Milestones Selected!</h1>
+    <Button
+      onClick={ () => {
+        confirmFn(true);
+        submitFn();
+      } }
+    >
+      OK
+    </Button>
+    <Button onClick={ () => cancelFn(false) }>
+      Cancel
+    </Button>
+  </div>
+);
+
 const DecisionPointPage = (
   { hospitalNumber, decisionType }: DecisionPointPageProps,
 ): JSX.Element => {
@@ -173,6 +196,8 @@ const DecisionPointPage = (
   const isSubmitted = mutateData?.createDecisionPoint?.decisionPoint?.id !== undefined;
 
   // FORM HOOK & VALIDATION
+  const [confirmNoRequests, setConfirmNoRequests] = useState<boolean>(false);
+  const [requestConfirmation, setRequestConfirmation] = useState<boolean>(false);
   const newDecisionPointSchema = yup.object({
     decisionType: yup.mixed().oneOf([Object.keys(DecisionPointType)]).required(),
     clinicHistory: yup.string().required(),
@@ -241,18 +266,31 @@ const DecisionPointPage = (
       milestoneTypeId: m.checked as unknown as string,
     }));
 
-    const variables: createDecisionPointVariables = {
-      input: {
-        onPathwayId: values.onPathwayId,
-        clinicHistory: values.clinicHistory,
-        comorbidities: values.comorbidities,
-        decisionType: values.decisionType,
-        milestoneRequests: milestoneRequests,
-      },
-    };
-
-    mutation({ variables: variables });
+    if (milestoneRequests.length === 0 && !confirmNoRequests) {
+      setRequestConfirmation(true);
+    } else {
+      const variables: createDecisionPointVariables = {
+        input: {
+          onPathwayId: values.onPathwayId,
+          clinicHistory: values.clinicHistory,
+          comorbidities: values.comorbidities,
+          decisionType: values.decisionType,
+          milestoneRequests: milestoneRequests,
+        },
+      };
+      mutation({ variables: variables });
+    }
   };
+
+  if (requestConfirmation) {
+    return (
+      <ConfirmNoMilestones
+        confirmFn={ setConfirmNoRequests }
+        cancelFn={ setRequestConfirmation }
+        submitFn={ () => { onSubmitFn(createDecision, getValues()); } }
+      />
+    );
+  }
 
   // IF PATIENT HAS PRIOR DECISION
   const previousDecisionPoint = data.getPatient?.onPathways?.[0].decisionPoints
