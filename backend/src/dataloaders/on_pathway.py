@@ -1,3 +1,4 @@
+from importlib.resources import path
 from aiodataloader import DataLoader
 from models import OnPathway
 from typing import List, Union
@@ -46,12 +47,26 @@ class OnPathwayByIdLoader(DataLoader):
 
 class OnPathwaysByPatient:
     @staticmethod
-    async def load_from_id(context=None, id=None)->Union[List[OnPathway], None]:
+    async def load_from_id(context=None, id=None, pathwayId=None, isDischarged=None, awaitingDecisionType=None, limit=None)->Union[List[OnPathway], None]:
         if not context or not id:
             return None
+
         _gino=context['db']
+        query=OnPathway.query.where(OnPathway.patient_id==int(id))
+        if pathwayId is not None:
+            query=query.where(OnPathway.pathway_id==int(pathwayId))
+        if isDischarged is not None:
+            query=query.where(OnPathway.is_discharged==isDischarged)
+        if awaitingDecisionType is not None:
+            query=query.where(OnPathway.awaiting_decision_type==awaitingDecisionType)
+        if limit is not None:
+            query=query.limit(int(limit))
+    
+
         async with _gino.acquire(reuse=False) as conn:
-            onPathways=await conn.all(OnPathway.query.where(OnPathway.patient_id==id))
+            onPathways=await query.gino.all()
+
+            
         if OnPathwayByIdLoader.loader_name not in context:
             context[OnPathwayByIdLoader.loader_name]=OnPathwayByIdLoader(db=context['db'])
         for oP in onPathways:
