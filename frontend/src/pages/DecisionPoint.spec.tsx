@@ -90,7 +90,7 @@ describe('When page loads', () => {
     });
   });
 
-  it('Should report success on form submission without milestones', async () => {
+  it('Should warn user on form submission without milestones', async () => {
     const clinicalHistoryText = '{selectall}New Clinic History';
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
@@ -102,7 +102,7 @@ describe('When page loads', () => {
       userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
-    expect(screen.getByText(/decision submitted successfully/i)).toBeInTheDocument();
+    expect(screen.getByText(/no milestones selected/i)).toBeInTheDocument();
   });
 
   it('Should report success on form submission with milestones', async () => {

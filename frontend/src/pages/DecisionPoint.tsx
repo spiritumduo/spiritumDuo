@@ -266,7 +266,7 @@ const DecisionPointPage = (
       milestoneTypeId: m.checked as unknown as string,
     }));
 
-    if (!milestoneRequests || !confirmNoRequests) {
+    if (milestoneRequests.length === 0 && !confirmNoRequests) {
       setRequestConfirmation(true);
     } else {
       const variables: createDecisionPointVariables = {
