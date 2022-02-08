@@ -318,7 +318,7 @@ const DecisionPointPage = (
                   <div className="container">
 
                     <div className="text-center">
-                      <PatientInfoLonghand patient={ patient } /> <Link to={ `/decisionpoint/${patient.hospitalNumber}/edit` }>Edit patient record</Link>
+                      <PatientInfoLonghand patient={ patient } />
                     </div>
 
                     <hr />

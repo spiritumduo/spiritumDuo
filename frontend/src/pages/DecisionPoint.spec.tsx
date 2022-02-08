@@ -95,7 +95,7 @@ describe('When page loads', () => {
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
     await waitFor(() => expect(
-      screen.getByText((t) => /edit patient record/i.test(t)),
+      screen.getByText((t) => /submit/i.test(t)),
     ).toBeInTheDocument());
     await waitFor(() => {
       userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
@@ -110,7 +110,7 @@ describe('When page loads', () => {
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
     await waitFor(() => expect(
-      screen.getByText((t) => /edit patient record/i.test(t)),
+      screen.getByText((t) => /submit/i.test(t)),
     ).toBeInTheDocument());
     await waitFor(() => {
       userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
