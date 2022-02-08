@@ -246,4 +246,6 @@ input PatientInput{
     pathwayId:ID!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
+
+    milestones: [MilestoneRequestInput]
 }
