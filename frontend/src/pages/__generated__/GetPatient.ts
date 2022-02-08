@@ -15,6 +15,11 @@ export interface GetPatient_getPatient_onPathways_underCareOf {
   lastName: string;
 }
 
+export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_forwardDecisionPoint {
+  __typename: "DecisionPoint";
+  id: string;
+}
+
 export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult {
   __typename: "TestResult";
   id: string;
@@ -29,6 +34,7 @@ export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_mile
 
 export interface GetPatient_getPatient_onPathways_decisionPoints_milestones {
   __typename: "Milestone";
+  forwardDecisionPoint: GetPatient_getPatient_onPathways_decisionPoints_milestones_forwardDecisionPoint | null;
   testResult: GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult | null;
   milestoneType: GetPatient_getPatient_onPathways_decisionPoints_milestones_milestoneType;
 }

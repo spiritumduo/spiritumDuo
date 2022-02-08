@@ -15,6 +15,8 @@ import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse } from 'react-bootstrap';
 import { ArrowDownShort } from 'react-bootstrap-icons';
+// eslint-disable-next-line import/extensions
+import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
 import './decisionpoint.css';
 
@@ -43,6 +45,9 @@ export const GET_PATIENT_QUERY = gql`
             clinicHistory
             comorbidities
             milestones {
+              forwardDecisionPoint {
+                id
+              }
               testResult {
                 id
                 description
@@ -97,19 +102,21 @@ type DecisionPointPageForm = {
   }[];
 };
 
+interface TestResultData {
+  id: string;
+  key: string;
+  elementId: string;
+  milestoneName: string;
+  description: string;
+  addedAt: Date;
+  forwardDecisionPointId?: string;
+}
+
 const usePreviousTestResults = (data: GetPatient | undefined ) => {
   interface CollapseState {
     [elementId: string]: boolean;
   }
   const [testResultCollapseStates, setTestResultCollapseStates] = useState<CollapseState>({});
-  interface TestResultData {
-    id: string;
-    key: string;
-    elementId: string;
-    milestoneName: string;
-    description: string;
-    addedAt: Date;
-  }
   const [previousTestResults, setPreviousTestResults] = useState<TestResultData[]>([]);
 
   useEffect(() => {
@@ -128,6 +135,7 @@ const usePreviousTestResults = (data: GetPatient | undefined ) => {
                   milestoneName: ms.milestoneType.name,
                   description: ms.testResult?.description,
                   addedAt: ms.testResult.addedAt,
+                  forwardDecisionPointId: ms.forwardDecisionPoint?.id,
                 }
                 : []
             ),
@@ -153,7 +161,14 @@ interface ConfirmNoMilestonesProps {
   cancelFn: (value: boolean) => void;
 }
 
-const ConfirmNoMilestones = ({ confirmFn, submitFn, cancelFn }: ConfirmNoMilestonesProps) => (
+/**
+ * Confirmation when user tries to submit without any milestones selected
+ * @param {ConfirmNoMilestonesProps} props Props
+ * @returns JSX.Element
+ */
+const ConfirmNoMilestones = (
+  { confirmFn, submitFn, cancelFn }: ConfirmNoMilestonesProps,
+): JSX.Element => (
   <div className="no-milestones-confirmation">
     <h1>No Milestones Selected!</h1>
     <Button
@@ -169,6 +184,92 @@ const ConfirmNoMilestones = ({ confirmFn, submitFn, cancelFn }: ConfirmNoMilesto
     </Button>
   </div>
 );
+
+interface PreviousTestResultsElementProps {
+  data: GetPatient | undefined;
+}
+
+const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) => {
+  const {
+    testResultCollapseStates,
+    setTestResultCollapseStates,
+    previousTestResults,
+  } = usePreviousTestResults(data);
+
+  const TestResultDataElement = ({ result }: { result: TestResultData }) => (
+    <div className="row" key={ result.key }>
+      <div className="col-1">
+        {
+          !result.forwardDecisionPointId
+            ? (
+              <>
+                <img src={ newResultImage } alt="New Result" />
+              </>
+            )
+            : ''
+        }
+      </div>
+      <div className="col-3">
+        <p className="text-right">
+          { result.milestoneName }:
+        </p>
+      </div>
+      <div className="col" id={ result.elementId }>
+        {
+          result.description.length < 30
+            ? <>{result.description}</>
+            : (
+              <>
+                { result.description.slice(0, 30) }
+                <Collapse in={ testResultCollapseStates[result.elementId] }>
+                  <div>
+                    {result.description.slice(30, result.description.length)}
+                  </div>
+                </Collapse>
+              </>
+            )
+      }
+      </div>
+      <div className="col">
+        {
+          result.description.length < 30
+            ? ''
+            : (
+              <Button
+                onClick={ () => {
+                  const newCollapseStates = { ...testResultCollapseStates };
+                  newCollapseStates[
+                    result.elementId
+                  ] = !testResultCollapseStates[result.elementId];
+                  setTestResultCollapseStates(newCollapseStates);
+                } }
+                aria-controls="example-collapse-text"
+                aria-expanded={ testResultCollapseStates[result.elementId] }
+              >
+                <ArrowDownShort size="2em" />
+              </Button>
+            )
+        }
+      </div>
+    </div>
+  );
+
+  const elements = previousTestResults?.map((result) => (
+    !result.forwardDecisionPointId
+      ? (
+        <strong>
+          <TestResultDataElement result={ result } />
+        </strong>
+      )
+      : <TestResultDataElement result={ result } />
+  ));
+
+  return (
+    <div className="">
+      { elements }
+    </div>
+  );
+};
 
 const DecisionPointPage = (
   { hospitalNumber, decisionType }: DecisionPointPageProps,
@@ -218,6 +319,7 @@ const DecisionPointPage = (
     control: control,
   });
 
+  // REQUEST CHECKBOXES
   useEffect(() => {
     const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
       ? data?.getMilestoneTypes?.map((milestoneType) => ({
@@ -230,13 +332,6 @@ const DecisionPointPage = (
     append(fieldProps);
     // }
   }, [data, append]);
-
-  // PREVIOUS TEST RESULTS
-  const {
-    testResultCollapseStates,
-    setTestResultCollapseStates,
-    previousTestResults,
-  } = usePreviousTestResults(data);
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
@@ -327,7 +422,15 @@ const DecisionPointPage = (
                     <div className="container pt-1">
                       <div className="form-outline mb-4 row">
                         <div className="col">
-                          <p>Decision: <select id="decisionType" defaultValue={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) }>{ decisionSelectOptions }</select></p>
+                          <p>Decision:
+                            <select
+                              id="decisionType"
+                              defaultValue={ decisionType.toUpperCase() }
+                              { ...register('decisionType', { required: true }) }
+                            >
+                              { decisionSelectOptions }
+                            </select>
+                          </p>
                         </div>
                         <div className="col">
                           {
@@ -339,55 +442,7 @@ const DecisionPointPage = (
                           }
                         </div>
                       </div>
-                      {
-                        previousTestResults?.map((result) => (
-                          <div className="row" key={ result.key }>
-                            <div className="col-3">
-                              <p className="text-right">
-                                { result.milestoneName }:
-                              </p>
-                            </div>
-                            <div className="col" id={ result.elementId }>
-                              {
-                                result.description.length < 30
-                                  ? <>{result.description}</>
-                                  : (
-                                    <>
-                                      { result.description.slice(0, 30) }
-                                      <Collapse in={ testResultCollapseStates[result.elementId] }>
-                                        <div>
-                                          {result.description.slice(30, result.description.length)}
-                                        </div>
-                                      </Collapse>
-                                    </>
-                                  )
-                            }
-                            </div>
-                            <div className="col">
-                              {
-                                result.description.length < 30
-                                  ? ''
-                                  : (
-                                    <Button
-                                      onClick={ () => {
-                                        const newCollapseStates = { ...testResultCollapseStates };
-                                        newCollapseStates[
-                                          result.elementId
-                                        ] = !testResultCollapseStates[result.elementId];
-                                        setTestResultCollapseStates(newCollapseStates);
-                                      } }
-                                      aria-controls="example-collapse-text"
-                                      aria-expanded={ testResultCollapseStates[result.elementId] }
-                                    >
-                                      <ArrowDownShort size="2em" />
-                                    </Button>
-                                  )
-                              }
-                            </div>
-                          </div>
-                        ))
-                      }
-
+                      <PreviousTestResultsElement data={ data } />
                       <div className="form-outline mb-4">
                         <label className="form-label" htmlFor="clinicHistory">Clinical history
                           <textarea className="form-control" id="clinicHistory" rows={ 3 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
