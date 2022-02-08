@@ -1,6 +1,6 @@
 from ariadne.objects import ObjectType
 from dataloaders import UserByIdLoader, OnPathwayByIdLoader
-from dataloaders.milestone import MilestoneByDecisionPointLoader, MilestoneByReferenceIdFromIELoader
+from dataloaders import MilestoneByDecisionPointLoader
 from models import Milestone
 
 DecisionPointObjectType=ObjectType("DecisionPoint")
@@ -26,7 +26,7 @@ async def resolve_on_pathway_pathway(obj=None, info=None, *_):
 @DecisionPointObjectType.field("milestones")
 async def resolve_decision_point_milestones(obj=None, info=None, *_):
     # TODO: added another dataloader to get by decision point ID
-    # tieMilestone=await MilestoneByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.id)
+    # tieMilestone=await TestResultByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.id)
     # query.order_by(tieMilestone.added_at)
     query = Milestone.query.where(Milestone.decision_point_id == obj.id)
     query.order_by(Milestone.added_at.desc())
