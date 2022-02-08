@@ -5,3 +5,4 @@ from .decision_point import DecisionPointLoader, DecisionPointsByPatient, Decisi
 from .on_pathway import OnPathwayByIdLoader, OnPathwaysByPatient
 from .milestone import MilestoneByDecisionPointLoader, MilestoneByReferenceIdFromIELoader
 from .milestone_type import MilestoneTypeLoader
+from .test_result import TestResultByReferenceIdFromIELoader
