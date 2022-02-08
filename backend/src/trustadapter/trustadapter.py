@@ -2,39 +2,39 @@ import logging
 import requests
 import httpx
 import json
-from models import Milestone, MilestoneType
+from SdTypes import MilestoneState
+from models import MilestoneType
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import List, Optional
 from datetime import date, datetime
 from dataclasses import dataclass
 
-
 @dataclass
 class Patient_IE:
-    id: int = None,
-    first_name: str = None,
-    last_name: str = None,
-    hospital_number: str = None,
-    national_number: str = None,
-    communication_method: str = None,
+    id: int = None
+    first_name: str = None
+    last_name: str = None
+    hospital_number: str = None
+    national_number: str = None
+    communication_method: str = None
     date_of_birth: date = None
 
-class Milestone_IE:
-    def __init__(self, 
-        id:int=None,
-        current_state:str=None, 
-        added_at:date=None, 
-        updated_at:date=None,
+@dataclass
+class TestResultRequest_IE:
+    type_id: int = None
+    current_state: str = None
+    added_at: datetime = datetime.now()
+    updated_at: datetime = datetime.now()
+    description: str = None
 
-        test_result:Dict[str, Union[str, int, datetime]]=None
-    ):
-        self.id=id
-        self.current_state=current_state
-        self.added_at=added_at
-        self.updated_at=updated_at
-        self.test_result=test_result
-
-
+@dataclass
+class TestResult_IE:
+    id: int = None,
+    description: str = None
+    type_reference_name: str = None
+    current_state: str = None
+    added_at: datetime = None
+    updated_at: datetime = None
 
 class TrustAdapter(ABC):
     """
@@ -50,7 +50,7 @@ class TrustAdapter(ABC):
         :param patient: Patient to input
         :return: String ID of created patient
         """
-
+        
     @abstractmethod
     async def load_patient(self, hospitalNumber: str = None, auth_token: str = None) -> Optional[Patient_IE]:
         """
@@ -60,6 +60,7 @@ class TrustAdapter(ABC):
         :return: Patient if found, null if not
         """
 
+    @abstractmethod
     async def load_many_patients(self, hospitalNumbers:List=None, auth_token: str = None) -> List[Optional[Patient_IE]]:
         """
         Load many patients
@@ -69,30 +70,30 @@ class TrustAdapter(ABC):
         """
 
     @abstractmethod
-    async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
+    async def create_test_result(self, testResult: TestResultRequest_IE = None, auth_token: str = None) -> TestResult_IE:
         """
-        Create a Milestone
+        Create a test result
         :param auth_token: Auth token string to pass to backend
-        :param milestone: Milestone to create
-        :return: String ID of created milestone
+        :param testResult: Test result to create
+        :return: String ID of created test result
         """
 
     @abstractmethod
-    async def load_milestone(self, recordId: str = None, auth_token: str = None) -> Optional[Milestone_IE]:
+    async def load_test_result(self, recordId: str = None, auth_token: str = None) -> Optional[TestResult_IE]:
         """
-        Load a Milestone
+        Load a test result
         :param auth_token: Auth token string to pass to backend
-        :param recordId: ID of milestone to load
-        :return: Milestone, or null if milestone not found
+        :param recordId: ID of test result to load
+        :return: Test result, or null if test result not found
         """
 
     @abstractmethod
-    async def load_many_milestones(self, recordIds: str = None, auth_token: str = None) -> List[Optional[Milestone_IE]]:
+    async def load_many_test_results(self, recordIds: str = None, auth_token: str = None) -> List[Optional[TestResult_IE]]:
         """
-        Load many milestones
+        Load many test results
         :param auth_token: Auth token string to pass to backend
-        :param recordIds: IDs of milestones to load
-        :return: List of milestones, or empty list if none found
+        :param recordIds: IDs of test results to load
+        :return: List of test results, or empty list if none found
         """
         
     
@@ -195,84 +196,72 @@ class PseudoTrustAdapter(TrustAdapter):
                     )
         return return_list
 
-    async def create_milestone(self, milestone: Milestone = None, auth_token: str = None) -> Milestone_IE:
+    async def create_test_result(self, testResult: TestResultRequest_IE, auth_token: str = None) -> TestResult_IE:
         params={}
-        milestoneType:MilestoneType=await MilestoneType.get(int(milestone.milestone_type_id))
-        typeReferenceName=milestoneType.ref_name
-        params['typeReferenceName'] = typeReferenceName
+        milestoneType:MilestoneType=await MilestoneType.get(int(testResult.type_id))
+        params['typeReferenceName'] = milestoneType.ref_name
 
-        if milestone.current_state:
-            params['currentState'] = milestone.current_state
-        if milestone.added_at:
-            params['addedAt'] = milestone.added_at.isoformat()
-        if milestone.updated_at:
-            params['updatedAt'] = milestone.updated_at.isoformat()
+        if testResult.current_state:
+            params['currentState'] = testResult.current_state.value
+        if testResult.added_at:
+            params['addedAt'] = testResult.added_at.isoformat()
+        if testResult.updated_at:
+            params['updatedAt'] = testResult.updated_at.isoformat()
+        if testResult.description:
+            params['description'] = testResult.description
 
         async with httpx.AsyncClient() as client:
             result = await client.post(
-                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone",
+                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/testresult",
                 json=params,
                 cookies={"SDSESSION": auth_token}
             )
+        tieTestResult=json.loads(result.text)
 
-        tie_milestone=json.loads(result.text)
-        _added_at = datetime.fromisoformat(tie_milestone['added_at'])
-        _updated_at = datetime.fromisoformat(tie_milestone['updated_at'])
+        tieTestResult['added_at'] = datetime.fromisoformat(tieTestResult['added_at'])
+        tieTestResult['updated_at'] = datetime.fromisoformat(tieTestResult['updated_at'])
         
-        return Milestone_IE(
-            id=tie_milestone['id'],
-            current_state=tie_milestone['current_state'],
-            added_at=_added_at,
-            updated_at=_updated_at
+        return TestResult_IE(
+            **tieTestResult
         )
 
-    async def load_milestone(self, recordId: str = None, auth_token: str = None) -> Optional[Milestone_IE]:
-        result = requests.get(
-            self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/milestone/"+str(recordId),
-            cookies={"SDSESSION": auth_token}
-        )
-        if result.status_code!=200:
-            raise Exception(f"HTTP{result.status_code} received")
-        record=json.loads(result.text)
-
-        _added_at = datetime.fromisoformat(record['added_at'])
-        _updated_at = datetime.fromisoformat(record['updated_at'])
-        
-        return Milestone_IE(
-            id=record['id'],
-            current_state=record['current_state'],
-            added_at=_added_at,
-            updated_at=_updated_at
-        )
-
-    async def load_many_milestones(self, recordIds: List = None, auth_token: str = None) -> List[Optional[Milestone_IE]]:
-        return_list = []
-        logging.warning(recordIds)
+    async def load_test_result(self, recordId: str = None, auth_token: str = None) -> Optional[TestResult_IE]:
         async with httpx.AsyncClient() as client:
-            res = await client.post(
-                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/milestones/get/',
-                cookies={"SDSESSION": auth_token},
-                json=recordIds
+            result = await client.get(
+                f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}",
+                cookies={"SDSESSION": auth_token}
             )
+        if result.status_code!=200: raise Exception(f"HTTP{result.status_code} received")
 
-            if res.status_code != 200:
-                raise Exception(f"HTTP{res.status_code} received")
+        tieTestResult=json.loads(result.text)
+        tieTestResult['added_at'] = datetime.fromisoformat(tieTestResult['added_at'])
+        tieTestResult['updated_at'] = datetime.fromisoformat(tieTestResult['updated_at'])
+        
+        return TestResult_IE(
+            **tieTestResult
+        )
 
-            if res is not None:
-                res_data = json.loads(res.text)
-                for record in res_data:
-                    _added_at = datetime.fromisoformat(record['added_at'])
-                    _updated_at = datetime.fromisoformat(record['updated_at'])
-                    if record['test_result']:
-                        record['test_result']['added_at'] = datetime.fromisoformat(record['test_result']['added_at'])
+    async def load_many_test_results(self, recordIds: List = None, auth_token: str = None) -> List[Optional[TestResult_IE]]:
+        async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient() as client:
+                result = await client.post(
+                    f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/",
+                    cookies={"SDSESSION": auth_token},
+                    json=recordIds
+                )
+            if result.status_code!=200: raise Exception(f"HTTP{result.status_code} received")
+
+            if result is not None:
+                return_list = []
+                result_data = json.loads(result.text)
+                for record in result_data:
+                    record['added_at'] = datetime.fromisoformat(record['added_at'])
+                    record['updated_at'] = datetime.fromisoformat(record['updated_at'])
 
                     return_list.append(
-                        Milestone_IE(
-                            id=record['id'],
-                            current_state=record['current_state'],
-                            added_at=_added_at,
-                            updated_at=_updated_at,
-                            test_result=record['test_result']
+                        TestResult_IE(
+                            **record
                         )
                     )
         return return_list
+
