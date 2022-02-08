@@ -40,6 +40,8 @@ type Mutation {
     createPatient(input:PatientInput!): AddPatientPayload!
     createPathway(input:PathwayInput!): AddPathwayPayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
+
+    importMilestone(input:MilestoneImportInput!): AddMilestonePayload!
 }
 
 enum PatientCommunicationMethods {
