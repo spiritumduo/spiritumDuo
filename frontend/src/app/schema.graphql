@@ -32,6 +32,7 @@ type Query {
         last: Int
         before: String
         outstanding: Boolean
+        underCareOf: Boolean
     ): PatientConnection!
 }
 
@@ -98,8 +99,6 @@ type Patient {
         awaitingDecisionType: DecisionType, 
         limit: Int
     ): [OnPathway!]
-
-    # testResults: [TestResult] # to implement
 }
 
 type PageInfo {
@@ -136,6 +135,8 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
+    testResults: [TestResult!]
+    underCareOf: User
 }
 
 type User {
@@ -162,10 +163,8 @@ type DecisionPoint {
 
 type TestResult {
     id: ID!
-    patient: Patient!
-    onPathway: OnPathway!
+    milestone: Milestone!
     description: String!
-    mediaUrls: [String!]
     addedAt: DateTime!
 }
 
@@ -181,6 +180,7 @@ type Milestone {
   milestoneType: MilestoneType!
   decisionPoint: DecisionPoint!
   forwardDecisionPoint: DecisionPoint
+  testResult: TestResult
 
   addedAt: DateTime!                        # from TIE                       
   updatedAt: DateTime!                      # from TIE
@@ -202,10 +202,8 @@ enum MilestoneState {
 
 #### INPUT TYPES
 input TestResultInput{
-    patientId: ID!
-    pathwayId: ID!
+    milestoneId: ID!
     description: String!
-    mediaUrls: [String]
 }
 
 input AddUserToGroupInput{
