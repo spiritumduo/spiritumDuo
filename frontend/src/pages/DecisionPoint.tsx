@@ -17,7 +17,7 @@ import { Button, Collapse } from 'react-bootstrap';
 import { ArrowDownShort } from 'react-bootstrap-icons';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
-import { DecisionType, MilestoneInput } from '../../__generated__/globalTypes';
+import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
 import './decisionpoint.css';
 
 export interface DecisionPointPageProps {
@@ -387,7 +387,7 @@ const DecisionPointPage = (
 
   // FORM SUBMISSION
   const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
-    const milestoneRequests: MilestoneInput[] = values.milestoneRequests?.filter(
+    const milestoneRequests: MilestoneRequestInput[] = values.milestoneRequests?.filter(
       (m) => (m.checked !== false),
     ).map((m) => ({
       // The value of 'checked' will be anything we supply in the tag, but the
