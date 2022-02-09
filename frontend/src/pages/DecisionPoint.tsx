@@ -257,8 +257,8 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   const elements = previousTestResults?.map((result) => (
     !result.forwardDecisionPointId
       ? (
-        <strong>
-          <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
+        <strong key={ `result-data-element-${result.key}` }>
+          <TestResultDataElement result={ result } />
         </strong>
       )
       : <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
