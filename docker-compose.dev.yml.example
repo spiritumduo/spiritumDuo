@@ -30,6 +30,8 @@ services:
     env_file: ./backend/.env
     volumes:
       - ./backend/:/app
+      - sd_alembic_backend_data:/alembic_versions
+
     expose:
       - 8080
     ports:
@@ -48,6 +50,8 @@ services:
     env_file: ./pseudotie/.env
     volumes:
       - ./pseudotie:/app
+      - sd_alembic_pseudotie_data:/alembic_versions
+
     ports:
       - "8081:8081"
     networks:
@@ -147,6 +151,8 @@ volumes:
   sd_postgres_data:
   sd_wordpress:
   sd_mysql_data:
+  sd_alembic_backend_data:
+  sd_alembic_pseudotie_data:
 
 networks:
   app-network:
