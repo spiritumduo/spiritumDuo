@@ -41,6 +41,20 @@ export const GET_PATIENT_QUERY = gql`
             firstName
             lastName
           }
+          milestones(notOnDecisionPoint: false) {
+            id
+            forwardDecisionPoint {
+              id
+            }
+            testResult{
+              id
+              description
+              addedAt
+            }
+            milestoneType{
+              name
+            }
+          }
           decisionPoints {
             clinicHistory
             comorbidities
@@ -124,26 +138,18 @@ const usePreviousTestResults = (data: GetPatient | undefined ) => {
   const [previousTestResults, setPreviousTestResults] = useState<TestResultData[]>([]);
 
   useEffect(() => {
-    // we could do this transformation outside of the effect hook, but then we'd have to silence the
-    // linter and lie in our dependancy array.
-    const testResults = data?.getPatient?.onPathways?.[0].decisionPoints?.flatMap(
-      (dp) => (
-        dp.milestones
-          ? dp.milestones?.flatMap(
-            (ms) => (
-              ms.testResult?.description
-                ? {
-                  id: ms.testResult.id,
-                  key: `tr-${ms.testResult.id}`,
-                  elementId: `tr-href-${ms.testResult.id}`,
-                  milestoneName: ms.milestoneType.name,
-                  description: ms.testResult?.description,
-                  addedAt: ms.testResult.addedAt,
-                  forwardDecisionPointId: ms.forwardDecisionPoint?.id,
-                }
-                : []
-            ),
-          )
+    const testResults = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
+      (ms) => (
+        ms.testResult?.description
+          ? {
+            id: ms.testResult.id,
+            key: `tr-${ms.testResult.id}`,
+            elementId: `tr-href-${ms.testResult.id}`,
+            milestoneName: ms.milestoneType.name,
+            description: ms.testResult?.description,
+            addedAt: ms.testResult.addedAt,
+            forwardDecisionPointId: ms.forwardDecisionPoint?.id,
+          }
           : []
       ),
     );
@@ -349,19 +355,13 @@ const DecisionPointPage = (
   });
 
   useEffect(() => {
-    const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].decisionPoints?.flatMap(
-      (dp) => (
-        dp.milestones
-          ? dp.milestones.flatMap(
-            (ms) => (
-              ms.forwardDecisionPoint
-                ? []
-                : {
-                  id: ms.id,
-                }
-            ),
-          )
-          : []
+    const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
+      (ms) => (
+        ms.forwardDecisionPoint
+          ? []
+          : {
+            id: ms.id,
+          }
       ),
     );
     if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
