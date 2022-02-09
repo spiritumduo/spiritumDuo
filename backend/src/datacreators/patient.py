@@ -1,14 +1,14 @@
 from dependency_injector.wiring import Provide, inject
 
 from containers import SDContainer
-from models import Patient, OnPathway
+from models import Patient, OnPathway, Milestone
 from datetime import date, datetime
 from gettext import gettext as _
 import re
 from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader, PatientByHospitalNumberFromIELoader
 from config import config as SdConfig
-from typing import Optional
-from trustadapter.trustadapter import Patient_IE, TrustAdapter
+from typing import Optional, List
+from trustadapter.trustadapter import Patient_IE, TrustAdapter, TestResultRequest_IE
 
 
 class ReferencedItemDoesNotExistError(Exception):
@@ -35,6 +35,7 @@ async def CreatePatient(
 
     referred_at:datetime=None,
     awaiting_decision_type:Optional[str]="TRIAGE",
+    milestones:List[Milestone]=None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     if not context:
@@ -121,6 +122,7 @@ async def CreatePatient(
         _patient = await trust_adapter.create_patient(patient=_patient, auth_token=auth_token)
         if _patient is None:
             raise PatientNotInIntegrationEngineError(hospital_number, national_number)
+        
 
     patient = await Patient.create(
         hospital_number=_patient.hospital_number,
@@ -140,6 +142,18 @@ async def CreatePatient(
     _pathwayInstance=await OnPathway.create(
         **onPathwayInformation
     )
+
+    for milestone in milestones:
+        test_result=await trust_adapter.create_test_result(TestResultRequest_IE(
+            type_id=milestone["milestoneTypeId"],
+            current_state=milestone["currentState"],
+        ), auth_token=auth_token)
+        await Milestone.create(
+            on_pathway_id=int(_pathwayInstance.id),
+            current_state=milestone["currentState"],
+            milestone_type_id=int(milestone["milestoneTypeId"]),
+            test_result_reference_id=str(test_result.id)
+        )
 
     return{
         "patient":_patient

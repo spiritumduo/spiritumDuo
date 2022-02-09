@@ -14,9 +14,9 @@ from pydantic import BaseModel
 from starlette.responses import JSONResponse
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from models import Milestone, TestResult
-from typing import List, Optional
-from RecordTypes import MilestoneState
+from models import TestResult
+from typing import List, Optional, Union
+from RecordTypes import TestResultState
 from placeholder_data import TEST_RESULT_DATA
 import httpx
 
@@ -149,30 +149,32 @@ async def proc_wrapper(func):
     loop = asyncio.get_event_loop()
     loop.create_task(func)
 
-async def updateMilestoneAtRandomTime(milestoneId:int=None):
+async def updateTestResultAtRandomTime(testResultId:int=None):
     delay=randint(30, 60)
     await asyncio.sleep(delay)
-    milestone=await Milestone.get(milestoneId)
-    await milestone.update(current_state=MilestoneState.COMPLETED).apply()
+    testResult=await TestResult.get(testResultId)
 
-    # Generate test results
-    testResultDescription=""
-    if milestone.type_reference_name in TEST_RESULT_DATA:
-        testResultDescription=TEST_RESULT_DATA[milestone.type_reference_name]['result']
+    # Generate test result description
+    description=""
+    if testResult.type_reference_name in TEST_RESULT_DATA:
+        description=TEST_RESULT_DATA[testResult.type_reference_name]['result']
     else:
-        testResultDescription="Lorem ipsum doner kebab"
+        log.warn(f"TYPE REFERENCE '{testResult.type_reference_name} HAS NO DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
+        description="Vitae itaque illo ut. Non voluptatum aut qui porro dolores autem saepe."
+    
+    await testResult.update(
+        current_state=TestResultState.COMPLETED,
+        description=description
+    ).apply()
 
-    testResult=await TestResult.create(
-        milestone_id=milestone.id,
-        description=testResultDescription
-    )
+    
 
     async with httpx.AsyncClient() as client:
         await client.post(
             url="http://sd-backend:8080/rest/testresult/update",
             json={
-                "id":milestone.id,
-                "new_state":MilestoneState.COMPLETED.value
+                "id":testResult.id,
+                "new_state":TestResultState.COMPLETED.value
             },
             cookies={
                 "SDTIEKEY": UPDATE_ENDPOINT_KEY
@@ -180,124 +182,105 @@ async def updateMilestoneAtRandomTime(milestoneId:int=None):
         )
 
 
-class MilestoneInput(BaseModel):
+class TestResultRequest(BaseModel):
     currentState: Optional[str]
     typeReferenceName: str
     addedAt: Optional[datetime]
     updatedAt: Optional[datetime]
+    description: Optional[str]
 
-@app.post("/milestone")
+@app.post("/testresult")
 @needs_authentication
-async def post_milestone(request: Request, my_input: MilestoneInput):
+async def create_test_result_post(request: Request, input: TestResultRequest):
     """
-    Create Milestone
-    :return: JSONResponse containing ID of created milestone or error data
+    Create test result
+    :return: JSONResponse containing ID of created test result or error data
     """
-    milestoneData={
-        "type_reference_name": my_input.typeReferenceName
+    data={
+        "type_reference_name": input.typeReferenceName
     }
-    if my_input.currentState is not None:
-        milestoneData["current_state"] = my_input.currentState
-    if my_input.addedAt is not None:
-        milestoneData["added_at"] = my_input.addedAt
-    if my_input.updatedAt is not None:
-        milestoneData["updated_at"] = my_input.updatedAt
+    if input.currentState is not None:
+        data["current_state"] = input.currentState
+    if input.addedAt is not None:
+        data["added_at"] = input.addedAt
+    if input.updatedAt is not None:
+        data["updated_at"] = input.updatedAt
 
-    milestone:Milestone = await Milestone.create(
-        **milestoneData
+    if input.description is None and (input.currentState is not None and input.currentState=="COMPLETED"):
+        if input.typeReferenceName in TEST_RESULT_DATA:
+            data["description"]=TEST_RESULT_DATA[input.typeReferenceName]['result']
+        else:
+            log.warn(f"TYPE REFERENCE '{input.typeReferenceName} HAS NO DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
+            data["description"]="Vitae itaque illo ut. Non voluptatum aut qui porro dolores autem saepe."
+    elif input.currentState is not None and input.currentState=="COMPLETED":
+        data["description"] = input.description
+
+    testResult:TestResult = await TestResult.create(
+        **data
     )
 
     bg=BackgroundTasks()
-    bg.add_task(proc_wrapper, updateMilestoneAtRandomTime(milestone.id))
+    if "description" not in data:
+        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(testResultId=testResult.id))
 
     return JSONResponse({
-        "id":milestone.id,
-        "type_reference_name":milestone.type_reference_name,
-        "current_state":milestone.current_state.value,
-        "added_at":milestone.added_at.isoformat(),
-        "updated_at":milestone.updated_at.isoformat(),
-        "test_result":None
+        "id":testResult.id,
+        "description": testResult.description,
+        "type_reference_name":testResult.type_reference_name,
+        "current_state":testResult.current_state.value,
+        "added_at":testResult.added_at.isoformat(),
+        "updated_at":testResult.updated_at.isoformat()
     }, background=bg)
 
 
-@app.post("/milestones/get/")
+@app.post("/testresults/get/")
 @needs_authentication
-async def milestones(request: Request, input: List[str]):
+async def get_test_results_post(request: Request, input: List[str]):
     """
-    Get many milestones via post request
+    Get many test results via post request
     :param request:
     :param input:
     :return:
     """
-    integer_ids = [int(i) for i in input]
+    integerInput = [int(i) for i in input]
+    testResults:Union[List[TestResult], None] = await TestResult.query.where(TestResult.id.in_(integerInput)).gino.all()
 
-    milestones = await db.select([
-        Milestone, 
-        TestResult.id.label("test_result_id"),
-        TestResult.added_at.label("test_result_added_at"),
-        TestResult.description.label("test_result_description"),
-    ]).select_from(Milestone.outerjoin(TestResult, Milestone.id==TestResult.milestone_id)).gino.all()
+    if testResults is None: return None
 
-    if milestones is not None:
-        res = []
-        for milestone in milestones:
-            test_result=None
-            if milestone.test_result_id is not None:
-                test_result={
-                    "id": milestone.test_result_id,
-                    "added_at": milestone.test_result_added_at,
-                    "description": milestone.test_result_description
-                }
-            res.append({
-                "id": milestone.id,
-                "current_state": milestone.current_state,
-                "added_at": milestone.added_at,
-                "updated_at": milestone.updated_at,
-                "test_result":test_result
-            })
-        return res
-    else:
-        return None
+    res = []
+    for testResult in testResults:
+        res.append({
+            "id": testResult.id,
+            "description": testResult.description,
+            "type_reference_name": testResult.type_reference_name,
+            "current_state": testResult.current_state,
+            "added_at": testResult.added_at,
+            "updated_at": testResult.updated_at
+        })
+    return res
 
 
-@app.get("/milestone/{id}")
+@app.get("/testresult/{id}")
 @needs_authentication
-async def milestone_id(request: Request, id: str=None):
+async def get_test_result_get(request: Request, id: str=None):
     """
-    Get milestone by ID
+    Get test result by ID
     :param id: String ID
-    :return: JSONResponse containing Milestone requested or null
+    :return: JSONResponse containing TestResult requested or null
     """
 
-    try:
-        id=int(id)
-    except:
-        pass
-    else:
-        milestone = await db.select([
-            Milestone, 
-            TestResult.id.label("test_result_id"),
-            TestResult.added_at.label("test_result_added_at"),
-            TestResult.description.label("test_result_description"),
-        ]).select_from(Milestone.outerjoin(TestResult, Milestone.id==TestResult.milestone_id))\
-            .where(Milestone.id==id)\
-            .gino.all()
-        if milestone:
-            test_result=None
-            if milestone.test_result_id is not None:
-                test_result={
-                    "id": milestone.test_result_id,
-                    "added_at": milestone.test_result_added_at,
-                    "description": milestone.test_result_description
-                }
-            return {
-                "id":milestone.id,
-                "current_state":milestone.current_state,
-                "added_at":milestone.added_at,
-                "updated_at":milestone.updated_at,
-                "test_result":test_result
-            }
-        else:
-            return None
+    id=int(id)
+    testResult:Union[TestResult, None] = await TestResult.query.where(TestResult.id==id).gino.one_or_none()
+    
+    if testResult is None: return None
+
+    return {
+        "id": testResult.id,
+        "description": testResult.description,
+        "type_reference_name": testResult.type_reference_name,
+        "current_state": testResult.current_state,
+        "added_at": testResult.added_at,
+        "updated_at": testResult.updated_at
+    }
 
 db.init_app(app)

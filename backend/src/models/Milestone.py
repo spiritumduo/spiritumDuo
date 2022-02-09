@@ -6,9 +6,10 @@ class Milestone(db.Model):
     __tablename__ = "tbl_milestone"
 
     id = db.Column(db.Integer(), primary_key=True)
-    decision_point_id = db.Column(db.Integer(), db.ForeignKey('tbl_decision_point.id'), nullable=False)
+    on_pathway_id = db.Column(db.Integer(), db.ForeignKey('tbl_on_pathway.id'), nullable=False)
+    decision_point_id = db.Column(db.Integer(), db.ForeignKey('tbl_decision_point.id'), nullable=True)
     fwd_decision_point_id = db.Column(db.Integer(), db.ForeignKey('tbl_decision_point.id'), nullable=True)
-    reference_id = db.Column(db.Integer(), unique=True, nullable=False)
+    test_result_reference_id = db.Column(db.String(), unique=True, nullable=False)
     current_state = db.Column(
         Enum(MilestoneState, native_enum=False), default=MilestoneState.INIT.value,
         server_default=MilestoneState.INIT.value, nullable=False, native_enum=False

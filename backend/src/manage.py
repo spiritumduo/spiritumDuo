@@ -73,6 +73,8 @@ async def insert_user():
         print("Error: " + str(err))
 
 async def insert_test_data():
+    _Faker:Faker=Faker()
+
     await Milestone.delete.where(Milestone.id >= 0).gino.status()
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
@@ -81,28 +83,29 @@ async def insert_test_data():
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
 
     created_pathways=[
-        await Pathway.create(name="Lung Cancer"),
-        await Pathway.create(name="Bronchastasis")
+        await Pathway.create(id=1, name="Lung Cancer"),
+        await Pathway.create(id=2, name="Bronchiectasis")
     ]
-
-    await MilestoneType.create(name="CT Thorax", ref_name="Computed tomography of chest (procedure)")
-    await MilestoneType.create(name="X-Ray Chest", ref_name="Plain chest X-ray (procedure)")
-    await MilestoneType.create(name="MRI Head", ref_name="Magnetic resonance imaging of head (procedure)")
-    await MilestoneType.create(name="CT Head - Contrast", ref_name="Computed tomography of head with contrast (procedure)")
-    await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)")
-
-    milestone_types = await MilestoneType.query.gino.all()
-    _Faker=Faker()
+    create_milestone_types={
+        "referralLetter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)"),
+        "ctThorax": await MilestoneType.create(name="CT Thorax", ref_name="Computed tomography of chest (procedure)"),
+        "xRayChest": await MilestoneType.create(name="X-Ray Chest", ref_name="Plain chest X-ray (procedure)"),
+        "mriHead": await MilestoneType.create(name="MRI Head", ref_name="Magnetic resonance imaging of head (procedure)"),
+        "ctHeadWithContrast": await MilestoneType.create(name="CT Head - Contrast", ref_name="Computed tomography of head with contrast (procedure)"),
+        "bronchoscopy": await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)")
+    }
+    selectable_milestone_types=[
+        create_milestone_types['mriHead'],
+        create_milestone_types['ctHeadWithContrast'],
+        create_milestone_types['bronchoscopy'],
+    ]
+    
 
     
     for i in range(0, 50):
         first_name=_Faker.first_name()
         last_name=_Faker.last_name()
 
-        # this way of generating the identifiers makes
-        # them look realistic/different whilst ensuring they're
-        # all unique. Would need slightly changing if a 
-        # triple digit range is used
         hospital_number="fMRN" + str(randint(10000,99999))
         if len(str(i))==1:
             hospital_number+= "0"
@@ -117,8 +120,10 @@ async def insert_test_data():
         month = randint(1, 12)
         day = randint(1, 28)
         dob = date(year, month, day)
+        
+        _patientObject=None
         try:
-            await CreatePatient(
+            _patientObject = await CreatePatient(
                 context=_CONTEXT,
                 first_name=first_name,
                 last_name=last_name,
@@ -126,102 +131,100 @@ async def insert_test_data():
                 national_number=national_number,
                 date_of_birth=dob,
                 communication_method="LETTER",
-                pathwayId=created_pathways[randint(0, len(created_pathways)-1)].id
+                pathwayId=created_pathways[0].id,
+                milestones=[
+                    {
+                        "milestoneTypeId": create_milestone_types["referralLetter"].id,
+                        "currentState": MilestoneState.COMPLETED
+                    },
+                    {
+                        "milestoneTypeId": create_milestone_types["xRayChest"].id,
+                        "currentState": MilestoneState.COMPLETED
+                    },
+                    {
+                        "milestoneTypeId": create_milestone_types["ctThorax"].id,
+                        "currentState": MilestoneState.COMPLETED
+                    }
+                ]
             )
             print(f"Creating patient: {first_name} {last_name}")
         except Exception as e:
             traceback.print_exc()
-    patients = await Patient.query.gino.all()
-    pathways = await Pathway.query.gino.all()
 
-    d_types = [
-        DecisionTypes.TRIAGE,
-        DecisionTypes.CLINIC,
-        DecisionTypes.AD_HOC,
-        DecisionTypes.MDT,
-        DecisionTypes.POST_REQUEST,
-    ]
-
-    lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed gravida, arcu at tempus consequat, metus felis ornare tortor, et consectetur ipsum ipsum eget ex. Pellentesque molestie est ut magna tristique, in sollicitudin odio malesuada. Sed viverra, massa vitae imperdiet faucibus, ligula dui tristique turpis, eget efficitur elit erat nec ante."
-    user = await User.query.gino.first()
-    for p in patients:
-        path = pathways[randint(0, 1)]
-        d_t = d_types[randint(0, 1)]
-        referDay = randint(1, 10)
-        referMonth = randint(1, 10)
-        referYear = 2021
-        on_pathway = await OnPathway.create(
-            patient_id=p.id,
-            pathway_id=path.id,
-            awaiting_decision_type=d_t,
-            referred_at=datetime(referYear, referMonth, referDay)
-        )
-
-        num_decisions = randint(1, 2)
-        decisionDay = referDay + randint(1, 7)
-        decisionMonth = referMonth
-        decisionYear = referYear
-
-
-        milestones_to_add_to_decision_point=[]
-        num_milestones = randint(2, 5)
-        for i in range(0, num_milestones):
-            current_state = MilestoneState.WAITING
-            updated_at = datetime(decisionYear, decisionMonth, decisionDay)
-            if num_decisions == 2:
-                current_state = MilestoneState.COMPLETED
-                updated_at = datetime(decisionYear, decisionMonth, decisionDay + randint(1, 7))
-            elif randint(0, 1) == 1:
-                current_state = MilestoneState.COMPLETED
-                updated_at = datetime(decisionYear, decisionMonth, decisionDay + randint(1, 7))
-            
-            milestones_to_add_to_decision_point.append({
-                "milestoneTypeId":milestone_types[i].id,
-                "currentState":current_state,
-                "addedAt":datetime(decisionYear, decisionMonth, decisionDay),
-                "updatedAt":updated_at
-            })
-
-        dp=await CreateDecisionPoint(
-            context=_CONTEXT,
-            clinician_id=_CONTEXT['request']['user'].id,
-            on_pathway_id=on_pathway.id,
-            decision_type=DecisionTypes.TRIAGE,
-            clinic_history=lorem,
-            comorbidities=lorem,
-            added_at=datetime(decisionYear, decisionMonth, decisionDay),
-            milestone_requests=milestones_to_add_to_decision_point
-        )
-        
-        if num_decisions == 2:
-            decisionMonth += 1
-            milestones_to_add_to_decision_point=[]
-            num_milestones = randint(2, 5)
-            for i in range(0, num_milestones):
-                current_state = MilestoneState.WAITING
-                updated_at = datetime(decisionYear, decisionMonth, decisionDay)
-                if randint(0, 1) == 1:
-                    current_state = MilestoneState.COMPLETED
-                    updated_at = datetime(decisionYear, decisionMonth, decisionDay + randint(1, 7))
-
-                milestones_to_add_to_decision_point.append({
-                    "milestoneTypeId":milestone_types[i].id,
-                    "currentState":current_state,
-                    "addedAt":datetime(decisionYear, decisionMonth, decisionDay),
-                    "updatedAt":updated_at
-                })
-
-            await CreateDecisionPoint(
-                context=_CONTEXT,
-                clinician_id=_CONTEXT['request']['user'].id,
-                on_pathway_id=on_pathway.id,
-                decision_type=DecisionTypes.CLINIC,
-                clinic_history=lorem,
-                comorbidities=lorem,
-                added_at=datetime(decisionYear, decisionMonth, decisionDay),
-                milestone_requests=milestones_to_add_to_decision_point
+        on_pathways={
+            await OnPathway.query.where(
+                OnPathway.patient_id==_patientObject['patient'].id
+            ).where(
+                OnPathway.pathway_id==created_pathways[0].id
+            ).gino.one_or_none(),
+            await OnPathway.create(
+                patient_id = _patientObject['patient'].id,
+                pathway_id = created_pathways[1].id
             )
+        }
 
+        on_pathway_counter=0
+        for on_pathway in on_pathways:
+            on_pathway_counter=on_pathway_counter+1
+            if on_pathway_counter==1 or (on_pathway_counter!=1 and bool(getrandbits(1))):
+                print(f"OnPathway is {(await Pathway.get(on_pathway.pathway_id)).name}")
+                is_patient_new=bool(getrandbits(1))
+                if is_patient_new:
+                    """
+                    is the patient new to the pathway? if they are, we don't
+                    want to add any decision points as they will need to be triaged
+                    """
+                    print(f"Not creating any decision points")
+                else:
+                    await on_pathway.update(
+                        under_care_of_id=_CONTEXT["request"]["user"].id
+                    ).apply()
+
+                    number_of_milestones=randint(1,2)
+                    possible_milestone_types=[
+                        selectable_milestone_types[randint(0, len(selectable_milestone_types)-1)],
+                        selectable_milestone_types[randint(0, len(selectable_milestone_types)-1)]
+                    ]
+
+                    while (possible_milestone_types[0]==possible_milestone_types[1]):
+                        possible_milestone_types[1]=selectable_milestone_types[randint(0, len(selectable_milestone_types)-1)]
+                    milestone_requests=[]
+                    for i in range(0, number_of_milestones):
+                        milestone_requests.append(
+                            {"milestoneTypeId": possible_milestone_types[i].id}
+                        )
+                    
+                    await CreateDecisionPoint(
+                        context=_CONTEXT,
+                        on_pathway_id=on_pathway.id,
+                        clinician_id=_CONTEXT["request"]["user"].id,
+                        decision_type=DecisionTypes.TRIAGE,
+                        clinic_history=_Faker.text(),
+                        comorbidities=_Faker.text(),
+                        milestone_requests=milestone_requests
+                    )
+                    print(f"Created TRIAGE decision point")
+                    await on_pathway.update(
+                        awaiting_decision_type=DecisionTypes.CLINIC
+                    ).apply()
+
+                    has_clinic=bool(getrandbits(1))
+                    if has_clinic:
+                        await CreateDecisionPoint(
+                            context=_CONTEXT,
+                            on_pathway_id=on_pathway.id,
+                            clinician_id=_CONTEXT["request"]["user"].id,
+                            decision_type=DecisionTypes.CLINIC,
+                            clinic_history=_Faker.text(),
+                            comorbidities=_Faker.text(),
+                            milestone_requests=[
+                                {"milestoneTypeId": selectable_milestone_types[randint(0, len(selectable_milestone_types)-1)].id}
+                            ]
+                        )
+                        print(f"Created CLINIC decision point")
+                        await on_pathway.update(
+                            awaiting_decision_type=DecisionTypes.MDT
+                        ).apply()
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))

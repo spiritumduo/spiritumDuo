@@ -3,7 +3,7 @@ from gettext import gettext as _
 from SdTypes import DecisionTypes
 from typing import List, Dict
 from containers import SDContainer
-from trustadapter.trustadapter import Milestone_IE, TrustAdapter
+from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from datetime import date, datetime
 
@@ -40,39 +40,41 @@ async def CreateDecisionPoint(
     if added_at:
         decision_point_details['added_at']=added_at
 
-    _decisionPoint=await DecisionPoint.create(
+    _decisionPoint:DecisionPoint=await DecisionPoint.create(
         **decision_point_details
     )
 
     if milestone_requests is not None:
-        for milestone in milestone_requests:
-            _milestone=Milestone_IE()
-            _milestone.added_at=datetime.now()
-            _milestone.updated_at=datetime.now()
-            _milestone.milestone_type_id=milestone['milestoneTypeId']
+        for requestInput in milestone_requests:
+            testResultRequest=TestResultRequest_IE()
+            testResultRequest.added_at=datetime.now()
+            testResultRequest.updated_at=datetime.now()
+            testResultRequest.type_id=requestInput['milestoneTypeId']
+            
             # TODO: batch these
-            if "currentState" in milestone:
-                _milestone.current_state=milestone['currentState'].value
-            if "addedAt" in milestone:
-                _milestone.added_at=milestone['addedAt']
-            if "updatedAt" in milestone:
-                _milestone.updated_at=milestone['updatedAt']
+            if "currentState" in requestInput:
+                testResultRequest.current_state=requestInput['currentState']
+            if "addedAt" in requestInput:
+                testResultRequest.added_at=requestInput['addedAt']
+            if "updatedAt" in requestInput:
+                testResultRequest.updated_at=requestInput['updatedAt']
 
-            tieMilestone=await trust_adapter.create_milestone(_milestone, auth_token=context['request'].cookies['SDSESSION'])
+            testResult=await trust_adapter.create_test_result(testResultRequest, auth_token=context['request'].cookies['SDSESSION'])
 
             await Milestone(
+                on_pathway_id=int(_decisionPoint.on_pathway_id),
                 decision_point_id=int(_decisionPoint.id),
-                milestone_type_id=int(milestone['milestoneTypeId']),
-                reference_id = tieMilestone.id,
-                added_at = _milestone.added_at,
-                updated_at = _milestone.updated_at
+                milestone_type_id=int(testResultRequest.type_id),
+                test_result_reference_id = str(testResult.id),
+                added_at = testResultRequest.added_at,
+                updated_at = testResultRequest.updated_at
             ).create()
 
     if milestone_resolutions is not None:
         for milestoneId in milestone_resolutions:
             await Milestone.update.values(fwd_decision_point_id=int(_decisionPoint.id)).where(Milestone.id==int(milestoneId)).gino.status()
 
-    on_pathway = await OnPathway.update\
+    await OnPathway.update\
         .where(OnPathway.id == on_pathway_id)\
         .where(OnPathway.under_care_of_id == None)\
         .values(under_care_of_id=context['request']['user'].id)\

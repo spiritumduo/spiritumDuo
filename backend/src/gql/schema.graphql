@@ -40,6 +40,8 @@ type Mutation {
     createPatient(input:PatientInput!): AddPatientPayload!
     createPathway(input:PathwayInput!): AddPathwayPayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
+
+    importMilestone(input:MilestoneImportInput!): AddMilestonePayload!
 }
 
 enum PatientCommunicationMethods {
@@ -70,6 +72,10 @@ type AddPathwayPayload {
 type AddDecisionPointPayload{
     decisionPoint:DecisionPoint
     userErrors:[UserError!]    
+}
+type AddMilestonePayload{
+    milestone: Milestone
+    userErrors:[UserError!]
 }
 
 #### DATA TYPES
@@ -135,7 +141,7 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
-    testResults: [TestResult!]
+    milestones(notOnDecisionPoint: Boolean = True): [Milestone!]
     underCareOf: User
 }
 
@@ -161,36 +167,36 @@ type DecisionPoint {
     milestoneResolutions: [Milestone!]
 }
 
-type TestResult {
+type TestResult { 
+    # ALL THIS INFO IS FROM THE PSEUDOTIE!
     id: ID!
-    milestone: Milestone!
-    description: String!
+    description: String
+    currentState: String!
+    typeReferenceName: String!
     addedAt: DateTime!
+    updatedAt: DateTime!
 }
 
 type MilestoneType {
-  id: ID!
-  refName: String!
-  name: String!
+    id: ID!
+    refName: String!
+    name: String!
 }
 
 
 type Milestone {
-  id: ID!
-  milestoneType: MilestoneType!
-  decisionPoint: DecisionPoint!
-  forwardDecisionPoint: DecisionPoint
-  testResult: TestResult
+    id: ID!
 
-  addedAt: DateTime!                        # from TIE                       
-  updatedAt: DateTime!                      # from TIE
-  currentState: String!                     # from TIE
+    milestoneType: MilestoneType!
+    onPathway: OnPathway!
+    decisionPoint: DecisionPoint
+    forwardDecisionPoint: DecisionPoint
+    testResult: TestResult
 
-  internalCurrentState: MilestoneState!     # from SD
-  internalAddedAt: DateTime!                # from SD
-  internalUpdatedAt: DateTime!              # from SD
+    addedAt: DateTime!                        # from SD                      
+    updatedAt: DateTime!                      # from SD
+    currentState: String!                     # from SD
 }
-
 
 enum MilestoneState {
   INIT
@@ -211,9 +217,16 @@ input AddUserToGroupInput{
     groupName: String!
 }
 
-input MilestoneInput {
-  milestoneTypeId: ID!
-  currentState: MilestoneState
+input MilestoneRequestInput {
+    milestoneTypeId: ID!
+    currentState: MilestoneState
+}
+
+input MilestoneImportInput {
+    onPathwayId: ID!
+    milestoneTypeId: ID!
+    description: String!
+    currentState: MilestoneState!
 }
 
 input DecisionPointInput{
@@ -221,7 +234,7 @@ input DecisionPointInput{
     decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String
-    milestoneRequests: [MilestoneInput!]
+    milestoneRequests: [MilestoneRequestInput!]
     milestoneResolutions: [ID!]
 }
 
@@ -244,4 +257,6 @@ input PatientInput{
     pathwayId:ID!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
+
+    milestones: [MilestoneRequestInput]
 }
