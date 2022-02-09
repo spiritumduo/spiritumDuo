@@ -102,7 +102,7 @@ async def insert_test_data():
     
 
     
-    for i in range(0, 5):
+    for i in range(0, 50):
         first_name=_Faker.first_name()
         last_name=_Faker.last_name()
 
