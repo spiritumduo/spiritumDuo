@@ -36,11 +36,11 @@ export interface DecisionPointInput {
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities?: string | null;
-  milestoneRequests?: MilestoneInput[] | null;
+  milestoneRequests?: MilestoneRequestInput[] | null;
   milestoneResolutions?: string[] | null;
 }
 
-export interface MilestoneInput {
+export interface MilestoneRequestInput {
   milestoneTypeId: string;
   currentState?: MilestoneState | null;
 }
@@ -55,6 +55,7 @@ export interface PatientInput {
   pathwayId: string;
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
+  milestones?: (MilestoneRequestInput | null)[] | null;
 }
 
 //==============================================================

@@ -23,7 +23,7 @@ export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_forw
 export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult {
   __typename: "TestResult";
   id: string;
-  description: string;
+  description: string | null;
   addedAt: any;
 }
 
