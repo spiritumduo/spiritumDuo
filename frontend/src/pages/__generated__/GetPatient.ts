@@ -34,6 +34,7 @@ export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_mile
 
 export interface GetPatient_getPatient_onPathways_decisionPoints_milestones {
   __typename: "Milestone";
+  id: string;
   forwardDecisionPoint: GetPatient_getPatient_onPathways_decisionPoints_milestones_forwardDecisionPoint | null;
   testResult: GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult | null;
   milestoneType: GetPatient_getPatient_onPathways_decisionPoints_milestones_milestoneType;

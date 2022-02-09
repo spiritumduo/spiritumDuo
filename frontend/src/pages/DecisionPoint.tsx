@@ -45,6 +45,7 @@ export const GET_PATIENT_QUERY = gql`
             clinicHistory
             comorbidities
             milestones {
+              id
               forwardDecisionPoint {
                 id
               }
@@ -99,6 +100,9 @@ type DecisionPointPageForm = {
     milestoneTypeId: string;
     name: string;
     checked: boolean;
+  }[];
+  milestoneResolutions: {
+    id: string;
   }[];
 };
 
@@ -314,12 +318,15 @@ const DecisionPointPage = (
     control,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
-  const { fields, append } = useFieldArray({
+  // REQUEST CHECKBOXES
+  const {
+    fields: requestFields,
+    append: appendRequestFields,
+  } = useFieldArray({
     name: 'milestoneRequests',
     control: control,
   });
 
-  // REQUEST CHECKBOXES
   useEffect(() => {
     const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
       ? data?.getMilestoneTypes?.map((milestoneType) => ({
@@ -329,9 +336,36 @@ const DecisionPointPage = (
         checked: false,
       }))
       : [];
-    append(fieldProps);
-    // }
-  }, [data, append]);
+    appendRequestFields(fieldProps);
+  }, [data, appendRequestFields]);
+
+  // CONFIRM PREVIOUS TEST RESULTS HIDDEN INPUTS
+  const {
+    fields: hiddenConfirmationFields,
+    append: appendHiddenConfirmationFields,
+  } = useFieldArray({
+    name: 'milestoneResolutions',
+    control: control,
+  });
+
+  useEffect(() => {
+    const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].decisionPoints?.flatMap(
+      (dp) => (
+        dp.milestones
+          ? dp.milestones.flatMap(
+            (ms) => (
+              ms.forwardDecisionPoint
+                ? []
+                : {
+                  id: ms.id,
+                }
+            ),
+          )
+          : []
+      ),
+    );
+    if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
+  }, [data, appendHiddenConfirmationFields]);
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
@@ -353,7 +387,7 @@ const DecisionPointPage = (
 
   // FORM SUBMISSION
   const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
-    const milestoneRequests: MilestoneInput[] = values.milestoneRequests.filter(
+    const milestoneRequests: MilestoneInput[] = values.milestoneRequests?.filter(
       (m) => (m.checked !== false),
     ).map((m) => ({
       // The value of 'checked' will be anything we supply in the tag, but the
@@ -371,6 +405,7 @@ const DecisionPointPage = (
           comorbidities: values.comorbidities,
           decisionType: values.decisionType,
           milestoneRequests: milestoneRequests,
+          milestoneResolutions: values.milestoneResolutions.map((mr) => mr.id),
         },
       };
       mutation({ variables: variables });
@@ -410,6 +445,11 @@ const DecisionPointPage = (
                   <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
                   <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
                   <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
+                  {
+                    hiddenConfirmationFields.map((field, index) => (
+                      <input key={ `hidden-test-confirmation-${field.id}` } type="hidden" value={ field.id } { ...register(`milestoneResolutions.${index}.id`) } />
+                    ))
+                  }
                   <div className="container">
 
                     <div className="text-center">
@@ -456,7 +496,7 @@ const DecisionPointPage = (
                         </label>
                       </div>
                       {
-                        fields.map((field, index) => (
+                        requestFields.map((field, index) => (
                           <div className="row" key={ `ms-check-${field.id}` }>
                             <div className="col">
                               <div className="form-check">
