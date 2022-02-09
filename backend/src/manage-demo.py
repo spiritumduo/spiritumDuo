@@ -55,7 +55,7 @@ async def insert_demo_data():
     for i in range(1, NUMBER_OF_USERS+1):
 
         _user=await CreateUser(
-            username=f"user{i}",
+            username=f"demo{i}",
             password=f"21password{i}",
             first_name="Demo",
             last_name=f"User {i}",
