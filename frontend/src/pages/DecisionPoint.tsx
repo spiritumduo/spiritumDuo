@@ -197,7 +197,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <div className="row" key={ result.key }>
+    <div className="row">
       <div className="col-1">
         {
           !result.forwardDecisionPointId
@@ -258,7 +258,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
     !result.forwardDecisionPointId
       ? (
         <strong>
-          <TestResultDataElement result={ result } />
+          <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
         </strong>
       )
       : <TestResultDataElement result={ result } />
