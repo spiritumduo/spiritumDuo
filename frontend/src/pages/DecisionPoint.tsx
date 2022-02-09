@@ -261,7 +261,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
           <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
         </strong>
       )
-      : <TestResultDataElement result={ result } />
+      : <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
   ));
 
   return (
