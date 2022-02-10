@@ -38,16 +38,21 @@ export interface PatientListProps {
 const PatientList = (
   { pageCount, updateData, data, isLoading }: PatientListProps,
 ): JSX.Element => (
-  <div className="patient-list-div">
+  <div>
     <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
-    <ul className="patient-list px-0">
+    <table className="table">
+      <tr style={{border: 'none'}}>
+        <th className="d-table-cell">Most recent stage</th>
+        <th className="d-table-cell">Name</th>
+        <th className="d-none d-md-table-cell">Hospital number</th>
+        <th className="d-none d-lg-table-cell">Date of birth</th>
+      </tr>
       {
         data.map((p) => (
-          <li key={ p.key }> { p } </li>
+          <tr className="border-0" key={ p.key }> { p } </tr>
         ))
       }
-    </ul>
-
+    </table>
     <ReactPaginate
       previousLabel="previous"
       nextLabel="next"

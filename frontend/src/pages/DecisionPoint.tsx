@@ -219,30 +219,36 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             : ''
         }
       </div>
-      <div className="col-3">
+      <div className="col-4 col-lg-2">
         <p className="text-right">
-          { result.milestoneName }:
+          {
+            !result.forwardDecisionPointId
+              ? (
+                <strong style={{color: 'red'}}>{result.milestoneName}:</strong>
+              )
+              : <>{result.milestoneName}:</>
+          }
         </p>
       </div>
-      <div className="col" id={ result.elementId }>
+      <div className="col-5 col-lg-8" id={ result.elementId }>
         {
-          result.description.length < 30
+          result.description.length < 75
             ? <>{result.description}</>
             : (
               <>
-                { result.description.slice(0, 30) }
+                { result.description.slice(0, 75) }
                 <Collapse in={ testResultCollapseStates[result.elementId] }>
                   <div>
-                    {result.description.slice(30, result.description.length)}
+                    {result.description.slice(75, result.description.length)}
                   </div>
                 </Collapse>
               </>
             )
       }
       </div>
-      <div className="col">
+      <div className="col-2 col-lg-1">
         {
-          result.description.length < 30
+          result.description.length < 75
             ? ''
             : (
               <Button
@@ -256,7 +262,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 aria-controls="example-collapse-text"
                 aria-expanded={ testResultCollapseStates[result.elementId] }
               >
-                <ArrowDownShort size="2em" />
+                <ArrowDownShort size="1.5rem" />
               </Button>
             )
         }
@@ -267,9 +273,9 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   const elements = previousTestResults?.map((result) => (
     !result.forwardDecisionPointId
       ? (
-        <strong key={ `result-data-element-${result.key}` }>
+        <span key={ `result-data-element-${result.key}` }>
           <TestResultDataElement result={ result } />
-        </strong>
+        </span>
       )
       : <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
   ));
@@ -437,91 +443,87 @@ const DecisionPointPage = (
   return (
     <div>
       <section>
-        <div className="container py-5 h-100">
+        <div className="container col-12 col-lg-6 col-md-8 py-md-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="card shadow-2-strong col-12 col-md-10">
-              <form className="card-body p-5" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
-                <fieldset disabled={ loading || mutateLoading || isSubmitted }>
-                  <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
-                  <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
-                  <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
+            <form className="card p-0 px-md-5 pt-md-2" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
+              <fieldset disabled={ loading || mutateLoading || isSubmitted }>
+                <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
+                <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
+                <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
+                {
+                  hiddenConfirmationFields.map((field, index) => (
+                    <input key={ `hidden-test-confirmation-${field.id}` } type="hidden" value={ field.id } { ...register(`milestoneResolutions.${index}.id`) } />
+                  ))
+                }
+
+                <div className="text-center pt-3">
+                  <PatientInfoLonghand patient={ patient } />
+                </div>
+
+                <hr />
+                <p>{ error?.message }</p>
+
+                <div className="container pt-1 px-sm-0">
+                  <div className="form-outline mb-4 row">
+                    <div className="col">
+                      <p>Decision:
+                        <select
+                          id="decisionType"
+                          defaultValue={ decisionType.toUpperCase() }
+                          { ...register('decisionType', { required: true }) }
+                        >
+                          { decisionSelectOptions }
+                        </select>
+                      </p>
+                    </div>
+                    <div className="col">
+                      {
+                        underCareOf
+                          ? (
+                            <>Under Care Of: {`${underCareOf.firstName} ${underCareOf.lastName}`}</>
+                          )
+                          : ''
+                      }
+                    </div>
+                  </div>
+                  <PreviousTestResultsElement data={ data } />
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="clinicHistory">Clinical history
+                      <textarea className="form-control d-inline-block" id="clinicHistory" style={{minWidth: '100%'}} rows={ 3 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
+                      <p>{ formErrors.clinicHistory?.message }</p>
+                    </label>
+                  </div>
+                  <div className="form-outline mb-4">
+                    <label className="form-label" htmlFor="comorbidities">Co-morbidities
+                      <textarea className="form-control d-inline-block" id="comorbidities" rows={ 3 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
+                      <p>{ formErrors.comorbidities?.message }</p>
+                    </label>
+                  </div>
                   {
-                    hiddenConfirmationFields.map((field, index) => (
-                      <input key={ `hidden-test-confirmation-${field.id}` } type="hidden" value={ field.id } { ...register(`milestoneResolutions.${index}.id`) } />
+                    requestFields.map((field, index) => (
+                      <div className="row" key={ `ms-check-${field.id}` }>
+                        <div className="col">
+                          <div className="form-check">
+                            <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
+                              { field.name }
+                            </label>
+                          </div>
+                        </div>
+                        <div className="col" />
+                      </div>
                     ))
                   }
                   <div className="container">
-
-                    <div className="text-center">
-                      <PatientInfoLonghand patient={ patient } />
-                    </div>
-
-                    <hr />
-                    <p>{ error?.message }</p>
-
-                    <div className="container pt-1">
-                      <div className="form-outline mb-4 row">
-                        <div className="col">
-                          <p>Decision:
-                            <select
-                              id="decisionType"
-                              defaultValue={ decisionType.toUpperCase() }
-                              { ...register('decisionType', { required: true }) }
-                            >
-                              { decisionSelectOptions }
-                            </select>
-                          </p>
-                        </div>
-                        <div className="col">
-                          {
-                            underCareOf
-                              ? (
-                                <>Under Care Of: {`${underCareOf.firstName} ${underCareOf.lastName}`}</>
-                              )
-                              : ''
-                          }
-                        </div>
-                      </div>
-                      <PreviousTestResultsElement data={ data } />
-                      <div className="form-outline mb-4">
-                        <label className="form-label" htmlFor="clinicHistory">Clinical history
-                          <textarea className="form-control" id="clinicHistory" rows={ 3 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
-                          <p>{ formErrors.clinicHistory?.message }</p>
-                        </label>
-                      </div>
-                      <div className="form-outline mb-4">
-                        <label className="form-label" htmlFor="comorbidities">Co-morbidities
-                          <textarea className="form-control" id="comorbidities" rows={ 3 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
-                          <p>{ formErrors.comorbidities?.message }</p>
-                        </label>
-                      </div>
-                      {
-                        requestFields.map((field, index) => (
-                          <div className="row" key={ `ms-check-${field.id}` }>
-                            <div className="col">
-                              <div className="form-check">
-                                <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                                  <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
-                                  { field.name }
-                                </label>
-                              </div>
-                            </div>
-                            <div className="col" />
-                          </div>
-                        ))
-                      }
-                      <div className="container mt-4">
-                        <button type="submit" name="submitBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Submit</button>
-                      </div>
-
-                      <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-                      <p>{ mutateError?.message }</p>
-
-                    </div>
+                    <button type="submit" name="submitBtn" className="btn btn-outline-secondary px-4 my-4 float-end ms-1">Submit</button>
                   </div>
-                </fieldset>
-              </form>
-            </div>
+
+                  <p>{ mutateLoading ? 'Submitting...' : '' }</p>
+                  <p>{ mutateError?.message }</p>
+
+                </div>
+              </fieldset>
+            </form>
           </div>
         </div>
       </section>

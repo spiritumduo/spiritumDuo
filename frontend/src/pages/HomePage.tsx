@@ -18,7 +18,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
 
   const linkFactory = (
     patient: QueryPatient,
-  ) => <Link to={ `/decision/triage/${patient.hospitalNumber}` }>{ `${patient.firstName} ${patient.lastName}` }</Link>;
+  ) => <Link style={ { padding: '0' } } to={ `/decision/triage/${patient.hospitalNumber}` }>{ `${patient.firstName} ${patient.lastName}` }</Link>;
 
   return (
     <div className="container">

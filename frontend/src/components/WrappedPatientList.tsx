@@ -140,13 +140,14 @@ const WrappedPatientList = ({
           ).reduce(compareMilestones, undefined);
           if (milestone) lastMilestoneName = milestone.milestoneType.name;
         }
+
         return (
-          <div className="row justify-content-start" key={ n.id }>
-            <div className="col-2">{lastMilestoneName}</div>
-            <div className="col-2">{ linkFactory(n) }</div>
-            <div className="col-2">{n.hospitalNumber}</div>
-            <div className="col-5">{n.dateOfBirth?.toLocaleDateString()}</div>
-          </div>
+          <>
+            <td className="">{lastMilestoneName}</td>
+            <td className="">{linkFactory(n)}</td>
+            <td className="d-none d-md-table-cell">{n.hospitalNumber}</td>
+            <td className="d-none d-lg-table-cell">{n.dateOfBirth?.toLocaleDateString()}</td>
+          </>
         );
       },
     );

@@ -44,8 +44,6 @@ export function useLoginSubmit(): LoginSubmitHook {
           'content-type': 'application/json;charset=UTF-8',
         },
         body: JSON.stringify(variables),
-        // eslint-disable-next-line max-len
-        credentials: 'include', // TODO: GET RID OF THIS! We need frontend and backend to be served from same port ASAP
       });
       if (!response.ok) {
         throw new Error(`Error: Response ${response.status} ${response.statusText}`);
@@ -95,7 +93,7 @@ const LoginPage = (): JSX.Element => {
       <section>
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="card shadow-2-strong col-12 col-sm-12 col-md-10 col-lg-7 col-xl-5 mb-5">
+            <div className="col-12 col-sm-12 col-md-10 col-lg-7 col-xl-5 mb-5">
               <form onSubmit={ handleSubmit( () => {
                 doLogin(getValues());
               } ) }

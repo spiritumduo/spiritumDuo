@@ -13,7 +13,7 @@ interface LogoutLinkProps {
  * Link to individual Patient
  */
 const LogoutLink = ({ name }: LogoutLinkProps): JSX.Element => (
-  <div className="float-end">Logged in: { name }, <Link to="/logout">Logout</Link></div>
+  <div className="float-end m-2">Logged in: { name }, <Link to="/logout">Logout</Link></div>
 );
 
 export default LogoutLink;
