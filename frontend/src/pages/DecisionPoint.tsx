@@ -354,11 +354,11 @@ const DecisionPointPage = (
         dp.milestones
           ? dp.milestones.flatMap(
             (ms) => (
-              ms.forwardDecisionPoint
-                ? []
-                : {
+              !ms.forwardDecisionPoint && ms.testResult
+                ? {
                   id: ms.id,
                 }
+                : []
             ),
           )
           : []
