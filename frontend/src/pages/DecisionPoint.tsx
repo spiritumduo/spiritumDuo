@@ -64,6 +64,8 @@ export const GET_PATIENT_QUERY = gql`
       getMilestoneTypes {
         id
         name
+        isCheckboxHidden
+      }
       }
     }
 `;
@@ -329,12 +331,16 @@ const DecisionPointPage = (
 
   useEffect(() => {
     const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-      ? data?.getMilestoneTypes?.map((milestoneType) => ({
-        id: '',
-        milestoneTypeId: milestoneType.id,
-        name: milestoneType.name,
-        checked: false,
-      }))
+      ? data?.getMilestoneTypes?.flatMap((milestoneType) => (
+        !milestoneType.isCheckboxHidden
+          ? {
+            id: '',
+            milestoneTypeId: milestoneType.id,
+            name: milestoneType.name,
+            checked: false,
+          }
+          : []
+      ))
       : [];
     appendRequestFields(fieldProps);
   }, [data, appendRequestFields]);
