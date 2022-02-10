@@ -1,5 +1,4 @@
 import React from 'react';
-import { LogoutLink } from './Link';
 import './footer.css';
 
 export interface FooterProps {
@@ -9,9 +8,7 @@ export interface FooterProps {
 const Footer = ({ name }: FooterProps): JSX.Element => (
   <footer className="container">
     <div className="row justify-content-end">
-      <div className="col">
-        <LogoutLink name={ name } />
-      </div>
+      <div className="col" />
     </div>
   </footer>
 );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ListGroupItem, Button, Card, ListGroup, Row, Col, Container } from 'react-bootstrap';
 
 export interface DecisionSubmissionSuccessProps {
   milestones?: {
@@ -12,31 +13,34 @@ const DecisionSubmissionSuccess = (
   { milestones }: DecisionSubmissionSuccessProps,
 ): JSX.Element => {
   const milestonesElement: JSX.Element[] | undefined = milestones?.map(
-    (m) => (<div className="row" key={ m.id }>{m.name}</div>),
+    (m) => (<li key={ m.id }>{m.name}</li>),
   );
   return (
-    <div className="container">
-      <div className="row">
-        <h2>Decision submitted successfully</h2>
-      </div>
-      <div>
-        {
-          milestonesElement
-            ? (
-              <>
-                <h5 className="row">Requests Sent:</h5>
-                { milestonesElement }
-              </>
-            )
-            : ''
-          }
-        <Link to="/">
-          <button type="button" className="btn btn-outline-secondary w-25 ms-1 float-end">
+    <Container className="d-flex align-items-center justify-content-left mt-5">
+      <div className="d-flex align-items-center">
+        <div>
+          <strong>Requests sent:</strong>
+          <ul>
+            {
+              milestonesElement ? (
+                <>
+                  { milestonesElement }
+                </>
+              ) : ''
+            }
+          </ul>
+          <div className="mt-lg-4">
+            <p>
+              The above requests have now been submitted. You shall
+              receive confirmation of completion of requests shortly.
+            </p>
+          </div>
+          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" href="/app/">
             OK
-          </button>
-        </Link>
+          </Button>
+        </div>
       </div>
-    </div>
+    </Container>
   );
 };
 

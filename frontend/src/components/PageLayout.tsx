@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 import Header from 'components/Header';
-import Footer from 'components/Footer';
 import './pagelayout.css';
 import { AuthContext, PathwayContext } from 'app/context';
 
@@ -26,9 +25,9 @@ const PageLayout = ({
         currentPathwayId={ actualCurrentPathwayId }
         pathwayOnItemSelect={ () => console.log('item selected') }
         searchOnSubmit={ () => console.log('search submit') }
+        usersName={ `${user?.firstName} ${user?.lastName}` }
       />
       {children}
-      <Footer name={ `${user?.firstName} ${user?.lastName}` } />
     </div>
   );
 };

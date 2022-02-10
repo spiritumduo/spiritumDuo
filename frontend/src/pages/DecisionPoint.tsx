@@ -13,8 +13,8 @@ import { createDecisionPointVariables, createDecisionPoint } from 'pages/__gener
 import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
-import { Button, Collapse } from 'react-bootstrap';
-import { ArrowDownShort } from 'react-bootstrap-icons';
+import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
+import { ArrowDown, ArrowDownShort, ChevronBarDown, ChevronDown } from 'react-bootstrap-icons';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
@@ -179,20 +179,39 @@ interface ConfirmNoMilestonesProps {
 const ConfirmNoMilestones = (
   { confirmFn, submitFn, cancelFn }: ConfirmNoMilestonesProps,
 ): JSX.Element => (
-  <div className="no-milestones-confirmation">
-    <h1>No Milestones Selected!</h1>
-    <Button
-      onClick={ () => {
-        confirmFn(true);
-        submitFn();
-      } }
-    >
-      OK
-    </Button>
-    <Button onClick={ () => cancelFn(false) }>
-      Cancel
-    </Button>
-  </div>
+  <Container className="d-flex align-items-center justify-content-left mt-5">
+    <div className="d-flex align-items-center">
+      <div>
+        <strong>No requests selected!</strong>
+        <div className="mt-lg-4">
+          <p>
+            No requests have been selected. Are you sure
+            you want to continue?
+          </p>
+        </div>
+        <Button
+          className="float-end w-25 mt-lg-4 ms-4"
+          variant="outline-secondary"
+          href="/app/"
+          onClick={ () => {
+            confirmFn(true);
+            submitFn();
+          } }
+        >
+          Submit
+        </Button>
+        <Button
+          onClick={ () => {
+            cancelFn(false);
+          } }
+          className="float-end w-25 mt-lg-4"
+          variant="outline-secondary"
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  </Container>
 );
 
 interface PreviousTestResultsElementProps {
@@ -207,7 +226,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <div className="row">
+    <div className="row my-3 my-lg-0">
       <div className="col-1">
         {
           !result.forwardDecisionPointId
@@ -224,7 +243,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
           {
             !result.forwardDecisionPointId
               ? (
-                <strong style={{color: 'red'}}>{result.milestoneName}:</strong>
+                <strong>{result.milestoneName}:</strong>
               )
               : <>{result.milestoneName}:</>
           }
@@ -261,8 +280,10 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 } }
                 aria-controls="example-collapse-text"
                 aria-expanded={ testResultCollapseStates[result.elementId] }
+                variant="link"
+                className="p-0"
               >
-                <ArrowDownShort size="1.5rem" />
+                <ChevronDown color="black" size="1.5rem" />
               </Button>
             )
         }
@@ -273,9 +294,9 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   const elements = previousTestResults?.map((result) => (
     !result.forwardDecisionPointId
       ? (
-        <span key={ `result-data-element-${result.key}` }>
+        <strong key={ `result-data-element-${result.key}` }>
           <TestResultDataElement result={ result } />
-        </span>
+        </strong>
       )
       : <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
   ));
@@ -465,39 +486,49 @@ const DecisionPointPage = (
 
                 <div className="container pt-1 px-sm-0">
                   <div className="form-outline mb-4 row">
-                    <div className="col">
-                      <p>Decision:
-                        <select
-                          id="decisionType"
-                          defaultValue={ decisionType.toUpperCase() }
-                          { ...register('decisionType', { required: true }) }
-                        >
-                          { decisionSelectOptions }
-                        </select>
-                      </p>
+                    <div className="col-5 col-lg-2 d-flex align-items-center">
+                      Decision:
                     </div>
-                    <div className="col">
-                      {
-                        underCareOf
-                          ? (
-                            <>Under Care Of: {`${underCareOf.firstName} ${underCareOf.lastName}`}</>
-                          )
-                          : ''
-                      }
+                    <div className="col-7 col-lg-4">
+                      <FormSelect
+                        className="d-inline-block float-left mx-2"
+                        id="decisionType"
+                        defaultValue={ decisionType.toUpperCase() }
+                        // eslint-disable-next-line react/jsx-props-no-spreading
+                        { ...register('decisionType', { required: true }) }
+                      >
+                        { decisionSelectOptions }
+                      </FormSelect>
+                    </div>
+                    <div className="col-5 col-lg-2 d-flex align-items-center">
+                      Under care of:
+                    </div>
+                    <div className="col-7 col-lg-4">
+                      <FormSelect
+                        className="d-inline-block float-left mx-2"
+                        disabled
+                      >
+                        {
+                          underCareOf
+                            ? (
+                              <option>{`${underCareOf.firstName} ${underCareOf.lastName}`}</option>
+                            )
+                            : <option>AWAITING TRIAGE</option>
+                        }
+                      </FormSelect>
                     </div>
                   </div>
+                  <hr />
                   <PreviousTestResultsElement data={ data } />
-                  <div className="form-outline mb-4">
-                    <label className="form-label" htmlFor="clinicHistory">Clinical history
-                      <textarea className="form-control d-inline-block" id="clinicHistory" style={{minWidth: '100%'}} rows={ 3 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
-                      <p>{ formErrors.clinicHistory?.message }</p>
-                    </label>
+                  <div className="col-12">
+                    <label className="form-label" htmlFor="clinicHistory">Clinical history</label>
+                    <textarea className="form-control" style={{minWidth: '100%'}} id="clinicHistory" rows={ 8 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
+                    <p>{ formErrors.clinicHistory?.message }</p>
                   </div>
-                  <div className="form-outline mb-4">
-                    <label className="form-label" htmlFor="comorbidities">Co-morbidities
-                      <textarea className="form-control d-inline-block" id="comorbidities" rows={ 3 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
-                      <p>{ formErrors.comorbidities?.message }</p>
-                    </label>
+                  <div className="col-12">
+                    <label className="form-label" htmlFor="comorbidities">Co-morbidities</label>
+                    <textarea className="form-control" style={{minWidth: '100%'}} id="comorbidities" rows={ 8 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
+                    <p>{ formErrors.comorbidities?.message }</p>
                   </div>
                   {
                     requestFields.map((field, index) => (
