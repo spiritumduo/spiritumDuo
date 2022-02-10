@@ -6,7 +6,6 @@ TestResultObjectType = ObjectType("TestResult")
 
 @TestResultObjectType.field("description")
 async def resolver(obj:TestResult_IE=None, info=None, *_):
-    print("obj",obj)
     record = await TestResultByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.id)    
     return record.description
 
