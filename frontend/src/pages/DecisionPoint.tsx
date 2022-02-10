@@ -64,8 +64,8 @@ export const GET_PATIENT_QUERY = gql`
       getMilestoneTypes {
         id
         name
+        isDischarge
         isCheckboxHidden
-      }
       }
     }
 `;
@@ -97,6 +97,8 @@ type DecisionPointPageForm = {
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities: string;
+  dischargeRequestId: string;
+  something: string;
   milestoneRequests: {
     id: string;
     milestoneTypeId: string;
@@ -332,7 +334,7 @@ const DecisionPointPage = (
   useEffect(() => {
     const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
       ? data?.getMilestoneTypes?.flatMap((milestoneType) => (
-        !milestoneType.isCheckboxHidden
+        !milestoneType.isCheckboxHidden && !milestoneType.isDischarge
           ? {
             id: '',
             milestoneTypeId: milestoneType.id,
@@ -372,6 +374,8 @@ const DecisionPointPage = (
     );
     if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
   }, [data, appendHiddenConfirmationFields]);
+
+  const [dischargeEnabled, setDischargeEnabled] = useState<boolean>(false);
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
@@ -393,13 +397,21 @@ const DecisionPointPage = (
 
   // FORM SUBMISSION
   const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
-    const milestoneRequests: MilestoneRequestInput[] = values.milestoneRequests?.filter(
-      (m) => (m.checked !== false),
-    ).map((m) => ({
-      // The value of 'checked' will be anything we supply in the tag, but the
-      // form expects it to be boolean and breaks if it's not - so we do this cast
-      milestoneTypeId: m.checked as unknown as string,
-    }));
+    let milestoneRequests: MilestoneRequestInput[];
+
+    if (dischargeEnabled) {
+      milestoneRequests = [{
+        milestoneTypeId: values.dischargeRequestId,
+      }];
+    } else {
+      milestoneRequests = values.milestoneRequests?.filter(
+        (m) => (m.checked !== false),
+      ).map((m) => ({
+        // The value of 'checked' will be anything we supply in the tag, but the
+        // form expects it to be boolean and breaks if it's not - so we do this cast
+        milestoneTypeId: m.checked as unknown as string,
+      }));
+    }
 
     if (milestoneRequests.length === 0 && !confirmNoRequests) {
       setRequestConfirmation(true);
@@ -501,21 +513,67 @@ const DecisionPointPage = (
                           <p>{ formErrors.comorbidities?.message }</p>
                         </label>
                       </div>
-                      {
-                        requestFields.map((field, index) => (
-                          <div className="row" key={ `ms-check-${field.id}` }>
-                            <div className="col">
-                              <div className="form-check">
-                                <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                                  <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
-                                  { field.name }
-                                </label>
-                              </div>
-                            </div>
-                            <div className="col" />
-                          </div>
-                        ))
-                      }
+                      <div className="row">
+                        <div className="col">
+                          <h5>Requests</h5>
+                          <fieldset disabled={ dischargeEnabled }>
+                            {
+                              requestFields.map((field, index) => (
+                                <div className="row" key={ `ms-check-${field.id}` }>
+                                  <div className="col">
+                                    <div className="form-check">
+                                      <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+                                        <input
+                                          className="form-check-input"
+                                          type="checkbox"
+                                          value={ field.milestoneTypeId }
+                                          { ...register(`milestoneRequests.${index}.checked` as const) }
+                                          defaultChecked={ false }
+                                        />
+                                        { field.name }
+                                      </label>
+                                    </div>
+                                  </div>
+                                  <div className="col" />
+                                </div>
+                              ))
+                            }
+                          </fieldset>
+                        </div>
+                        <div className="col">
+                          <h5>Discharge?</h5> <input type="checkbox" name="discharge-enable-checkbox" onChange={ () => setDischargeEnabled(!dischargeEnabled) } />
+                          <fieldset disabled={ !dischargeEnabled }>
+                            {
+                              data?.getMilestoneTypes?.flatMap((milestoneType) => (
+                                !milestoneType.isCheckboxHidden && milestoneType.isDischarge
+                                  ? (
+                                    <div className="row" key={ `ms-discharge-${milestoneType.id}` }>
+                                      <div className="col">
+                                        <div className="form-check">
+                                          <label
+                                            className="form-check-label pull-right"
+                                            htmlFor={ `discharge.${milestoneType.id}` }
+                                          >
+                                            <input
+                                              className="form-check-input"
+                                              type="radio"
+                                              value={ milestoneType.id }
+                                              id={ `discharge.${milestoneType.id}` }
+                                              { ...register('dischargeRequestId') }
+                                            />
+                                            { milestoneType.name }
+                                          </label>
+                                        </div>
+                                      </div>
+                                      <div className="col" />
+                                    </div>
+                                  )
+                                  : ''
+                              ))
+                            }
+                          </fieldset>
+                        </div>
+                      </div>
                       <div className="container mt-4">
                         <button type="submit" name="submitBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Submit</button>
                       </div>
