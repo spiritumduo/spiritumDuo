@@ -1,7 +1,6 @@
 import asyncio
 import secrets
 import string
-from types import TracebackType
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
 from containers import SDContainer
@@ -36,6 +35,8 @@ _CONTEXT={
     "request":RequestPlaceholder()
 }
 
+
+created_pathways=[]
 # this generates a placeholder cookie for use when connecting
 # to the TIE as it's the only way to do so in one script w/
 # authentication enabled
@@ -46,6 +47,21 @@ _CONTEXT['request'].cookies={
 }
 
 async def insert_user():
+    global created_pathways
+
+    await Milestone.delete.where(Milestone.id >= 0).gino.status()
+    await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
+    await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
+    await User.delete.where(User.id >= 0).gino.status()
+    await Patient.delete.where(Patient.id >= 0).gino.status()
+    await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
+    await Pathway.delete.where(Pathway.id >= 0).gino.status()
+
+    created_pathways=[
+        await Pathway.create(id=1, name="Lung Cancer"),
+        await Pathway.create(id=2, name="Bronchiectasis")
+    ]
+
     users = await User.query.gino.all()
     user_num = str(len(users))
     username = "user" + user_num
@@ -53,8 +69,9 @@ async def insert_user():
     first_name = "John " + user_num
     last_name = "Doe " + user_num
     department = "Respiratory"
+    default_pathway_id = 1
     try:
-        user = await CreateUser(username, password, first_name, last_name, department)
+        user = await CreateUser(username, password, first_name, last_name, department, default_pathway_id)
         print("User inserted")
         print("Username: " + user['username'])
         print("Password: " + password)
@@ -75,17 +92,6 @@ async def insert_user():
 async def insert_test_data():
     _Faker:Faker=Faker()
 
-    await Milestone.delete.where(Milestone.id >= 0).gino.status()
-    await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
-    await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
-    await Pathway.delete.where(Pathway.id >= 0).gino.status()
-    await Patient.delete.where(Patient.id >= 0).gino.status()
-    await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
-
-    created_pathways=[
-        await Pathway.create(id=1, name="Lung Cancer"),
-        await Pathway.create(id=2, name="Bronchiectasis")
-    ]
     create_milestone_types={
         "referralLetter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)"),
         "ctThorax": await MilestoneType.create(name="CT Thorax", ref_name="Computed tomography of chest (procedure)"),

@@ -25,12 +25,13 @@ class SessionAlreadyExists(Exception):
     """
 
 class SDUser(BaseUser):
-    def __init__(self, id:int=None, username:str=None, firstName:str=None, lastName:str=None, department:str=None) -> None:
+    def __init__(self, id:int=None, username:str=None, firstName:str=None, lastName:str=None, department:str=None, default_pathway_id:int=None) -> None:
         self.id = id
         self.username = username
         self.firstName = firstName
         self.lastName = lastName
         self.department = department
+        self.default_pathway_id = default_pathway_id
 
     @property
     def is_authenticated(self) -> bool:
@@ -61,7 +62,8 @@ class SDAuthentication(AuthenticationBackend):
                         username=user.username,
                         firstName=user.first_name,
                         lastName=user.last_name,
-                        department=user.department
+                        department=user.department,
+                        default_pathway_id=user.default_pathway_id
                     )
                     return AuthCredentials(
                         scopes=["authenticated"]

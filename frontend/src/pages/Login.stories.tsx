@@ -45,6 +45,8 @@ const successfulLoginMock: { user: User, pathways: PathwayOption[], error: strin
     lastName: 'Doe',
     department: 'Respiratory',
     roles: [],
+    defaultPathwayId: 1,
+
   },
   pathways: [
     {

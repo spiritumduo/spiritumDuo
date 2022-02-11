@@ -12,3 +12,4 @@ class User(db.Model):
     department = db.Column(db.String(), nullable=False)
     last_login = db.Column(db.DateTime(), server_default=func.now(), nullable=False)
     is_active = db.Column(db.Boolean(), nullable=False, default=True)
+    default_pathway_id = db.Column(db.Integer(), db.ForeignKey('tbl_pathway.id'), nullable=False)

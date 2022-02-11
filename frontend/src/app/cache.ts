@@ -79,6 +79,7 @@ let sanitisedUser: User | null = {
   lastName: '',
   department: '',
   roles: [],
+  defaultPathwayId: 0,
 };
 
 const loggedInuserLocalStorage = localStorage.getItem('loggedInUser');

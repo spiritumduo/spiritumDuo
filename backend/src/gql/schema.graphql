@@ -152,6 +152,7 @@ type User {
     username: String!
     lastLogin: DateTime
     department: String!
+    defaultPathway: Pathway!
 }
 
 type DecisionPoint {

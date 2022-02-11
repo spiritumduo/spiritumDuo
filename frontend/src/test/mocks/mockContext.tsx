@@ -23,6 +23,7 @@ export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JS
     firstName: 'Test-John',
     lastName: 'Test-Doe',
     department: 'Respiratory',
+    defaultPathwayId: 1,
     roles: [],
   };
   // eslint-disable-next-line no-unneeded-ternary
