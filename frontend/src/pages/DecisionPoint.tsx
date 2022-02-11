@@ -226,7 +226,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <div className="row my-3 my-lg-0">
+    <div className="row my-5 my-xl-2">
       <div className="col-1">
         {
           !result.forwardDecisionPointId
@@ -238,8 +238,8 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             : ''
         }
       </div>
-      <div className="col-4 col-lg-2">
-        <p className="text-right">
+      <div className="col-11 col-xl-3">
+        <p className="text-left">
           {
             !result.forwardDecisionPointId
               ? (
@@ -249,7 +249,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
           }
         </p>
       </div>
-      <div className="col-5 col-lg-8" id={ result.elementId }>
+      <div className="col-10 col-xl-7" id={ result.elementId }>
         {
           result.description.length < 75
             ? <>{result.description}</>
@@ -265,7 +265,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             )
       }
       </div>
-      <div className="col-2 col-lg-1">
+      <div className="col-2 col-xl-1">
         {
           result.description.length < 75
             ? ''
@@ -524,12 +524,12 @@ const DecisionPointPage = (
                   </div>
                   <hr />
                   <PreviousTestResultsElement data={ data } />
-                  <div className="col-12">
+                  <div className="col-12 pb-2">
                     <label className="form-label" htmlFor="clinicHistory">Clinical history</label>
                     <textarea className="form-control" style={{minWidth: '100%'}} id="clinicHistory" rows={ 8 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
                     <p>{ formErrors.clinicHistory?.message }</p>
                   </div>
-                  <div className="col-12">
+                  <div className="col-12 pb-2">
                     <label className="form-label" htmlFor="comorbidities">Co-morbidities</label>
                     <textarea className="form-control" style={{minWidth: '100%'}} id="comorbidities" rows={ 8 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
                     <p>{ formErrors.comorbidities?.message }</p>
