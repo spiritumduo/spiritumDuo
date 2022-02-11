@@ -13,7 +13,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
-import { ChevronDown, ChevronLeft } from 'react-bootstrap-icons';
+import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
