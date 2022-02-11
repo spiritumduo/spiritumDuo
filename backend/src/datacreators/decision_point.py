@@ -1,4 +1,4 @@
-from models import DecisionPoint, Milestone, OnPathway
+from models import DecisionPoint, Milestone, OnPathway, MilestoneType
 from gettext import gettext as _
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -9,12 +9,12 @@ from datetime import date, datetime
 
 class ReferencedItemDoesNotExistError(Exception):
     """
-        This occurs when a referenced item does not 
+        This occurs when a referenced item does not
         exist and cannot be found when it should
     """
 @inject
 async def CreateDecisionPoint(
-    context:dict=None, 
+    context:dict=None,
     on_pathway_id:int=None,
     clinician_id:int=None,
     decision_type:DecisionTypes=None,
@@ -50,7 +50,7 @@ async def CreateDecisionPoint(
             testResultRequest.added_at=datetime.now()
             testResultRequest.updated_at=datetime.now()
             testResultRequest.type_id=requestInput['milestoneTypeId']
-            
+
             # TODO: batch these
             if "currentState" in requestInput:
                 testResultRequest.current_state=requestInput['currentState']
@@ -69,6 +69,13 @@ async def CreateDecisionPoint(
                 added_at = testResultRequest.added_at,
                 updated_at = testResultRequest.updated_at
             ).create()
+
+            milestone_type = await MilestoneType.get(int(testResultRequest.type_id))
+            if milestone_type.is_discharge:
+                await OnPathway.update\
+                    .where(OnPathway.id == on_pathway_id)\
+                    .values(is_discharged=True)\
+                    .gino.scalar()
 
     if milestone_resolutions is not None:
         for milestoneId in milestone_resolutions:

@@ -14,36 +14,52 @@ const milestoneTypes = [
   {
     id: '1',
     name: 'Milestone Request',
+    isDischarge: false,
+    isCheckboxHidden: false,
   },
   {
     id: '2',
     name: 'X-Ray',
+    isDischarge: false,
+    isCheckboxHidden: false,
   },
   {
     id: '3',
     name: 'Other Request',
+    isDischarge: false,
+    isCheckboxHidden: false,
   },
   {
     id: '4',
     name: 'Refer Somewhere',
+    isDischarge: false,
+    isCheckboxHidden: false,
   },
   {
     id: '5',
     name: 'MRI Head',
+    isDischarge: false,
+    isCheckboxHidden: false,
   },
 ];
 
 const milestones = [
   {
+    id: '1',
     testResult: null,
+    forwardDecisionPoint: null,
     milestoneType: {
       name: 'MRI Head',
     },
   },
   {
+    id: '2',
+    forwardDecisionPoint: {
+      id: '1',
+    },
     testResult: {
       id: '1',
-      description: 'X-Ray description from CH1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
+      description: 'X-Ray description from DP1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2021-12-12'),
     },
     milestoneType: {
@@ -51,9 +67,13 @@ const milestones = [
     },
   },
   {
+    id: '3',
+    forwardDecisionPoint: {
+      id: '2',
+    },
     testResult: {
       id: '2',
-      description: 'CT Thorax description from CH1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
+      description: 'CT Thorax description from DP1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-07'),
     },
     milestoneType: {
@@ -61,9 +81,13 @@ const milestones = [
     },
   },
   {
+    id: '4',
+    forwardDecisionPoint: {
+      id: '3',
+    },
     testResult: {
       id: '3',
-      description: 'EBUS description from CH2 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
+      description: 'EBUS description from DP2 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-02'),
     },
     milestoneType: {
@@ -71,15 +95,19 @@ const milestones = [
     },
   },
   {
+    id: '5',
+    forwardDecisionPoint: null,
     testResult: null,
     milestoneType: {
       name: 'MRI Head',
     },
   },
   {
+    id: '6',
+    forwardDecisionPoint: null,
     testResult: {
       id: '4',
-      description: 'Lung function description from CH3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
+      description: 'Lung function description from DP3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-16'),
     },
     milestoneType: {
@@ -87,9 +115,11 @@ const milestones = [
     },
   },
   {
+    id: '7',
+    forwardDecisionPoint: null,
     testResult: {
       id: '5',
-      description: 'PET-CT description from CH3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
+      description: 'PET-CT description from DP3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-06'),
     },
     milestoneType: {
@@ -172,6 +202,7 @@ const apolloMocks = [
           comorbidities: 'New Comorbidities',
           decisionType: DecisionPointType.TRIAGE.toString(),
           milestoneRequests: [],
+          milestoneResolutions: ['6', '7'],
         },
       },
     },
@@ -197,6 +228,7 @@ const apolloMocks = [
           clinicHistory: 'New Clinic History',
           comorbidities: 'New Comorbidities',
           decisionType: DecisionPointType.TRIAGE.toString(),
+          milestoneResolutions: ['6', '7'],
           milestoneRequests: [
             {
               milestoneTypeId: milestoneTypes[0].id,
