@@ -14,7 +14,7 @@ type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_
 
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
-  const pathwayId = currentPathwayId || 1;
+  const pathwayId = currentPathwayId as number;
 
   const linkFactory = (
     patient: QueryPatient,

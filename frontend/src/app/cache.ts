@@ -67,10 +67,6 @@ export const pathwayOptionsVar: ReactiveVar<PathwayOption[]> = makePersistantVar
   'pathwayOptions',
 );
 
-const _currentId = pathwayOptionsArray[0] ? pathwayOptionsArray[0].id : 0;
-// Save the current pathway ID
-export const currentPathwayIdVar: ReactiveVar<number> = makePersistantVar<number>(_currentId, 'currentPathwayId');
-
 // Here we reconstruct the user from local storage. If any fields are missing, we
 // don't use it
 let sanitisedUser: User | null = {
@@ -91,6 +87,7 @@ if (loggedInuserLocalStorage) {
     sanitisedUser.lastName = loggedInUser.lastName;
     sanitisedUser.department = loggedInUser.department;
     sanitisedUser.roles = loggedInUser.roles;
+    sanitisedUser.defaultPathwayId = loggedInUser.defaultPathwayId;
   } catch (err) {
     sanitisedUser = null;
   }
@@ -99,4 +96,23 @@ sanitisedUser = sanitisedUser?.id === 0 ? null : sanitisedUser;
 export const loggedInUserVar: ReactiveVar<User | null> = makePersistantVar<User | null>(
   sanitisedUser,
   'loggedInUser',
+);
+
+const currentPathwayIdLocalStorage = localStorage.getItem('currentPathwayId');
+const userDefaultPathway = loggedInUserVar()?.defaultPathwayId;
+
+let _currentPathway;
+if (currentPathwayIdLocalStorage) {
+  _currentPathway = parseInt(currentPathwayIdLocalStorage, 10);
+} else if (userDefaultPathway) {
+  _currentPathway = userDefaultPathway;
+} else if (pathwayOptionsArray[0]) {
+  _currentPathway = pathwayOptionsArray[0].id;
+} else {
+  throw new Error('No pathway found');
+}
+
+// Save the current pathway ID
+export const currentPathwayIdVar: ReactiveVar<number> = makePersistantVar<number>(
+  _currentPathway, 'currentPathwayId',
 );
