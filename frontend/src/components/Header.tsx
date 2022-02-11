@@ -20,7 +20,7 @@ const Header = ({
 }: HeaderProps): JSX.Element => {
   const currentOption = pathwayOptions.find((p) => p.id === currentPathwayId);
   return (
-    <Navbar expand="md">
+    <Navbar expand="lg">
       <Container fluid className="w-100">
         <Form>
           <Form.Group>
