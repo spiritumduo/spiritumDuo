@@ -14,7 +14,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
-import { ArrowDown, ArrowDownShort, ChevronBarDown, ChevronDown, ChevronLeft } from 'react-bootstrap-icons';
+import { ArrowDown, ArrowDownShort, ChevronBarDown, ChevronDown, ChevronLeft, ChevronUp } from 'react-bootstrap-icons';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
@@ -255,7 +255,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             ? <>{result.description}</>
             : (
               <>
-                { result.description.slice(0, 75) }
+                { result.description.slice(0, 75) }...
                 <Collapse in={ testResultCollapseStates[result.elementId] }>
                   <div>
                     {result.description.slice(75, result.description.length)}
@@ -265,7 +265,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             )
       }
       </div>
-      <div className="col-2 col-xl-1">
+      <div className="col-2 col-xl-1 position-relative">
         {
           result.description.length < 75
             ? ''
@@ -281,12 +281,13 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 aria-controls="example-collapse-text"
                 aria-expanded={ testResultCollapseStates[result.elementId] }
                 variant="link"
-                className="p-0"
+                className="p-0 position-absolute"
+                style={{bottom: '0'}}
               >
                 {
                   testResultCollapseStates[result.elementId]
-                    ? <ChevronDown color="black" size="1.5rem" />
-                    : <ChevronLeft color="black" size="1.5rem" />
+                    ? <ChevronUp color="black" size="1.5rem" />
+                    : <ChevronDown color="black" size="1.5rem" />
                 }
               </Button>
             )
@@ -470,7 +471,7 @@ const DecisionPointPage = (
       <section>
         <div className="container col-12 col-lg-6 col-md-8 py-md-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
-            <form className="card p-0 px-md-5 pt-md-2" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
+            <form className="card p-0 px-4 pt-md-2" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
               <fieldset disabled={ loading || mutateLoading || isSubmitted }>
                 <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
                 <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
