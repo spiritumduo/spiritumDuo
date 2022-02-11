@@ -14,7 +14,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
-import { ArrowDown, ArrowDownShort, ChevronBarDown, ChevronDown } from 'react-bootstrap-icons';
+import { ArrowDown, ArrowDownShort, ChevronBarDown, ChevronDown, ChevronLeft } from 'react-bootstrap-icons';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
@@ -283,7 +283,11 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 variant="link"
                 className="p-0"
               >
-                <ChevronDown color="black" size="1.5rem" />
+                {
+                  testResultCollapseStates[result.elementId]
+                    ? <ChevronDown color="black" size="1.5rem" />
+                    : <ChevronLeft color="black" size="1.5rem" />
+                }
               </Button>
             )
         }
