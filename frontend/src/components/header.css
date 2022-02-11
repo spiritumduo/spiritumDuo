@@ -24,3 +24,7 @@ h1 {
 button + button {
   margin-left: 10px;
 }
+
+.navbar-light .navbar-nav .nav-link {
+  color: black;
+}
