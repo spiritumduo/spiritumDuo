@@ -12,6 +12,7 @@ import { DecisionPointInput } from "./../../../__generated__/globalTypes";
 export interface createDecisionPoint_createDecisionPoint_decisionPoint_milestones_milestoneType {
   __typename: "MilestoneType";
   name: string;
+  isDischarge: boolean;
 }
 
 export interface createDecisionPoint_createDecisionPoint_decisionPoint_milestones {

@@ -14,6 +14,7 @@ import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
+import PathwayComplete from 'components/PathwayComplete';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
@@ -92,6 +93,7 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
           id
           milestoneType {
             name
+            isDischarge
           }
         }
       }
@@ -285,7 +287,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 aria-expanded={ testResultCollapseStates[result.elementId] }
                 variant="link"
                 className="p-0 position-absolute"
-                style={{bottom: '0'}}
+                style={ { bottom: '0' } }
               >
                 {
                   testResultCollapseStates[result.elementId]
@@ -415,8 +417,11 @@ const DecisionPointPage = (
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
       id: ms.id,
       name: ms.milestoneType.name,
+      isDischarge: ms.milestoneType.isDischarge,
     }));
-    return <DecisionSubmissionSuccess milestones={ _milestones } />;
+    return _milestones?.find((ms) => ms.isDischarge)
+      ? <PathwayComplete />
+      : <DecisionSubmissionSuccess milestones={ _milestones } />;
   }
 
   const patient: Patient = {
