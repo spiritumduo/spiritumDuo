@@ -5,6 +5,7 @@ interface User {
     firstName: string;
     lastName: string;
     department: string;
+    defaultPathwayId: number;
     lastAccess?: Date;
     roles: Role[];
 }

@@ -26,10 +26,11 @@ async def clear_existing_data():
     await Milestone.delete.where(Milestone.id >= 0).gino.status()
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
+    await Session.delete.gino.status()
+    await User.delete.where(User.username.like("%user%")).gino.status()
     await Pathway.delete.where(Pathway.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
-    await User.delete.where(User.username.like("%user%")).gino.status()
 
 async def insert_demo_data():
     created_milestone_types={
@@ -54,28 +55,28 @@ async def insert_demo_data():
 
     for i in range(1, NUMBER_OF_USERS+1):
 
+        _pathway=await CreatePathway(
+            context=_context,
+            name=f"Lung Cancer demo {i}"
+        )
+
         _user=await CreateUser(
             username=f"user{i}",
             password=f"21password{i}",
             first_name="Demo",
             last_name=f"User {i}",
-            department="Demonstration"
+            department="Demonstration",
+            default_pathway_id=_pathway['pathway'].id
         )
         _context['request']['user']=User(
             id=_user["id"],
             username=_user['username'],
             department=_user['department'],
             first_name=_user['first_name'],
-            last_name=_user['last_name']
+            last_name=_user['last_name'],
+            default_pathway_id=_pathway['pathway'].id
         )
-
         print(f"Creating user {_user['username']}")
-
-        _pathway=await CreatePathway(
-            context=_context,
-            name=f"Lung Cancer demo {i}"
-        )
-
 
         hospital_number="fMRN" + str(randint(10000,99999))
         if len(str(i))==1:

@@ -83,7 +83,7 @@ const LoginPage = (): JSX.Element => {
     if (data?.user && data?.pathways) {
       updateUser(data.user);
       updatePathwayOptions(data.pathways);
-      updateCurrentPathwayId(data.pathways?.[0].id);
+      updateCurrentPathwayId(data.user?.defaultPathwayId);
       navigate('/', { replace: true });
     }
   });

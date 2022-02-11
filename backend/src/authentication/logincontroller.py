@@ -58,7 +58,8 @@ class LoginController:
             username=user.username,
             firstName=user.first_name,
             lastName=user.last_name,
-            department=user.department
+            department=user.department,
+            default_pathway_id=user.default_pathway_id
         )
 
         sessionKey=None
@@ -94,7 +95,8 @@ class LoginController:
                 "username": sdUser.username,
                 "firstName": sdUser.firstName,
                 "lastName": sdUser.lastName,
-                "department": sdUser.department
+                "department": sdUser.department,
+                "defaultPathwayId": sdUser.default_pathway_id
             },
             "pathways": preparedPathways
         })
