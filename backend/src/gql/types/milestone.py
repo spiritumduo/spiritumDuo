@@ -1,4 +1,6 @@
 from ariadne.objects import ObjectType
+
+from SdTypes import MilestoneState
 from dataloaders import MilestoneTypeLoader, TestResultByReferenceIdFromIELoader, DecisionPointLoader, OnPathwayByIdLoader
 from models import Milestone
 MilestoneObjectType = ObjectType("Milestone")
@@ -21,7 +23,10 @@ async def resolver(obj:Milestone=None, info=None, *_):
 
 @MilestoneObjectType.field("testResult")
 async def resolver(obj:Milestone=None, info=None, *_):
-    return await TestResultByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.test_result_reference_id)
+    if obj.current_state == MilestoneState.COMPLETED:
+        return await TestResultByReferenceIdFromIELoader.load_from_id(context=info.context, id=obj.test_result_reference_id)
+    else:
+        return None
 
 @MilestoneObjectType.field("currentState")
 async def resolver(obj:Milestone=None, info=None, *_):

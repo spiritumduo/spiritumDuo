@@ -170,7 +170,7 @@ type DecisionPoint {
 type TestResult { 
     # ALL THIS INFO IS FROM THE PSEUDOTIE!
     id: ID!
-    description: String
+    description: String!
     currentState: String!
     typeReferenceName: String!
     addedAt: DateTime!
