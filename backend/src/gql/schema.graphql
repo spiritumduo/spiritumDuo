@@ -181,6 +181,8 @@ type MilestoneType {
     id: ID!
     refName: String!
     name: String!
+    isDischarge: Boolean!
+    isCheckboxHidden: Boolean!
 }
 
 

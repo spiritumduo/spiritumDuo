@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
 import { AuthContext, PathwayContext } from 'app/context';
-import { Link } from 'react-router-dom';
 import Patient from 'types/Patient';
 import { DecisionPointType } from 'types/DecisionPoint';
 import PatientInfoLonghand from 'components/PatientInfoLonghand';
@@ -14,7 +13,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
 import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
-import { ArrowDown, ArrowDownShort, ChevronBarDown, ChevronDown, ChevronLeft } from 'react-bootstrap-icons';
+import { ChevronDown, ChevronLeft } from 'react-bootstrap-icons';
 // eslint-disable-next-line import/extensions
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
@@ -78,6 +77,8 @@ export const GET_PATIENT_QUERY = gql`
       getMilestoneTypes {
         id
         name
+        isDischarge
+        isCheckboxHidden
       }
     }
 `;
@@ -109,6 +110,8 @@ type DecisionPointPageForm = {
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities: string;
+  dischargeRequestId: string;
+  something: string;
   milestoneRequests: {
     id: string;
     milestoneTypeId: string;
@@ -366,12 +369,16 @@ const DecisionPointPage = (
 
   useEffect(() => {
     const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-      ? data?.getMilestoneTypes?.map((milestoneType) => ({
-        id: '',
-        milestoneTypeId: milestoneType.id,
-        name: milestoneType.name,
-        checked: false,
-      }))
+      ? data?.getMilestoneTypes?.flatMap((milestoneType) => (
+        !milestoneType.isCheckboxHidden
+          ? {
+            id: '',
+            milestoneTypeId: milestoneType.id,
+            name: milestoneType.name,
+            checked: false,
+          }
+          : []
+      ))
       : [];
     appendRequestFields(fieldProps);
   }, [data, appendRequestFields]);
@@ -388,15 +395,17 @@ const DecisionPointPage = (
   useEffect(() => {
     const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
       (ms) => (
-        ms.forwardDecisionPoint
-          ? []
-          : {
+        !ms.forwardDecisionPoint && ms.testResult
+          ? {
             id: ms.id,
           }
+          : []
       ),
     );
     if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
   }, [data, appendHiddenConfirmationFields]);
+
+  // const [dischargeEnabled, setDischargeEnabled] = useState<boolean>(false);
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
@@ -526,12 +535,12 @@ const DecisionPointPage = (
                   <PreviousTestResultsElement data={ data } />
                   <div className="col-12 pb-2">
                     <label className="form-label" htmlFor="clinicHistory">Clinical history</label>
-                    <textarea className="form-control" style={{minWidth: '100%'}} id="clinicHistory" rows={ 8 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
+                    <textarea className="form-control" style={ { minWidth: '100%' } } id="clinicHistory" rows={ 8 } defaultValue={ previousDecisionPoint?.clinicHistory } { ...register('clinicHistory', { required: true }) } />
                     <p>{ formErrors.clinicHistory?.message }</p>
                   </div>
                   <div className="col-12 pb-2">
                     <label className="form-label" htmlFor="comorbidities">Co-morbidities</label>
-                    <textarea className="form-control" style={{minWidth: '100%'}} id="comorbidities" rows={ 8 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
+                    <textarea className="form-control" style={ { minWidth: '100%' } } id="comorbidities" rows={ 8 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
                     <p>{ formErrors.comorbidities?.message }</p>
                   </div>
                   {
