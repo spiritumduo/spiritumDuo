@@ -22,8 +22,8 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
 
   return (
     <div className="container">
-      <div className="row mt-1 justify-content-start">
-        <div className="col">
+      <div className="col-12 col-xxl-6 row mt-1 justify-content-start">
+        <div>
           <h3>Outstanding Decisions</h3>
           <WrappedPatientList
             pathwayId={ pathwayId.toString() }
