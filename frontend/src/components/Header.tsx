@@ -1,8 +1,5 @@
 import React from 'react';
-import Navbar from 'react-bootstrap/Navbar';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-
+import {Navbar, Container, Nav, Form} from 'react-bootstrap';
 import Patient from '../types/Patient';
 import PathwayOption from '../types/PathwayOption';
 import PatientInfoLonghand from './PatientInfoLonghand';
@@ -25,7 +22,11 @@ const Header = ({
   return (
     <Navbar expand="md">
       <Container fluid className="w-100">
-        <Navbar.Brand>Spiritum Duo</Navbar.Brand>
+        <Form>
+          <Form.Group>
+            <Form.Control disabled type="text" placeholder="Hospital number" />
+          </Form.Group>
+        </Form>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto">
@@ -34,7 +35,6 @@ const Header = ({
             <Nav.Link href="/app/mdt">MDT</Nav.Link>
             <Nav.Link href="/app/patient/add" disabled>Add Patient</Nav.Link>
             <Nav.Link href="/app/logout">Logout</Nav.Link>
-            {/* <Nav.Link href="/app/logout">Logout ({usersName})</Nav.Link> */}
           </Nav>
           <Nav className="">
             <Nav.Item>
