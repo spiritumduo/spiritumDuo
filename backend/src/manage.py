@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from containers import SDContainer
 
 from models.db import db, DATABASE_URL
-from models import User, Pathway, Patient, OnPathway, DecisionPoint, Milestone, MilestoneType
+from models import *
 from random import randint, getrandbits
 from datetime import date, datetime
 from SdTypes import DecisionTypes, MilestoneState
@@ -52,6 +52,7 @@ async def insert_user():
     await Milestone.delete.where(Milestone.id >= 0).gino.status()
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
+    await Session.delete.gino.status()
     await User.delete.where(User.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
