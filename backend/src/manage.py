@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from containers import SDContainer
 
 from models.db import db, DATABASE_URL
-from models import User, Pathway, Patient, OnPathway, DecisionPoint, Milestone, MilestoneType
+from models import *
 from random import randint, getrandbits
 from datetime import date, datetime
 from SdTypes import DecisionTypes, MilestoneState
@@ -52,6 +52,7 @@ async def insert_user():
     await Milestone.delete.where(Milestone.id >= 0).gino.status()
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
+    await Session.delete.gino.status()
     await User.delete.where(User.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
@@ -92,21 +93,31 @@ async def insert_user():
 async def insert_test_data():
     _Faker:Faker=Faker()
 
-    create_milestone_types={
-        "referralLetter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)"),
-        "ctThorax": await MilestoneType.create(name="CT Thorax", ref_name="Computed tomography of chest (procedure)"),
-        "xRayChest": await MilestoneType.create(name="X-Ray Chest", ref_name="Plain chest X-ray (procedure)"),
-        "mriHead": await MilestoneType.create(name="MRI Head", ref_name="Magnetic resonance imaging of head (procedure)"),
-        "ctHeadWithContrast": await MilestoneType.create(name="CT Head - Contrast", ref_name="Computed tomography of head with contrast (procedure)"),
-        "bronchoscopy": await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)")
+    general_milestone_types={
+        "referral_letter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)", is_checkbox_hidden=True),
+        "pathology": await MilestoneType.create(name="Pathology", ref_name="Pathology report (record artifact)", is_checkbox_hidden=True),
+        "prehad_referral": await MilestoneType.create(name="Prehad referral", ref_name="Prehabilitation (regime/therapy)", is_discharge=True),
+        "dietician_referral": await MilestoneType.create(name="Dietician referral", ref_name="Patient referral to dietitian (procedure)", is_discharge=True),
+        "smoking_cessation_referral": await MilestoneType.create(name="Smoking cessation referral", ref_name="Referral to smoking cessation service (procedure)"),
+        "chest_xray": await MilestoneType.create(name="Chest X-ray", ref_name="Plain chest X-ray (procedure)"),
+        "ct_chest": await MilestoneType.create(name="CT chest", ref_name="Computed tomography of chest (procedure)"),
     }
-    selectable_milestone_types=[
-        create_milestone_types['mriHead'],
-        create_milestone_types['ctHeadWithContrast'],
-        create_milestone_types['bronchoscopy'],
-    ]
-    
 
+    selectable_milestone_types=[
+        await MilestoneType.create(name="PET-CT", ref_name="Positron emission tomography with computed tomography (procedure)"),
+        await MilestoneType.create(name="CT head - contrast", ref_name="Computed tomography of head with contrast (procedure)"),
+        await MilestoneType.create(name="MRI head", ref_name="Magnetic resonance imaging of head (procedure)"),
+        await MilestoneType.create(name="Lung function tests", ref_name="Measurement of respiratory function (procedure)"),
+        await MilestoneType.create(name="ECHO", ref_name="Echocardiography (procedure)"),
+        await MilestoneType.create(name="CT guided biopsy thorax", ref_name="Biopsy of thorax using computed tomography guidance (procedure)"),
+        await MilestoneType.create(name="EBUS", ref_name="Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)"),
+        await MilestoneType.create(name="ECG", ref_name="Electrocardiogram analysis (qualifier value)"),
+        await MilestoneType.create(name="Thoracoscopy", ref_name="Thoracoscopy (procedure)"),
+        await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)"),
+        await MilestoneType.create(name="Pleural tap", ref_name="Thoracentesis (procedure)"),
+        await MilestoneType.create(name="CPET", ref_name=" Cardiopulmonary exercise test (procedure)"),
+        await MilestoneType.create(name="Bloods", ref_name="Blood test (procedure)"),
+    ]
     
     for i in range(0, 50):
         first_name=_Faker.first_name()
@@ -140,15 +151,15 @@ async def insert_test_data():
                 pathwayId=created_pathways[0].id,
                 milestones=[
                     {
-                        "milestoneTypeId": create_milestone_types["referralLetter"].id,
+                        "milestoneTypeId": general_milestone_types["referral_letter"].id,
                         "currentState": MilestoneState.COMPLETED
                     },
                     {
-                        "milestoneTypeId": create_milestone_types["xRayChest"].id,
+                        "milestoneTypeId": general_milestone_types["chest_xray"].id,
                         "currentState": MilestoneState.COMPLETED
                     },
                     {
-                        "milestoneTypeId": create_milestone_types["ctThorax"].id,
+                        "milestoneTypeId": general_milestone_types["ct_chest"].id,
                         "currentState": MilestoneState.COMPLETED
                     }
                 ]
