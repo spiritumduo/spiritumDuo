@@ -1,27 +1,14 @@
+import re
 from dependency_injector.wiring import Provide, inject
-
 from containers import SDContainer
-from models import Patient, OnPathway, Milestone
+from models import Patient, OnPathway, Milestone, Pathway
 from datetime import date, datetime
 from gettext import gettext as _
-import re
-from dataloaders import PatientByHospitalNumberLoader, PathwayByIdLoader, PatientByHospitalNumberFromIELoader
+from dataloaders import PathwayByIdLoader
 from config import config as SdConfig
-from typing import Optional, List
-from trustadapter.trustadapter import Patient_IE, TrustAdapter, TestResultRequest_IE
-
-
-class ReferencedItemDoesNotExistError(Exception):
-    """
-    This occurs when a referenced item does not 
-    exist and cannot be found when it should
-    """
-class PatientNotInIntegrationEngineError(Exception):
-    """
-    This is raised when a patient cannot be found
-    via the integration engine
-    """
 from typing import Optional, List, Union
+from trustadapter.trustadapter import Patient_IE, TestResult_IE, TrustAdapter, TestResultRequest_IE
+from common import ReferencedItemDoesNotExistError, PatientNotInIntegrationEngineError, DataCreatorInputErrors
 
 @inject
 async def CreatePatient(
@@ -33,70 +20,46 @@ async def CreatePatient(
     date_of_birth:date=None,
     communication_method: Optional[str] = "LETTER",
     pathwayId:int=None,
-
     referred_at:datetime=None,
     awaiting_decision_type:Optional[str]="TRIAGE",
-    milestones:List[Milestone]=None,
+    milestones:List[Milestone]={},
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
     _db=context['db']
-    userErrors=[]
 
     auth_token = context['request'].cookies['SDSESSION']
     
+    errors=DataCreatorInputErrors()
     # check if hospital number provided matches regex in configuration
     if re.search(SdConfig["HOSPITAL_NUMBER_REGEX"], hospital_number) is None: 
-        userErrors.append({
-            "message":_("Regex failure"),
-            "field":"hospital_number"
-        })
+        errors.addError(field="hospital_number", message="Input does not match expected pattern")
         
     if re.search(SdConfig["NATIONAL_NUMBER_REGEX"], national_number) is None:
-        userErrors.append({
-            "message":_("Regex failure"),
-            "field":"national_number"
-        })
-
-    if len(userErrors)>0:
-        return {
-            "userErrors": userErrors 
-        }
+        errors.addError(field="national_number", message="Input does not match expected pattern")
+    
+    if errors.hasErrors(): return errors
 
     if not pathwayId:
-        raise ReferencedItemDoesNotExistError("Pathway ID not provided. Could not add new patient.")
-    _pathway=await PathwayByIdLoader.load_from_id(context=context, id=pathwayId)
+        raise ReferencedItemDoesNotExistError("Pathway ID not provided.")
+
+    _pathway:Pathway=await PathwayByIdLoader.load_from_id(context=context, id=pathwayId)
     if not _pathway:
-        raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
+        raise ReferencedItemDoesNotExistError("Pathway provided does not exist.")
     
     _patient:Patient_IE = await trust_adapter.load_patient(hospitalNumber=hospital_number, auth_token=auth_token)
     if _patient:
         if _patient.first_name!=first_name:
-            userErrors.append({
-                "message":_("Entry does not match patient from hospital number. Please check the information provided is correct"),
-                "field":"first_name"
-            })
+            errors.addError(field="first_name", message="Input does not match patient from external system")
         if _patient.last_name!=last_name:
-            userErrors.append({
-                "message":_("Entry does not match patient from hospital number. Please check the information provided is correct"),
-                "field":"last_name"
-            })
+            errors.addError(field="last_name", message="Input does not match patient from external system")
         if _patient.date_of_birth!=date_of_birth:
-            userErrors.append({
-                "message":_("Entry does not match patient from hospital number. Please check the information provided is correct"),
-                "field":"date_of_birth"
-            })
+            errors.addError(field="date_of_birth", message="Input does not match patient from external system")
         if _patient.national_number!=national_number:
-            userErrors.append({
-                "message":_("Entry does not match patient from hospital number. Please check the information provided is correct"),
-                "field":"national_number"
-            })
-        if len(userErrors)>0:
-            return {
-                "patient": None,
-                "userErrors": userErrors 
-            }
+            errors.addError(field="national_number", message="Input does not match patient from external system")
+        
+        if errors.hasErrors(): return errors
 
         # if the patient does already exist
         existingOnPathwayQuery=OnPathway.query.where(OnPathway.patient_id==_patient.id).where(OnPathway.pathway_id==_pathway.id).where(OnPathway.is_discharged==False)
@@ -105,12 +68,9 @@ async def CreatePatient(
             existingOnPathway:Union[OnPathway, None]=await conn.one_or_none(existingOnPathwayQuery)
         
         if existingOnPathway: # if there is an active pathway instance
-            return {"userErrors":[
-                {
-                    "message":_("Patient is already enrolled on specified pathway (not discharged)"),
-                    "field":"pathway"
-                }
-            ]}
+            errors.addError(field="patient", message="Patient already belongs to this pathway and is not discharged")
+
+        if errors.hasErrors(): return errors
     else:
         _patient = Patient_IE(
             first_name=first_name,
@@ -156,7 +116,4 @@ async def CreatePatient(
             milestone_type_id=int(milestone["milestoneTypeId"]),
             test_result_reference_id=str(test_result.id)
         )
-
-    return{
-        "patient":_patient
-    }
+    return _patient
