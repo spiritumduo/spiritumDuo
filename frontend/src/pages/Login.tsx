@@ -100,7 +100,7 @@ const LoginPage = (): JSX.Element => {
               >
                 <fieldset disabled={ loading } aria-label="Login Form">
                   <div className="form-group mb-2">
-                    <h5>Please enter credentials below to access Spiritum Duo</h5>
+                    <h5>Please enter credentials below</h5>
                   </div>
 
                   <div className="form-group row mb-2">
