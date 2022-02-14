@@ -2,13 +2,12 @@ from .mutation_type import mutation
 from datacreators import CreateDecisionPoint
 from models import DecisionPoint
 from authentication.authentication import needsAuthorization
-import logging
-
+from graphql.type import GraphQLResolveInfo
 
 @mutation.field("createDecisionPoint")
 @needsAuthorization(["authenticated"])
 async def resolve_create_decision(
-        _=None, info=None, input: dict=None,
+    obj=None, info:GraphQLResolveInfo=None, input:dict=None,
 ):
     decision_point_details={
         "context": info.context,
@@ -23,8 +22,8 @@ async def resolve_create_decision(
     if "milestoneRequests" in input:
         decision_point_details['milestone_requests']=input['milestoneRequests']
 
-    decision_point:DecisionPoint=(await CreateDecisionPoint(
+    decision_point:DecisionPoint=await CreateDecisionPoint(
         **decision_point_details
-    ))
+    )
 
     return decision_point

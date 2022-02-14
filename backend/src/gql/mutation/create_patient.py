@@ -1,10 +1,11 @@
 from .mutation_type import mutation
-from datacreators import CreatePatient
 from authentication.authentication import needsAuthorization
+from graphql.type import GraphQLResolveInfo
+from datacreators.patient import CreatePatient
 
 @mutation.field("createPatient")
 @needsAuthorization(["authenticated"])
-async def resolve_create_patient(_=None, info=None, input:dict=None):
+async def resolve_create_patient(obj=None, info:GraphQLResolveInfo=None, input:dict=None):
     patientInfo={
         "first_name":input["firstName"],
         "last_name":input["lastName"],

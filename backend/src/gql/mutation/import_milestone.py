@@ -4,7 +4,6 @@ from authentication.authentication import needsAuthorization
 
 @mutation.field("importMilestone")
 @needsAuthorization(["authenticated"])
-async def resolver(_=None, info=None, input:dict=None):
     data={
         "onPathwayId":input["onPathwayId"],
         "milestoneTypeId":input["milestoneTypeId"],
@@ -12,6 +11,7 @@ async def resolver(_=None, info=None, input:dict=None):
         "currentState":input["currentState"],
     }
     
+async def resolver(obj=None, info:GraphQLResolveInfo=None, input:dict=None):   
     return {
         "milestone": await ImportMilestone(
             context=info.context,

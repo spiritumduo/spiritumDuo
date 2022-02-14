@@ -1,5 +1,4 @@
 import logging
-
 from sqlalchemy import or_, and_
 from dataloaders import PatientByIdLoader
 from .query_type import query
@@ -7,12 +6,13 @@ from models import OnPathway, DecisionPoint, Milestone, db
 from SdTypes import MilestoneState
 from .pagination import *
 from authentication.authentication import needsAuthorization
+from graphql.type import GraphQLResolveInfo
 
 
 @needsAuthorization(["authenticated"])
 @query.field("getPatientOnPathwayConnection")
 async def get_patient_connection(
-        _, info, pathwayId=None, awaitingDecisionType=None, isDischarged=False,
+        obj=None, info:GraphQLResolveInfo=None, pathwayId=None, awaitingDecisionType=None, isDischarged=False,
         first=None, after=None, last=None, before=None, outstanding=True,
         underCareOf=False
 ):

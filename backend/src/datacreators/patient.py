@@ -21,6 +21,7 @@ class PatientNotInIntegrationEngineError(Exception):
     This is raised when a patient cannot be found
     via the integration engine
     """
+from typing import Optional, List, Union
 
 @inject
 async def CreatePatient(
@@ -69,7 +70,7 @@ async def CreatePatient(
     if not _pathway:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist. Could not add new patient.")
     
-    _patient = await trust_adapter.load_patient(hospitalNumber=hospital_number, auth_token=auth_token)
+    _patient:Patient_IE = await trust_adapter.load_patient(hospitalNumber=hospital_number, auth_token=auth_token)
     if _patient:
         if _patient.first_name!=first_name:
             userErrors.append({
@@ -101,7 +102,7 @@ async def CreatePatient(
         existingOnPathwayQuery=OnPathway.query.where(OnPathway.patient_id==_patient.id).where(OnPathway.pathway_id==_pathway.id).where(OnPathway.is_discharged==False)
         
         async with _db.acquire(reuse=False) as conn:
-            existingOnPathway=await conn.one_or_none(existingOnPathwayQuery)
+            existingOnPathway:Union[OnPathway, None]=await conn.one_or_none(existingOnPathwayQuery)
         
         if existingOnPathway: # if there is an active pathway instance
             return {"userErrors":[
@@ -119,12 +120,13 @@ async def CreatePatient(
             national_number=national_number,
             date_of_birth=date_of_birth
         )
-        _patient = await trust_adapter.create_patient(patient=_patient, auth_token=auth_token)
+
+        _patient:Patient_IE = await trust_adapter.create_patient(patient=_patient, auth_token=auth_token)
         if _patient is None:
             raise PatientNotInIntegrationEngineError(hospital_number, national_number)
         
 
-    patient = await Patient.create(
+    patient:Patient = await Patient.create(
         hospital_number=_patient.hospital_number,
         national_number=_patient.national_number
     )
@@ -139,12 +141,12 @@ async def CreatePatient(
     if referred_at:
         onPathwayInformation['referred_at']=referred_at
         
-    _pathwayInstance=await OnPathway.create(
+    _pathwayInstance:OnPathway=await OnPathway.create(
         **onPathwayInformation
     )
 
     for milestone in milestones:
-        test_result=await trust_adapter.create_test_result(TestResultRequest_IE(
+        test_result:TestResult_IE=await trust_adapter.create_test_result(TestResultRequest_IE(
             type_id=milestone["milestoneTypeId"],
             current_state=milestone["currentState"],
         ), auth_token=auth_token)
