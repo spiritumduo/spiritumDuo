@@ -95,12 +95,12 @@ async def insert_demo_data():
         )
         print(f"Creating user {_user['username']}")
 
-        hospital_number="fMRN" + str(randint(10000,99999))
+        hospital_number="fMRN" + str(randint(1000,9999))
         if len(str(i))==1:
             hospital_number+= "0"
         hospital_number+=str(i)
 
-        national_number="fNHS" + str(randint(10000000,99999999))
+        national_number="fNHS" + str(randint(1000000,9999999))
         if len(str(i))==1:
             national_number+= "0"
         national_number+=str(i)
