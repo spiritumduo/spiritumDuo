@@ -532,7 +532,8 @@ const DecisionPointPage = (
                             ? (
                               <option>{`${underCareOf.firstName} ${underCareOf.lastName}`}</option>
                             )
-                            : <option>AWAITING TRIAGE</option>
+                            // : <option>AWAITING TRIAGE</option>
+                            : <option>{`${user.firstName} ${user.firstName}`}</option>
                         }
                       </FormSelect>
                     </div>
