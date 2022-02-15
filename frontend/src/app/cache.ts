@@ -108,8 +108,6 @@ if (currentPathwayIdLocalStorage) {
   _currentPathway = userDefaultPathway;
 } else if (pathwayOptionsArray[0]) {
   _currentPathway = pathwayOptionsArray[0].id;
-} else {
-  throw new Error('No pathway found');
 }
 
 // Save the current pathway ID
