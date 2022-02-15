@@ -482,6 +482,10 @@ const DecisionPointPage = (
   const onPathwayId = data.getPatient.onPathways?.[0].id;
   const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
+  const testOptions = requestFields.filter((ck) => ck.discharge === false).filter((ck) => !ck.name.includes('referral'));
+  const referNoDischargeOptions = requestFields.filter((ck) => ck.name.includes('referral')).filter((ck) => ck.discharge === false);
+  const referAndDischargeOptions = requestFields.filter((ck) => ck.discharge === true);
+
   return (
     <div>
       <section>
@@ -552,12 +556,10 @@ const DecisionPointPage = (
                     <p>{ formErrors.comorbidities?.message }</p>
                   </div>
 
-                  <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-                  <p>{ mutateError?.message }</p>
                   <Row>
                     <Col>
                       {
-                        requestFields.filter((ck) => ck.discharge === false).filter((ck) => !ck.name.includes('referral')).map((field, index) => (
+                        testOptions.map((field, index) => (
                           <div className="form-check" key={ `ms-check-${field.id}` }>
                             <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
                               <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
@@ -569,10 +571,10 @@ const DecisionPointPage = (
                     </Col>
                     <Col>
                       {
-                        requestFields.filter((ck) => ck.name.includes('referral')).filter((ck) => ck.discharge === false).map((field, index) => (
+                        referNoDischargeOptions.map((field, index) => (
                           <div className="form-check" key={ `ms-check-${field.id}` }>
                             <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
+                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index + testOptions.length}.checked` as const) } defaultChecked={ false } />
                               { field.name }
                             </label>
                           </div>
@@ -581,10 +583,10 @@ const DecisionPointPage = (
                     </Col>
                     <Col>
                       {
-                        requestFields.filter((ck) => ck.discharge === true).map((field, index) => (
+                        referAndDischargeOptions.map((field, index) => (
                           <div className="form-check" key={ `ms-check-${field.id}` }>
                             <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
+                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index + testOptions.length + referNoDischargeOptions.length}.checked` as const) } defaultChecked={ false } />
                               { field.name }
                             </label>
                           </div>
@@ -592,6 +594,8 @@ const DecisionPointPage = (
                       }
                     </Col>
                   </Row>
+                  <p>{ mutateLoading ? 'Submitting...' : '' }</p>
+                  <p>{ mutateError?.message }</p>
                   <div className="container">
                     <button type="submit" name="submitBtn" className="btn btn-outline-secondary px-4 my-4 float-end ms-1">Submit</button>
                   </div>
