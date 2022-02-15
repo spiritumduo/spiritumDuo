@@ -45,7 +45,7 @@ async def CreatePatient(
         raise ReferencedItemDoesNotExistError("Pathway ID not provided.")
 
     _pathway:Pathway=await PathwayByIdLoader.load_from_id(context=context, id=pathwayId)
-    if not _pathway:
+    if _pathway is None:
         raise ReferencedItemDoesNotExistError("Pathway provided does not exist.")
     
     _patient:Patient_IE = await trust_adapter.load_patient(hospitalNumber=hospital_number, auth_token=auth_token)
@@ -85,7 +85,7 @@ async def CreatePatient(
         if _patient is None:
             raise PatientNotInIntegrationEngineError(hospital_number, national_number)
         
-
+    
     patient:Patient = await Patient.create(
         hospital_number=_patient.hospital_number,
         national_number=_patient.national_number
