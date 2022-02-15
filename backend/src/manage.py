@@ -15,7 +15,7 @@ from itsdangerous import TimestampSigner
 from config import config
 from base64 import b64encode
 from api import app
-from typing import Union, List
+from typing import Union, List, Dict
 app.container=SDContainer()
 
 # Generate random 8 character password from [a-zA-Z0-9]
@@ -84,15 +84,20 @@ async def insert_user():
 async def insert_test_data():
     _Faker:Faker=Faker()
 
-    general_milestone_types={
+    general_milestone_types:Dict[str, MilestoneType]={
         "referral_letter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)", is_checkbox_hidden=True),
         "pathology": await MilestoneType.create(name="Pathology", ref_name="Pathology report (record artifact)", is_checkbox_hidden=True),
-        "prehad_referral": await MilestoneType.create(name="Prehad referral", ref_name="Prehabilitation (regime/therapy)", is_discharge=True),
-        "dietician_referral": await MilestoneType.create(name="Dietician referral", ref_name="Patient referral to dietitian (procedure)", is_discharge=True),
+        "prehad_referral": await MilestoneType.create(name="Prehad referral", ref_name="Prehabilitation (regime/therapy)"), 
+        "dietician_referral": await MilestoneType.create(name="Dietician referral", ref_name="Patient referral to dietitian (procedure)"),
         "smoking_cessation_referral": await MilestoneType.create(name="Smoking cessation referral", ref_name="Referral to smoking cessation service (procedure)"),
         "chest_xray": await MilestoneType.create(name="Chest X-ray", ref_name="Plain chest X-ray (procedure)"),
         "ct_chest": await MilestoneType.create(name="CT chest", ref_name="Computed tomography of chest (procedure)"),
+        "ref_to_surgery": await MilestoneType.create(name="Refer to surgeons", ref_name="ref Surgeons", is_discharge=True),
+        "ref_to_oncology": await MilestoneType.create(name="Refer to oncology", ref_name="ref Oncology", is_discharge=True),
+        "ref_to_palliative": await MilestoneType.create(name="Refer to palliation", ref_name="ref Palliation", is_discharge=True),
+        "discharge": await MilestoneType.create(name="Discharge", ref_name="ref Discharge", is_discharge=True),
     }
+
 
     selectable_milestone_types:List[MilestoneType]=[
         await MilestoneType.create(name="PET-CT", ref_name="Positron emission tomography with computed tomography (procedure)"),
