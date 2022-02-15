@@ -2,11 +2,12 @@ from .query_type import query
 from models.OnPathway import OnPathway
 from models.Patient import Patient
 from authentication.authentication import needsAuthorization
+from graphql.type import GraphQLResolveInfo
 
 @query.field("getPatientsOnPathway")
 @needsAuthorization(["authenticated"])
 async def resolve_get_patients_on_pathway(
-        obj=None, info=None, pathwayId=None, awaitingDecisionType=None, isDischarged=False
+        obj=None, info:GraphQLResolveInfo=None, pathwayId=None, awaitingDecisionType=None, isDischarged=False
 ):
     query = OnPathway.query.where(OnPathway.pathway == int(pathwayId)).where(OnPathway.is_discharged == isDischarged)
     if awaitingDecisionType is not None:

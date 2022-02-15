@@ -41,7 +41,7 @@ type Mutation {
     createPathway(input:PathwayInput!): AddPathwayPayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
-    importMilestone(input:MilestoneImportInput!): AddMilestonePayload!
+    importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
 }
 
 enum PatientCommunicationMethods {
@@ -73,7 +73,7 @@ type AddDecisionPointPayload{
     decisionPoint:DecisionPoint
     userErrors:[UserError!]    
 }
-type AddMilestonePayload{
+type ImportMilestonePayload{
     milestone: Milestone
     userErrors:[UserError!]
 }

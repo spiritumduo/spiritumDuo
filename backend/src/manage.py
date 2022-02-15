@@ -3,19 +3,19 @@ import secrets
 import string
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
+from trustadapter.trustadapter import Patient_IE
 from containers import SDContainer
-
 from models.db import db, DATABASE_URL
 from models import *
 from random import randint, getrandbits
-from datetime import date, datetime
+from datetime import date
 from SdTypes import DecisionTypes, MilestoneState
 from datacreators import CreatePatient, CreateUser, CreateDecisionPoint
 from itsdangerous import TimestampSigner
 from config import config
 from base64 import b64encode
 from api import app
-import traceback
+from typing import Union, List
 app.container=SDContainer()
 
 # Generate random 8 character password from [a-zA-Z0-9]
@@ -72,21 +72,12 @@ async def insert_user():
     department = "Respiratory"
     default_pathway_id = 1
     try:
-        user = await CreateUser(username, password, first_name, last_name, department, default_pathway_id)
+        user:User = await CreateUser(username, password, first_name, last_name, department, default_pathway_id)
         print("User inserted")
-        print("Username: " + user['username'])
+        print("Username: " + user.username)
         print("Password: " + password)
 
-        # the return data from `CreateUser` is a dict so it can be
-        # directly output via gql. To emulate the request class, 
-        # we set this as a user object as it would be normally
-        _CONTEXT['request']['user']=User(
-            id=user["id"],
-            username=user['username'],
-            department=user['department'],
-            first_name=user['first_name'],
-            last_name=user['last_name']
-        )
+        _CONTEXT['request']['user']=user
     except IntegrityError as err:
         print("Error: " + str(err))
 
@@ -103,7 +94,7 @@ async def insert_test_data():
         "ct_chest": await MilestoneType.create(name="CT chest", ref_name="Computed tomography of chest (procedure)"),
     }
 
-    selectable_milestone_types=[
+    selectable_milestone_types:List[MilestoneType]=[
         await MilestoneType.create(name="PET-CT", ref_name="Positron emission tomography with computed tomography (procedure)"),
         await MilestoneType.create(name="CT head - contrast", ref_name="Computed tomography of head with contrast (procedure)"),
         await MilestoneType.create(name="MRI head", ref_name="Magnetic resonance imaging of head (procedure)"),
@@ -138,44 +129,39 @@ async def insert_test_data():
         day = randint(1, 28)
         dob = date(year, month, day)
         
-        _patientObject=None
-        try:
-            _patientObject = await CreatePatient(
-                context=_CONTEXT,
-                first_name=first_name,
-                last_name=last_name,
-                hospital_number=hospital_number,
-                national_number=national_number,
-                date_of_birth=dob,
-                communication_method="LETTER",
-                pathwayId=created_pathways[0].id,
-                milestones=[
-                    {
-                        "milestoneTypeId": general_milestone_types["referral_letter"].id,
-                        "currentState": MilestoneState.COMPLETED
-                    },
-                    {
-                        "milestoneTypeId": general_milestone_types["chest_xray"].id,
-                        "currentState": MilestoneState.COMPLETED
-                    },
-                    {
-                        "milestoneTypeId": general_milestone_types["ct_chest"].id,
-                        "currentState": MilestoneState.COMPLETED
-                    }
-                ]
-            )
-            print(f"Creating patient: {first_name} {last_name}")
-        except Exception as e:
-            traceback.print_exc()
+        _patientObject:Patient_IE = await CreatePatient(
+            context=_CONTEXT,
+            first_name=first_name,
+            last_name=last_name,
+            hospital_number=hospital_number,
+            national_number=national_number,
+            date_of_birth=dob,
+            communication_method="LETTER",
+            pathwayId=created_pathways[0].id,
+            milestones=[
+                {
+                    "milestoneTypeId": general_milestone_types["referral_letter"].id,
+                    "currentState": MilestoneState.COMPLETED
+                },
+                {
+                    "milestoneTypeId": general_milestone_types["chest_xray"].id,
+                    "currentState": MilestoneState.COMPLETED
+                },
+                {
+                    "milestoneTypeId": general_milestone_types["ct_chest"].id,
+                    "currentState": MilestoneState.COMPLETED
+                }
+            ]
+        )
 
-        on_pathways={
+        on_pathways:Union[List[OnPathway], None]={
             await OnPathway.query.where(
-                OnPathway.patient_id==_patientObject['patient'].id
+                OnPathway.patient_id==_patientObject.id
             ).where(
                 OnPathway.pathway_id==created_pathways[0].id
             ).gino.one_or_none(),
             await OnPathway.create(
-                patient_id = _patientObject['patient'].id,
+                patient_id = _patientObject.id,
                 pathway_id = created_pathways[1].id
             )
         }
@@ -184,15 +170,13 @@ async def insert_test_data():
         for on_pathway in on_pathways:
             on_pathway_counter=on_pathway_counter+1
             if on_pathway_counter==1 or (on_pathway_counter!=1 and bool(getrandbits(1))):
-                print(f"OnPathway is {(await Pathway.get(on_pathway.pathway_id)).name}")
+                # print(f"OnPathway is {(await Pathway.get(on_pathway.pathway_id)).name}")
                 is_patient_new=bool(getrandbits(1))
-                if is_patient_new:
-                    """
+                """
                     is the patient new to the pathway? if they are, we don't
                     want to add any decision points as they will need to be triaged
-                    """
-                    print(f"Not creating any decision points")
-                else:
+                """
+                if not is_patient_new:
                     await on_pathway.update(
                         under_care_of_id=_CONTEXT["request"]["user"].id
                     ).apply()
@@ -220,7 +204,7 @@ async def insert_test_data():
                         comorbidities=_Faker.text(),
                         milestone_requests=milestone_requests
                     )
-                    print(f"Created TRIAGE decision point")
+                    # print(f"Created TRIAGE decision point")
                     await on_pathway.update(
                         awaiting_decision_type=DecisionTypes.CLINIC
                     ).apply()
@@ -238,7 +222,7 @@ async def insert_test_data():
                                 {"milestoneTypeId": selectable_milestone_types[randint(0, len(selectable_milestone_types)-1)].id}
                             ]
                         )
-                        print(f"Created CLINIC decision point")
+                        # print(f"Created CLINIC decision point")
                         await on_pathway.update(
                             awaiting_decision_type=DecisionTypes.MDT
                         ).apply()

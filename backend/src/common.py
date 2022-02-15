@@ -1,15 +1,22 @@
-from datetime import datetime
-
-def DateStringToDateObject(date_string):
+class ReferencedItemDoesNotExistError(Exception):
     """
-    Converts a date string to a data object
-    :param date_string: Date in string format
-    :return: DateTime object
+    This occurs when a referenced item does not 
+    exist and cannot be found when it should
     """
-    if type(date_string)!=str:
-        raise ValueError("expected string, got "+str(type(date_string)))
-    try:
-        date_object = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
-    except ValueError:
-        date_object = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S.%f")
-    return date_object
+class PatientNotInIntegrationEngineError(Exception):
+    """
+    This is raised when a patient cannot be found
+    via the integration engine
+    """
+class DataCreatorInputErrors:
+    """
+    Stores user errors for data creators where user
+    input is taken, or possible user errors occur
+    """
+    def __init__(self):
+        self.errorList=[]
+    def addError(self, field:str = None , message:str = None):
+        self.errorList.append({"field":field, "message":message})
+        return self
+    def hasErrors(self):
+        return len(self.errorList)>0
