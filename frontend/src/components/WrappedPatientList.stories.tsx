@@ -93,6 +93,7 @@ Default.parameters = {
             first: patientsPerPage,
             after: undefined,
             outstanding: false,
+            underCareOf: false,
           },
         },
         result: {
