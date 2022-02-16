@@ -260,7 +260,11 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             ? <>{result.description}</>
             : (
               <>
-                { result.description.slice(0, 75) }
+                {
+                  testResultCollapseStates[result.elementId]
+                    ? result.description.slice(0, 75)
+                    : `${result.description.slice(0, 75)}...`
+                }
                 <Collapse in={ testResultCollapseStates[result.elementId] } className="test-collapse">
                   <div>
                     {result.description.slice(75, result.description.length)}
