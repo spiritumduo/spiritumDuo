@@ -41,17 +41,21 @@ const PatientList = (
   <div>
     <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
     <table className="table">
-      <tr style={{border: 'none'}}>
-        <th className="d-table-cell">Most recent stage</th>
-        <th className="d-table-cell">Name</th>
-        <th className="d-none d-md-table-cell">Hospital number</th>
-        <th className="d-none d-lg-table-cell">Date of birth</th>
-      </tr>
-      {
-        data.map((p) => (
-          <tr className="border-0" key={ p.key }> { p } </tr>
-        ))
-      }
+      <thead>
+        <tr style={ { border: 'none' } }>
+          <th className="d-table-cell">Most recent stage</th>
+          <th className="d-table-cell">Name</th>
+          <th className="d-none d-md-table-cell">Hospital number</th>
+          <th className="d-none d-lg-table-cell">Date of birth</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          data.map((p) => (
+            <tr className="border-0" key={ p.key }>{p}</tr>
+          ))
+        }
+      </tbody>
     </table>
     <ReactPaginate
       previousLabel="previous"

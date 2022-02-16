@@ -152,7 +152,7 @@ const WrappedPatientList = ({
       },
     );
   } else {
-    listElements = [<div key="emptyListElement" />];
+    listElements = [<td key="emptyListElement" />];
   }
   return (
     <>
