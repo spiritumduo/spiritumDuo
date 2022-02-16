@@ -47,7 +47,7 @@ class OnPathwayByIdLoader(DataLoader):
 
 class OnPathwaysByPatient:
     @staticmethod
-    async def load_from_id(context=None, id=None, pathwayId=None, isDischarged=None, awaitingDecisionType=None, limit=None)->Union[List[OnPathway], None]:
+    async def load_from_id(context=None, id=None, pathwayId=None, includeDischarged=None, awaitingDecisionType=None, limit=None)->Union[List[OnPathway], None]:
         if not context or not id:
             return None
 
@@ -55,8 +55,10 @@ class OnPathwaysByPatient:
         query=OnPathway.query.where(OnPathway.patient_id==int(id))
         if pathwayId is not None:
             query=query.where(OnPathway.pathway_id==int(pathwayId))
-        if isDischarged is not None:
-            query=query.where(OnPathway.is_discharged==isDischarged)
+
+        if includeDischarged is None or includeDischarged is False:
+            query=query.where(OnPathway.is_discharged == False)
+
         if awaitingDecisionType is not None:
             query=query.where(OnPathway.awaiting_decision_type==awaitingDecisionType)
         if limit is not None:

@@ -1,6 +1,7 @@
 from .query_type import query
 from dataloaders import UserByIdLoader, UserByUsernameLoader
 from authentication.authentication import needsAuthorization
+from graphql.type import GraphQLResolveInfo
 
 @needsAuthorization(["authenticated"])
 @query.field("getUser")

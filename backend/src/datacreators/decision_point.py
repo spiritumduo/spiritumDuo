@@ -5,13 +5,9 @@ from typing import List, Dict
 from containers import SDContainer
 from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
-from datetime import date, datetime
+from datetime import datetime
+from common import ReferencedItemDoesNotExistError
 
-class ReferencedItemDoesNotExistError(Exception):
-    """
-        This occurs when a referenced item does not
-        exist and cannot be found when it should
-    """
 @inject
 async def CreateDecisionPoint(
     context:dict=None,
@@ -87,6 +83,4 @@ async def CreateDecisionPoint(
         .values(under_care_of_id=context['request']['user'].id)\
         .gino.scalar()
 
-    return {
-        "decisionPoint":_decisionPoint
-    }
+    return _decisionPoint

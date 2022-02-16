@@ -32,9 +32,9 @@ const Header = ({
           <Nav className="me-auto">
             <Nav.Link href="/app">Home</Nav.Link>
             <Nav.Link href="/app/patients">All Patients</Nav.Link>
-            <Nav.Link href="/app/mdt">MDT</Nav.Link>
+            <Nav.Link href="/app/mdt" disabled>MDT</Nav.Link>
             <Nav.Link href="/app/patient/add" disabled>Add Patient</Nav.Link>
-            <Nav.Link href="/app/logout">Logout</Nav.Link>
+            <Nav.Link href="/app/logout">Logout ({usersName})</Nav.Link>
           </Nav>
           <Nav className="">
             <Nav.Item>

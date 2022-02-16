@@ -1,8 +1,6 @@
 import logging
-import requests
 import httpx
 import json
-from SdTypes import MilestoneState
 from models import MilestoneType
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -97,10 +95,10 @@ class TrustAdapter(ABC):
         """
         
     
-class TrustAdapterNotFoundException(Exception):
+class TrustIntegrationCommunicationError(Exception):
     """
-    This is raised when a specified trust adapter
-    cannot be found
+    This is raised when the connection to the trust adapter
+    fails or times out
     """
 
 
@@ -131,42 +129,49 @@ class PseudoTrustAdapter(TrustAdapter):
                     "date_of_birth": patient.date_of_birth.isoformat(),
                 }
             )
-            res = res.json()
-            try:
-                return Patient_IE(
-                    id=res['id'],
-                    first_name=res['first_name'],
-                    last_name=res['last_name'],
-                    hospital_number=res['hospital_number'],
-                    national_number=res['national_number'],
-                    communication_method=res['communication_method'],
-                    date_of_birth=res['date_of_birth'],
-                )
-            except KeyError:
-                logging.warning('ress')
-                logging.warning(res)
-                return None
+
+            if res.status_code != 200:
+                raise Exception(f"HTTP{res.status_code} received")
+        res = res.json()
+        try:
+            return Patient_IE(
+                id=res['id'],
+                first_name=res['first_name'],
+                last_name=res['last_name'],
+                hospital_number=res['hospital_number'],
+                national_number=res['national_number'],
+                communication_method=res['communication_method'],
+                date_of_birth=res['date_of_birth'],
+            )
+        except KeyError:
+            logging.warning('ress')
+            logging.warning(res)
+            return None
 
     async def load_patient(self, hospitalNumber: str = None, auth_token: str = None) -> Optional[Patient_IE]:
-        result = requests.get(
-            self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/patient/hospital/"+hospitalNumber,
-            cookies={"SDSESSION": auth_token}
-        )
-        if result.status_code!=200:
-            raise Exception(f"HTTP{result.status_code} received")
-        record=json.loads(result.text)
-        if record is not None:
-            return Patient_IE(
-                id=record['id'],
-                first_name=record['first_name'],
-                last_name=record['last_name'],
-                hospital_number=record['hospital_number'],
-                national_number=record['national_number'],
-                communication_method=record['communication_method'],
-                date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+        async with httpx.AsyncClient() as client:
+            res = await client.get(
+                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}',
+                cookies={"SDSESSION": auth_token},
             )
-        else:
-            return None
+
+            if res.status_code != 200:
+                raise Exception(f"HTTP{res.status_code} received")
+
+        if res is not None:
+            record=res.json()
+            if record is not None:
+                return Patient_IE(
+                    id=record['id'],
+                    first_name=record['first_name'],
+                    last_name=record['last_name'],
+                    hospital_number=record['hospital_number'],
+                    national_number=record['national_number'],
+                    communication_method=record['communication_method'],
+                    date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
+                )
+            else:
+                return None
 
     async def load_many_patients(self, hospitalNumbers: List = None, auth_token: str = None) -> List[Optional[Patient_IE]]:
         return_list = []
@@ -180,20 +185,20 @@ class PseudoTrustAdapter(TrustAdapter):
             if res.status_code != 200:
                 raise Exception(f"HTTP{res.status_code} received")
 
-            if res is not None:
-                res_data = json.loads(res.text)
-                for record in res_data:
-                    return_list.append(
-                        Patient_IE(
-                            id=record['id'],
-                            first_name=record['first_name'],
-                            last_name=record['last_name'],
-                            hospital_number=record['hospital_number'],
-                            national_number=record['national_number'],
-                            communication_method=record['communication_method'],
-                            date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
-                        )
+        if res is not None:
+            res_data = res.json()
+            for record in res_data:
+                return_list.append(
+                    Patient_IE(
+                        id=record['id'],
+                        first_name=record['first_name'],
+                        last_name=record['last_name'],
+                        hospital_number=record['hospital_number'],
+                        national_number=record['national_number'],
+                        communication_method=record['communication_method'],
+                        date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
                     )
+                )
         return return_list
 
     async def create_test_result(self, testResult: TestResultRequest_IE, auth_token: str = None) -> TestResult_IE:
@@ -211,12 +216,16 @@ class PseudoTrustAdapter(TrustAdapter):
             params['description'] = testResult.description
 
         async with httpx.AsyncClient() as client:
-            result = await client.post(
+            res = await client.post(
                 self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/testresult",
                 json=params,
                 cookies={"SDSESSION": auth_token}
             )
-        tieTestResult=json.loads(result.text)
+
+            if res.status_code != 200:
+                raise Exception(f"HTTP{res.status_code} received")
+            
+        tieTestResult=res.json()
 
         tieTestResult['added_at'] = datetime.fromisoformat(tieTestResult['added_at'])
         tieTestResult['updated_at'] = datetime.fromisoformat(tieTestResult['updated_at'])
@@ -231,7 +240,8 @@ class PseudoTrustAdapter(TrustAdapter):
                 f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}",
                 cookies={"SDSESSION": auth_token}
             )
-        if result.status_code!=200: raise Exception(f"HTTP{result.status_code} received")
+        if result.status_code!=200: 
+            raise Exception(f"HTTP{result.status_code} received")
 
         tieTestResult=json.loads(result.text)
         tieTestResult['added_at'] = datetime.fromisoformat(tieTestResult['added_at'])
@@ -243,25 +253,24 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def load_many_test_results(self, recordIds: List = None, auth_token: str = None) -> List[Optional[TestResult_IE]]:
         async with httpx.AsyncClient() as client:
-            async with httpx.AsyncClient() as client:
-                result = await client.post(
-                    f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/",
-                    cookies={"SDSESSION": auth_token},
-                    json=recordIds
-                )
-            if result.status_code!=200: raise Exception(f"HTTP{result.status_code} received")
+            result = await client.post(
+                f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/",
+                cookies={"SDSESSION": auth_token},
+                json=recordIds
+            )
+        if result.status_code!=200: 
+            raise Exception(f"HTTP{result.status_code} received")
 
-            if result is not None:
-                return_list = []
-                result_data = json.loads(result.text)
-                for record in result_data:
-                    record['added_at'] = datetime.fromisoformat(record['added_at'])
-                    record['updated_at'] = datetime.fromisoformat(record['updated_at'])
+        return_list = []
+        if result is not None:
+            result_data = json.loads(result.text)
+            for record in result_data:
+                record['added_at'] = datetime.fromisoformat(record['added_at'])
+                record['updated_at'] = datetime.fromisoformat(record['updated_at'])
 
-                    return_list.append(
-                        TestResult_IE(
-                            **record
-                        )
+                return_list.append(
+                    TestResult_IE(
+                        **record
                     )
+                )
         return return_list
-

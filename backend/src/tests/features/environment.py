@@ -1,11 +1,12 @@
 from starlette.config import environ
+
 environ['TESTING'] = "True"
 
 import asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
-from models import User, MilestoneType
+from models import User, MilestoneType, Pathway
 from api import app
 from behave import fixture, use_fixture
 from starlette.testclient import TestClient
@@ -52,20 +53,40 @@ CLINICIAN = {
     "department": "CIH",
 }
 
+PATHWAY = {
+    "name": "Test Pathway"
+}
+
 
 @fixture
 def add_test_data(context):
     loop = asyncio.get_event_loop()
+
+    context.pathway = loop.run_until_complete(Pathway.create(
+        name=PATHWAY['name']
+    ))
+
     context.user = loop.run_until_complete(User.create(
         username=CLINICIAN['username'],
         password=hashpw(CLINICIAN["password"].encode('utf-8'), gensalt()).decode('utf-8'),
         first_name=CLINICIAN['firstName'],
         last_name=CLINICIAN['lastName'],
-        department=CLINICIAN['department']
+        department=CLINICIAN['department'],
+        default_pathway_id=context.pathway.id
+    ))
+    context.milestone_referral_letter=loop.run_until_complete(MilestoneType.create(
+        name="Referral letter",
+        ref_name="ref Referral letter",
+        is_checkbox_hidden=True
     ))
     context.milestone_one=loop.run_until_complete(MilestoneType.create(
-        name="Test Milestone One",
-        ref_name="test_milestone_one",
+        name="Test",
+        ref_name="ref Test",
+    ))
+    context.milestone_discharge=loop.run_until_complete(MilestoneType.create(
+        name="Discharge",
+        ref_name="ref Discharge",
+        is_discharge=True
     ))
 
 @fixture

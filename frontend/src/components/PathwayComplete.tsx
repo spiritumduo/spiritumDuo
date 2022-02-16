@@ -9,8 +9,8 @@ const PathwayComplete = (
         <strong>You have completed the pathway!</strong>
         <div className="mt-lg-4">
           <p>
-            The pathway is now complete! The patient has been referred
-            to a speciality.
+            The pathway is now complete! Congratulations on completing
+            the demo!
           </p>
         </div>
         <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" href="/app/">

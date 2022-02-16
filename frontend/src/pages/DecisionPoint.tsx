@@ -12,7 +12,7 @@ import { createDecisionPointVariables, createDecisionPoint } from 'pages/__gener
 import { GetPatient } from 'pages/__generated__/GetPatient';
 import * as yup from 'yup';
 import User from 'types/Users';
-import { Button, Collapse, FormSelect, Container } from 'react-bootstrap';
+import { Button, Collapse, FormSelect, Container, Row, Col } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 import PathwayComplete from 'components/PathwayComplete';
 // eslint-disable-next-line import/extensions
@@ -26,7 +26,7 @@ export interface DecisionPointPageProps {
 }
 
 export const GET_PATIENT_QUERY = gql`
-    query GetPatient($hospitalNumber: String, $pathwayId: ID) {
+    query GetPatient($hospitalNumber: String, $pathwayId: ID, $includeDischarged: Boolean) {
       getPatient(hospitalNumber: $hospitalNumber) {
         hospitalNumber
         id
@@ -35,7 +35,7 @@ export const GET_PATIENT_QUERY = gql`
         lastName
         dateOfBirth
 
-        onPathways(pathwayId: $pathwayId, isDischarged: false) {
+        onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
           id
           underCareOf {
             firstName
@@ -119,6 +119,7 @@ type DecisionPointPageForm = {
     milestoneTypeId: string;
     name: string;
     checked: boolean;
+    discharge: boolean;
   }[];
   milestoneResolutions: {
     id: string;
@@ -336,6 +337,7 @@ const DecisionPointPage = (
       variables: {
         hospitalNumber: hospitalNumber,
         pathwayId: currentPathwayId,
+        includeDischarged: true,
       },
     },
   );
@@ -382,6 +384,7 @@ const DecisionPointPage = (
             milestoneTypeId: milestoneType.id,
             name: milestoneType.name,
             checked: false,
+            discharge: milestoneType.isDischarge,
           }
           : []
       ))
@@ -415,6 +418,7 @@ const DecisionPointPage = (
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
+  console.log(data);
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
   if (isSubmitted) {
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
@@ -483,6 +487,10 @@ const DecisionPointPage = (
   const onPathwayId = data.getPatient.onPathways?.[0].id;
   const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
+  const testOptions = requestFields.filter((ck) => ck.discharge === false).filter((ck) => !ck.name.includes('referral'));
+  const referNoDischargeOptions = requestFields.filter((ck) => ck.name.includes('referral')).filter((ck) => ck.discharge === false);
+  const referAndDischargeOptions = requestFields.filter((ck) => ck.discharge === true);
+
   return (
     <div>
       <section>
@@ -535,7 +543,7 @@ const DecisionPointPage = (
                             ? (
                               <option>{`${underCareOf.firstName} ${underCareOf.lastName}`}</option>
                             )
-                            : <option>AWAITING TRIAGE</option>
+                            : <option>{`${user.firstName} ${user.lastName}`}</option>
                         }
                       </FormSelect>
                     </div>
@@ -552,28 +560,50 @@ const DecisionPointPage = (
                     <textarea className="form-control" style={ { minWidth: '100%' } } id="comorbidities" rows={ 8 } defaultValue={ previousDecisionPoint?.comorbidities } { ...register('comorbidities', { required: true }) } />
                     <p>{ formErrors.comorbidities?.message }</p>
                   </div>
-                  {
-                    requestFields.map((field, index) => (
-                      <div className="row" key={ `ms-check-${field.id}` }>
-                        <div className="col">
-                          <div className="form-check">
+
+                  <Row>
+                    <Col>
+                      {
+                        testOptions.map((field, index) => (
+                          <div className="form-check" key={ `ms-check-${field.id}` }>
                             <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
                               <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
                               { field.name }
                             </label>
                           </div>
-                        </div>
-                        <div className="col" />
-                      </div>
-                    ))
-                  }
+                        ))
+                      }
+                    </Col>
+                    <Col>
+                      {
+                        referNoDischargeOptions.map((field, index) => (
+                          <div className="form-check" key={ `ms-check-${field.id}` }>
+                            <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index + testOptions.length}.checked` as const) } defaultChecked={ false } />
+                              { field.name }
+                            </label>
+                          </div>
+                        ))
+                      }
+                    </Col>
+                    <Col>
+                      {
+                        referAndDischargeOptions.map((field, index) => (
+                          <div className="form-check" key={ `ms-check-${field.id}` }>
+                            <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+                              <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index + testOptions.length + referNoDischargeOptions.length}.checked` as const) } defaultChecked={ false } />
+                              { field.name }
+                            </label>
+                          </div>
+                        ))
+                      }
+                    </Col>
+                  </Row>
+                  <p>{ mutateLoading ? 'Submitting...' : '' }</p>
+                  <p>{ mutateError?.message }</p>
                   <div className="container">
                     <button type="submit" name="submitBtn" className="btn btn-outline-secondary px-4 my-4 float-end ms-1">Submit</button>
                   </div>
-
-                  <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-                  <p>{ mutateError?.message }</p>
-
                 </div>
               </fieldset>
             </form>
