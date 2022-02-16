@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useState, useEffect } from 'react';
-import client from 'app/sdApolloClient';
+import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import PatientList from 'components/PatientList';
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
