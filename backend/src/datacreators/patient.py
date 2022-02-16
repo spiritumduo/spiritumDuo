@@ -109,7 +109,7 @@ async def CreatePatient(
 
         patientFromLocal=await Patient.query.where(Patient.hospital_number==patientFromTrustAdapter.hospital_number).gino.one_or_none()
     
-    patientOnPathway:Union[OnPathway, None]=await OnPathwaysByPatient.load_from_id(context=context, id=patientFromLocal.id, pathwayId=_pathway.id, isDischarged=False)
+    patientOnPathway:Union[OnPathway, None]=await OnPathwaysByPatient.load_from_id(context=context, id=patientFromLocal.id, pathwayId=_pathway.id, includeDischarged=False)
     if patientOnPathway is not None and len(patientOnPathway)>0: # if there is an active pathway instance
         errors.addError(field="patient", message="Patient already belongs to this pathway and is not discharged")
         return errors
