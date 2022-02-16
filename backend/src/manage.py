@@ -96,6 +96,7 @@ async def insert_test_data():
         "ref_to_oncology": await MilestoneType.create(name="Refer to oncology", ref_name="ref Oncology", is_discharge=True),
         "ref_to_palliative": await MilestoneType.create(name="Refer to palliation", ref_name="ref Palliation", is_discharge=True),
         "discharge": await MilestoneType.create(name="Discharge", ref_name="ref Discharge", is_discharge=True),
+        "mdt": await MilestoneType.create(name="Add to MDT", ref_name="Assessment by multidisciplinary team (procedure)")
     }
 
 
