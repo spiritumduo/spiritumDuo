@@ -87,7 +87,7 @@ async def insert_test_data():
     general_milestone_types:Dict[str, MilestoneType]={
         "referral_letter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)", is_checkbox_hidden=True),
         "pathology": await MilestoneType.create(name="Pathology", ref_name="Pathology report (record artifact)", is_checkbox_hidden=True),
-        "prehad_referral": await MilestoneType.create(name="Prehad referral", ref_name="Prehabilitation (regime/therapy)"), 
+        "prehab_referral": await MilestoneType.create(name="Prehab referral", ref_name="Prehabilitation (regime/therapy)"), 
         "dietician_referral": await MilestoneType.create(name="Dietician referral", ref_name="Patient referral to dietitian (procedure)"),
         "smoking_cessation_referral": await MilestoneType.create(name="Smoking cessation referral", ref_name="Referral to smoking cessation service (procedure)"),
         "chest_xray": await MilestoneType.create(name="Chest X-ray", ref_name="Plain chest X-ray (procedure)"),
