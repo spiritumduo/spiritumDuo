@@ -124,14 +124,23 @@ const WrappedPatientList = ({
            * @returns Milestone that was completed most recently
            */
           const compareMilestones = (
-            currentMilestone: GraphQLMilestone | undefined,
             mostRecentCompletedMilestone: GraphQLMilestone | undefined,
-          ) => (
-            currentMilestone?.currentState === 'COMPLETED'
-            && currentMilestone.updatedAt > mostRecentCompletedMilestone?.updatedAt
-              ? currentMilestone
-              : mostRecentCompletedMilestone
-          );
+            currentMilestone: GraphQLMilestone | undefined,
+          ) => {
+            let returnMilestone;
+            if (mostRecentCompletedMilestone === undefined) {
+              returnMilestone = currentMilestone;
+            } else if (
+              currentMilestone?.currentState === 'COMPLETED'
+              // eslint-disable-next-line max-len
+              && currentMilestone.updatedAt.valueOf() > mostRecentCompletedMilestone?.updatedAt.valueOf()
+            ) {
+              returnMilestone = currentMilestone;
+            } else {
+              returnMilestone = mostRecentCompletedMilestone;
+            }
+            return returnMilestone;
+          };
 
           // This is kind of bad. I really just want to look at all the milestones
           // and find the most recent, so DFS would be better?

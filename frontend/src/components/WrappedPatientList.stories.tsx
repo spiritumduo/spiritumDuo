@@ -6,6 +6,7 @@ import Patient from 'types/Patient';
 import { MemoryRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import { getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node } from 'components/__generated__/getPatientOnPathwayConnection';
+import { MilestoneState } from '../__generated__/globalTypes';
 
 // Dummy data for display
 const patientArray: Patient[] = [];
@@ -14,6 +15,33 @@ const patient = {
   firstName: 'John',
   lastName: 'Doe',
 };
+
+const milestones = [
+  {
+    id: '1',
+    updatedAt: new Date(2021, 1, 5),
+    currentState: 'COMPLETED',
+    milestoneType: {
+      name: 'Triage',
+    },
+  },
+  {
+    id: '2',
+    updatedAt: new Date(2020, 1, 5),
+    currentState: 'INIT',
+    milestoneType: {
+      name: 'Second',
+    },
+  },
+  {
+    id: '3',
+    updatedAt: new Date(2022, 1, 5),
+    currentState: 'COMPLETED',
+    milestoneType: {
+      name: 'Third Milestone',
+    },
+  },
+];
 
 for (let i = 0; i < 20; ++i) {
   const newPatient = {
@@ -26,16 +54,7 @@ for (let i = 0; i < 20; ++i) {
       {
         decisionPoints: [
           {
-            milestones: [
-              {
-                id: '1',
-                updatedAt: new Date(2020, 1, 5),
-                currentState: 'COMPLETED',
-                milestoneType: {
-                  name: 'Triage',
-                },
-              },
-            ],
+            milestones: milestones,
           },
         ],
       },

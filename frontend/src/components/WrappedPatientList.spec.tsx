@@ -35,6 +35,12 @@ test('Patient lists should contain patients', async () => {
   }
 });
 
+test('It should display the last completed milestone alongside the patient', async () => {
+  const patientsPerPage = Default.args?.patientsToDisplay;
+  renderDefault();
+  await waitFor(() => expect(screen.getAllByText(/third milestone/i).length).toEqual(patientsPerPage));
+});
+
 test('Patient lists should paginate', async () => {
   const patients = Default.parameters?.patients;
   const patientsPerPage = Default.args?.patientsToDisplay;
