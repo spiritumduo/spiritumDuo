@@ -33,7 +33,7 @@
     },
     "Biopsy of thorax using computed tomography guidance (procedure)": {
         "name": "CT guided biopsy thorax",
-        "result": "Right anterior intercostal approach. 10 mL 1% lidocaine used. Single pass 18 gauge cutting needle yielded a small / adequate core. No immediate complication. Lesion diameter 11 mm, lesion depth 11 mm."
+        "result": "Right anterior intercostal approach. 10 mL 1% lidocaine used. Single pass 18 gauge cutting needle yielded a small / adequate core. No immediate complication. Lesion diameter 11 mm, lesion depth 11 mm. Pathology: adenocarcinoma"
     },
     "Pathology report (record artifact)": {
         "name": "Pathology",
