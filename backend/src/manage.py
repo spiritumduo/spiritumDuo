@@ -112,7 +112,7 @@ async def insert_test_data():
         await MilestoneType.create(name="Thoracoscopy", ref_name="Thoracoscopy (procedure)"),
         await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)"),
         await MilestoneType.create(name="Pleural tap", ref_name="Thoracentesis (procedure)"),
-        await MilestoneType.create(name="CPET", ref_name=" Cardiopulmonary exercise test (procedure)"),
+        await MilestoneType.create(name="CPET", ref_name="Cardiopulmonary exercise test (procedure)"),
         await MilestoneType.create(name="Bloods", ref_name="Blood test (procedure)"),
     ]
     
