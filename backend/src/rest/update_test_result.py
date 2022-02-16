@@ -12,7 +12,7 @@ class TestResultUpdate(BaseModel):
 
 @_FastAPI.post("/testresult/update")
 async def update_test_result(request:Request, data:TestResultUpdate):
-    if 'SDTIEKEY' not in request.cookies or request.cookies['SDTIEKEY']!=config['UPDATE_ENDPOINT_KEY']:
+    if ('SDTIEKEY' not in request.cookies or request.cookies['SDTIEKEY']!=config['UPDATE_ENDPOINT_KEY']) and config['TESTING'] is None:
         return Response(status_code=401)
     milestone=await Milestone.query.where(Milestone.test_result_reference_id==str(data.id)).gino.one_or_none()
     await milestone.update(current_state=data.new_state).apply()
