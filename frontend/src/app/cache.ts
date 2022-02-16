@@ -108,6 +108,8 @@ if (currentPathwayIdLocalStorage) {
   _currentPathway = userDefaultPathway;
 } else if (pathwayOptionsArray[0]) {
   _currentPathway = pathwayOptionsArray[0].id;
+} else {
+  _currentPathway = 0;
 }
 
 // Save the current pathway ID
