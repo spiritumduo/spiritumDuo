@@ -487,8 +487,8 @@ const DecisionPointPage = (
   const onPathwayId = data.getPatient.onPathways?.[0].id;
   const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
-  const testOptions = requestFields.filter((ck) => ck.discharge === false).filter((ck) => !ck.name.includes('referral'));
-  const referNoDischargeOptions = requestFields.filter((ck) => ck.name.includes('referral')).filter((ck) => ck.discharge === false);
+  const testOptions = requestFields.filter((ck) => ck.discharge === false).filter((ck) => !ck.name.includes('referral')).filter((ck) => !ck.name.includes('MDT'));
+  const referNoDischargeOptions = requestFields.filter((ck) => ck.name.includes('referral') || ck.name.includes('MDT')).filter((ck) => ck.discharge === false);
   const referAndDischargeOptions = requestFields.filter((ck) => ck.discharge === true);
 
   return (
