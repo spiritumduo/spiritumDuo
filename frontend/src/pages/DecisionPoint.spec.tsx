@@ -119,6 +119,6 @@ describe('When page loads', () => {
       requestCheckboxes.forEach((cb) => userEvent.click(cb));
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
-    expect(screen.getByText(/The above requests have now been submitted/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
   });
 });
