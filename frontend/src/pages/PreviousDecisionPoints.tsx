@@ -3,6 +3,7 @@ import './previousdecisionpoints.css';
 import { gql, useQuery } from '@apollo/client';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
 import { PathwayContext } from 'app/context';
+import { Link } from 'react-router-dom';
 
 export interface PreviousDecisionPointsProps {
   hospitalNumber: string;
@@ -60,6 +61,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
       <div className="container previous-decision-points-container">
         <div className="row previous-decision-points-header">
           <h3>Previous Decision Points</h3>
+          <Link style={ { padding: '0' } } to={ `/decision/triage/${hospitalNumber}` }>Create new decision</Link>
           <p>{ error?.message }</p>
         </div>
         {
