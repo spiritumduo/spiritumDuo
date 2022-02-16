@@ -9,9 +9,9 @@ export interface PreviousDecisionPointsProps {
 }
 
 export const PREVIOUS_DECISION_POINTS_QUERY = gql`
-  query previousDecisionPoints($hospitalNumber: String!, $pathwayId: ID!) {
+  query previousDecisionPoints($hospitalNumber: String!, $pathwayId: ID!, $includeDischarged: Boolean = false) {
     getPatient(hospitalNumber: $hospitalNumber) {
-      onPathways(pathwayId: $pathwayId) {
+      onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
         decisionPoints {
           id
           decisionType
@@ -49,6 +49,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
         pathwayId: currentPathwayId,
         hospitalNumber: hospitalNumber,
         limit: 5,
+        includeDischarged: true,
       },
     },
   );

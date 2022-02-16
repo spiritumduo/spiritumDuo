@@ -10,7 +10,7 @@ async def resolve_patient_pathways(
     obj:Patient=None, 
     info:GraphQLResolveInfo=None, 
     pathwayId:int=None, 
-    isDischarged:bool=False, 
+    includeDischarged:bool=False, 
     awaitingDecisionType=None, 
     limit:int=None, 
 ):
@@ -18,7 +18,7 @@ async def resolve_patient_pathways(
         context=info.context, 
         id=obj.id, 
         pathwayId=pathwayId, 
-        isDischarged=isDischarged, 
+        includeDischarged=includeDischarged, 
         awaitingDecisionType=awaitingDecisionType, 
         limit=limit
     )

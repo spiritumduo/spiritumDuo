@@ -7,13 +7,13 @@ import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatient
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
-    $outstanding: Boolean, $pathwayId:ID!, $first:Int, $after: String, $underCareOf: Boolean
+    $outstanding: Boolean, $pathwayId:ID!, $first:Int, $after: String, $underCareOf: Boolean, $includeDischarged: Boolean
   ) {
     getPatientOnPathwayConnection(
-      outstanding: $outstanding, pathwayId:$pathwayId, first:$first, after: $after, underCareOf: $underCareOf
+      outstanding: $outstanding, pathwayId:$pathwayId, first:$first, after: $after, underCareOf: $underCareOf, includeDischarged: $includeDischarged
     ) @connection(
         key: "getPatientOnPathwayConnection",
-        filter: ["outstanding", "pathwayId", "underCareOf"]
+        filter: ["outstanding", "pathwayId", "underCareOf", "includeDischarged"]
         )
       {
       totalCount
@@ -29,7 +29,7 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
           lastName
           hospitalNumber
           dateOfBirth
-          onPathways(pathwayId: $pathwayId) {
+          onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
             decisionPoints {
               milestones {
                 id
@@ -48,7 +48,8 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  pathwayId: string, first: number, outstanding: boolean, underCareOf: boolean, cursor?: string,
+  // eslint-disable-next-line max-len
+  pathwayId: string, first: number, outstanding: boolean, underCareOf: boolean, includeDischarged: boolean, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
@@ -57,6 +58,7 @@ const usePatientsForPathwayQuery = (
       first: first,
       after: cursor,
       underCareOf: underCareOf,
+      includeDischarged: includeDischarged,
     },
     notifyOnNetworkStatusChange: true,
   },
@@ -87,6 +89,7 @@ export interface WrappedPatientListProps {
   linkFactory: (patient: QueryPatient) => JSX.Element;
   outstanding?: boolean;
   underCareOf?: boolean;
+  includeDischarged?: boolean;
 }
 
 const WrappedPatientList = ({
@@ -95,13 +98,15 @@ const WrappedPatientList = ({
   linkFactory,
   outstanding = true,
   underCareOf = false,
+  includeDischarged = false,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
     error,
     data,
     fetchMore,
-  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, outstanding, underCareOf);
+  // eslint-disable-next-line max-len
+  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, outstanding, underCareOf, includeDischarged);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   let listElements: JSX.Element[];

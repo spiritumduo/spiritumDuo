@@ -30,6 +30,7 @@ const AllPatients = ({ patientsPerPage }: AllPatientsProps): JSX.Element => {
             linkFactory={ linkFactory }
             outstanding={ false }
             underCareOf={ false }
+            includeDischarged
           />
         </div>
       </div>

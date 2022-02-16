@@ -26,7 +26,7 @@ type Query {
     getPatientOnPathwayConnection(
         pathwayId: ID!
         awaitingDecisionType: DecisionType
-        isDischarged: Boolean
+        includeDischarged: Boolean
         first: Int
         after: String
         last: Int
@@ -101,7 +101,7 @@ type Patient {
 
     onPathways(
         pathwayId: ID,
-        isDischarged: Boolean = False,
+        includeDischarged: Boolean = False,
         awaitingDecisionType: DecisionType, 
         limit: Int
     ): [OnPathway!]

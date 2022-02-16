@@ -26,7 +26,7 @@ export interface DecisionPointPageProps {
 }
 
 export const GET_PATIENT_QUERY = gql`
-    query GetPatient($hospitalNumber: String, $pathwayId: ID) {
+    query GetPatient($hospitalNumber: String, $pathwayId: ID, $includeDischarged: Boolean) {
       getPatient(hospitalNumber: $hospitalNumber) {
         hospitalNumber
         id
@@ -35,7 +35,7 @@ export const GET_PATIENT_QUERY = gql`
         lastName
         dateOfBirth
 
-        onPathways(pathwayId: $pathwayId, isDischarged: false) {
+        onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
           id
           underCareOf {
             firstName
@@ -334,6 +334,7 @@ const DecisionPointPage = (
       variables: {
         hospitalNumber: hospitalNumber,
         pathwayId: currentPathwayId,
+        includeDischarged: true,
       },
     },
   );
@@ -414,6 +415,7 @@ const DecisionPointPage = (
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
+  console.log(data);
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
   if (isSubmitted) {
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({

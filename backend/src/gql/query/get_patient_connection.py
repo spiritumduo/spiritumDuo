@@ -12,7 +12,7 @@ from graphql.type import GraphQLResolveInfo
 @needsAuthorization(["authenticated"])
 @query.field("getPatientOnPathwayConnection")
 async def get_patient_connection(
-        obj=None, info:GraphQLResolveInfo=None, pathwayId=None, awaitingDecisionType=None, isDischarged=False,
+        obj=None, info:GraphQLResolveInfo=None, pathwayId=None, awaitingDecisionType=None, includeDischarged=False,
         first=None, after=None, last=None, before=None, outstanding=True,
         underCareOf=False
 ):
@@ -32,7 +32,10 @@ async def get_patient_connection(
 
     db_query=db.select([OnPathway.patient_id.label("patient_id")], distinct=True)\
         .where(OnPathway.pathway_id == int(pathwayId))\
-        .where(OnPathway.is_discharged == isDischarged)
+
+    if includeDischarged is False:
+        db_query=db_query.where(OnPathway.is_discharged == False)
+        
     if outstanding:
         db_query=db_query.select_from(
             db.join(OnPathway, DecisionPoint, OnPathway.id == DecisionPoint.on_pathway_id, isouter=True)\
