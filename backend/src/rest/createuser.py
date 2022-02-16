@@ -10,6 +10,7 @@ class CreateUserInput(BaseModel):
     firstName:str
     lastName:str
     department:str
+    defaultPathwayId:int
 
 
 @_FastAPI.post("/createuser/")
@@ -20,6 +21,7 @@ async def create_user(request:Request, input:CreateUserInput):
         password=input.password,
         first_name=input.firstName,
         last_name=input.lastName,
-        department=input.department
+        department=input.department,
+        default_pathway_id=int(input.defaultPathwayId)
     )
     return user
