@@ -161,7 +161,7 @@ const usePreviousTestResults = (data: GetPatient | undefined ) => {
     testResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
     const collapseStates: CollapseState = {};
     testResults?.forEach((tr) => {
-      collapseStates[tr.elementId] = false;
+      collapseStates[tr.elementId] = !tr.forwardDecisionPointId;
     });
     if (testResults) setPreviousTestResults(testResults);
     if (collapseStates) setTestResultCollapseStates(collapseStates);
