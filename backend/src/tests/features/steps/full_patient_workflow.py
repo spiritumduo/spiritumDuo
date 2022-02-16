@@ -1,12 +1,10 @@
 from behave import *
 from hamcrest import *
 import json
-import asyncio
 from SdTypes import MilestoneState, DecisionTypes
-from models import Milestone
 from datetime import datetime
 from random import randint
-from trustadapter.trustadapter import Patient_IE, Milestone_IE
+from trustadapter.trustadapter import Patient_IE, TestResult_IE
 import logging
 
 CREATE_USER_REST_ENDPOINT="http://localhost:8080/rest/createuser/"
@@ -17,8 +15,8 @@ PATIENT={
     "firstName": "JOHN",
     "lastName": "DOE",
     "dateOfBirth": datetime(year=2000, month=1, day=1).date(),
-    "hospitalNumber": f"fMRN{randint(1000000,9999999)}",
-    "nationalNumber": f"fNHS{randint(1000000000,9999999999)}",
+    "hospitalNumber": f"fMRN{randint(100000,999999)}",
+    "nationalNumber": f"fNHS{randint(100000000,999999999)}",
     "communicationMethod": "LETTER"
 }
 PATHWAY={
@@ -69,6 +67,7 @@ def step_impl(context):
     )
 
     assert_that(create_pathway_result.status_code, equal_to(200))  # check that there are no HTTP errors
+
     user_errors = json.loads(create_pathway_result.text)['data']['createPathway']['userErrors']
     assert_that(user_errors, none())  # check that there are no input errors
     pathway_id = json.loads(create_pathway_result.text)['data']['createPathway']['pathway']['id']
@@ -98,6 +97,7 @@ def step_impl(context):
         communication_method = PATIENT["communicationMethod"],
         id = PATIENT['id']
     )]
+
     context.trust_adapter_mock.create_patient.return_value=Patient_IE(
         first_name = PATIENT['firstName'],
         last_name = PATIENT['lastName'],
@@ -108,6 +108,30 @@ def step_impl(context):
         id = PATIENT['id']
     )
 
+    context.trust_adapter_mock.create_test_result.return_value=TestResult_IE(
+        current_state=MilestoneState.COMPLETED,
+        added_at=datetime.now(),
+        updated_at=datetime.now(),
+        description="This is a test description!",
+        type_reference_name=context.milestone_referral_letter.ref_name,
+        id=1000
+    )
+    context.trust_adapter_mock.load_test_result.return_value=TestResult_IE(
+        current_state=MilestoneState.COMPLETED,
+        added_at=datetime.now(),
+        updated_at=datetime.now(),
+        description="This is a test description!",
+        type_reference_name=context.milestone_referral_letter.ref_name,
+        id=1000
+    )
+    context.trust_adapter_mock.load_many_test_results.return_value=[TestResult_IE(
+        current_state=MilestoneState.COMPLETED,
+        added_at=datetime.now(),
+        updated_at=datetime.now(),
+        description="This is a test description!",
+        type_reference_name=context.milestone_referral_letter.ref_name,
+        id=1000
+    )]
 
     create_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
@@ -120,6 +144,7 @@ def step_impl(context):
                     $nationalNumber: String!
                     $dateOfBirth: Date!
                     $pathwayId: ID!
+                    $milestoneTypeId: ID!
                 ){
                     createPatient(input: {
                         firstName: $firstName,
@@ -127,7 +152,13 @@ def step_impl(context):
                         hospitalNumber: $hospitalNumber,
                         nationalNumber: $nationalNumber,
                         dateOfBirth: $dateOfBirth,
-                        pathwayId: $pathwayId
+                        pathwayId: $pathwayId,
+                        milestones: [
+                            {
+                                milestoneTypeId: $milestoneTypeId,
+                                currentState: COMPLETED
+                            }
+                        ]
                     }){
                         patient{
                             id
@@ -138,6 +169,16 @@ def step_impl(context):
                             dateOfBirth
                             onPathways{
                                 id
+                                milestones{
+                                    testResult{
+                                        id
+                                        description
+                                        currentState
+                                        addedAt
+                                        updatedAt
+                                        typeReferenceName
+                                    }
+                                }
                             }
                         }
                         userErrors{
@@ -153,10 +194,12 @@ def step_impl(context):
                 "hospitalNumber": PATIENT['hospitalNumber'],
                 "nationalNumber": PATIENT['nationalNumber'],
                 "dateOfBirth": PATIENT['dateOfBirth'].isoformat(),
-                "pathwayId": PATHWAY['id']
+                "pathwayId": PATHWAY['id'],
+                "milestoneTypeId": context.milestone_referral_letter.id
             }
         }
     )
+
     assert_that(create_patient_result.status_code, equal_to(200)) # check the HTTP status for 200 OK
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['userErrors'], none()) # make sure there are no input errors
     assert_that(json.loads(create_patient_result.text)['data']['createPatient']['patient']['id'], not_none()) # check that an id has been returned
@@ -175,41 +218,46 @@ def step_impl(context):
     assert_that(context.patient_record['hospitalNumber'], equal_to(PATIENT['hospitalNumber']))
     assert_that(context.patient_record['nationalNumber'], equal_to(PATIENT['nationalNumber']))
     assert_that(context.patient_record['dateOfBirth'], equal_to(PATIENT['dateOfBirth'].isoformat()))
-
-
-##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
-@when("we run the GraphQL mutation to add the decision point and milestones")
-def step_impl(context):
-    context.trust_adapter_mock.create_milestone.return_data=Milestone_IE(
-        id=1,
-        current_state=MilestoneState.INIT,
-        added_at=datetime.now().isoformat(),
-        updated_at=datetime.now().isoformat()
-    )
-
-    async def load_many_milestones(recordIds, auth_token):
-        data=[]
-        for key in recordIds:
-            data.append(
-                Milestone_IE(
-                    id=key,
-                    current_state=MilestoneState.INIT,
-                    added_at=datetime.now(),
-                    updated_at=datetime.now()
-                )
-            )
-        return data
-
-    context.trust_adapter_mock.load_many_milestones=load_many_milestones
-
-    context.trust_adapter_mock.load_milestone.return_value=Milestone_IE(
-        id=1,
-        current_state=MilestoneState.INIT,
-        added_at=datetime.now(),
-        updated_at=datetime.now()
-    )
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult']['id'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult']['description'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult']['currentState'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult']['addedAt'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult']['updatedAt'], not_none())
+    assert_that(context.patient_record['onPathways'][0]['milestones'][0]['testResult']['typeReferenceName'], context.milestone_referral_letter.ref_name)
     
 
+
+
+# ##### SCENARIO: A PATIENT NEEDS A DECISION POINT ADDED #####
+@when("we run the GraphQL mutation to add the decision point and milestones")
+def step_impl(context):
+    context.trust_adapter_mock.create_test_result.return_value=TestResult_IE(
+        current_state=MilestoneState.COMPLETED,
+        added_at=datetime.now(),
+        updated_at=datetime.now(),
+        description="This is a test description!",
+        type_reference_name=context.milestone_one.ref_name,
+        id=2000
+    )
+    context.trust_adapter_mock.load_test_result.return_value=TestResult_IE(
+        current_state=MilestoneState.COMPLETED,
+        added_at=datetime.now(),
+        updated_at=datetime.now(),
+        description="This is a test description!",
+        type_reference_name=context.milestone_one.ref_name,
+        id=2000
+    )
+    context.trust_adapter_mock.load_many_test_results.return_value=[TestResult_IE(
+        current_state=MilestoneState.COMPLETED,
+        added_at=datetime.now(),
+        updated_at=datetime.now(),
+        description="This is a test description!",
+        type_reference_name=context.milestone_one.ref_name,
+        id=2000
+    )]
+    
     create_decision_point_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
         json={
@@ -220,6 +268,7 @@ def step_impl(context):
                     $clinicHistory: String!
                     $comorbidities: String!
                     $milestoneOneId: ID!
+                    $milestoneResolutionId: ID!
                 ){
                     createDecisionPoint(input: {
                         onPathwayId: $onPathwayId,
@@ -230,6 +279,9 @@ def step_impl(context):
                             {
                                 milestoneTypeId: $milestoneOneId
                             }
+                        ]
+                        milestoneResolutions:[
+                            $milestoneResolutionId
                         ]
                     })
                     {
@@ -251,10 +303,6 @@ def step_impl(context):
                                 addedAt
                                 updatedAt
                                 currentState
-                                
-                                internalAddedAt
-                                internalUpdatedAt
-                                internalCurrentState
 
                                 milestoneType{
                                     id
@@ -279,129 +327,75 @@ def step_impl(context):
                 "clinicHistory":DECISION_POINT['clinicHistory'],
                 "comorbidities":DECISION_POINT['comorbidities'],
                 "milestoneOneId":context.milestone_one.id,
+                "milestoneResolutionId": context.milestone_referral_letter.id
             }
         }
     )
 
     assert_that(create_decision_point_result.status_code, equal_to(200))
     assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['id'], not_none()) # check that an id has been returned
+    
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['clinician'], not_none())
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['clinician']['id'], context.user.id)
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['clinician']['username'], context.user.username)
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['onPathway']['id'], PATIENT['onPathwayId'])
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['onPathway']['pathway']['id'], PATHWAY['id'])
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['onPathway']['pathway']['name'], PATHWAY['name'])
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['milestones'][0]['id'], not_none())
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['milestones'][0]['addedAt'], not_none())
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['milestones'][0]['updatedAt'], not_none())
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['milestones'][0]['currentState'], MilestoneState.INIT.value)
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['milestones'][0]['milestoneType']['id'], context.milestone_one.id)
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['milestones'][0]['milestoneType']['name'], context.milestone_one.name)
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['decisionType'], DecisionTypes.TRIAGE.value)
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['clinicHistory'], DECISION_POINT['clinicHistory'])
+    assert_that(json.loads(create_decision_point_result.text)['data']['createDecisionPoint']['decisionPoint']['comorbidities'], DECISION_POINT['comorbidities'])
+    
     context.patient_record_from_decision_point=json.loads(create_decision_point_result.text)['data']['createDecisionPoint'] # save entire record for future use
     MILESTONE['milestoneId']=context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['id']
+    DECISION_POINT['id']=context.patient_record_from_decision_point['decisionPoint']['id']
 
 @then("the milestones are completed")
 def step_impl(context):
-
-
-    async def updateMilestonesToCompleted():
-        Milestone.update.values(current_state=MilestoneState.COMPLETED)\
-            .where(Milestone.id==context.patient_record_from_decision_point['decisionPoint']['milestones'][0]['id'])\
-            .gino.status()
-
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        updateMilestonesToCompleted()
-    )
-
-
-    async def load_many_milestones(recordIds, auth_token):
-        data=[]
-        for key in recordIds:
-            data.append(Milestone_IE(
-                id=key,
-                current_state=MilestoneState.COMPLETED,
-                added_at=datetime.now(),
-                updated_at=datetime.now()
-            ))
-        return data
-
-    context.trust_adapter_mock.load_many_milestones=load_many_milestones
-
-    context.trust_adapter_mock.load_milestone.return_value=Milestone_IE(
-        id=1,
-        current_state=MilestoneState.COMPLETED,
-        added_at=datetime.now(),
-        updated_at=datetime.now()
-    )
-
-
-##### SCENARIO: A PATIENT NEEDS A POST REQUEST DECISION POINT ADDED #####
-@when("we run the GraphQL mutation to add a post request decision point")
-def step_impl(context):
-    create_decision_point_result=context.client.post(
-        url=GRAPHQL_ENDPOINT,
+    res=context.client.post(
+        url="rest/testresult/update",
         json={
-            "query": """
-                mutation createDecisionPoint(
-                    $onPathwayId: ID!
-                    $decisionType: DecisionType!
-                    $clinicHistory: String!
-                    $comorbidities: String!
-                    $milestoneId: ID!
-                ){
-                    createDecisionPoint(input: {
-                        onPathwayId: $onPathwayId,
-                        decisionType: $decisionType,
-                        clinicHistory: $clinicHistory,
-                        comorbidities: $comorbidities,
-                        milestoneRequests:[
-                        ]
-                        milestoneResolutions:[$milestoneId]
-                    })
-                    {
-                        decisionPoint {
-                            id
-                            clinician{
-                                id
-                                username
-                            }
-                            onPathway{
-                                id
-                                pathway{
-                                    id
-                                    name
-                                }
-                            }
-                            milestones{
-                                id
-                                addedAt
-                                updatedAt
-                                currentState
-                                
-                                internalAddedAt
-                                internalUpdatedAt
-                                internalCurrentState
-
-                                milestoneType{
-                                    id
-                                    name
-                                }
-                            }
-                            decisionType
-                            clinicHistory
-                            comorbidities
-                        }
-                        
-                        userErrors {
-                            message
-                            field
-                        }
-                    }
-                }
-            """,
-            "variables": {
-                "onPathwayId":PATIENT['onPathwayId'],
-                "decisionType":DecisionTypes.POST_REQUEST.value,
-                "clinicHistory":DECISION_POINT['clinicHistory'],
-                "comorbidities":DECISION_POINT['comorbidities'],
-                "milestoneId":MILESTONE['milestoneId']
-            }
+            "id":2000,
+            "new_state": MilestoneState.COMPLETED.value
         }
     )
+    assert_that(res.status_code, equal_to(200))
+
+
 
 ##### SCENARIO: WE SEARCH FOR A PATIENT #####
 @when("we run the query to search for the patient")
 def step_impl(context):
+    async def _load_many_test_results(recordIds=None, auth_token=None):
+        recordIds = [int(x) for x in recordIds]
+        retVal=[]
+        if 1000 in recordIds:
+            retVal.append(TestResult_IE(
+                current_state=MilestoneState.COMPLETED,
+                added_at=datetime.now(),
+                updated_at=datetime.now(),
+                description="This is a test description!",
+                type_reference_name=context.milestone_referral_letter.ref_name,
+                id=1000
+            ))
+        elif 2000 in recordIds:
+            retVal.append(TestResult_IE(
+                current_state=MilestoneState.COMPLETED,
+                added_at=datetime.now(),
+                updated_at=datetime.now(),
+                description="This is a test description!",
+                type_reference_name=context.milestone_one.ref_name,
+                id=2000
+            ))
+        return retVal
+
+    context.trust_adapter_mock.load_many_test_results=_load_many_test_results
+
     get_patient_result=context.client.post(
         url=GRAPHQL_ENDPOINT,
         json={
@@ -423,8 +417,8 @@ def step_impl(context):
                                 lastName
                                 hospitalNumber
                                 nationalNumber
-                                communicationMethod
                                 dateOfBirth
+                                communicationMethod
                             }
                             pathway{
                                 id
@@ -438,12 +432,38 @@ def step_impl(context):
                             underCareOf {
                                 id
                                 username
+                                firstName
+                                lastName
+                            }
+                            milestones{
+                                id
+                                addedAt
+                                updatedAt
+                                currentState
+                                milestoneType{
+                                    id
+                                    name
+                                    refName
+                                }
+                                forwardDecisionPoint{
+                                    id
+                                }
+                                testResult{
+                                    id
+                                    description
+                                    currentState
+                                    addedAt
+                                    updatedAt
+                                    typeReferenceName
+                                }
                             }
                             decisionPoints{
                                 id
                                 clinician{
                                     id
                                     username
+                                    firstName
+                                    lastName
                                 }
                                 onPathway{
                                     id
@@ -462,9 +482,6 @@ def step_impl(context):
                                     addedAt
                                     updatedAt
                                     currentState
-                                    internalAddedAt
-                                    internalUpdatedAt
-                                    internalCurrentState
                                     milestoneType{
                                         id
                                         name
@@ -473,10 +490,25 @@ def step_impl(context):
                                     forwardDecisionPoint{
                                         id
                                     }
+                                    testResult{
+                                        id
+                                        description
+                                        currentState
+                                        addedAt
+                                        updatedAt
+                                        typeReferenceName
+                                    }
                                 }
                                 milestoneResolutions{
                                     id
                                     currentState
+                                    addedAt
+                                    updatedAt
+                                    milestoneType{
+                                        id
+                                        name
+                                        refName
+                                    }
                                 }
                             }
                         }
@@ -498,7 +530,6 @@ def step_impl(context):
     assert_that(context.get_patient_result, not_none())
 
     patient=context.get_patient_result
-
     assert_that(patient['id'], not_none())
     assert_that(patient['firstName'], equal_to(PATIENT['firstName']))
     assert_that(patient['lastName'], equal_to(PATIENT['lastName']))
@@ -509,8 +540,8 @@ def step_impl(context):
 
     onPathway=patient['onPathways'][0]
     assert_that(onPathway, not_none())
-    onPathway_Patient=onPathway['patient']
 
+    onPathway_Patient=onPathway['patient']
     assert_that(onPathway['isDischarged'], equal_to(False))
     assert_that(onPathway['awaitingDecisionType'], equal_to(DECISION_POINT['decisionType']))
     assert_that(onPathway['addedAt'], not_none())
@@ -518,6 +549,28 @@ def step_impl(context):
     assert_that(onPathway['referredAt'], not_none())
     assert_that(onPathway['underCareOf']['id'], equal_to(str(context.user.id)))
     assert_that(onPathway['underCareOf']['username'], equal_to(context.user.username))
+
+    onPathway_Milestone=onPathway['milestones'][0]
+    assert_that(onPathway_Milestone['id'], not_none())
+    assert_that(onPathway_Milestone, not_none())
+    assert_that(onPathway_Milestone['id'], not_none())
+    assert_that(onPathway_Milestone['addedAt'], not_none())
+    assert_that(onPathway_Milestone['updatedAt'], not_none())
+    assert_that(onPathway_Milestone['currentState'], MilestoneState.COMPLETED)
+    assert_that(onPathway_Milestone['milestoneType'], not_none())
+    assert_that(onPathway_Milestone['milestoneType']['id'], not_none())
+    assert_that(onPathway_Milestone['milestoneType']['name'], equal_to(context.milestone_referral_letter.name))
+    assert_that(onPathway_Milestone['milestoneType']['refName'], equal_to(context.milestone_referral_letter.ref_name))
+    assert_that(onPathway_Milestone['forwardDecisionPoint'], DECISION_POINT['id'])
+
+    onPathway_Milestone_TestResult=onPathway_Milestone['testResult']
+    assert_that(onPathway_Milestone_TestResult, not_none())
+    assert_that(onPathway_Milestone_TestResult['id'], not_none())
+    assert_that(onPathway_Milestone_TestResult['description'], "This is a test description!")
+    assert_that(onPathway_Milestone_TestResult['currentState'], MilestoneState.COMPLETED)
+    assert_that(onPathway_Milestone_TestResult['addedAt'], not_none())
+    assert_that(onPathway_Milestone_TestResult['updatedAt'], not_none())
+    assert_that(onPathway_Milestone_TestResult['typeReferenceName'], context.milestone_referral_letter.ref_name)
 
     assert_that(onPathway_Patient['id'], not_none())
     assert_that(onPathway_Patient['firstName'], equal_to(PATIENT['firstName']))
@@ -531,54 +584,38 @@ def step_impl(context):
     assert_that(onPathway_Pathway['id'], not_none())
     assert_that(onPathway_Pathway['name'], equal_to(PATHWAY['name']))
 
-
-
-    onPathway_DecisionPoint_triage=onPathway['decisionPoints'][1]
-    assert_that(onPathway_DecisionPoint_triage, not_none())
-
-    assert_that(onPathway_DecisionPoint_triage['clinician'], not_none())
-    assert_that(onPathway_DecisionPoint_triage['clinician']['id'], equal_to(str(context.user.id)))
-    assert_that(onPathway_DecisionPoint_triage['clinician']['username'], equal_to(context.user.username))
-
-    assert_that(onPathway_DecisionPoint_triage['onPathway'], not_none())
-    assert_that(onPathway_DecisionPoint_triage['onPathway']['id'], not_none())
-    assert_that(onPathway_DecisionPoint_triage['onPathway']['pathway']['id'], PATHWAY['id'])
-    assert_that(onPathway_DecisionPoint_triage['onPathway']['pathway']['name'], PATHWAY['name'])
-
-    assert_that(onPathway_DecisionPoint_triage['decisionType'], equal_to(DecisionTypes.TRIAGE.value))
-    assert_that(onPathway_DecisionPoint_triage['clinicHistory'], equal_to(DECISION_POINT['clinicHistory']))
-    assert_that(onPathway_DecisionPoint_triage['comorbidities'], equal_to(DECISION_POINT['comorbidities']))
-    assert_that(onPathway_DecisionPoint_triage['addedAt'], not_none())
-    assert_that(onPathway_DecisionPoint_triage['updatedAt'], not_none())
+    onPathway_DecisionPoint=onPathway['decisionPoints'][0]
+    assert_that(onPathway_DecisionPoint, not_none())
+    assert_that(onPathway_DecisionPoint['clinician'], not_none())
+    assert_that(onPathway_DecisionPoint['clinician']['id'], equal_to(str(context.user.id)))
+    assert_that(onPathway_DecisionPoint['clinician']['username'], equal_to(context.user.username))
+    assert_that(onPathway_DecisionPoint['onPathway'], not_none())
+    assert_that(onPathway_DecisionPoint['onPathway']['id'], not_none())
+    assert_that(onPathway_DecisionPoint['onPathway']['pathway']['id'], PATHWAY['id'])
+    assert_that(onPathway_DecisionPoint['onPathway']['pathway']['name'], PATHWAY['name'])
+    assert_that(onPathway_DecisionPoint['decisionType'], equal_to(DecisionTypes.TRIAGE.value))
+    assert_that(onPathway_DecisionPoint['clinicHistory'], equal_to(DECISION_POINT['clinicHistory']))
+    assert_that(onPathway_DecisionPoint['comorbidities'], equal_to(DECISION_POINT['comorbidities']))
+    assert_that(onPathway_DecisionPoint['addedAt'], not_none())
+    assert_that(onPathway_DecisionPoint['updatedAt'], not_none())
     
-    milestone=onPathway_DecisionPoint_triage['milestones'][0]
+    milestone=onPathway_DecisionPoint['milestones'][0]
     assert_that(milestone, not_none())
     assert_that(milestone['id'], not_none())
     assert_that(milestone['addedAt'], not_none())
     assert_that(milestone['updatedAt'], not_none())
-    assert_that(milestone['internalAddedAt'], not_none())
-    assert_that(milestone['internalUpdatedAt'], not_none())
     assert_that(milestone['currentState'], MilestoneState.COMPLETED)
     assert_that(milestone['milestoneType'], not_none())
     assert_that(milestone['milestoneType']['id'], not_none())
     assert_that(milestone['milestoneType']['name'], equal_to(context.milestone_one.name))
     assert_that(milestone['milestoneType']['refName'], equal_to(context.milestone_one.ref_name))
-    assert_that(milestone['forwardDecisionPoint'], not_none())
-
-    onPathway_DecisionPoint_postrequest=onPathway['decisionPoints'][0]
-    assert_that(onPathway_DecisionPoint_postrequest, not_none())
-
-    assert_that(onPathway_DecisionPoint_postrequest['clinician'], not_none())
-    assert_that(onPathway_DecisionPoint_postrequest['clinician']['id'], equal_to(str(context.user.id)))
-    assert_that(onPathway_DecisionPoint_postrequest['clinician']['username'], equal_to(context.user.username))
-
-    assert_that(onPathway_DecisionPoint_postrequest['onPathway'], not_none())
-    assert_that(onPathway_DecisionPoint_postrequest['onPathway']['id'], not_none())
-    assert_that(onPathway_DecisionPoint_postrequest['onPathway']['pathway']['id'], PATHWAY['id'])
-    assert_that(onPathway_DecisionPoint_postrequest['onPathway']['pathway']['name'], PATHWAY['name'])
-
-    assert_that(onPathway_DecisionPoint_postrequest['decisionType'], equal_to(DecisionTypes.POST_REQUEST.value))
-    assert_that(onPathway_DecisionPoint_postrequest['clinicHistory'], equal_to(DECISION_POINT['clinicHistory']))
-    assert_that(onPathway_DecisionPoint_postrequest['comorbidities'], equal_to(DECISION_POINT['comorbidities']))
-    assert_that(onPathway_DecisionPoint_postrequest['addedAt'], not_none())
-    assert_that(onPathway_DecisionPoint_postrequest['updatedAt'], not_none())
+    assert_that(milestone['forwardDecisionPoint'], none())
+    
+    onPathway_DecisionPoint_TestResult=milestone['testResult']
+    assert_that(onPathway_DecisionPoint_TestResult, not_none())
+    assert_that(onPathway_DecisionPoint_TestResult['id'], not_none())
+    assert_that(onPathway_DecisionPoint_TestResult['description'], "This is a test description!")
+    assert_that(onPathway_DecisionPoint_TestResult['currentState'], MilestoneState.COMPLETED)
+    assert_that(onPathway_DecisionPoint_TestResult['addedAt'], not_none())
+    assert_that(onPathway_DecisionPoint_TestResult['updatedAt'], not_none())
+    assert_that(onPathway_DecisionPoint_TestResult['typeReferenceName'], context.milestone_referral_letter.ref_name)

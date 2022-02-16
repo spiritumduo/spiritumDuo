@@ -1,7 +1,7 @@
 from behave import *
 import json
 from hamcrest import *
-import requests, json
+import json
 from random import randint
 from behave.runner import Context
 
@@ -23,7 +23,8 @@ def step_impl(context:Context):
             "password":NEW_CLINICIAN['password'],
             "firstName":NEW_CLINICIAN['firstName'],
             "lastName":NEW_CLINICIAN['lastName'],
-            "department":NEW_CLINICIAN['department']
+            "department":NEW_CLINICIAN['department'],
+            "defaultPathwayId":context.pathway.id
         }
     )
     assert_that(create_user_result.status_code, equal_to(200))
@@ -32,5 +33,9 @@ def step_impl(context:Context):
 
 @then('we get the user\'s ID')
 def step_impl(context):
-    assert context.user_result['id'] is not None
+    print(context.user_result)
     assert context.user_result['username']==NEW_CLINICIAN['username']
+    assert context.user_result['first_name']==NEW_CLINICIAN['firstName']
+    assert context.user_result['last_name']==NEW_CLINICIAN['lastName']
+    assert context.user_result['department']==NEW_CLINICIAN['department']
+    assert context.user_result['default_pathway_id']==context.pathway.id

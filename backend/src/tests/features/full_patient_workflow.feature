@@ -6,8 +6,6 @@ Feature: all patient operations
     Scenario: a patient needs a decision point added and milestones requested
         When we run the GraphQL mutation to add the decision point and milestones
         Then the milestones are completed
-    Scenario: a patient needs a post request decision point added
-        When we run the GraphQL mutation to add a post request decision point
     Scenario: we search for a patient
         When we run the query to search for the patient
         Then we get the patient's record with all created data
