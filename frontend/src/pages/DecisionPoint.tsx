@@ -197,7 +197,6 @@ const ConfirmNoMilestones = (
         <Button
           className="float-end w-25 mt-lg-4 ms-4"
           variant="outline-secondary"
-          href="/app/"
           onClick={ () => {
             confirmFn(true);
             submitFn();
