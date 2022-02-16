@@ -6,7 +6,6 @@ import Patient from 'types/Patient';
 import { MemoryRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import { getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node } from 'components/__generated__/getPatientOnPathwayConnection';
-import { MilestoneState } from '../__generated__/globalTypes';
 
 // Dummy data for display
 const patientArray: Patient[] = [];
