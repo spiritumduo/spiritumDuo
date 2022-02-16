@@ -69,7 +69,6 @@
     },
     "Cardiopulmonary exercise test (procedure)": {
         "name": "CPET",
-        "ref_name": " ",
         "result": "Satisfactory results. Patient fit enough for surgery."
     },
     "Referral to smoking cessation service (procedure)": {
@@ -79,5 +78,9 @@
     "Blood test (procedure)": {
         "name": "Bloods",
         "result": "Urea & electrolytes, liver function tests, bone profile, full blood count and clotting were all normal."
+    },
+    "Assessment by multidisciplinary team (procedure)": {
+        "name": "Add to MDT",
+        "result": "MDT recommends refer to thoracic surgery"
     }
 }

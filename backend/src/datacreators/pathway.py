@@ -1,12 +1,8 @@
 from models import Pathway
 from gettext import gettext as _
+from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
 from asyncpg.exceptions import UniqueViolationError
 
-class ReferencedItemDoesNotExistError(Exception):
-    """
-        This occurs when a referenced item does not 
-        exist and cannot be found when it should
-    """
 async def CreatePathway(
     context:dict=None,
     name:str=None
@@ -17,16 +13,8 @@ async def CreatePathway(
         raise ReferencedItemDoesNotExistError("Name is not provided.")
 
     try:
-        _pathway=await Pathway.create(
+        return await Pathway.create(
             name=name
         )
     except UniqueViolationError:
-        return{
-            "userErrors":[
-                {"field":"name", "message":_("A pathway with this name already exists.")}
-            ]
-        }
-
-    return{
-        "pathway":_pathway
-    }
+        return DataCreatorInputErrors().addError(field="name", message="A pathway with this name already exists")
