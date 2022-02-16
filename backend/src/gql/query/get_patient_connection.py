@@ -30,7 +30,7 @@ async def get_patient_connection(
     if before is None and after is None and first is None:
         raise ValueError("Require first argument if no cursors present")
 
-    db_query=db.select([OnPathway.patient_id.label("patient_id")], distinct=True)\
+    db_query=db.select([OnPathway.patient_id.label("patient_id")])\
         .where(OnPathway.pathway_id == int(pathwayId))\
         .where(OnPathway.is_discharged == isDischarged)
     if outstanding:
@@ -41,12 +41,12 @@ async def get_patient_connection(
         db_query=db_query.where(
                 or_(
                     and_(
-                        Milestone.fwd_decision_point_id.is_(None), 
+                        Milestone.fwd_decision_point_id.is_(None),
                         Milestone.current_state == MilestoneState.COMPLETED
                     ),
                     DecisionPoint.id.is_(None)
                 )
-            )
+            ).group_by(OnPathway.id)
     if awaitingDecisionType is not None: db_query=db_query.where(OnPathway.awaiting_decision_type == awaitingDecisionType)
 
     if underCareOf: db_query=db_query.where(
@@ -55,7 +55,7 @@ async def get_patient_connection(
             OnPathway.under_care_of_id.is_(None)
         ))
 
-
+    db_query = db_query.order_by(OnPathway.id)
     all_patients_on_pathways = await db_query.gino.all()
     patients_ids = [pp.patient_id for pp in all_patients_on_pathways]
     patients = await PatientByIdLoader.load_many_from_id(info.context, patients_ids)
