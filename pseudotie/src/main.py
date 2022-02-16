@@ -150,7 +150,8 @@ async def proc_wrapper(func):
     loop.create_task(func)
 
 async def updateTestResultAtRandomTime(testResultId:int=None):
-    delay=randint(30, 60)
+    # delay=randint(30, 60)
+    delay=0
     await asyncio.sleep(delay)
     testResult=await TestResult.get(testResultId)
 
