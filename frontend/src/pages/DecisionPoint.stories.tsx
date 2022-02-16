@@ -148,6 +148,7 @@ const apolloMocks = [
           onPathways: [
             {
               id: '1',
+              milestones: milestones,
               underCareOf: {
                 firstName: 'John',
                 lastName: 'Doe',

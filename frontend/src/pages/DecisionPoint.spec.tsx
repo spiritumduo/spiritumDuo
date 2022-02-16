@@ -102,7 +102,7 @@ describe('When page loads', () => {
       userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
-    expect(screen.getByText(/no milestones selected/i)).toBeInTheDocument();
+    expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument();
   });
 
   it('Should report success on form submission with milestones', async () => {
@@ -119,6 +119,6 @@ describe('When page loads', () => {
       requestCheckboxes.forEach((cb) => userEvent.click(cb));
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
-    expect(screen.getByText(/decision submitted successfully/i)).toBeInTheDocument();
+    expect(screen.getByText(/The above requests have now been submitted/i)).toBeInTheDocument();
   });
 });

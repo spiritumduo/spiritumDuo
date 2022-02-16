@@ -8,13 +8,13 @@ const { Default, WithMilestones } = composeStories(stories);
 
 test('Should display success when no milestones', () => {
   render(<Default />);
-  expect(screen.getByText(/decision submitted/i)).toBeInTheDocument();
+  expect(screen.getByText(/requests have now been submitted/i)).toBeInTheDocument();
   expect(screen.queryByText(/requests sent/i)).toBeNull();
 });
 
 test('Should display provided milestones', () => {
   render(<WithMilestones />);
-  expect(screen.getByText(/decision submitted/i)).toBeInTheDocument();
+  expect(screen.getByText(/requests have now been submitted/i)).toBeInTheDocument();
   expect(screen.getByText(/requests sent/i)).toBeInTheDocument();
   WithMilestones.args?.milestones?.forEach((m) => {
     expect(screen.getByText(m.name)).toBeInTheDocument();

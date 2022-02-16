@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroupItem, Button, Card, ListGroup, Row, Col, Container } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 
 export interface DecisionSubmissionSuccessProps {
   milestones?: {
