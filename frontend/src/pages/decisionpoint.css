@@ -1,3 +1,7 @@
 .text-right {
     text-align: right;
 }
+
+.test-collapse {
+    display: inline;
+}
