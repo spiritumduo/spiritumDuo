@@ -82,5 +82,9 @@
     "Assessment by multidisciplinary team (procedure)": {
         "name": "Add to MDT",
         "result": "MDT recommends refer to thoracic surgery"
+    },
+    "Appointment (record artifact)": {
+        "name": "Book clinic appointment",
+        "result": "Patient now with you in clinic"
     }
 }
