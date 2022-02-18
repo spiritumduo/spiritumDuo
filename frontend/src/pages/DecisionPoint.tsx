@@ -80,6 +80,7 @@ export const GET_PATIENT_QUERY = gql`
         name
         isDischarge
         isCheckboxHidden
+        isTestRequest
       }
     }
 `;
@@ -120,6 +121,7 @@ type DecisionPointPageForm = {
     name: string;
     checked: boolean;
     discharge: boolean;
+    isTestRequest: boolean;
   }[];
   milestoneResolutions: {
     id: string;
@@ -385,6 +387,7 @@ const DecisionPointPage = (
             name: milestoneType.name,
             checked: false,
             discharge: milestoneType.isDischarge,
+            isTestRequest: milestoneType.isTestRequest,
           }
           : []
       ))
@@ -418,7 +421,6 @@ const DecisionPointPage = (
   // DO NOT PUT HOOKS AFTER HERE
 
   if (loading) return <h1>Loading!</h1>;
-  console.log(data);
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
   if (isSubmitted) {
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
@@ -487,8 +489,9 @@ const DecisionPointPage = (
   const onPathwayId = data.getPatient.onPathways?.[0].id;
   const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
-  const testOptions = requestFields.filter((ck) => ck.discharge === false).filter((ck) => !ck.name.includes('referral')).filter((ck) => !ck.name.includes('MDT')).filter((ck) => !ck.name.includes('clinic'));
-  const referNoDischargeOptions = requestFields.filter((ck) => ck.name.includes('referral') || ck.name.includes('MDT') || ck.name.includes('clinic')).filter((ck) => ck.discharge === false);
+  const testOptions = requestFields.filter((ck) => ck.isTestRequest === true);
+  const referNoDischargeOptions = requestFields.filter((ck) => ck.isTestRequest === false)
+    .filter((ck) => ck.discharge === false);
   const referAndDischargeOptions = requestFields.filter((ck) => ck.discharge === true);
 
   return (
