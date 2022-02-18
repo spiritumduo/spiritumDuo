@@ -184,6 +184,7 @@ type MilestoneType {
     name: String!
     isDischarge: Boolean!
     isCheckboxHidden: Boolean!
+    isTestRequest: Boolean!
 }
 
 
