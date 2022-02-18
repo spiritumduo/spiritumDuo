@@ -39,8 +39,8 @@ async def insert_demo_data():
         "prehab_referral": await MilestoneType.create(name="Prehab referral", ref_name="Prehabilitation (regime/therapy)"),
         "dietician_referral": await MilestoneType.create(name="Dietician referral", ref_name="Patient referral to dietitian (procedure)"),
         "smoking_cessation_referral": await MilestoneType.create(name="Smoking cessation referral", ref_name="Referral to smoking cessation service (procedure)"),
-        "chest_xray": await MilestoneType.create(name="Chest X-ray", ref_name="Plain chest X-ray (procedure)"),
-        "ct_chest": await MilestoneType.create(name="CT chest", ref_name="Computed tomography of chest (procedure)"),
+        "chest_xray": await MilestoneType.create(name="Chest X-ray", ref_name="Plain chest X-ray (procedure)", is_test_request=True),
+        "ct_chest": await MilestoneType.create(name="CT chest", ref_name="Computed tomography of chest (procedure)", is_test_request=True),
         "ref_to_surgery": await MilestoneType.create(name="Refer to surgeons", ref_name="ref Surgeons", is_discharge=True),
         "ref_to_oncology": await MilestoneType.create(name="Refer to oncology", ref_name="ref Oncology", is_discharge=True),
         "ref_to_palliative": await MilestoneType.create(name="Refer to palliation", ref_name="ref Palliation", is_discharge=True),
@@ -50,19 +50,19 @@ async def insert_demo_data():
     }
 
     selectable_milestone_types:List[MilestoneType]=[
-        await MilestoneType.create(name="PET-CT", ref_name="Positron emission tomography with computed tomography (procedure)"),
-        await MilestoneType.create(name="CT head - contrast", ref_name="Computed tomography of head with contrast (procedure)"),
-        await MilestoneType.create(name="MRI head", ref_name="Magnetic resonance imaging of head (procedure)"),
-        await MilestoneType.create(name="Lung function tests", ref_name="Measurement of respiratory function (procedure)"),
-        await MilestoneType.create(name="ECHO", ref_name="Echocardiography (procedure)"),
-        await MilestoneType.create(name="CT guided biopsy thorax", ref_name="Biopsy of thorax using computed tomography guidance (procedure)"),
-        await MilestoneType.create(name="EBUS", ref_name="Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)"),
-        await MilestoneType.create(name="ECG", ref_name="Electrocardiogram analysis (qualifier value)"),
-        await MilestoneType.create(name="Thoracoscopy", ref_name="Thoracoscopy (procedure)"),
-        await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)"),
-        await MilestoneType.create(name="Pleural tap", ref_name="Thoracentesis (procedure)"),
-        await MilestoneType.create(name="CPET", ref_name="Cardiopulmonary exercise test (procedure)"),
-        await MilestoneType.create(name="Bloods", ref_name="Blood test (procedure)"),
+        await MilestoneType.create(name="PET-CT", ref_name="Positron emission tomography with computed tomography (procedure)", is_test_request=True),
+        await MilestoneType.create(name="CT head - contrast", ref_name="Computed tomography of head with contrast (procedure)", is_test_request=True),
+        await MilestoneType.create(name="MRI head", ref_name="Magnetic resonance imaging of head (procedure)", is_test_request=True),
+        await MilestoneType.create(name="Lung function tests", ref_name="Measurement of respiratory function (procedure)", is_test_request=True),
+        await MilestoneType.create(name="ECHO", ref_name="Echocardiography (procedure)", is_test_request=True),
+        await MilestoneType.create(name="CT guided biopsy thorax", ref_name="Biopsy of thorax using computed tomography guidance (procedure)", is_test_request=True),
+        await MilestoneType.create(name="EBUS", ref_name="Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)", is_test_request=True),
+        await MilestoneType.create(name="ECG", ref_name="Electrocardiogram analysis (qualifier value)", is_test_request=True),
+        await MilestoneType.create(name="Thoracoscopy", ref_name="Thoracoscopy (procedure)", is_test_request=True),
+        await MilestoneType.create(name="Bronchoscopy", ref_name="Bronchoscopy (procedure)", is_test_request=True),
+        await MilestoneType.create(name="Pleural tap", ref_name="Thoracentesis (procedure)", is_test_request=True),
+        await MilestoneType.create(name="CPET", ref_name="Cardiopulmonary exercise test (procedure)", is_test_request=True),
+        await MilestoneType.create(name="Bloods", ref_name="Blood test (procedure)", is_test_request=True),
     ]
 
     _context={
