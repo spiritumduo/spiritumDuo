@@ -97,6 +97,7 @@ export interface GetPatient_getMilestoneTypes {
   name: string;
   isDischarge: boolean;
   isCheckboxHidden: boolean;
+  isTestRequest: boolean;
 }
 
 export interface GetPatient {

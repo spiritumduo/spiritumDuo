@@ -56,4 +56,5 @@ export interface previousDecisionPoints {
 export interface previousDecisionPointsVariables {
   hospitalNumber: string;
   pathwayId: string;
+  includeDischarged?: boolean | null;
 }
