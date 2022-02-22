@@ -17,6 +17,10 @@ class ContextNotDefined(Exception):
     """
 
 class LoginController:
+    """
+    A class to handle authentication methods
+    """
+
     _WRONG_USERNAME_OR_PASSWORD_PROMPT="Incorrect username and/or password"
     _NO_PERMISSIONS_PROMPT="This account is not authenticated for use in this system"
 
@@ -27,6 +31,16 @@ class LoginController:
         self._db=context['db']
 
     async def login(self, request:Request=None):
+        """
+        This collects user information from the request and
+        attempts to authenticate the user
+
+        Parameters:
+            request (Request): request information
+
+        Returns:
+            JSONResponse
+        """
         if request['session']:
             request.scope['session']=None
             
@@ -109,6 +123,18 @@ class LoginController:
         return res
 
     async def logout(self, request:Request=None):
+        """
+        This collects user information from the request and
+        attempts to logout the user, destroying the session 
+        key
+
+        Parameters:
+            request (Request): request information
+
+        Returns:
+            JSONResponse
+        """
+        
         if request['session']:
             async with db.acquire(reuse=False) as conn:
                 await conn.scalar(Session.delete.where(Session.session_key==str(request['session'])))

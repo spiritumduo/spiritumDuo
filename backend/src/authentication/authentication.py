@@ -50,6 +50,9 @@ class SDUser(BaseUser):
         return self.department
 
 class SDAuthentication(AuthenticationBackend):
+    """
+    The backend's authentication mechanism as a middleware
+    """
     async def authenticate(self, request:HTTPConnection):
         if "Authorization" not in request.headers:
             if request['session']:
@@ -74,6 +77,10 @@ class SDAuthentication(AuthenticationBackend):
 def needsAuthorization(
     scopes:List[str]=None
 )-> Callable:
+    """
+    A decorator to ensure a user has one of a specified
+    list of scopes/permissions
+    """
     def decorator(func:Callable)->Callable:
         signature=inspect.signature(func)
         info=False
@@ -97,6 +104,10 @@ def needsAuthorization(
     return decorator
 
 def needsAuthenticated(func:Callable)->Callable:
+    """
+    A decorator to ensure a user is logged in (has
+    authenticated)
+    """
     signature=inspect.signature(func)
     requestIndex=None
     for _,param in enumerate(signature.parameters.values()):
