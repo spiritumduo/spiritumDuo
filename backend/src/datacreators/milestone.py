@@ -9,11 +9,11 @@ from models import Milestone, MilestoneType
 @inject
 async def ImportMilestone(
     context = None,
-    onPathwayId:int = None,
-    milestoneTypeId:int = None,
+    on_pathway_id:int = None,
+    milestone_type_id:int = None,
     description:str = None,
-    currentState:MilestoneState = None,    
-    trustAdapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
+    current_state:MilestoneState = None,    
+    trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     """
     Creates a milestone object in local and external databases
@@ -30,15 +30,15 @@ async def ImportMilestone(
     """
     testResult=await trust_adapter.create_test_result(
         TestResultRequest_IE(
-            type_id=milestoneTypeId,
+            type_id=milestone_type_id,
             description=description,
-            current_state=currentState,
+            current_state=current_state,
         ), auth_token=context['request'].cookies['SDSESSION']
     )
     
     return await Milestone.create(
-        on_pathway_id=int(onPathwayId),
-        current_state=currentState,
-        milestone_type_id=int(milestoneTypeId),
+        on_pathway_id=int(on_pathway_id),
+        current_state=current_state,
+        milestone_type_id=int(milestone_type_id),
         test_result_reference_id=str(testResult.id)
     )

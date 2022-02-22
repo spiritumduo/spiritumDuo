@@ -8,9 +8,9 @@ from graphql.type import GraphQLResolveInfo
 async def resolver(obj=None, info:GraphQLResolveInfo=None, input:dict=None):   
     milestone = await ImportMilestone(
         context = info.context,
-        onPathwayId = input["onPathwayId"],
-        milestoneTypeId = input["milestoneTypeId"],
+        on_pathway_id = input["onPathwayId"],
+        milestone_type_id = input["milestoneTypeId"],
         description = input["description"],
-        currentState = input["currentState"],
+        current_state = input["currentState"],
     )
     return milestone
