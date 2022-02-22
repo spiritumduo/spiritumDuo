@@ -6,3 +6,6 @@ Ongoing work, but this repo will hold all of the work for the modular and open-s
 
 ## Installation
 For full installation instructions, please see [INSTALL.md](INSTALL.md).
+
+## Glossary
+Please see [GLOSSARY.md](GLOSSARY.md)
