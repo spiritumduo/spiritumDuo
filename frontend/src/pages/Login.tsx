@@ -104,14 +104,14 @@ const LoginPage = (): JSX.Element => {
                   </div>
 
                   <div className="form-group row mb-2">
-                    <label className="col-sm-9 col-form-label" htmlFor="username">Username
+                    <label className="col-sm-9 col-form-label" htmlFor="username" autoCapitalize="off" autoCorrect="username">Username
                       <input id="username" type="text" placeholder="Username" className="form-control" { ...register('username', { required: true }) } />
                       <p>{ errors.username?.message }</p>
                     </label>
                   </div>
 
                   <div className="form-group row mb-4">
-                    <label className="col-sm-9 col-form-label" htmlFor="password">Password
+                    <label className="col-sm-9 col-form-label" htmlFor="password" autoCapitalize="off" autoCorrect="password">Password
                       <input id="password" type="password" placeholder="Password" className="form-control" { ...register('password', { required: true }) } />
                       <p>{ errors.password?.message }</p>
                     </label>
