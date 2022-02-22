@@ -1,4 +1,3 @@
-from ast import Str
 from aiodataloader import DataLoader
 from dependency_injector.wiring import Provide, inject
 
@@ -9,6 +8,13 @@ from typing import List, Union, Dict, Optional
 from trustadapter import TrustAdapter
 
 class PatientByIdLoader(DataLoader):
+    """
+        This is class for loading patients and 
+        caching the result in the request context
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
     loader_name = "_patient_by_id_loader"
     _db=None
 
@@ -38,6 +44,15 @@ class PatientByIdLoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Union[Patient, None]:
+        """
+            Load a single entry from its record ID
+            
+            Parameters:
+                context (dict): request context
+                id (int): ID to find
+            Returns: 
+                Patient/None
+        """
         if not id:
             return None
         if cls.loader_name not in context:
@@ -53,11 +68,29 @@ class PatientByIdLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->Union[List[Patient], None]:
+        """
+            Load a multiple entries from their record ID
+            
+            Parameters:
+                context (dict): request context
+                id (List[int]): IDs to find
+            Returns: 
+                List[Patient]/None
+        """
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
 class PatientByHospitalNumberLoader(DataLoader):
+    """
+        This is class for loading patients by their
+        hospital numbers and caching the result in 
+        the request context
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
+
     loader_name="_patient_by_hospital_number_loader"
     _db=None
 
@@ -85,6 +118,15 @@ class PatientByHospitalNumberLoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Union[Patient, None]:
+        """
+            Load a single entry from its hospital number
+            
+            Parameters:
+                context (dict): request context
+                id (str): ID to find
+            Returns: 
+                Patient/None
+        """
         if not id:
             return None
         if cls.loader_name not in context:
@@ -100,6 +142,15 @@ class PatientByHospitalNumberLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->Union[List[Patient], None]:
+        """
+            Loads many entries from their hospital numbers
+            
+            Parameters:
+                context (dict): request context
+                ids (List[str]): IDs to find
+            Returns: 
+                List[Patient]/None
+        """
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
@@ -115,6 +166,14 @@ class ReferencePatient:
 
 
 class PatientByHospitalNumberFromIELoader(DataLoader):
+    """
+        This is class for loading patients by their
+        hospital numbers and caching the result in 
+        the request context from the TrustAdapter
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
     loader_name = "_patient_by_hospital_number_from_ie_loader"
 
     def __init__(self, context=None):
@@ -151,12 +210,30 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Optional[ReferencePatient]:
+        """
+            Load a single entry from its hospital number from the TrustAdapter
+            
+            Parameters:
+                context (dict): request context
+                id (str): ID to find
+            Returns: 
+                ReferencePatient/None
+        """
         if not id:
             return None
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->List[Optional[ReferencePatient]]:
+        """
+            Loads multiple entries from their hospital number from the TrustAdapter
+            
+            Parameters:
+                context (dict): request context
+                ids (List[str]): ID to find
+            Returns: 
+                List[ReferencePatient]/None
+        """
         if not ids:
             return None
         return await cls._get_loader_from_context(context).load_many(ids)

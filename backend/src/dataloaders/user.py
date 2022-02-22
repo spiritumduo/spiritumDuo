@@ -3,6 +3,13 @@ from models import User
 from typing import List, Union
 
 class UserByIdLoader(DataLoader):
+    """
+        This is class for loading users and 
+        caching the result in the request context
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
     loader_name = "_user_by_id_loader"
     _db=None
 
@@ -32,6 +39,15 @@ class UserByIdLoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Union[User, None]:
+        """
+            Load a single entry from its record ID
+            
+            Parameters:
+                context (dict): request context
+                id (int): ID to find
+            Returns: 
+                User/None
+        """
         if not id:
             return None
         if cls.loader_name not in context:
@@ -45,11 +61,28 @@ class UserByIdLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->Union[List[User], None]:
+        """
+            Loads many entires from their record ID
+            
+            Parameters:
+                context (dict): request context
+                id (List[int]): ID to find
+            Returns: 
+                List[User]/None
+        """
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
 class UserByUsernameLoader(DataLoader):
+    """
+        This is class for loading users by their username 
+        and caching the result in the request context
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
+
     loader_name = "_user_by_username_loader"
     _db=None
 
@@ -79,6 +112,15 @@ class UserByUsernameLoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Union[User, None]:
+        """
+            Load a single entry from its username
+            
+            Parameters:
+                context (dict): request context
+                id (str): username to find
+            Returns: 
+                User/None
+        """
         if not id:
             return None
         if cls.loader_name not in context:
@@ -94,6 +136,15 @@ class UserByUsernameLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->Union[List[User], None]:
+        """
+            Loads many entries from their usernames
+            
+            Parameters:
+                context (dict): request context
+                ids (List[str]): username to find
+            Returns: 
+                List[User]/None
+        """
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)

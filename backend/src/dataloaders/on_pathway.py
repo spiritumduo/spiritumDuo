@@ -4,6 +4,14 @@ from models import OnPathway
 from typing import List, Union
 
 class OnPathwayByIdLoader(DataLoader):
+    """
+        This is class for loading OnPathway records
+        by their IDs
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
+
     loader_name = "_on_pathway_loader"
     _db=None
 
@@ -33,6 +41,15 @@ class OnPathwayByIdLoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Union[OnPathway, None]:
+        """
+            Load a single entry from its record ID
+            
+            Parameters:
+                context (dict): request context
+                id (int): ID to find
+            Returns: 
+                OnPathway/None
+        """
         if not id:
             return None
         if cls.loader_name not in context:
@@ -41,13 +58,43 @@ class OnPathwayByIdLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->Union[List[OnPathway], None]:
+        """
+            Loads many entries from their record ID
+            
+            Parameters:
+                context (dict): request context
+                ids (List[int]): IDs to find
+            Returns: 
+                List[OnPathway]/None
+        """
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
 class OnPathwaysByPatient:
+    """
+        This is class for loading OnPathway records
+        by their Patient ID
+
+        Attributes:
+            None
+    """
     @staticmethod
     async def load_from_id(context=None, id=None, pathwayId=None, includeDischarged=None, awaitingDecisionType=None, limit=None)->Union[List[OnPathway], None]:
+        """
+            Loads OnPathway records by their Patient ID
+            
+            Parameters:
+                context (dict): request context
+                ids (List[int]): ID to find
+                pathwayId (int): filter by OnPathway ID
+                includeDischarged (bool): filter to include discharged patients
+                awaitingDecisionType (DecisionTypes): filter by awaiting_decision_types
+                limit (int): number of records to return
+            Returns: 
+                List[OnPathway]/None
+        """
+
         if not context or not id:
             return None
 

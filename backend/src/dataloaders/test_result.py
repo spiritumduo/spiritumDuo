@@ -5,6 +5,14 @@ from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
 
 class TestResultByReferenceIdFromIELoader(DataLoader):
+    """
+        This is class for loading test results by their 
+        reference IDs and caching the result in 
+        the request context
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
     loader_name = "_test_result_by_reference_id_from_ie_loader"
 
     def __init__(self, context=None):
@@ -39,12 +47,30 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
 
     @classmethod
     async def load_from_id(cls, context=None, id=None)->Optional[TestResult_IE]:
+        """
+            Load a single entry from its reference ID
+            
+            Parameters:
+                context (dict): request context
+                id (int): ID to find
+            Returns: 
+                TestResult_IE/None
+        """
         if not id:
             return None
         return await cls._get_loader_from_context(context).load(int(id))
 
     @classmethod
     async def load_many_from_id(cls, context=None, ids=None)->List[Optional[TestResult_IE]]:
+        """
+            Loads many entries from their reference ID
+            
+            Parameters:
+                context (dict): request context
+                id (List[int]): IDs to find
+            Returns: 
+                List[TestResult_IE]/None
+        """
         if not ids:
             return None
         return await cls._get_loader_from_context(context).load_many([int(x) for x in ids])

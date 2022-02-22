@@ -4,6 +4,14 @@ from models import DecisionPoint
 from typing import List, Union
 
 class DecisionPointLoader(DataLoader):
+    """
+        This is class for loading decision points and 
+        caching the result in the request context
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
+
     loader_name = "_decision_point_loader"
     _db=None
 
@@ -31,7 +39,16 @@ class DecisionPointLoader(DataLoader):
         return sortedData
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None)->Union[DecisionPoint, None]:
+    async def load_from_id(cls, context=None, id:int=None)->Union[DecisionPoint, None]:
+        """
+            Load a single entry from its record ID
+            
+            Parameters:
+                context (dict): request context
+                id (int): ID to find
+            Returns: 
+                DecisionPoint/None
+        """
         if not id:
             return None
         if cls.loader_name not in context:
@@ -39,14 +56,45 @@ class DecisionPointLoader(DataLoader):
         return await context[cls.loader_name].load(id)
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None)->Union[List[DecisionPoint], None]:
+    async def load_many_from_id(cls, context=None, ids:List[int]=None)->Union[List[DecisionPoint], None]:
+        """
+            Load a multiple entries from their record IDs
+            
+            Parameters:
+                context (dict): request context
+                id (List[int]): IDs to find
+            Returns: 
+                List[DecisionPoint]/None
+        """
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
 class DecisionPointsByPatient:
+    """
+        This is class for loading decision points using
+        a patient's ID
+
+        Attributes:
+            None
+    """
+    
     @staticmethod
     async def load_from_id(context=None, id=None, pathwayId=None, decisionType=None, limit=None)->Union[List[DecisionPoint], None]:
+        """
+            Load all decision points by a patient's record ID
+            and where filters match
+            
+            Parameters:
+                context (dict): request context
+                id (int): ID of patient's record
+                pathwayId (int): ID of pathway to filter by
+                decisionType (DecisionTypes): decision type to filter by
+                limit (int): number of records to return
+            Returns: 
+                List[DecisionPoint]/None
+        """
+
         if not context or not id:
             return None
 
@@ -70,8 +118,26 @@ class DecisionPointsByPatient:
 
 
 class DecisionPointsByOnPathway:
+    """
+        This is class for loading decision points using
+        an OnPathway id
+
+        Attributes:
+            None
+    """
+
     @staticmethod
     async def load_many_from_id(context=None, id=None)->Union[List[DecisionPoint], None]:
+        """
+            Load all decision points by an OnPathway id
+            
+            Parameters:
+                context (dict): request context
+                id (List[int]): IDs of OnPathway records
+            Returns: 
+                List[DecisionPoint]/None
+        """
+
         if not context or not id:
             return None
 
