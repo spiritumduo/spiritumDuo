@@ -7,6 +7,15 @@ async def CreatePathway(
     context:dict=None,
     name:str=None
 ):
+    """
+    Creates a decision point object in the local database
+
+    Keyword arguments:
+        context (dict): the current request context
+        name (string): the name of the pathway
+    Returns:
+        Pathway/DataCreatorInputErrors: newly created pathway object/errors object
+    """
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
     if not name:

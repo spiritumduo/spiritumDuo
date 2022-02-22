@@ -21,6 +21,23 @@ async def CreateDecisionPoint(
     milestone_requests:List[Dict[str, int]]=None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
+    """
+    Creates a decision point object in local and external databases
+
+    Keyword arguments:
+        context (dict): the current request context
+        on_pathway_id (int): the ID of the `OnPathway` instance the newly created DecisionPoint is to be linked to
+        clinician_id (int): the ID of the `User` object the newly created DecisionPoint is to be linked to
+        decision_type (DecisionTypes): the type of the decision point
+        clinic_history (str): the clinical history to be linked to the decision point
+        comorbidities (str): the comorbidities to be linked to the decision point
+        added_at (datetime): the date and time of creation of the decision point (used for data creation scripts to add previous data)
+        milestone_resolutions (List[int]): a list of previous milestones this decision point will acknowledge
+        milestone_requests (List[Dict[str, int]]): a list of milestones this decision point will request
+    Returns:
+        DecisionPoint: newly created decision point object
+    """
+
     if context is None:
         raise ReferencedItemDoesNotExistError("Context is not provided")
     on_pathway_id = int(on_pathway_id)

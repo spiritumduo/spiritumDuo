@@ -26,6 +26,25 @@ async def CreatePatient(
     milestones:List[Milestone]={},
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
+    """
+    Creates a patient object in local and external databases
+
+    Keyword arguments:
+        context (dict): the current request context
+        first_name (str): Patient's first name
+        last_name (str): Patient's last name
+        hospital_number (str): hospital number of patient
+        national_number (str): national number of patient
+        date_of_birth (date): date of birth of patient
+        communication_method (str): optimal communication method for patient
+        pathwayId (int): ID of pathway the patient is to be added to
+        referred_at (datetime): time of the patient's referral (used for importing patients)
+        awaiting_decision_type (DecisionType): next decision type (used for importing patients)
+        milestones (List[Milestone]): list of milestones to import when a patient enters the pathway (referral letter, ex)
+    Returns:
+        Patient/DataCreatorInputErrors: newly created decision point object/list of errors
+    """
+
     if context is None:
         raise TypeError("Context is not provided.")
     if pathwayId is None:

@@ -9,6 +9,21 @@ async def CreateUser(
     department:str=None,
     default_pathway_id:int=None
 ):
+    """
+    Creates a patient object in local and external databases
+
+    Keyword arguments:
+        context (dict): the current request context
+        username (str): User's username
+        password (str): User's plaintext password
+        first_name (str): User's first name
+        last_name (str): User's last name
+        department (str): User's department
+        default_pathway_id (int): ID of pathway user will log onto and see
+    Returns:
+        User: newly created user object (without password)
+    """
+
     class userOutput:
         def __init__(self, id:int=None,  username:str=None, first_name:str=None, last_name:str=None, department:str=None, default_pathway_id:int=None):
             self.id = id
