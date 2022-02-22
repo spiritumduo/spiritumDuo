@@ -71,6 +71,14 @@ These define the database settings, the database and user account is automatical
 - UPDATE_ENDPOINT_KEY
 	- This should be equal to `UPDATE_ENDPOINT_KEY`  in `backend/.env`
 
+### nginx/.env
+- PRIMARY_HOSTNAME
+	- This is the primary hostname NGINX will listen on. For a dev environment, it's safe to leave this as `localhost`
+- ALTERNATIVE_HOSTNAME
+	- This is an alternative hostname NGINX will **also** listen on. This can be anything, but is usually used if two sites need to be listened on (www. and non-www.)
+- SSL_EMAIL 
+	- This is the email address that will be used for LetsEncrypt SSL certificate generation. This is not used in a developer environment
+
 ### mysql/.env
 These define the database settings as used by the wordpress landing page. The database and database user account will be created automatically on container build
 - MYSQL_USER
