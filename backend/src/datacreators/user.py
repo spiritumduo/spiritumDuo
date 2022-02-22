@@ -10,7 +10,8 @@ async def CreateUser(
     default_pathway_id:int=None
 ):
     class userOutput:
-        def __init__(self, username:str=None, first_name:str=None, last_name:str=None, department:str=None, default_pathway_id:int=None):
+        def __init__(self, id:int=None,  username:str=None, first_name:str=None, last_name:str=None, department:str=None, default_pathway_id:int=None):
+            self.id = id
             self.username = username
             self.first_name = first_name
             self.last_name = last_name
@@ -29,6 +30,7 @@ async def CreateUser(
         default_pathway_id=default_pathway_id
     )
     return userOutput(
+	    id=newUser.id,
         username=newUser.username,
         first_name=newUser.first_name, 
         last_name=newUser.last_name,
