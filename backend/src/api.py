@@ -1,5 +1,9 @@
+import asyncio
+import logging
+
+from starlette.endpoints import WebSocketEndpoint
 from starlette.applications import Starlette
-from starlette.routing import Route
+from starlette.routing import Route, WebSocketRoute
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -7,7 +11,7 @@ from models import db
 from rest.api import _FastAPI
 from authentication.authentication import SDAuthentication
 from config import config
-from gql.graphql import graphql
+from gql.graphql import graphql, _graphql
 from containers import SDContainer
 
 
@@ -17,7 +21,8 @@ starlette_middleware = [
 ]
 
 starlette_routes = [
-    Route("/graphql", endpoint=graphql, methods=["POST", "GET"])
+    Route("/graphql", endpoint=graphql, methods=["POST", "GET"]),
+    WebSocketRoute("/subscription", endpoint=_graphql)
 ]
 
 app = Starlette(debug=True, middleware=starlette_middleware, routes=starlette_routes)
