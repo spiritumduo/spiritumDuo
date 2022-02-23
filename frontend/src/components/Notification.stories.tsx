@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import Notification, { NOTIFICATION_SUBSCRIPTION_QUERY} from 'components/Notification';
+import Notification, { NOTIFICATION_SUBSCRIPTION_QUERY } from 'components/Notification';
 
 export default {
   title: 'Components/Notification',
