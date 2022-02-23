@@ -51,6 +51,7 @@
     "react-scripts": "4.0.3",
     "react-testing-library": "^8.0.1",
     "storybook-addon-apollo-client": "^4.0.9",
+    "subscriptions-transport-ws": "^0.11.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1",
     "workbox-core": "^6.4.2",
