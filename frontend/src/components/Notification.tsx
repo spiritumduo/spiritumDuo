@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
 import { gql, useSubscription } from '@apollo/client';
-import { Button, Toast, ToastContainer } from 'react-bootstrap';
+import { Toast, ToastContainer } from 'react-bootstrap';
 import { notificationSubscription } from 'components/__generated__/notificationSubscription';
 
 export const NOTIFICATION_SUBSCRIPTION_QUERY = gql`
