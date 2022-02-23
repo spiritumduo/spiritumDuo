@@ -101,6 +101,31 @@ class TrustIntegrationCommunicationError(Exception):
     fails or times out
     """
 
+async def httpRequest(method:str, endpoint:str, json:str={}, cookies:dict={}):
+    try:
+        async with httpx.AsyncClient() as client:
+            if method=="post":
+                response=await client.post(
+                    endpoint,
+                    json=json,
+                    cookies=cookies
+                )
+            elif method=="get":
+                response=await client.get(
+                    endpoint,
+                    cookies=cookies
+                )
+            
+            response.raise_for_status()
+            return response
+
+    except httpx.HTTPStatusError as e:
+        if response.status_code // 100 > 3: 
+            raise TrustIntegrationCommunicationError(f"Connection to TIE gave HTTP error: {response.status_code}")
+    except httpx.TimeoutException as e:
+        raise TrustIntegrationCommunicationError(f"Connection to TIE timed out ({e})")
+    except httpx.NetworkError as e:
+        raise TrustIntegrationCommunicationError(f"Connection to TIE failed ({e})")
 
 class PseudoTrustAdapter(TrustAdapter):
     """
@@ -116,90 +141,71 @@ class PseudoTrustAdapter(TrustAdapter):
         self.TRUST_INTEGRATION_ENGINE_ENDPOINT="http://sd-pseudotie:8081"
 
     async def create_patient(self, patient: Patient_IE = None, auth_token: str = None):
-        async with httpx.AsyncClient() as client:
-            res = await client.post(
-                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/',
-                cookies={"SDSESSION": auth_token},
-                json={
-                    "hospital_number": patient.hospital_number,
-                    "national_number": patient.national_number,
-                    "communication_method": patient.communication_method,
-                    "first_name": patient.first_name,
-                    "last_name": patient.last_name,
-                    "date_of_birth": patient.date_of_birth.isoformat(),
-                }
-            )
+        json={
+            "hospital_number": patient.hospital_number,
+            "national_number": patient.national_number,
+            "communication_method": patient.communication_method,
+            "first_name": patient.first_name,
+            "last_name": patient.last_name,
+            "date_of_birth": patient.date_of_birth.isoformat(),
+        }
+        patientRecord=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/', json=json, cookies={"SDSESSION": auth_token})
+        if not patientRecord:
+            return None
+        patientRecord=patientRecord.json()
 
-            if res.status_code != 200:
-                raise Exception(f"HTTP{res.status_code} received")
-        res = res.json()
         try:
             return Patient_IE(
-                id=res['id'],
-                first_name=res['first_name'],
-                last_name=res['last_name'],
-                hospital_number=res['hospital_number'],
-                national_number=res['national_number'],
-                communication_method=res['communication_method'],
-                date_of_birth=res['date_of_birth'],
+                id=patientRecord['id'],
+                first_name=patientRecord['first_name'],
+                last_name=patientRecord['last_name'],
+                hospital_number=patientRecord['hospital_number'],
+                national_number=patientRecord['national_number'],
+                communication_method=patientRecord['communication_method'],
+                date_of_birth=patientRecord['date_of_birth'],
             )
         except KeyError:
-            logging.warning('ress')
-            logging.warning(res)
             return None
 
     async def load_patient(self, hospitalNumber: str = None, auth_token: str = None) -> Optional[Patient_IE]:
-        async with httpx.AsyncClient() as client:
-            res = await client.get(
-                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}',
-                cookies={"SDSESSION": auth_token},
+        patientRecord=await httpRequest("get", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}', cookies={"SDSESSION": auth_token})
+        if not patientRecord:
+            return None
+        patientRecord=patientRecord.json()
+
+        try:
+            return Patient_IE(
+                id=patientRecord['id'],
+                first_name=patientRecord['first_name'],
+                last_name=patientRecord['last_name'],
+                hospital_number=patientRecord['hospital_number'],
+                national_number=patientRecord['national_number'],
+                communication_method=patientRecord['communication_method'],
+                date_of_birth=date.fromisoformat(patientRecord['date_of_birth'])
             )
-
-            if res.status_code != 200:
-                raise Exception(f"HTTP{res.status_code} received")
-
-        if res is not None:
-            record=res.json()
-            if record is not None:
-                return Patient_IE(
-                    id=record['id'],
-                    first_name=record['first_name'],
-                    last_name=record['last_name'],
-                    hospital_number=record['hospital_number'],
-                    national_number=record['national_number'],
-                    communication_method=record['communication_method'],
-                    date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
-                )
-            else:
-                return None
+        except KeyError:
+            return None
 
     async def load_many_patients(self, hospitalNumbers: List = None, auth_token: str = None) -> List[Optional[Patient_IE]]:
-        return_list = []
-        async with httpx.AsyncClient() as client:
-            res = await client.post(
-                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/',
-                cookies={"SDSESSION": auth_token},
-                json=hospitalNumbers
-            )
+        patientList=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/', json=hospitalNumbers, cookies={"SDSESSION": auth_token})
+        if not patientList:
+            return {}
+        patientList=patientList.json()
 
-            if res.status_code != 200:
-                raise Exception(f"HTTP{res.status_code} received")
-
-        if res is not None:
-            res_data = res.json()
-            for record in res_data:
-                return_list.append(
-                    Patient_IE(
-                        id=record['id'],
-                        first_name=record['first_name'],
-                        last_name=record['last_name'],
-                        hospital_number=record['hospital_number'],
-                        national_number=record['national_number'],
-                        communication_method=record['communication_method'],
-                        date_of_birth=datetime.strptime(record['date_of_birth'], "%Y-%m-%d").date()
-                    )
+        patientObjectList = []
+        for patientRecord in patientList:
+            patientObjectList.append(
+                Patient_IE(
+                    id=patientRecord['id'],
+                    first_name=patientRecord['first_name'],
+                    last_name=patientRecord['last_name'],
+                    hospital_number=patientRecord['hospital_number'],
+                    national_number=patientRecord['national_number'],
+                    communication_method=patientRecord['communication_method'],
+                    date_of_birth=date.fromisoformat(patientRecord['date_of_birth'])
                 )
-        return return_list
+            )
+        return patientObjectList
 
     async def create_test_result(self, testResult: TestResultRequest_IE, auth_token: str = None) -> TestResult_IE:
         params={}
@@ -215,62 +221,45 @@ class PseudoTrustAdapter(TrustAdapter):
         if testResult.description:
             params['description'] = testResult.description
 
-        async with httpx.AsyncClient() as client:
-            res = await client.post(
-                self.TRUST_INTEGRATION_ENGINE_ENDPOINT+"/testresult",
-                json=params,
-                cookies={"SDSESSION": auth_token}
-            )
-
-            if res.status_code != 200:
-                raise Exception(f"HTTP{res.status_code} received")
+        testResultRecord=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult', json=params, cookies={"SDSESSION": auth_token})
+        if not testResultRecord:
+            return None
+        testResultRecord=testResultRecord.json()
             
-        tieTestResult=res.json()
-
-        tieTestResult['added_at'] = datetime.fromisoformat(tieTestResult['added_at'])
-        tieTestResult['updated_at'] = datetime.fromisoformat(tieTestResult['updated_at'])
+        testResultRecord['added_at'] = datetime.fromisoformat(testResultRecord['added_at'])
+        testResultRecord['updated_at'] = datetime.fromisoformat(testResultRecord['updated_at'])
         
         return TestResult_IE(
-            **tieTestResult
+            **testResultRecord
         )
 
     async def load_test_result(self, recordId: str = None, auth_token: str = None) -> Optional[TestResult_IE]:
-        async with httpx.AsyncClient() as client:
-            result = await client.get(
-                f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}",
-                cookies={"SDSESSION": auth_token}
-            )
-        if result.status_code!=200: 
-            raise Exception(f"HTTP{result.status_code} received")
+        testResultRecord=await httpRequest("get", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}', cookies={"SDSESSION": auth_token})
+        if not testResultRecord:
+            return None
+        testResultRecord=testResultRecord.json()
 
-        tieTestResult=json.loads(result.text)
-        tieTestResult['added_at'] = datetime.fromisoformat(tieTestResult['added_at'])
-        tieTestResult['updated_at'] = datetime.fromisoformat(tieTestResult['updated_at'])
+        testResultRecord['added_at'] = datetime.fromisoformat(testResultRecord['added_at'])
+        testResultRecord['updated_at'] = datetime.fromisoformat(testResultRecord['updated_at'])
         
         return TestResult_IE(
-            **tieTestResult
+            **testResultRecord
         )
 
     async def load_many_test_results(self, recordIds: List = None, auth_token: str = None) -> List[Optional[TestResult_IE]]:
-        async with httpx.AsyncClient() as client:
-            result = await client.post(
-                f"{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/",
-                cookies={"SDSESSION": auth_token},
-                json=recordIds
-            )
-        if result.status_code!=200: 
-            raise Exception(f"HTTP{result.status_code} received")
+        testResultList=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get', json=recordIds, cookies={"SDSESSION": auth_token})
+        if not testResultList:
+            return {}
+        testResultList=testResultList.json()
 
-        return_list = []
-        if result is not None:
-            result_data = json.loads(result.text)
-            for record in result_data:
-                record['added_at'] = datetime.fromisoformat(record['added_at'])
-                record['updated_at'] = datetime.fromisoformat(record['updated_at'])
+        testResultObjectList = []
+        for record in testResultList:
+            record['added_at'] = datetime.fromisoformat(record['added_at'])
+            record['updated_at'] = datetime.fromisoformat(record['updated_at'])
 
-                return_list.append(
-                    TestResult_IE(
-                        **record
-                    )
+            testResultObjectList.append(
+                TestResult_IE(
+                    **record
                 )
-        return return_list
+            )
+        return testResultObjectList
