@@ -1,8 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 import Header from 'components/Header';
-import './pagelayout.css';
+import Notification from 'components/Notification';
 import { AuthContext, PathwayContext } from 'app/context';
+import './pagelayout.css';
 
 export interface PageLayoutProps {
     children?: JSX.Element
@@ -28,6 +29,7 @@ const PageLayout = ({
         usersName={ `${user?.firstName} ${user?.lastName}` }
       />
       {children}
+      <Notification />
     </div>
   );
 };

@@ -4,6 +4,7 @@ scalar DateTime
 schema {
     query: Query
     mutation: Mutation
+    subscription: Subscription
 }
 
 type Query {
@@ -42,6 +43,10 @@ type Mutation {
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
     importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
+}
+
+type Subscription {
+    milestoneResolved(clinicianID: ID): Milestone!
 }
 
 enum PatientCommunicationMethods {

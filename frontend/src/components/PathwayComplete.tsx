@@ -1,8 +1,7 @@
 import React from 'react';
 import { Button, Container } from 'react-bootstrap';
 
-const PathwayComplete = (
-): JSX.Element => (
+const PathwayComplete = (): JSX.Element => (
   <Container className="d-flex align-items-center justify-content-left mt-5">
     <div className="d-flex align-items-center">
       <div>
