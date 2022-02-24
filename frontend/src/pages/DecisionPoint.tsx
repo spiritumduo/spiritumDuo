@@ -233,7 +233,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <div className="row my-5 my-xl-2">
+    <div className={ `row my-5 my-xl-2 ${!result.forwardDecisionPointId ? 'test-new' : ''}` }>
       <div className="col-1">
         {
           !result.forwardDecisionPointId
@@ -247,13 +247,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
       </div>
       <div className="col-11 col-xl-3">
         <p className="text-left">
-          {
-            !result.forwardDecisionPointId
-              ? (
-                <strong>{result.milestoneName}:</strong>
-              )
-              : <>{result.milestoneName}:</>
-          }
+          {result.milestoneName}:
         </p>
       </div>
       <div className="col-10 col-xl-7" id={ result.elementId }>
@@ -307,15 +301,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
     </div>
   );
 
-  const elements = previousTestResults?.map((result) => (
-    !result.forwardDecisionPointId
-      ? (
-        <strong key={ `result-data-element-${result.key}` }>
-          <TestResultDataElement result={ result } />
-        </strong>
-      )
-      : <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />
-  ));
+  const elements = previousTestResults?.map((result) => <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />);
 
   return (
     <div className="">
