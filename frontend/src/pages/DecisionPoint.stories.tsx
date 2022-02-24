@@ -7,6 +7,7 @@ import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { DefaultLayout } from 'components/PageLayout.stories';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
+import { Standard } from 'components/Notification.stories';
 import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
@@ -301,6 +302,9 @@ Default.args = {
 Default.parameters = {
   milestones: milestones,
   apolloClient: {
-    mocks: apolloMocks,
+    mocks: [
+      ...apolloMocks,
+      Standard.parameters?.apolloClient.mocks[0], // notification mock
+    ],
   },
 };

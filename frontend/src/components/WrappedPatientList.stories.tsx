@@ -6,6 +6,7 @@ import Patient from 'types/Patient';
 import { MemoryRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import { getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node } from 'components/__generated__/getPatientOnPathwayConnection';
+import { Standard } from 'components/Notification.stories';
 
 // Dummy data for display
 const patientArray: Patient[] = [];
@@ -103,6 +104,7 @@ Default.parameters = {
   edges: edges,
   apolloClient: {
     mocks: [
+      Standard.parameters?.apolloClient.mocks[0], // notification mock
       { // PAGE 1
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
@@ -112,6 +114,7 @@ Default.parameters = {
             after: undefined,
             outstanding: false,
             underCareOf: false,
+            includeDischarged: false,
           },
         },
         result: {
@@ -135,6 +138,7 @@ Default.parameters = {
             first: patientsPerPage,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
             outstanding: false,
+            includeDischarged: false,
           },
         },
         result: {
