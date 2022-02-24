@@ -134,6 +134,7 @@ const apolloMocks = [
       variables: {
         hospitalNumber: patientHospitalNumber,
         pathwayId: 1, // this is a brittle, improve this
+        includeDischarged: true,
       },
     },
     result: {
