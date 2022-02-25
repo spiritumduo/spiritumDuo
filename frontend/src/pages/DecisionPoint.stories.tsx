@@ -17,30 +17,35 @@ const milestoneTypes = [
     name: 'Milestone Request',
     isDischarge: false,
     isCheckboxHidden: false,
+    isTestRequest: true,
   },
   {
     id: '2',
     name: 'X-Ray',
     isDischarge: false,
     isCheckboxHidden: false,
+    isTestRequest: true,
   },
   {
     id: '3',
     name: 'Other Request',
     isDischarge: false,
     isCheckboxHidden: false,
+    isTestRequest: false,
   },
   {
     id: '4',
     name: 'Refer Somewhere',
     isDischarge: false,
     isCheckboxHidden: false,
+    isTestRequest: false,
   },
   {
     id: '5',
     name: 'MRI Head',
     isDischarge: false,
     isCheckboxHidden: false,
+    isTestRequest: true,
   },
 ];
 
@@ -232,7 +237,7 @@ const apolloMocks = [
           comorbidities: 'New Comorbidities',
           decisionType: DecisionPointType.TRIAGE.toString(),
           milestoneResolutions: ['6', '7'],
-          milestoneRequests: [
+          milestoneRequests: [ // the order of these requests in this mock matters for some reason
             {
               milestoneTypeId: milestoneTypes[0].id,
             },
@@ -240,13 +245,13 @@ const apolloMocks = [
               milestoneTypeId: milestoneTypes[1].id,
             },
             {
+              milestoneTypeId: milestoneTypes[4].id,
+            },
+            {
               milestoneTypeId: milestoneTypes[2].id,
             },
             {
               milestoneTypeId: milestoneTypes[3].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[4].id,
             },
           ],
         },
@@ -262,6 +267,7 @@ const apolloMocks = [
                 id: '1',
                 milestoneType: {
                   name: 'TypeName',
+                  isDischarge: false,
                 },
               },
             ],
