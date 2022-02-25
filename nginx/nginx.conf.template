@@ -44,6 +44,7 @@ server {
     }
 
     location /app/ {
+        root /var/www/app;
         index index.html;
         try_files $uri /app/index.html;
     }
@@ -74,9 +75,6 @@ server {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param SCRIPT_NAME $fastcgi_script_name;
-    }
-    location / {
-        alias /var/www/wp/;
     }
 
 }
