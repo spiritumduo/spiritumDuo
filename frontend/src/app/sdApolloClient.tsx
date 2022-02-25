@@ -10,12 +10,19 @@ const httpLink = new HttpLink({
   credentials: 'include',
 });
 
-const wsLink = new WebSocketLink({
-  uri: `ws://${window.location.host}/api/subscription`,
-  options: {
-    reconnect: true,
-  },
-});
+const wsLink = window.location.host === 'localhost'
+  ? new WebSocketLink({
+    uri: 'ws://localhost/api/subscription',
+    options: {
+      reconnect: true,
+    },
+  })
+  : new WebSocketLink({
+    uri: `wss://${window.location.host}/api/subscription`,
+    options: {
+      reconnect: true,
+    },
+  });
 
 // The split function takes three parameters:
 //
