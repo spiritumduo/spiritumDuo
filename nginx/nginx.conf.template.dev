@@ -44,6 +44,14 @@ server {
         return 302 /api/;
     }
 
+    location /sockjs-node {
+        proxy_pass http://host.docker.internal:3000/sockjs-node;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+
     location /sockjs-node/ {
         return 302 /sockjs-node;
     }
