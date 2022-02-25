@@ -20,15 +20,15 @@ server {
 
 server {
     listen 443 ssl;
-    server_name ${PRIMARY_HOSTNAME} ${ALTERNATIVE_HOSTNAME};
+    server_name spiritumduo.com www.spiritumduo.com;
 
-    ssl_certificate /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/spiritumduo.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/spiritumduo.com/privkey.pem;
 
     access_log on;
     root /var/www/html;
 
-    index index.php;
+    index index.php index.html;
     server_tokens off;
 
     location /.well-known/acme-challenge/ {
@@ -43,10 +43,9 @@ server {
         alias /static;
     }
 
-    location /app/ {
-        root /var/www/app;
-        index index.html;
-        try_files $uri /app/index.html;
+    location ^~ /app/ {
+        alias /var/www/app/;
+        try_files $uri $uri/ /app/index.html ;
     }
 
     location /app {
@@ -68,13 +67,34 @@ server {
         return 302 /api/;
     }
 
-    location ~ \.php$ {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass sd-wordpress:9000;
-        fastcgi_index index.php;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+    location = /favicon.ico {
+            log_not_found off;
+            access_log off;
+     }
+
+     location = /robots.txt {
+            allow all;
+            log_not_found off;
+            access_log off;
+     }
+
+     location / {
+            # This is cool because no php is touched for static content.
+            # include the "?$args" part so non-default permalinks doesn't break when using query string
+            try_files $uri $uri/ /index.php?$args;
+     }
+
+     location ~ \.php$ {
+            #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+            include fastcgi_params;
+            fastcgi_intercept_errors on;
+            fastcgi_pass sd-wordpress:9000;
+            #The following parameter can be also included in fastcgi_params file
+            fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+            expires max;
+            log_not_found off;
+    }
 }
