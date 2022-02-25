@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Default as WrappedListDefault } from 'components/WrappedPatientList.stories';
 import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'components/WrappedPatientList';
+import { Standard } from 'components/Notification.stories';
 import HomePage, { HomePageProps } from './HomePage';
 
 const patientsPerPage = 10;
@@ -44,6 +45,7 @@ Default.parameters = {
   patients: patientArray,
   apolloClient: {
     mocks: [
+      Standard.parameters?.apolloClient.mocks[0], // notification mock
       { // PAGE 1
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
@@ -53,6 +55,7 @@ Default.parameters = {
             after: undefined,
             outstanding: true,
             underCareOf: true,
+            includeDischarged: false,
           },
         },
         result: {
@@ -76,6 +79,8 @@ Default.parameters = {
             first: patientsPerPage,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
             outstanding: true,
+            underCareOf: true,
+            includeDischarged: false,
           },
         },
         result: {

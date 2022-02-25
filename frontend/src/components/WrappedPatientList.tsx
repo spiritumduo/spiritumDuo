@@ -96,8 +96,8 @@ const WrappedPatientList = ({
   patientsToDisplay,
   linkFactory,
   outstanding = true,
-  underCareOf = false,
-  includeDischarged = false,
+  underCareOf = true,
+  includeDischarged = true,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,

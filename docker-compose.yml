@@ -70,7 +70,7 @@ services:
       - ./media:/media
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-      - sd_wordpress:/var/www/wp
+      - sd_wordpress:/var/www/html
     ports:
       - 80:80
       - 443:443

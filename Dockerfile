@@ -6,7 +6,7 @@ RUN yarn install --silent && yarn build
 
 # Final target
 FROM nginx:1.21.4-alpine
-COPY --from=build /app/build /var/www/html/app
+COPY --from=build /app/build /var/www/app
 COPY nginx/docker-entrypoint /
 COPY nginx/nginx.conf.template /etc/nginx/conf.d
 RUN chmod +x ./docker-entrypoint
