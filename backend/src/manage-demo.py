@@ -1,4 +1,6 @@
 import asyncio
+
+from common import DataCreatorInputErrors
 from models import *
 from datacreators import *
 from containers import SDContainer
@@ -106,7 +108,7 @@ async def insert_demo_data():
 
         date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
 
-        await CreatePatient(
+        res = await CreatePatient(
             context=_context,
             first_name=faker.first_name(),
             last_name=faker.last_name(),
@@ -129,6 +131,9 @@ async def insert_demo_data():
                 }
             ]
         )
+        if isinstance(res, DataCreatorInputErrors):
+            for error in res.errorList:
+                print(error)
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))

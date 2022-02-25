@@ -108,4 +108,5 @@ export interface GetPatient {
 export interface GetPatientVariables {
   hospitalNumber?: string | null;
   pathwayId?: string | null;
+  includeDischarged?: boolean | null;
 }

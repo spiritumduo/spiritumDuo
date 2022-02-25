@@ -78,4 +78,5 @@ export interface getPatientOnPathwayConnectionVariables {
   first?: number | null;
   after?: string | null;
   underCareOf?: boolean | null;
+  includeDischarged?: boolean | null;
 }
