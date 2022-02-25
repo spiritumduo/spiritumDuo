@@ -41,6 +41,13 @@ class TrustAdapter(ABC):
     """
 
     @abstractmethod
+    async def test_connection(self, auth_token: str = None):
+        """
+        Tests the connection to the trust integration engine
+        :return: Boolean success state of connection
+        """
+
+    @abstractmethod
     async def create_patient(self, patient: Patient_IE, auth_token: str = None):
         """
         Create a patient on the trust
@@ -139,6 +146,9 @@ class PseudoTrustAdapter(TrustAdapter):
         Constructor
         """
         self.TRUST_INTEGRATION_ENGINE_ENDPOINT="http://sd-pseudotie:8081"
+
+    async def test_connection(self, auth_token: str = None):
+        return await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/test/', cookies={"SDSESSION": auth_token})
 
     async def create_patient(self, patient: Patient_IE = None, auth_token: str = None):
         json={
