@@ -37,6 +37,7 @@ async def CreateDecisionPoint(
     Returns:
         DecisionPoint: newly created decision point object
     """
+    await trust_adapter.test_connection(auth_token=context['request'].cookies['SDSESSION'])
 
     if context is None:
         raise ReferencedItemDoesNotExistError("Context is not provided")

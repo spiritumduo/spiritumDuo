@@ -3,7 +3,7 @@ import secrets
 import string
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
-from trustadapter.trustadapter import Patient_IE
+from trustadapter.trustadapter import Patient_IE, TrustIntegrationCommunicationError, PseudoTrustAdapter
 from containers import SDContainer
 from models.db import db, DATABASE_URL
 from models import *
@@ -17,6 +17,9 @@ from base64 import b64encode
 from api import app
 from typing import Union, List, Dict
 app.container=SDContainer()
+
+created_pathways=[]
+
 
 # Generate random 8 character password from [a-zA-Z0-9]
 def password_generator():
@@ -35,8 +38,6 @@ _CONTEXT={
     "request":RequestPlaceholder()
 }
 
-
-created_pathways=[]
 # this generates a placeholder cookie for use when connecting
 # to the TIE as it's the only way to do so in one script w/
 # authentication enabled
@@ -45,6 +46,17 @@ cookie=signer.sign(b64encode(str(getrandbits(64)).encode("utf-8")))
 _CONTEXT['request'].cookies={
     "SDSESSION":cookie.decode("utf-8")
 }
+
+async def check_connection():
+    print("Testing connection...")
+    try:
+        await PseudoTrustAdapter().test_connection(auth_token=_CONTEXT['request'].cookies['SDSESSION'])
+    except TrustIntegrationCommunicationError as e:
+        print(e)
+        print("Connection failed!")
+        raise SystemExit()
+    else:
+        print("Connection successful!")
 
 async def insert_user():
     global created_pathways
@@ -134,7 +146,7 @@ async def insert_test_data():
         month = randint(1, 12)
         day = randint(1, 28)
         dob = date(year, month, day)
-        
+
         _patientObject:Patient_IE = await CreatePatient(
             context=_CONTEXT,
             first_name=first_name,
@@ -176,7 +188,6 @@ async def insert_test_data():
         for on_pathway in on_pathways:
             on_pathway_counter=on_pathway_counter+1
             if on_pathway_counter==1 or (on_pathway_counter!=1 and bool(getrandbits(1))):
-                # print(f"OnPathway is {(await Pathway.get(on_pathway.pathway_id)).name}")
                 is_patient_new=bool(getrandbits(1))
                 """
                     is the patient new to the pathway? if they are, we don't
@@ -210,7 +221,6 @@ async def insert_test_data():
                         comorbidities=_Faker.text(),
                         milestone_requests=milestone_requests
                     )
-                    # print(f"Created TRIAGE decision point")
                     await on_pathway.update(
                         awaiting_decision_type=DecisionTypes.CLINIC
                     ).apply()
@@ -228,12 +238,12 @@ async def insert_test_data():
                                 {"milestoneTypeId": selectable_milestone_types[randint(0, len(selectable_milestone_types)-1)].id}
                             ]
                         )
-                        # print(f"Created CLINIC decision point")
                         await on_pathway.update(
                             awaiting_decision_type=DecisionTypes.MDT
                         ).apply()
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
+loop.run_until_complete(check_connection())
 loop.run_until_complete(insert_user())
 loop.run_until_complete(insert_test_data())
