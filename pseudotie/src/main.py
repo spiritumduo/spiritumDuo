@@ -6,7 +6,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from starlette.background import BackgroundTasks
 from authentication import needs_authentication, PseudoAuth
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from datetime import date, datetime
 from models import Patient, db
 from asyncpg.exceptions import UniqueViolationError
@@ -41,6 +41,12 @@ async def root():
 @app.get("/hello/{name}")
 async def say_hello(name: str=None):
     return {"message": f"Hello {name}"}
+
+
+@app.post("/test/")
+@needs_authentication
+async def test_post(request: Request):
+    return Response(status_code=200)
 
 
 class PatientInput(BaseModel):

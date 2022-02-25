@@ -44,6 +44,8 @@ async def CreatePatient(
     Returns:
         Patient/DataCreatorInputErrors: newly created decision point object/list of errors
     """
+    
+    await trust_adapter.test_connection(auth_token=context['request'].cookies['SDSESSION'])
 
     if context is None:
         raise TypeError("Context is not provided.")

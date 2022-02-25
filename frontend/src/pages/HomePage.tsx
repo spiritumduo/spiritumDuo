@@ -31,6 +31,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
             linkFactory={ linkFactory }
             outstanding
             underCareOf
+            includeDischarged={ false }
           />
         </div>
       </div>

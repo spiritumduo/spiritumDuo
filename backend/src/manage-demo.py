@@ -11,6 +11,7 @@ from random import randint, getrandbits
 from datetime import date
 from SdTypes import MilestoneState
 from itsdangerous import TimestampSigner
+from trustadapter.trustadapter import TrustIntegrationCommunicationError, PseudoTrustAdapter
 from config import config
 from base64 import b64encode
 from typing import Dict, List
@@ -23,6 +24,28 @@ NUMBER_OF_USERS=99
 
 class RequestPlaceholder(dict):
     pass
+
+_CONTEXT={
+    "db": db,
+    "request":RequestPlaceholder()
+}
+
+signer=TimestampSigner(config['SESSION_SECRET_KEY'])
+cookie=signer.sign(b64encode(str(getrandbits(64)).encode("utf-8")))
+_CONTEXT['request'].cookies={
+    "SDSESSION":cookie.decode("utf-8")
+}
+
+async def check_connection():
+    print("Testing connection...")
+    try:
+        await PseudoTrustAdapter().test_connection(auth_token=_CONTEXT['request'].cookies['SDSESSION'])
+    except TrustIntegrationCommunicationError as e:
+        print(e)
+        print("Connection failed!")
+        raise SystemExit()
+    else:
+        print("Connection successful!")
 
 async def clear_existing_data():
     await Milestone.delete.where(Milestone.id >= 0).gino.status()
@@ -67,20 +90,9 @@ async def insert_demo_data():
         await MilestoneType.create(name="Bloods", ref_name="Blood test (procedure)", is_test_request=True),
     ]
 
-    _context={
-        "db": db,
-        "request": RequestPlaceholder()
-    }
-
-    signer=TimestampSigner(config['SESSION_SECRET_KEY'])
-    cookie=signer.sign(b64encode(str(getrandbits(64)).encode("utf-8")))
-    _context['request'].cookies={
-        "SDSESSION":cookie.decode("utf-8")
-    }
-
     for i in range(1, NUMBER_OF_USERS+1):
         _pathway:Pathway=await CreatePathway(
-            context=_context,
+            context=_CONTEXT,
             name=f"Lung Cancer demo {i}"
         )
 
@@ -92,7 +104,7 @@ async def insert_demo_data():
             department="Demonstration",
             default_pathway_id=_pathway.id
         )
-        _context['request']['user']=_user
+        _CONTEXT['request']['user']=_user
 
         print(f"Creating user {_user.username}")
 
@@ -109,7 +121,7 @@ async def insert_demo_data():
         date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
 
         res = await CreatePatient(
-            context=_context,
+            context=_CONTEXT,
             first_name=faker.first_name(),
             last_name=faker.last_name(),
             hospital_number=hospital_number,
@@ -137,5 +149,6 @@ async def insert_demo_data():
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
+loop.run_until_complete(check_connection())
 loop.run_until_complete(clear_existing_data())
 loop.run_until_complete(insert_demo_data())
