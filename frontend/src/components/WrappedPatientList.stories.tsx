@@ -98,6 +98,8 @@ Default.args = {
   patientsToDisplay: 10,
   outstanding: false,
   linkFactory: linkFactory,
+  underCareOf: true,
+  includeDischarged: true,
 };
 Default.parameters = {
   patients: patientArray,
@@ -112,7 +114,7 @@ Default.parameters = {
             pathwayId: '1',
             first: patientsPerPage,
             after: undefined,
-            outstanding: true,
+            outstanding: false,
             underCareOf: true,
             includeDischarged: true,
           },
@@ -137,7 +139,7 @@ Default.parameters = {
             pathwayId: '1',
             first: patientsPerPage,
             after: 'YXJyYXljb25uZWN0aW9uOjA=',
-            outstanding: true,
+            outstanding: false,
             underCareOf: true,
             includeDischarged: true,
           },

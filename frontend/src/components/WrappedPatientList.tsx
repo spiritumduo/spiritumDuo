@@ -95,9 +95,9 @@ const WrappedPatientList = ({
   pathwayId,
   patientsToDisplay,
   linkFactory,
-  outstanding = true,
-  underCareOf = true,
-  includeDischarged = true,
+  outstanding,
+  underCareOf,
+  includeDischarged,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
@@ -105,7 +105,7 @@ const WrappedPatientList = ({
     data,
     fetchMore,
   // eslint-disable-next-line max-len
-  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, outstanding, underCareOf, includeDischarged);
+  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, !!outstanding, !!underCareOf, !!includeDischarged);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   let listElements: JSX.Element[];

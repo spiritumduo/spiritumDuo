@@ -29,8 +29,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
             pathwayId={ pathwayId.toString() }
             patientsToDisplay={ patientsPerPage }
             linkFactory={ linkFactory }
-            // eslint-disable-next-line react/jsx-boolean-value
-            outstanding={ true }
+            outstanding
             underCareOf
           />
         </div>
