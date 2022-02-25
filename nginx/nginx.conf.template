@@ -20,10 +20,10 @@ server {
 
 server {
     listen 443 ssl;
-    server_name spiritumduo.com www.spiritumduo.com;
+    server_name ${PRIMARY_HOSTNAME} ${ALTERNATIVE_HOSTNAME};
 
-    ssl_certificate /etc/letsencrypt/live/spiritumduo.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/spiritumduo.com/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${PRIMARY_HOSTNAME}/privkey.pem;
 
     access_log on;
     root /var/www/html;
