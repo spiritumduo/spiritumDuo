@@ -127,8 +127,7 @@ async def httpRequest(method:str, endpoint:str, json:str={}, cookies:dict={}):
             return response
 
     except httpx.HTTPStatusError as e:
-        if response.status_code // 100 > 3: 
-            raise TrustIntegrationCommunicationError(f"Connection to TIE gave HTTP error: {response.status_code}")
+        raise TrustIntegrationCommunicationError(f"Connection to TIE gave HTTP error: {response.status_code}")
     except httpx.TimeoutException as e:
         raise TrustIntegrationCommunicationError(f"Connection to TIE timed out ({e})")
     except httpx.NetworkError as e:
