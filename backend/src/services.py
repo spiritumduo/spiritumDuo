@@ -34,6 +34,12 @@ class TrustAdapterService(BaseService):
             raise Exception("No TrustAdapter supplied")
         self._trust_adapter_client = trust_adapter_client
         super().__init__()
+        
+    async def test_connection(self, auth_token: str = None):
+        """
+        Tests the connection to the trust integration engine
+        :return: Boolean success state of connection
+        """
 
     async def create_patient(self, patient: Patient_IE, auth_token: str = None):
         """
