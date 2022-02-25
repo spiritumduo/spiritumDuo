@@ -23,6 +23,7 @@ const apolloMocks = [
         hospitalNumber: patient.hospitalNumber,
         pathwayId: 1,
         limit: 5,
+        includeDischarged: true,
       },
     },
     result: {
