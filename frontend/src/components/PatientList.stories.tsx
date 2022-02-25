@@ -62,7 +62,7 @@ const Template: ComponentStory<typeof PatientList> = ({ pageCount, isLoading, ..
 };
 
 const data: JSX.Element[] = patientArray.slice(0, patientsPerPage).map(
-  (n) => <PatientLink key={ n.id } patient={ n } />,
+  (n) => <div key={ n.id }><PatientLink patient={ n } /> <br /></div>,
 );
 const pageCount = patientArray.length / patientsPerPage;
 
