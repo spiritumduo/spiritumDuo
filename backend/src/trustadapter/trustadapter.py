@@ -154,18 +154,17 @@ class PseudoTrustAdapter(TrustAdapter):
             return None
         patientRecord=patientRecord.json()
 
-        try:
-            return Patient_IE(
-                id=patientRecord['id'],
-                first_name=patientRecord['first_name'],
-                last_name=patientRecord['last_name'],
-                hospital_number=patientRecord['hospital_number'],
-                national_number=patientRecord['national_number'],
-                communication_method=patientRecord['communication_method'],
-                date_of_birth=patientRecord['date_of_birth'],
-            )
-        except KeyError:
-            return None
+        if patientRecord is None: return None
+
+        return Patient_IE(
+            id=patientRecord['id'],
+            first_name=patientRecord['first_name'],
+            last_name=patientRecord['last_name'],
+            hospital_number=patientRecord['hospital_number'],
+            national_number=patientRecord['national_number'],
+            communication_method=patientRecord['communication_method'],
+            date_of_birth=patientRecord['date_of_birth'],
+        )
 
     async def load_patient(self, hospitalNumber: str = None, auth_token: str = None) -> Optional[Patient_IE]:
         patientRecord=await httpRequest("get", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}', cookies={"SDSESSION": auth_token})
@@ -173,18 +172,16 @@ class PseudoTrustAdapter(TrustAdapter):
             return None
         patientRecord=patientRecord.json()
 
-        try:
-            return Patient_IE(
-                id=patientRecord['id'],
-                first_name=patientRecord['first_name'],
-                last_name=patientRecord['last_name'],
-                hospital_number=patientRecord['hospital_number'],
-                national_number=patientRecord['national_number'],
-                communication_method=patientRecord['communication_method'],
-                date_of_birth=date.fromisoformat(patientRecord['date_of_birth'])
-            )
-        except KeyError:
-            return None
+        if patientRecord is None: return None
+        return Patient_IE(
+            id=patientRecord['id'],
+            first_name=patientRecord['first_name'],
+            last_name=patientRecord['last_name'],
+            hospital_number=patientRecord['hospital_number'],
+            national_number=patientRecord['national_number'],
+            communication_method=patientRecord['communication_method'],
+            date_of_birth=date.fromisoformat(patientRecord['date_of_birth'])
+        )
 
     async def load_many_patients(self, hospitalNumbers: List = None, auth_token: str = None) -> List[Optional[Patient_IE]]:
         patientList=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/', json=hospitalNumbers, cookies={"SDSESSION": auth_token})
