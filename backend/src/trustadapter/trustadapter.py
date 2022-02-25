@@ -241,7 +241,7 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def load_test_result(self, recordId: str = None, auth_token: str = None) -> Optional[TestResult_IE]:
         testResultRecord=await httpRequest("get", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}', cookies={"SDSESSION": auth_token})
-        if not testResultRecord:
+        if testResultRecord is None:
             return None
         testResultRecord=testResultRecord.json()
 
@@ -253,8 +253,8 @@ class PseudoTrustAdapter(TrustAdapter):
         )
 
     async def load_many_test_results(self, recordIds: List = None, auth_token: str = None) -> List[Optional[TestResult_IE]]:
-        testResultList=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get', json=recordIds, cookies={"SDSESSION": auth_token})
-        if not testResultList:
+        testResultList=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/', json=recordIds, cookies={"SDSESSION": auth_token})
+        if testResultList is None:
             return {}
         testResultList=testResultList.json()
 
