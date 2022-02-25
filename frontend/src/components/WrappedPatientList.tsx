@@ -155,17 +155,17 @@ const WrappedPatientList = ({
         }
 
         return (
-          <>
+          <tr className="border-0" key={ `patient-list-key${n.id}` }>
             <td className="">{lastMilestoneName}</td>
             <td className="">{linkFactory(n)}</td>
             <td className="d-none d-md-table-cell">{n.hospitalNumber}</td>
             <td className="d-none d-lg-table-cell">{n.dateOfBirth?.toLocaleDateString()}</td>
-          </>
+          </tr>
         );
       },
     );
   } else {
-    listElements = [<td key="emptyListElement" />];
+    listElements = [<tr key="emptyListElement" />];
   }
   return (
     <>

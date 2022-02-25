@@ -50,11 +50,7 @@ const PatientList = (
         </tr>
       </thead>
       <tbody>
-        {
-          data.map((p) => (
-            <tr className="border-0" key={ p.key }>{p}</tr>
-          ))
-        }
+        { data }
       </tbody>
     </table>
     <ReactPaginate
