@@ -8,8 +8,9 @@
 
 ## Terms
 
-|Term|Description|
-|Root directory|The root directory of the
+|Term|Description
+---|---|
+|Project's root directory|The topmost directory of the project (where the individual container folders are)
 
 ## Configuring environmental variables
 
@@ -124,7 +125,7 @@ These define the database settings as used by the wordpress landing page. The da
 
 ### NOTE: this may display warnings around peer dependancy versions, typically these can be ignored
 
-1. Move into `frontend/` directory
+1. Change directory into `frontend/`
 2. Set execution permissions on the `update-node-modules` script (`chmod +x ./bin/update-node-modules && ./bin/update-node-modules`).
 Depending on resources and configuration, the time this takes can vary dramatically.
 
@@ -132,7 +133,7 @@ Depending on resources and configuration, the time this takes can vary dramatica
 
 The containers need to be built to create database schemas for both `backend` and `pseudotie`. This will download the container images and configure them.
 
-1. Move to the project's root directory
+1. Change directory to the project's root
 2. Run `docker-compose -f docker-compose.dev.yml up -d --build`
 
 ## Import database schemas
