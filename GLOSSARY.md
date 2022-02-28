@@ -1,4 +1,5 @@
 # Glossary
+
 A list of terms used in this project, medical and non-medical
 
 |Term|Meaning
