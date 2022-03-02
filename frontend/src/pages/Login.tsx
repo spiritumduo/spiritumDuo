@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, MutableRefObject } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -6,6 +6,9 @@ import * as yup from 'yup';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { AuthContext, PathwayContext } from 'app/context';
+
+import { Button, Container, ErrorMessage, Fieldset, Form, Input } from 'nhsuk-react-components';
+import { FormGroup } from 'react-bootstrap';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
@@ -88,44 +91,30 @@ const LoginPage = (): JSX.Element => {
     }
   });
 
+  const usernameRef = register('username', { required: true });
+  const passwordRef = register('password', { required: true });
+
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  const usernameInput = <Input type="text" id="username" label="Username" error={ !!errors.username?.message } inputRef={ usernameRef.ref } { ...usernameRef } />;
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  const passwordInput = <Input type="password" id="password" label="Password" error={ !!errors.password?.message } inputRef={ passwordRef.ref } { ...passwordRef } />;
+
   return (
-    <div>
-      <section>
-        <div className="container py-5 h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-12 col-sm-12 col-md-10 col-lg-7 col-xl-5 mb-5">
-              <form onSubmit={ handleSubmit( () => {
-                doLogin(getValues());
-              } ) }
-              >
-                <fieldset disabled={ loading } aria-label="Login Form">
-                  <div className="form-group mb-2">
-                    <h5>Please enter credentials below</h5>
-                  </div>
-
-                  <div className="form-group row mb-2">
-                    <label className="col-sm-9 col-form-label" htmlFor="username" autoCapitalize="off" autoCorrect="username">Username
-                      <input id="username" type="text" placeholder="Username" className="form-control" { ...register('username', { required: true }) } />
-                      <p>{ errors.username?.message }</p>
-                    </label>
-                  </div>
-
-                  <div className="form-group row mb-4">
-                    <label className="col-sm-9 col-form-label" htmlFor="password" autoCapitalize="off" autoCorrect="password">Password
-                      <input id="password" type="password" placeholder="Password" className="form-control" { ...register('password', { required: true }) } />
-                      <p>{ errors.password?.message }</p>
-                    </label>
-                  </div>
-                  <p>{ error?.message }</p>
-                  <p>{ loading ? 'Loading' : '' }</p>
-                  <button type="submit" className="btn btn-outline-secondary float-end ms-1">Login</button>
-                </fieldset>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+    <Container className="py-5">
+      <Form onSubmit={ handleSubmit( () => {
+        doLogin(getValues());
+      } ) }
+      >
+        <Fieldset disableErrorLine disabled={ loading }>
+          <Fieldset.Legend isPageHeading>Enter credentials here</Fieldset.Legend>
+          { usernameInput }
+          { passwordInput }
+          {error?.message ? <ErrorMessage className="pt-4">{error?.message}</ErrorMessage> : ''}
+          <p>{ loading ? 'Loading' : '' }</p>
+          <Button id="submit">Login</Button>
+        </Fieldset>
+      </Form>
+    </Container>
   );
 };
 
