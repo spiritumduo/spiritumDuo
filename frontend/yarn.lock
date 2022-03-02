@@ -6581,7 +6581,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.3.1:
+classnames@^2.2.6, classnames@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
   integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
@@ -12214,6 +12214,18 @@ next-tick@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
+
+nhsuk-frontend@^6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-6.1.0.tgz#6d9d154167faaf15e923cf2ace19b737eba880a5"
+  integrity sha512-iUqPP9TM29ycbaqoNlINp7jVzPblrHVUIArQlpL4TRtu1iYDkwuXPMkZWps5ORN+DOIR3Xlt2XgeNoO26OWjeQ==
+
+nhsuk-react-components@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/nhsuk-react-components/-/nhsuk-react-components-2.0.0.tgz#00b90957f820ec22507244912a331618eb2ea8e6"
+  integrity sha512-jBG8zI7WIAgLOL3xg4fqZauP4OO6XWIjAUF80vReGn+HDcdeaUxim+y76wvzUMjuMf8zs2XnP83iNA3CrKzmVA==
+  dependencies:
+    classnames "^2.2.6"
 
 nice-try@^1.0.4:
   version "1.0.5"

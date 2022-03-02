@@ -1,4 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'nhsuk-frontend/dist/nhsuk.css';
+
 // Bootstrap imports first so other modules can override
 import React from 'react';
 import ReactDOM from 'react-dom';
