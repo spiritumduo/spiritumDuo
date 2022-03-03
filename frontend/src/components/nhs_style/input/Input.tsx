@@ -19,7 +19,7 @@ const Input = ({
   const { ref, ...rest } = register;
   const _error = typeof error === 'string' ? <span className="nhsuk-error-message" id={ `${id}--error` } role="alert"><span className="nhsuk-u-visually-hidden">Error:</span>{ error }</span> : '';
   return (
-    <div className="nhsuk-form-group">
+    <div className={ error ? 'nhsuk-form-group nhsuk-form-group--error' : 'nhsuk-form-group' }>
       {label ? <label className="nhsuk-label" id={ `${id}--label` } htmlFor={ id }>{ label }</label> : ''}
       <input id={ id } className={ _className } ref={ ref } { ...rest } { ...other } />
       { _error }
