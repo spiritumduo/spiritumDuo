@@ -94,6 +94,8 @@ async def insert_user():
         print("Error: " + str(err))
 
 async def insert_test_data():
+    print("This script will silently add test data. Please wait")
+
     _Faker:Faker=Faker()
 
     general_milestone_types:Dict[str, MilestoneType]={
@@ -241,6 +243,8 @@ async def insert_test_data():
                         await on_pathway.update(
                             awaiting_decision_type=DecisionTypes.MDT
                         ).apply()
+    print("Test data added. Success!")
+
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))

@@ -58,6 +58,7 @@ async def clear_existing_data():
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
 
 async def insert_demo_data():
+    print("This script will silently add test data. Please wait")
     general_milestone_types:Dict[str, MilestoneType]={
         "referral_letter": await MilestoneType.create(name="Referral letter", ref_name="Referral letter (record artifact)", is_checkbox_hidden=True),
         "pathology": await MilestoneType.create(name="Pathology", ref_name="Pathology report (record artifact)", is_checkbox_hidden=True),
@@ -146,6 +147,7 @@ async def insert_demo_data():
         if isinstance(res, DataCreatorInputErrors):
             for error in res.errorList:
                 print(error)
+    print("Test data added. Success!")
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
