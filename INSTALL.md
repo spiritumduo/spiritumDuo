@@ -38,11 +38,11 @@ These define the database settings, the database and user account is automatical
 - DATABASE_HOSTNAME
   - This should be set to `sd-postgres` if it hasn't been changed otherwise
 - DATABASE_USERNAME
-  - This should be equal to `POSTGRES_USER` in `backend\.env`
+  - This should be equal to `POSTGRES_USER` in `postgres\.env`
 - DATABASE_PASSWORD
-  - This should be equal to `POSTGRES_PASSWORD` in `backend\.env`
+  - This should be equal to `POSTGRES_PASSWORD` in `postgres\.env`
 - DATABASE_NAME
-  - This should be equal to `POSTGRES_DB` in `backend\.env`
+  - This should be equal to `POSTGRES_DB` in `postgres\.env`
 - DATABASE_PORT
   - By default, this is 5432
 - HOSPITAL_NUMBER_NAME
@@ -75,11 +75,11 @@ These define the database settings, the database and user account is automatical
 - DATABASE_PORT
   - By default, this is `5432`
 - DATABASE_USERNAME
-  - This should be equal to `POSTGRES_USER` in `backend\.env`
+  - This should be equal to `POSTGRES_USER` in `postgres\.env`
 - DATABASE_PASSWORD
-  - This should be equal to `POSTGRES_PASSWORD` in `backend\.env`
+  - This should be equal to `POSTGRES_PASSWORD` in `postgres\.env`
 - DATABASE_NAME
-  - By default, this is `pseudotie`
+  - By default, this is `pseudotie` and should be different to the database name specified in `postgres\.env`
 - SESSION_SECRET_KEY
   - This should be equal to `SESSION_SECRET_KEY`  in `backend/.env`
 - UPDATE_ENDPOINT_KEY
