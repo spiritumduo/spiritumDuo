@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 // import Header from 'components/Header';
-import { Header, Select } from 'nhsuk-react-components';
+import { Footer, Header, Select } from 'nhsuk-react-components';
 import Notification from 'components/Notification';
 import { AuthContext, PathwayContext } from 'app/context';
 import './pagelayout.css';
+import sdInvertedImage from '../static/i/sd_inverted.png';
 
 export interface PageLayoutProps {
     children?: JSX.Element
@@ -31,6 +32,7 @@ const PageLayout = ({
       /> */}
       <Header>
         <Header.Container>
+          <a href="/app"><img src={ sdInvertedImage } alt="Spiritum Duo logo" className="nhsuk-header__logo" height="40px" /></a>
           <Header.Content>
             <Header.MenuToggle />
             <Header.Search />
@@ -40,13 +42,18 @@ const PageLayout = ({
           <Header.NavItem href="/" mobileOnly>
             Home
           </Header.NavItem>
-          <Header.NavItem href="">Home</Header.NavItem>
-          <Header.NavItem href="mdt">MDT</Header.NavItem>
-          <Header.NavItem href="add-patient" disabled>Add Patient</Header.NavItem>
-          <Header.NavItem href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</Header.NavItem>
+          <Header.NavItem style={ { fontSize: '1.1875rem' } } href="">Home</Header.NavItem>
+          <Header.NavItem style={ { fontSize: '1.1875rem' } } href="mdt">MDT</Header.NavItem>
+          <Header.NavItem style={ { fontSize: '1.1875rem' } } href="add-patient" disabled>Add Patient</Header.NavItem>
+          <Header.NavItem style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</Header.NavItem>
         </Header.Nav>
       </Header>
       {children}
+      <Footer>
+        <Footer.List>
+          <Footer.ListItem href="/">Landing page</Footer.ListItem>
+        </Footer.List>
+      </Footer>
       <Notification />
     </div>
   );
