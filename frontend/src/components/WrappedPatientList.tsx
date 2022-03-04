@@ -91,7 +91,7 @@ export interface WrappedPatientListProps {
   outstanding?: boolean;
   underCareOf?: boolean;
   includeDischarged?: boolean;
-  setModalState?: any;
+  setModalPatient?: any;
 }
 
 const WrappedPatientList = ({
@@ -101,7 +101,7 @@ const WrappedPatientList = ({
   outstanding,
   underCareOf,
   includeDischarged,
-  setModalState,
+  setModalPatient,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
@@ -164,7 +164,7 @@ const WrappedPatientList = ({
           : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
 
         return (
-          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => { setModalState(true); } }>
+          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => { setModalPatient(n.hospitalNumber); } }>
             <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
             <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
