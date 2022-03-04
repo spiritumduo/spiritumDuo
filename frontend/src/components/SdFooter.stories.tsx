@@ -2,11 +2,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import Footer from './Footer';
+import SdFooter from './SdFooter';
 
 export default {
-  title: 'Footer',
-  component: Footer,
+  title: 'components/SdFooter',
+  component: SdFooter,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -14,9 +14,8 @@ export default {
       </MemoryRouter>
     ),
   ],
-} as ComponentMeta<typeof Footer>;
+} as ComponentMeta<typeof SdFooter>;
 
-const Template: ComponentStory<typeof Footer> = (args) => <Footer { ...args } />;
+const Template: ComponentStory<typeof SdFooter> = (args) => <SdFooter { ...args } />;
 
 export const Default = Template.bind({});
-Default.args = { name: 'John Smith' };
