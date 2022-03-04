@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import LogoutLink from './LogoutLink';
 
 export default {
-  title: 'Logout Link',
+  title: 'components/Logout Link',
   component: LogoutLink,
   decorators: [
     (Story) => (

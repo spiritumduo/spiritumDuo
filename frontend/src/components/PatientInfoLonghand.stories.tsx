@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import PatientInfoLonghand from './PatientInfoLonghand';
 
 export default {
-  title: 'Patient Information (longhand)',
+  title: 'components/Patient Information (longhand)',
   component: PatientInfoLonghand,
   decorators: [
     (Story) => (
