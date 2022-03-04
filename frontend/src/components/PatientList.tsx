@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
 import './patientlist.css';
-
+import { Table } from 'nhsuk-react-components';
 /**
  * PatientListUpdateDataFn
  *
@@ -40,19 +40,20 @@ const PatientList = (
 ): JSX.Element => (
   <div>
     <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
-    <table className="table">
-      <thead>
-        <tr style={ { border: 'none' } }>
-          <th className="d-table-cell">Most recent stage</th>
-          <th className="d-table-cell">Name</th>
-          <th className="d-none d-md-table-cell">Hospital number</th>
-          <th className="d-none d-lg-table-cell">Date of birth</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table responsive>
+      <Table.Head>
+        <Table.Row>
+          <Table.Cell>Most recent stage</Table.Cell>
+          <Table.Cell>Name</Table.Cell>
+          <Table.Cell>Hospital number</Table.Cell>
+          <Table.Cell>Date of birth</Table.Cell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
         { data }
-      </tbody>
-    </table>
+      </Table.Body>
+    </Table>
+    <br />
     <ReactPaginate
       previousLabel="previous"
       nextLabel="next"
