@@ -43,10 +43,11 @@ const PatientList = (
     <Table responsive>
       <Table.Head>
         <Table.Row>
-          <Table.Cell>Most recent stage</Table.Cell>
           <Table.Cell>Name</Table.Cell>
-          <Table.Cell>Hospital number</Table.Cell>
+          <Table.Cell>Patient number</Table.Cell>
           <Table.Cell>Date of birth</Table.Cell>
+          <Table.Cell>Most recent stage</Table.Cell>
+          <Table.Cell>Last updated</Table.Cell>
         </Table.Row>
       </Table.Head>
       <Table.Body>
@@ -64,13 +65,14 @@ const PatientList = (
       pageRangeDisplayed={ 5 }
       onPageChange={ updateData }
       containerClassName="pagination justify-content-center"
-      activeClassName="active"
+      activeClassName="bkcolour-nhs-blue"
       pageClassName="page-item"
       previousClassName="page-item"
       nextClassName="page-item"
-      previousLinkClassName="page-link"
-      nextLinkClassName="page-link"
-      pageLinkClassName="page-link"
+      previousLinkClassName="colour-nhs-blue page-link"
+      nextLinkClassName="page-link colour-nhs-blue"
+      pageLinkClassName="page-link colour-nhs-blue"
+      activeLinkClassName="bkcolour-nhs-blue text-white"
     />
   </div>
 );
