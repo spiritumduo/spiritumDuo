@@ -7,7 +7,7 @@ import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { AuthContext, PathwayContext } from 'app/context';
 
-import { Button, Container, ErrorMessage, Fieldset, Form, Footer } from 'nhsuk-react-components';
+import { Button, Container, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-react-components';
 import Input from '../components/nhs_style/input/Input';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -105,6 +105,14 @@ const LoginPage = (): JSX.Element => {
             {error?.message ? <ErrorMessage>{error?.message}</ErrorMessage> : ''}
             <p>{ loading ? 'Loading' : '' }</p>
             <Button className="float-end" id="submit">Login</Button>
+            <Details>
+              <Details.Summary>Forgot your credentials?</Details.Summary>
+              <Details.Text>
+                This is a proof-of-concept system. If you are the administrator,
+                a username and password is generated when running `manage.py` that
+                will also generate test data.
+              </Details.Text>
+            </Details>
           </Fieldset>
         </Form>
       </Container>
