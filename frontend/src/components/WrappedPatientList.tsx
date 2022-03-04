@@ -40,6 +40,7 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
                 }
               }
             }
+            updatedAt
           }
         }
       }
@@ -90,6 +91,7 @@ export interface WrappedPatientListProps {
   outstanding?: boolean;
   underCareOf?: boolean;
   includeDischarged?: boolean;
+  setModalState?: any;
 }
 
 const WrappedPatientList = ({
@@ -99,6 +101,7 @@ const WrappedPatientList = ({
   outstanding,
   underCareOf,
   includeDischarged,
+  setModalState,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
@@ -116,7 +119,7 @@ const WrappedPatientList = ({
     listElements = nodes.flatMap(
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
-        let lastMilestoneName = 'Triage';
+        let lastMilestone = null;
         // eslint-disable-next-line max-len
         type GraphQLMilestone = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones;
         if (n.onPathways?.[0].decisionPoints) {
@@ -152,23 +155,21 @@ const WrappedPatientList = ({
           const milestone = decisionPoints.flatMap(
             (dp) => dp.milestones?.reduce(compareMilestones, undefined),
           ).reduce(compareMilestones, undefined);
-          if (milestone) lastMilestoneName = milestone.milestoneType.name;
+          if (milestone) lastMilestone = milestone;
         }
+        const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
 
-        // return (
-        //   <tr className="border-0" key={ `patient-list-key${n.id}` }>
-        //     <td className="">{lastMilestoneName}</td>
-        //     <td className="">{linkFactory(n)}</td>
-        //     <td className="d-none d-md-table-cell">{n.hospitalNumber}</td>
-        //     <td className="d-none d-lg-table-cell">{n.dateOfBirth?.toLocaleDateString()}</td>
-        //   </tr>
-        // );
+        const updatedAt = lastMilestone
+          ? `${lastMilestone?.updatedAt.toLocaleDateString()} ${lastMilestone?.updatedAt.toLocaleTimeString()}`
+          : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
+
         return (
-          <Table.Row key={ `patient-list-key${n.id}` }>
-            <Table.Cell>{lastMilestoneName}</Table.Cell>
-            <Table.Cell>{linkFactory(n)}</Table.Cell>
+          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => { setModalState(true); } }>
+            <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
             <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
+            <Table.Cell>{mostRecentStage}</Table.Cell>
+            <Table.Cell>{updatedAt}</Table.Cell>
           </Table.Row>
         );
       },
