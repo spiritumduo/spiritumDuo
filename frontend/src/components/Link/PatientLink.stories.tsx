@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import PatientLink from './PatientLink';
 
 export default {
-  title: 'Patient Link',
+  title: 'components/Patient Link',
   component: PatientLink,
   decorators: [
     (Story) => (
