@@ -27,6 +27,7 @@ class TestResultRequest_IE:
 
 @dataclass
 class TestResult_IE:
+    __test__ = False
     id: int = None,
     description: str = None
     type_reference_name: str = None
