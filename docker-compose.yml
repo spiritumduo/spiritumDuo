@@ -21,6 +21,7 @@ services:
     depends_on:
       - sd-postgres
     container_name: sd-backend
+    restart: unless-stopped
     image: sd-backend
     build:
       context: ./backend
@@ -39,6 +40,7 @@ services:
     depends_on:
       - sd-postgres
     container_name: sd-pseudotie
+    restart: unless-stopped
     image: sd-pseudotie
     build:
       context: ./pseudotie

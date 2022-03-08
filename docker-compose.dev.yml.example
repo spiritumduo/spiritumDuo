@@ -24,6 +24,7 @@ services:
       - sd-postgres
     container_name: sd-backend
     image: sd-backend
+    restart: unless-stopped
     build:
       context: ./backend
       dockerfile: ./Dockerfile
@@ -44,6 +45,7 @@ services:
       - sd-postgres
     container_name: sd-pseudotie
     image: sd-pseudotie
+    restart: unless-stopped
     build:
       context: ./pseudotie
       dockerfile: ./Dockerfile
@@ -62,6 +64,7 @@ services:
   sd-frontend:
     container_name: sd-frontend
     image: sd-frontend
+    restart: unless-stopped
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
@@ -80,6 +83,7 @@ services:
   sd-frontend-sb:
     container_name: sd-frontend-sb
     image: sd-frontend-sb
+    restart: unless-stopped
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
