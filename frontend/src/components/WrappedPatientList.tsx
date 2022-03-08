@@ -87,17 +87,15 @@ type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_
 export interface WrappedPatientListProps {
   pathwayId: string;
   patientsToDisplay: number;
-  linkFactory: (patient: QueryPatient) => JSX.Element;
   outstanding?: boolean;
   underCareOf?: boolean;
   includeDischarged?: boolean;
-  setModalPatient?: any;
+  setModalPatient?: (hospitalNumber: string) => void;
 }
 
 const WrappedPatientList = ({
   pathwayId,
   patientsToDisplay,
-  linkFactory,
   outstanding,
   underCareOf,
   includeDischarged,
@@ -164,7 +162,7 @@ const WrappedPatientList = ({
           : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
 
         return (
-          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => { setModalPatient(n.hospitalNumber); } }>
+          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => setModalPatient && setModalPatient(n.hospitalNumber) }>
             <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
             <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>

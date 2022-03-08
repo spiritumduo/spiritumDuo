@@ -12,17 +12,10 @@ export interface HomePageProps {
   patientsPerPage: number;
 }
 
-// eslint-disable-next-line camelcase
-type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node;
-
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
-  const [modalPatient, setModalPatient] = useState(false);
+  const [modalPatient, setModalPatient] = useState<string | undefined>();
   const pathwayId = currentPathwayId as number;
-
-  const linkFactory = (
-    patient: QueryPatient,
-  ) => <Link style={ { padding: '0' } } to={ `/decision/triage/${patient.hospitalNumber}` }>{ `${patient.firstName} ${patient.lastName}` }</Link>;
 
   return (
     <>
@@ -37,7 +30,6 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
-                linkFactory={ linkFactory }
                 outstanding
                 underCareOf
                 includeDischarged={ false }
@@ -48,7 +40,6 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
-                linkFactory={ linkFactory }
                 outstanding
                 underCareOf
                 includeDischarged={ false }
@@ -58,7 +49,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
           </div>
         </Tabs>
       </Container>
-      <Modal size="xl" fullscreen="md-down" show={ !!modalPatient } onHide={ () => { setModalPatient(false); } }>
+      <Modal size="xl" fullscreen="md-down" show={ modalPatient !== undefined } onHide={ () => { setModalPatient(undefined); } }>
         <Modal.Header closeButton>
           <Modal.Title>{modalPatient || ''}</Modal.Title>
         </Modal.Header>
@@ -71,7 +62,16 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               <Tab disabled>Notes</Tab>
             </TabList>
             <TabPanel>
-              test
+              test record
+            </TabPanel>
+            <TabPanel>
+              test history
+            </TabPanel>
+            <TabPanel>
+              test message
+            </TabPanel>
+            <TabPanel>
+              test notes
             </TabPanel>
           </Tabs>
         </Modal.Body>

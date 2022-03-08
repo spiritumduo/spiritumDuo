@@ -37,7 +37,7 @@ export const Default: Story<HomePageProps> = (args: HomePageProps) => {
 };
 
 // This is kind of messy, but it lets us reuse this test data without a deep copy
-const patientArray = WrappedListDefault.parameters?.patientArray;
+const patientArray = WrappedListDefault.parameters?.patients;
 const edges = WrappedListDefault.parameters?.edges;
 
 Default.args = { patientsPerPage: patientsPerPage };
