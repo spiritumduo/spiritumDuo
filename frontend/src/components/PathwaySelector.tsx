@@ -30,7 +30,7 @@ const PathwaySelector = ({
   ));
 
   return (
-    <select className="nhsuk-select" disabled onChange={ (e) => onItemSelect(e.currentTarget.value) }>
+    <select className="nhsuk-select float-end" disabled onChange={ (e) => onItemSelect(e.currentTarget.value) }>
       {itemList}
     </select>
   );
