@@ -38,11 +38,11 @@ These define the database settings, the database and user account is automatical
 - DATABASE_HOSTNAME
   - This should be set to `sd-postgres` if it hasn't been changed otherwise
 - DATABASE_USERNAME
-  - This should be equal to `POSTGRES_USER` in `postgres\.env`
+  - This should be equal to `POSTGRES_USER` in `backend\.env`
 - DATABASE_PASSWORD
-  - This should be equal to `POSTGRES_PASSWORD` in `postgres\.env`
+  - This should be equal to `POSTGRES_PASSWORD` in `backend\.env`
 - DATABASE_NAME
-  - This should be equal to `POSTGRES_DB` in `postgres\.env`
+  - This should be equal to `POSTGRES_DB` in `backend\.env`
 - DATABASE_PORT
   - By default, this is 5432
 - HOSPITAL_NUMBER_NAME
@@ -75,11 +75,11 @@ These define the database settings, the database and user account is automatical
 - DATABASE_PORT
   - By default, this is `5432`
 - DATABASE_USERNAME
-  - This should be equal to `POSTGRES_USER` in `postgres\.env`
+  - This should be equal to `POSTGRES_USER` in `backend\.env`
 - DATABASE_PASSWORD
-  - This should be equal to `POSTGRES_PASSWORD` in `postgres\.env`
+  - This should be equal to `POSTGRES_PASSWORD` in `backend\.env`
 - DATABASE_NAME
-  - By default, this is `pseudotie` and should be different to the database name specified in `postgres\.env`
+  - By default, this is `pseudotie`
 - SESSION_SECRET_KEY
   - This should be equal to `SESSION_SECRET_KEY`  in `backend/.env`
 - UPDATE_ENDPOINT_KEY
@@ -91,7 +91,7 @@ These define the database settings, the database and user account is automatical
   - This is the primary hostname NGINX will listen on. For a dev environment, it's safe to leave this as `localhost`
 - ALTERNATIVE_HOSTNAME
   - This is an alternative hostname NGINX will **also** listen on. This can be anything, but is usually used if two sites need to be listened on (www. and non-www.)
-- SSL_EMAIL 
+- SSL_EMAIL
   - This is the email address that will be used for LetsEncrypt SSL certificate generation. This is not used in a developer environment
 
 ### mysql/.env
@@ -164,3 +164,13 @@ This will insert a single test user and batch of test patients.
 ```bash
 docker exec -ti sd-backend python manage.py
 ```
+
+## Done!
+
+If the steps above have been completed successfully, you should be able to connect to the application. By default, the app
+will be listening on `http://localhost:8080/app`.
+
+### NOTES
+
+- The containers are set to restart automatically unless they are told to, by the user or if they crash out
+- The frontend containers may take a few minutes to listen (for you to connect)
