@@ -1,0 +1,90 @@
+{
+    "Referral letter (record artifact)": {
+        "name": "Referral letter",
+        "result": "Patient two test stuff"
+    },
+    "Plain chest X-ray (procedure)": {
+        "name": "Chest X-ray",
+        "result": "Patient two test stuff"
+    },    
+    "Computed tomography of chest (procedure)": {
+        "name": "CT chest",
+        "result": "Patient two test stuff"
+    },
+    "Positron emission tomography with computed tomography (procedure)": {
+        "name": "PET-CT",
+        "result": "Patient two test stuff"
+    },
+    "Computed tomography of head with contrast (procedure)": {
+        "name": "CT head - contrast",
+        "result": "Patient two test stuff"
+    },
+    "Magnetic resonance imaging of head (procedure)": {
+        "name": "MRI head",
+        "result": "Patient two test stuff"
+    },
+    "Measurement of respiratory function (procedure)": {
+        "name": "Lung function tests",
+        "result": "Patient two test stuff"
+    },
+    "Echocardiography (procedure)": {
+        "name": "ECHO",
+        "result": "Patient two test stuff"
+    },
+    "Biopsy of thorax using computed tomography guidance (procedure)": {
+        "name": "CT guided biopsy thorax",
+        "result": "Patient two test stuff"
+    },
+    "Pathology report (record artifact)": {
+        "name": "Pathology",
+        "result": "Patient two test stuff"
+    },
+    "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
+        "name": "EBUS",
+        "result": "Patient two test stuff"
+    },
+    "Electrocardiogram analysis (qualifier value)": {
+        "name": "ECG",
+        "result": "Patient two test stuff"
+    },
+    "Prehabilitation (regime/therapy)": {
+        "name": "Prehad referral",
+        "result": "Patient two test stuff"
+    },
+    "Patient referral to dietitian (procedure)": {
+        "name": "Dietician referral",
+        "result": "Patient two test stuff"
+    },
+    "Thoracoscopy (procedure)": {
+        "name": "Thoracoscopy",
+        "result": "Patient two test stuff"
+    },
+    "Bronchoscopy (procedure)": {
+        "name": "Bronchoscopy",
+        "result": "Patient two test stuff"
+    },
+    "Thoracentesis (procedure)": {
+        "name": "Pleural tap",
+        "result": "Patient two test stuff"
+    },
+    "Cardiopulmonary exercise test (procedure)": {
+        "name": "CPET",
+        "result": "Patient two test stuff"
+    },
+    "Referral to smoking cessation service (procedure)": {
+        "name": "Smoking cessation referral",
+        "result": "Patient two test stuff"
+    },
+    "Blood test (procedure)": {
+        "name": "Bloods",
+        "result": "Patient two test stuff"
+    },
+    "Assessment by multidisciplinary team (procedure)": {
+        "name": "Add to MDT",
+        "result": "Patient two test stuff"
+    },
+    "Appointment (record artifact)": {
+        "name": "Book clinic appointment",
+        "result": "Patient two test stuff"
+    }
+}
