@@ -45,7 +45,7 @@ const milestones = [
 
 for (let i = 0; i < 15; ++i) {
   const newPatient = {
-    id: i,
+    id: i.toString(),
     hospitalNumber: `${patient.hospitalNumber}-${i + 1}`,
     firstName: `${patient.firstName} ${i + 1}`,
     lastName: `${patient.lastName} ${i + 1}`,
