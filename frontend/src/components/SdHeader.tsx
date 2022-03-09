@@ -25,34 +25,34 @@ const SdHeader = ({
   return (
     <Header>
       <Header.Container>
-        <a href="/app" className="me-2"><img src={ sdInvertedImage } alt="Spiritum Duo logo" className="nhsuk-header__logo" height="40px" /></a>
+        <a href="/app" className="me-2"><img src={sdInvertedImage} alt="Spiritum Duo logo" className="nhsuk-header__logo" height="40px" /></a>
         <button
-          className={ `nhsuk-header__menu-toggle position-relative float-end ms-1 ${navbarState ? 'is-active' : ''}` }
-          style={ { width: '40px', height: '40px', padding: '0', right: '0' } }
+          className={`nhsuk-header__menu-toggle position-relative float-end ms-1 ${navbarState ? 'is-active' : ''}`}
+          style={{ width: '40px', height: '40px', padding: '0', right: '0' }}
           aria-label="Open search"
-          aria-expanded={ navbarState ? 'true' : 'false' }
-          onClick={ () => setNavbarState(!navbarState) }
+          aria-expanded={navbarState ? 'true' : 'false'}
+          onClick={() => setNavbarState(!navbarState)}
         >
           <ThreeDots />
         </button>
         <button
           className={`nhsuk-header__search-toggle float-end p-0 mx-1 position-relative ${searchState ? 'is-active' : ''}`}
-          style={{height: '40px', width: '40px'}}
+          style={{ height: '40px', width: '40px' }}
           aria-label="Open search"
           aria-expanded={searchState ? 'true' : 'false'}
-          onClick={ () => setSearchState(!searchState) }
+          onClick={() => setSearchState(!searchState)}
         >
           <SearchIcon />
           <span className="nhsuk-u-visually-hidden">Search</span>
         </button>
         <PathwaySelector
-          options={ pathwayOptions }
-          currentOption={ currentOption }
-          onItemSelect={ (name) => { pathwayOnItemSelect(name); } }
+          options={pathwayOptions}
+          currentOption={currentOption}
+          onItemSelect={(name) => { pathwayOnItemSelect(name); } }
         />
         <div className="nhsuk-header__search" aria-disabled>
           <div className={`nhsuk-header__search-wrap ${searchState ? 'js-show' : ''}`}>
-            <form className="nhsuk-header__search-form" role="search">
+            <form className="nhsuk-header__search-form" role="search" onSubmit={(e) => searchOnSubmit(e)}>
               <input className="nhsuk-search__input" id="searchInput" disabled />
               <button className="nhsuk-search__submit" type="submit" disabled>
                 <SearchIcon />
@@ -66,17 +66,16 @@ const SdHeader = ({
           </div>
         </div>
       </Header.Container>
-
-      <nav className={ `nhsuk-header__navigation ${navbarState ? 'js-show' : ''}` }>
+      <nav className={`nhsuk-header__navigation ${navbarState ? 'js-show' : ''}`}>
         <Container>
           <p className="nhsuk-header__navigation-title">
             <span>Menu</span>
           </p>
           <ul className="nhsuk-header__navigation-list">
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="">Home</Header.NavItem>
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="mdt">MDT</Header.NavItem>
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="add-patient" disabled>Add Patient</Header.NavItem>
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</Header.NavItem>
+            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="">Home</Header.NavItem>
+            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="mdt">MDT</Header.NavItem>
+            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="add-patient" disabled>Add Patient</Header.NavItem>
+            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</Header.NavItem>
           </ul>
         </Container>
       </nav>
