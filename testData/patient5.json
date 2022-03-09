@@ -1,0 +1,90 @@
+{
+    "Referral letter (record artifact)": {
+        "name": "Referral letter",
+        "result": ""
+    },
+    "Plain chest X-ray (procedure)": {
+        "name": "Chest X-ray",
+        "result": ""
+    },    
+    "Computed tomography of chest (procedure)": {
+        "name": "CT chest",
+        "result": ""
+    },
+    "Positron emission tomography with computed tomography (procedure)": {
+        "name": "PET-CT",
+        "result": ""
+    },
+    "Computed tomography of head with contrast (procedure)": {
+        "name": "CT head - contrast",
+        "result": ""
+    },
+    "Magnetic resonance imaging of head (procedure)": {
+        "name": "MRI head",
+        "result": ""
+    },
+    "Measurement of respiratory function (procedure)": {
+        "name": "Lung function tests",
+        "result": ""
+    },
+    "Echocardiography (procedure)": {
+        "name": "ECHO",
+        "result": ""
+    },
+    "Biopsy of thorax using computed tomography guidance (procedure)": {
+        "name": "CT guided biopsy thorax",
+        "result": ""
+    },
+    "Pathology report (record artifact)": {
+        "name": "Pathology",
+        "result": ""
+    },
+    "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
+        "name": "EBUS",
+        "result": ""
+    },
+    "Electrocardiogram analysis (qualifier value)": {
+        "name": "ECG",
+        "result": ""
+    },
+    "Prehabilitation (regime/therapy)": {
+        "name": "Prehad referral",
+        "result": ""
+    },
+    "Patient referral to dietitian (procedure)": {
+        "name": "Dietician referral",
+        "result": ""
+    },
+    "Thoracoscopy (procedure)": {
+        "name": "Thoracoscopy",
+        "result": ""
+    },
+    "Bronchoscopy (procedure)": {
+        "name": "Bronchoscopy",
+        "result": ""
+    },
+    "Thoracentesis (procedure)": {
+        "name": "Pleural tap",
+        "result": ""
+    },
+    "Cardiopulmonary exercise test (procedure)": {
+        "name": "CPET",
+        "result": ""
+    },
+    "Referral to smoking cessation service (procedure)": {
+        "name": "Smoking cessation referral",
+        "result": ""
+    },
+    "Blood test (procedure)": {
+        "name": "Bloods",
+        "result": ""
+    },
+    "Assessment by multidisciplinary team (procedure)": {
+        "name": "Add to MDT",
+        "result": ""
+    },
+    "Appointment (record artifact)": {
+        "name": "Book clinic appointment",
+        "result": ""
+    }
+}
