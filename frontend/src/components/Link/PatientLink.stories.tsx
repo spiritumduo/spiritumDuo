@@ -21,7 +21,7 @@ const Template: ComponentStory<typeof PatientLink> = (args) => <PatientLink { ..
 export const Default = Template.bind({});
 Default.args = {
   patient: {
-    id: 2,
+    id: '2',
     hospitalNumber: 'MRN0123456',
     firstName: 'John',
     lastName: 'Doe',

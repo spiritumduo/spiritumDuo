@@ -22,7 +22,7 @@ const Template: ComponentStory<typeof PatientInfoLonghand> = (args) => <PatientI
 export const Standard = Template.bind({});
 Standard.args = {
   patient: {
-    id: 2,
+    id: '2',
     hospitalNumber: 'MRN1234567',
     firstName: 'John',
     lastName: 'Doe',

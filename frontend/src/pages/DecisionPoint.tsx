@@ -420,7 +420,7 @@ const DecisionPointPage = (
   }
 
   const patient: Patient = {
-    id: parseInt(data.getPatient.id, 10),
+    id: data.getPatient.id,
     firstName: data.getPatient.firstName,
     lastName: data.getPatient.lastName,
     hospitalNumber: data.getPatient.hospitalNumber,

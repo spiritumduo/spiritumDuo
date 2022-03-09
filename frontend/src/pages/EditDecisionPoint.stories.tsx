@@ -30,7 +30,7 @@ const Template: Story<EditDecisionPointPageProps> = (args) => <EditDecisionPoint
 export const Standard = Template.bind({});
 Standard.args = {
   patient: {
-    id: 5,
+    id: '5',
     hospitalNumber: 'MRN9876543',
     firstName: 'John',
     lastName: 'Doe',
