@@ -14,6 +14,7 @@ from trustadapter.trustadapter import Patient_IE, TestResult_IE, TestResultReque
 from config import config
 from base64 import b64encode
 from typing import Dict, List
+from bcrypt import hashpw, gensalt
 
 faker=Faker()
 app.container=SDContainer()
@@ -208,9 +209,10 @@ async def insert_demo_data():
         )
         print(f"pathway id {sd_pathway.id} name {sd_pathway.name}")
 
-        sd_user:User=await CreateUser(
+        sd_user:User=await User.create(
+            id = int(i),
             username = f"user{i}",
-            password = f"22password{i}",
+            password = hashpw(f"22password{i}".encode('utf-8'), gensalt()).decode('utf-8'),
             first_name = "Demo",
             last_name = f"User {i}",
             department = "Demo user",
@@ -225,17 +227,15 @@ async def insert_demo_data():
                 padded_user_id = "0" + str(padded_user_id)
 
         for i in range(1, NUMBER_OF_PATIENTS_PER_USER+1):
-            """
-            fMRNIDxxID
-            fNHSIDxxxxID
-            """
-            
-            padded_patient_id = i
-            if len(str(padded_patient_id)) == 1:
-                padded_patient_id = "0" + str(padded_patient_id)
+            padded_patient_index = i
+            if len(str(padded_patient_index)) == 1:
+                padded_patient_index = "0" + str(padded_patient_index)
 
-            hospital_number = "fMRN"+str(padded_user_id) + str(randint(10, 99)) + str(padded_patient_id)
-            national_number = "fNHS"+str(padded_user_id) + str(randint(10000, 99909)) + str(padded_patient_id)
+            # hospital_number = "fMRN"+str(padded_user_id) + str(randint(10, 99)) + str(padded_patient_index)
+            # national_number = "fNHS"+str(padded_user_id) + str(randint(10000, 99909)) + str(padded_patient_index)
+
+            hospital_number = "fMRN"+str(randint(1000, 9999)) + str(padded_patient_index)
+            national_number = "fNHS"+str(randint(100000, 999999)) + str(padded_patient_index)
 
             date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
 
@@ -264,7 +264,8 @@ async def insert_demo_data():
             tie_testresult_ref:TestResult_IE = await PseudoTrustAdapter().create_test_result(
                 testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["referral_letter"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ),
                 auth_token=SESSION_COOKIE
             )
@@ -278,7 +279,8 @@ async def insert_demo_data():
             tie_testresult_cxr:TestResult_IE = await PseudoTrustAdapter().create_test_result(
                 testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["chest_xray"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), 
                 auth_token=SESSION_COOKIE
             )
@@ -309,7 +311,8 @@ async def insert_demo_data():
 
                 tie_testresult_ct:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["ct_chest"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
@@ -334,7 +337,8 @@ async def insert_demo_data():
 
                 tie_testresult_bronch:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = selectable_milestone_types["bronchoscopy"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
@@ -360,7 +364,8 @@ async def insert_demo_data():
 
                 tie_testresult_mdt:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["mdt"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
@@ -385,7 +390,8 @@ async def insert_demo_data():
 
                 tie_testresult_cpet:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = selectable_milestone_types["cpet"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
