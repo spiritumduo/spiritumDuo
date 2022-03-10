@@ -75,7 +75,7 @@ Patient 2 – Palliative in the end
     }, 
     "Thoracoscopy (procedure)": { 
         "name": "Thoracoscopy", 
-        "result": " Thoracoscopy was cancelled after discussion with cancer lead. This patient is most likely for best supportive care and a biopsy would hence not be required. " 
+        "result": "Thoracoscopy was cancelled after discussion with cancer lead. This patient is most likely for best supportive care and a biopsy would hence not be required." 
     }, 
     "Bronchoscopy (procedure)": { 
         "name": "Bronchoscopy", 
