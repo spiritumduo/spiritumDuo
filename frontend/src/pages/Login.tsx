@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, forwardRef, Props, MutableRefObject } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -6,9 +6,8 @@ import * as yup from 'yup';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { AuthContext, PathwayContext } from 'app/context';
-
-import { Button, Container, ErrorMessage, Fieldset, Form, Footer, Details, Input } from 'nhsuk-react-components';
-// import Input from '../components/nhs_style/input/Input';
+import { Button, Container, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-react-components';
+import { Input } from 'components/nhs-style';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
@@ -65,13 +64,6 @@ export function useLoginSubmit(): LoginSubmitHook {
   return [loading, error, data, doLogin];
 }
 
-const InputWrapper = forwardRef<HTMLInputElement, any>(
-  // eslint-disable-next-line prefer-arrow-callback
-  function InputWrapper(props, ref) {
-    return <Input { ...props } inputRef={ ref } />;
-  },
-);
-
 const LoginPage = (): JSX.Element => {
   const [loading, error, data, doLogin] = useLoginSubmit();
 
@@ -107,8 +99,8 @@ const LoginPage = (): JSX.Element => {
         >
           <Fieldset disabled={ loading }>
             <Fieldset.Legend isPageHeading>Enter credentials here</Fieldset.Legend>
-            <InputWrapper id="username" type="text" label="Username" error={ errors.username?.message } { ...register('username', { required: true }) } />
-            <InputWrapper id="password" type="password" label="Password" error={ errors.password?.message } { ...register('password', { required: true }) } />
+            <Input id="username" type="text" label="Username" error={ errors.username?.message } { ...register('username', { required: true }) } />
+            <Input id="password" type="password" label="Password" error={ errors.password?.message } { ...register('password', { required: true }) } />
             {error?.message ? <ErrorMessage>{error?.message}</ErrorMessage> : ''}
             <p>{ loading ? 'Loading' : '' }</p>
             <Button className="float-end" id="submit">Login</Button>
