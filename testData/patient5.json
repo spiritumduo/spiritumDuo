@@ -86,5 +86,13 @@
     "Appointment (record artifact)": {
         "name": "Book clinic appointment",
         "result": ""
+    },
+    "Clinical history": { 
+        "name": "Clinical history", 
+        "result": "" 
+    },
+    "Comorbidities": { 
+        "name": "Comorbidities", 
+        "result": "" 
     }
 }
