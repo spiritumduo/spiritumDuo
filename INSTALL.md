@@ -152,12 +152,20 @@ docker exec -ti sd-backend bash -c "chmod +x ./bin/container-migrate-alembic && 
 docker exec -ti sd-pseudotie bash -c "chmod +x ./bin/container-migrate-alembic && ./bin/container-migrate-alembic"
 ```
 
-3. Run `docker-compose down`
+3. Run `docker-compose -f docker-compose.dev.yml down`
 4. Run `docker-compose -f docker-compose.dev.yml up -d`
 
 ## Insert test data
 
-This will insert a single test user and batch of test patients.
+### NOTE
+
+You may run this script multiple times, however you may need to clear the `pseudotie` database if the script displays HTTP 409 or `409 conflict`.
+You can do this by:
+
+- Dropping the postgres volume (`docker volume rm spiritumduo_sd_postgres_data`) and re-running database migrations (see 'Import database schemas' above)
+- Manually deleting data using a database IDE like [pgadmin (FOSS)](https://www.pgadmin.org/) or [DataGrip (paid software)](https://www.jetbrains.com/datagrip/)
+
+To insert a single test user and batch of test patients.
 
 1. From the project's root directory, run
 
