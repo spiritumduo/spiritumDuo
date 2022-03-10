@@ -17,41 +17,10 @@ describe('When page loads', () => {
     );
   });
 
-  it('Should display the hospital number', async () => {
-    const hospitalNumber = Default
-      .parameters?.apolloClient.mocks[0]
-      .result.data.getPatient.hospitalNumber;
-    if (!hospitalNumber) throw new Error('No hospital number in mock');
-    // Match ONE element with hospital number at the start and other text after
-    await waitFor(
-      () => expect(screen.getByText(
-        (t) => new RegExp(`^${hospitalNumber}.+`).test(t),
-      )).toBeInTheDocument(),
-    );
-  });
-
-  it('Should display the first and last name', async () => {
-    const firstName = Default
-      .parameters?.apolloClient.mocks[0]
-      .result.data.getPatient.firstName;
-    if (!firstName) throw new Error('No first name in mock');
-    const lastName = Default
-      .parameters?.apolloClient.mocks[0]
-      .result.data.getPatient.lastName;
-    if (!lastName) throw new Error('No last name in mock');
-    // Match ONE element that has first and last name, seperated by whitespace
-    // with possible text before and after
-    await waitFor(
-      () => expect(screen.getByText(
-        (t) => new RegExp(`.+${firstName}\\s+${lastName}.+`).test(t),
-      )).toBeInTheDocument(),
-    );
-  });
-
   it('Should display the last clinical history', async () => {
     await waitFor(
       () => expect(
-        (screen.getByRole('textbox', { name: /clinical history/i }) as HTMLInputElement).value,
+        (screen.getByRole('textbox', { name: /clinical history/i }) as HTMLTextAreaElement).value,
       ).toMatch(/clinic history 1/i),
     );
   });
