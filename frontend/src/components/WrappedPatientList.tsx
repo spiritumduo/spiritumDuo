@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import PatientList from 'components/PatientList';
-import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
+import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 import { Table } from 'nhsuk-react-components';
+import Patient from 'types/Patient';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -82,15 +83,13 @@ function edgesToNodes(
   return { nodes, pageCount, pageInfo };
 }
 
-type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node;
-
 export interface WrappedPatientListProps {
   pathwayId: string;
   patientsToDisplay: number;
   outstanding?: boolean;
   underCareOf?: boolean;
   includeDischarged?: boolean;
-  setModalPatient?: (hospitalNumber: string) => void;
+  patientOnClick?: (hospitalNumber: Patient) => void;
 }
 
 const WrappedPatientList = ({
@@ -99,7 +98,7 @@ const WrappedPatientList = ({
   outstanding,
   underCareOf,
   includeDischarged,
-  setModalPatient,
+  patientOnClick,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
@@ -148,8 +147,6 @@ const WrappedPatientList = ({
             return returnMilestone;
           };
 
-          // This is kind of bad. I really just want to look at all the milestones
-          // and find the most recent, so DFS would be better?
           const milestone = decisionPoints.flatMap(
             (dp) => dp.milestones?.reduce(compareMilestones, undefined),
           ).reduce(compareMilestones, undefined);
@@ -162,7 +159,7 @@ const WrappedPatientList = ({
           : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
 
         return (
-          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => setModalPatient && setModalPatient(n.hospitalNumber) }>
+          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => patientOnClick && patientOnClick(n) }>
             <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
             <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
