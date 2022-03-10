@@ -68,7 +68,7 @@ def make_connection(models, before, after, first, last):
     all_edges = list(map(lambda c: ({'node': c, 'cursor': str(c.id)}), models))
     edges = edges_to_return(all_edges, before, after, first, last)
 
-    if not edges or edges[0]:
+    if not edges or not edges[0]:
         start_cursor=0,
         end_cursor=0
     else:
