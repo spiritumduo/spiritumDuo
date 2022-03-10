@@ -13,8 +13,9 @@
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
-    "react/jsx-props-no-spreading": ["error", {
-      "html": "ignore"
+    "react/jsx-props-no-spreading": ["off", {
+      "html": "ignore",
+      "exceptions": ["Input", "Select", "Textarea", "Checkboxes"]
     }],
     "camelcase": ["error", {"ignoreImports": true}],
     "no-shadow": "off",
