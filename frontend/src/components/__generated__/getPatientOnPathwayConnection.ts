@@ -34,6 +34,7 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edg
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways {
   __typename: "OnPathway";
   decisionPoints: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints[] | null;
+  updatedAt: any;
 }
 
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node {

@@ -1,3 +1,10 @@
 .patient-list {
     list-style-type: none;
 }
+
+.colour-nhs-blue{
+    color: #005EB8;
+}
+.bkcolour-nhs-blue{
+    background-color: #005EB8;
+}

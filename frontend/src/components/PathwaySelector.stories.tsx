@@ -7,7 +7,7 @@ import PathwaySelector from './PathwaySelector';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Pathway Selector',
+  title: 'components/Pathway Selector',
   component: PathwaySelector,
   decorators: [
     (Story) => (

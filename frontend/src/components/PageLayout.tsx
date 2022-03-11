@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
-import Header from 'components/Header';
 import Notification from 'components/Notification';
 import { AuthContext, PathwayContext } from 'app/context';
 import './pagelayout.css';
+import SdHeader from './SdHeader';
+import SdFooter from './SdFooter';
 
 export interface PageLayoutProps {
     children?: JSX.Element
@@ -21,14 +22,15 @@ const PageLayout = ({
   const actualCurrentPathwayId = currentPathwayId || pathwayOptions[0].id;
   return (
     <div>
-      <Header
+      <SdHeader
         pathwayOptions={ pathwayOptions }
         currentPathwayId={ actualCurrentPathwayId }
         pathwayOnItemSelect={ () => console.log('item selected') }
         searchOnSubmit={ () => console.log('search submit') }
-        usersName={ `${user?.firstName} ${user?.lastName}` }
+        user={ user }
       />
       {children}
+      <SdFooter />
       <Notification />
     </div>
   );

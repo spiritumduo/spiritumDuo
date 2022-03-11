@@ -26,10 +26,8 @@ test('Patient lists should contain patients', async () => {
     renderDefault();
     await waitFor(
       () => expect(
-        screen.getAllByRole('link', {
-          name: (t) => /john\s[0-9]+\sdoe\s[0-9]+/i.test(t),
-        }).length,
-      ).toEqual(patientsPerPage),
+        screen.getAllByRole('row').length,
+      ).toEqual(patientsPerPage + 1), // all patients plus header
     );
   } else {
     throw new Error('No patients per page specified in story');
@@ -43,13 +41,13 @@ test('Patient lists should paginate', async () => {
     renderDefault();
     await waitFor(() => expect(screen.getByText('Loading!')).toBeInTheDocument());
     const nextLinks = screen.getAllByRole('button', {
-      name: (t, _) => /next/i.test(t),
+      name: (t) => /next/i.test(t),
     });
     expect(nextLinks.length).toEqual(1);
     userEvent.click(nextLinks[0]);
     await waitFor(() => {
-      const links = screen.getAllByRole('link', { name: (t, _) => /john\s[0-9]+\sdoe\s[0-9]+/i.test(t) });
-      expect(links.length).toBe(patientsPerPage);
+      const tableRows = screen.getAllByRole('row');
+      expect(tableRows.length).toBe(6); // 5 patients on second page in mock, plus header
     });
   } else {
     throw new Error('No patients in story parameters');
