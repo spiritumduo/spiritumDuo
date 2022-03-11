@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import PatientList from 'components/PatientList';
-import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
+import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
+import { Table } from 'nhsuk-react-components';
+import Patient from 'types/Patient';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -39,6 +41,7 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
                 }
               }
             }
+            updatedAt
           }
         }
       }
@@ -80,24 +83,22 @@ function edgesToNodes(
   return { nodes, pageCount, pageInfo };
 }
 
-type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node;
-
 export interface WrappedPatientListProps {
   pathwayId: string;
   patientsToDisplay: number;
-  linkFactory: (patient: QueryPatient) => JSX.Element;
   outstanding?: boolean;
   underCareOf?: boolean;
   includeDischarged?: boolean;
+  patientOnClick?: (hospitalNumber: Patient) => void;
 }
 
 const WrappedPatientList = ({
   pathwayId,
   patientsToDisplay,
-  linkFactory,
   outstanding,
   underCareOf,
   includeDischarged,
+  patientOnClick,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
@@ -115,7 +116,7 @@ const WrappedPatientList = ({
     listElements = nodes.flatMap(
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
-        let lastMilestoneName = 'Triage';
+        let lastMilestone = null;
         // eslint-disable-next-line max-len
         type GraphQLMilestone = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones;
         if (n.onPathways?.[0].decisionPoints) {
@@ -146,21 +147,25 @@ const WrappedPatientList = ({
             return returnMilestone;
           };
 
-          // This is kind of bad. I really just want to look at all the milestones
-          // and find the most recent, so DFS would be better?
           const milestone = decisionPoints.flatMap(
             (dp) => dp.milestones?.reduce(compareMilestones, undefined),
           ).reduce(compareMilestones, undefined);
-          if (milestone) lastMilestoneName = milestone.milestoneType.name;
+          if (milestone) lastMilestone = milestone;
         }
+        const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
+
+        const updatedAt = lastMilestone
+          ? `${lastMilestone?.updatedAt.toLocaleDateString()} ${lastMilestone?.updatedAt.toLocaleTimeString()}`
+          : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
 
         return (
-          <tr className="border-0" key={ `patient-list-key${n.id}` }>
-            <td className="">{lastMilestoneName}</td>
-            <td className="">{linkFactory(n)}</td>
-            <td className="d-none d-md-table-cell">{n.hospitalNumber}</td>
-            <td className="d-none d-lg-table-cell">{n.dateOfBirth?.toLocaleDateString()}</td>
-          </tr>
+          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => patientOnClick && patientOnClick(n) }>
+            <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
+            <Table.Cell>{n.hospitalNumber}</Table.Cell>
+            <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
+            <Table.Cell>{mostRecentStage}</Table.Cell>
+            <Table.Cell>{updatedAt}</Table.Cell>
+          </Table.Row>
         );
       },
     );

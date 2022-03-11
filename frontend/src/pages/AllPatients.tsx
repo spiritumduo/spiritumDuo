@@ -9,12 +9,6 @@ export interface AllPatientsProps {
   patientsPerPage: number;
 }
 
-// eslint-disable-next-line camelcase
-type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node;
-const linkFactory = (
-  patient: QueryPatient,
-) => <Link style={ { padding: '0' } } to={ `/patient/${patient.hospitalNumber}` }>{ `${patient.firstName} ${patient.lastName}` }</Link>;
-
 const AllPatients = ({ patientsPerPage }: AllPatientsProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
   const pathwayId = currentPathwayId || 1;
@@ -27,7 +21,6 @@ const AllPatients = ({ patientsPerPage }: AllPatientsProps): JSX.Element => {
           <WrappedPatientList
             pathwayId={ pathwayId.toString() }
             patientsToDisplay={ patientsPerPage }
-            linkFactory={ linkFactory }
             outstanding={ false }
             underCareOf={ false }
             includeDischarged

@@ -63,7 +63,7 @@ test('Error should display to user', async () => {
     userEvent.type(passwordInput, 'Password');
     userEvent.click(loginButton);
   });
-  expect(screen.getByText(/error:/i)).toBeInTheDocument();
+  expect(screen.getByText(/Error: /i)).toBeInTheDocument();
 });
 
 // INCORRECT LOGIN

@@ -1,3 +1,4 @@
+import { Select } from 'nhsuk-react-components';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PathwayOption from 'types/PathwayOption';
@@ -10,7 +11,7 @@ interface PathwaySelectorProps {
   /**
   * Current selected option
   */
-  currentOption: PathwayOption;
+  currentOption?: PathwayOption;
   /**
   * Function to handle item select
   */
@@ -25,18 +26,13 @@ const PathwaySelector = ({
 }: PathwaySelectorProps): JSX.Element => {
   // filter out the current option from the item list
   const itemList = options.map((pathway) => (
-    pathway !== currentOption ? <Link key={ `pathwaySelect-${pathway.id}` } className="dropdown-item" to={ `/page/${pathway.name}` }>{pathway.name}</Link> : undefined
+    pathway !== currentOption ? <Select.Option key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option> : undefined
   ));
 
   return (
-    <div className="dropdown">
-      <button className="btn btn-outline-secondary dropdown-toggle disabled" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {currentOption.name}
-      </button>
-      <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        {itemList}
-      </div>
-    </div>
+    <select className="nhsuk-select" disabled onChange={ (e) => onItemSelect(e.currentTarget.value) }>
+      {itemList}
+    </select>
   );
 };
 

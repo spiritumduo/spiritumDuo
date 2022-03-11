@@ -287,9 +287,7 @@ export default {
       <MemoryRouter>
         <MockAuthProvider>
           <MockPathwayProvider>
-            <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-              <DecisionPointPageStory />
-            </PageLayout>
+            <DecisionPointPageStory />
           </MockPathwayProvider>
         </MockAuthProvider>
       </MemoryRouter>

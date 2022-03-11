@@ -1,5 +1,5 @@
 interface Patient {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   hospitalNumber: string;

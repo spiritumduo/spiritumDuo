@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import PatientLink from './PatientLink';
 
 export default {
-  title: 'Patient Link',
+  title: 'components/Patient Link',
   component: PatientLink,
   decorators: [
     (Story) => (
@@ -21,7 +21,7 @@ const Template: ComponentStory<typeof PatientLink> = (args) => <PatientLink { ..
 export const Default = Template.bind({});
 Default.args = {
   patient: {
-    id: 2,
+    id: '2',
     hospitalNumber: 'MRN0123456',
     firstName: 'John',
     lastName: 'Doe',

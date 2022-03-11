@@ -43,9 +43,9 @@ const milestones = [
   },
 ];
 
-for (let i = 0; i < 20; ++i) {
+for (let i = 0; i < 15; ++i) {
   const newPatient = {
-    id: i,
+    id: i.toString(),
     hospitalNumber: `${patient.hospitalNumber}-${i + 1}`,
     firstName: `${patient.firstName} ${i + 1}`,
     lastName: `${patient.lastName} ${i + 1}`,
@@ -57,6 +57,7 @@ for (let i = 0; i < 20; ++i) {
             milestones: milestones,
           },
         ],
+        updatedAt: new Date(2021, 1, 10),
       },
     ],
   };
@@ -86,18 +87,11 @@ const Template: ComponentStory<typeof WrappedPatientList> = (
 
 const patientsPerPage = 10;
 
-// eslint-disable-next-line camelcase
-type QueryPatient = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node;
-const linkFactory = (
-  linkPatient: QueryPatient,
-) => <Link to="/wrappedPatientListExample">{ `${linkPatient.firstName} ${linkPatient.lastName}` }</Link>;
-
 export const Default = Template.bind({});
 Default.args = {
   pathwayId: '1',
   patientsToDisplay: 10,
   outstanding: false,
-  linkFactory: linkFactory,
   underCareOf: true,
   includeDischarged: true,
 };

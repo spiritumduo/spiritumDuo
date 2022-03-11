@@ -3,11 +3,11 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import PathwayOption from 'types/PathwayOption';
 import { MemoryRouter } from 'react-router-dom';
-import Header from './Header';
+import SdHeader from './SdHeader';
 
 export default {
-  title: 'Header',
-  component: Header,
+  title: 'components/SdHeader',
+  component: SdHeader,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -15,9 +15,9 @@ export default {
       </MemoryRouter>
     ),
   ],
-} as ComponentMeta<typeof Header>;
+} as ComponentMeta<typeof SdHeader>;
 
-const Template: ComponentStory<typeof Header> = (args) => <Header { ...args } />;
+const Template: ComponentStory<typeof SdHeader> = (args) => <SdHeader { ...args } />;
 
 const pathways: PathwayOption[] = [
   {
@@ -39,25 +39,12 @@ Standard.args = {
     e.preventDefault();
     console.log(e); // is there some kind of storybook method to make this appear in actions?
   },
-};
-
-/**
- * Header with patient data underneath
- */
-export const Patient = Template.bind({});
-Patient.args = {
-  pathwayOptions: pathways,
-  currentPathwayId: pathways[0].id,
-  pathwayOnItemSelect: (name) => console.log(name),
-  searchOnSubmit: (e) => {
-    e.preventDefault();
-    console.log(e); // is there some kind of storybook method to make this appear in actions?
-  },
-  patient: {
-    id: 2,
-    hospitalNumber: 'MRN1234567',
+  user: {
+    id: 1,
     firstName: 'John',
     lastName: 'Doe',
-    dateOfBirth: new Date('1960-10-10'),
+    defaultPathwayId: 1,
+    department: 'Test department',
+    roles: [{ id: 1, name: 'test' }],
   },
 };

@@ -2,11 +2,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import Footer from './Footer';
+import Input from './Input';
 
 export default {
-  title: 'Footer',
-  component: Footer,
+  title: 'components/Input',
+  component: Input,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -14,9 +14,9 @@ export default {
       </MemoryRouter>
     ),
   ],
-} as ComponentMeta<typeof Footer>;
+} as ComponentMeta<typeof Input>;
 
-const Template: ComponentStory<typeof Footer> = (args) => <Footer { ...args } />;
+const Template: ComponentStory<typeof Input> = (args) => <Input { ...args } />;
 
 export const Default = Template.bind({});
-Default.args = { name: 'John Smith' };
+Default.args = { type: 'text' };

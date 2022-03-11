@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
 import './patientlist.css';
-
+import { Table } from 'nhsuk-react-components';
 /**
  * PatientListUpdateDataFn
  *
@@ -40,19 +40,21 @@ const PatientList = (
 ): JSX.Element => (
   <div>
     <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
-    <table className="table">
-      <thead>
-        <tr style={ { border: 'none' } }>
-          <th className="d-table-cell">Most recent stage</th>
-          <th className="d-table-cell">Name</th>
-          <th className="d-none d-md-table-cell">Hospital number</th>
-          <th className="d-none d-lg-table-cell">Date of birth</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table responsive>
+      <Table.Head>
+        <Table.Row>
+          <Table.Cell>Name</Table.Cell>
+          <Table.Cell>Patient number</Table.Cell>
+          <Table.Cell>Date of birth</Table.Cell>
+          <Table.Cell>Most recent stage</Table.Cell>
+          <Table.Cell>Last updated</Table.Cell>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
         { data }
-      </tbody>
-    </table>
+      </Table.Body>
+    </Table>
+    <br />
     <ReactPaginate
       previousLabel="previous"
       nextLabel="next"
@@ -63,13 +65,14 @@ const PatientList = (
       pageRangeDisplayed={ 5 }
       onPageChange={ updateData }
       containerClassName="pagination justify-content-center"
-      activeClassName="active"
+      activeClassName="bkcolour-nhs-blue"
       pageClassName="page-item"
       previousClassName="page-item"
       nextClassName="page-item"
-      previousLinkClassName="page-link"
-      nextLinkClassName="page-link"
-      pageLinkClassName="page-link"
+      previousLinkClassName="colour-nhs-blue page-link"
+      nextLinkClassName="page-link colour-nhs-blue"
+      pageLinkClassName="page-link colour-nhs-blue"
+      activeLinkClassName="bkcolour-nhs-blue text-white"
     />
   </div>
 );
