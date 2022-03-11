@@ -43,9 +43,9 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
-                outstanding
-                underCareOf
-                includeDischarged={ false }
+                outstanding={ false }
+                underCareOf={ false }
+                includeDischarged
                 patientOnClick={ setPatient }
               />
             </TabPanel>
