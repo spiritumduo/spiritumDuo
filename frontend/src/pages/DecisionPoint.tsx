@@ -569,6 +569,7 @@ const DecisionPointPage = (
             <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
               <Row>
                 <Col>
+                  <h5>Tests</h5>
                   {
                     testOptions.map((field, index) => (
                       <div className="form-check" key={ `ms-check-${field.id}` }>
@@ -581,6 +582,7 @@ const DecisionPointPage = (
                   }
                 </Col>
                 <Col>
+                  <h5>Internal Referrals</h5>
                   {
                     referNoDischargeOptions.map((field, index) => (
                       <div className="form-check" key={ `ms-check-${field.id}` }>
@@ -593,6 +595,7 @@ const DecisionPointPage = (
                   }
                 </Col>
                 <Col>
+                  <h5>External Referrals</h5>
                   {
                     referAndDischargeOptions.map((field, index) => (
                       <div className="form-check" key={ `ms-check-${field.id}` }>
