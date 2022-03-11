@@ -1,4 +1,5 @@
 import DecisionPointPage from 'pages/DecisionPoint';
+import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -30,7 +31,7 @@ const ModalPatient = ({ patient, closeCallback }: ModalPatientProps) => (
           />
         </TabPanel>
         <TabPanel>
-          test history
+          <PreviousDecisionPoints hospitalNumber={ patient.hospitalNumber } />
         </TabPanel>
         <TabPanel>
           test message
