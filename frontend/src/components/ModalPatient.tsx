@@ -20,7 +20,7 @@ const ModalPatient = ({ patient, closeCallback }: ModalPatientProps) => (
       <Tabs>
         <TabList>
           <Tab>New Decision</Tab>
-          <Tab>History</Tab>
+          <Tab>Previous Decisions</Tab>
           <Tab disabled>Messages</Tab>
           <Tab disabled>Notes</Tab>
         </TabList>
