@@ -13,7 +13,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
-    "react/jsx-props-no-spreading": ["off", {
+    "react/jsx-props-no-spreading": ["error", {
       "html": "ignore",
       "exceptions": ["Input", "Select", "Textarea", "Checkboxes"]
     }],

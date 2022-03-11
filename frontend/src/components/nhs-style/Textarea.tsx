@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { forwardRef, HTMLProps } from 'react';
 import classNames from 'classnames';
 import FormGroup, { FormElementProps } from './FormGroup';
