@@ -45,7 +45,7 @@ server {
 
     location ^~ /app/ {
         alias /var/www/app/;
-        try_files $uri $uri/ /app/index.html ;
+        try_files $uri $uri/ /app/index.html;
     }
 
     location /app {
