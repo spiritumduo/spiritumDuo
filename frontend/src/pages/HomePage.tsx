@@ -30,7 +30,6 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
           </TabList>
           <div>
             <TabPanel forceRender>
-              test1
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
@@ -40,7 +39,6 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               />
             </TabPanel>
             <TabPanel forceRender>
-              test2
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
