@@ -128,3 +128,6 @@ nginx/default.conf
 
 # Developer docker-compose
 docker-compose.dev.yml
+
+# Prod docker-compose
+docker-compose.yml
