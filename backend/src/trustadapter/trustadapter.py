@@ -24,6 +24,7 @@ class TestResultRequest_IE:
     added_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
     description: str = None
+    hospital_number: str = None
 
 @dataclass
 class TestResult_IE:
@@ -227,6 +228,8 @@ class PseudoTrustAdapter(TrustAdapter):
             params['updatedAt'] = testResult.updated_at.isoformat()
         if testResult.description:
             params['description'] = testResult.description
+        if testResult.hospital_number:
+            params['hospitalNumber'] = testResult.hospital_number
 
         testResultRecord=await httpRequest("post", f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult', json=params, cookies={"SDSESSION": auth_token})
         if not testResultRecord:
