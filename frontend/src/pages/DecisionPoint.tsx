@@ -503,12 +503,12 @@ const DecisionPointPage = (
               ))
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
-            <Row>
-              <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
-                <Col>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
+              <Row xs={ 2 } sm={ 12 }>
+                <Col xs={ 3 }>
                   Decision:
                 </Col>
-                <Col>
+                <Col xs={ 5 }>
                   <Select
                     className="d-inline-block float-left mx-2"
                     id="decisionType"
@@ -519,10 +519,11 @@ const DecisionPointPage = (
                     { decisionSelectOptions }
                   </Select>
                 </Col>
-                <Col>
+                <Col xs={ 4 } />
+                <Col xs={ 3 }>
                   Under care of:
                 </Col>
-                <Col>
+                <Col xs={ 5 }>
                   <Select
                     className="d-inline-block float-left mx-2"
                     disabled
@@ -536,8 +537,8 @@ const DecisionPointPage = (
                     }
                   </Select>
                 </Col>
-              </Fieldset>
-            </Row>
+              </Row>
+            </Fieldset>
             <hr />
             <PreviousTestResultsElement data={ data } />
             <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
