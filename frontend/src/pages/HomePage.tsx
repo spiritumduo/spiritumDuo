@@ -29,17 +29,18 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
             <Tab>All patients</Tab>
           </TabList>
           <div>
-            <TabPanel>
+            <TabPanel forceRender>
+              test1
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
                 outstanding
                 underCareOf
-                includeDischarged={ false }
                 patientOnClick={ setPatient }
               />
             </TabPanel>
-            <TabPanel>
+            <TabPanel forceRender>
+              test2
               <WrappedPatientList
                 pathwayId={ pathwayId.toString() }
                 patientsToDisplay={ patientsPerPage }
