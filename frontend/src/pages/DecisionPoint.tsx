@@ -257,7 +257,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
       <Col sm={ 11 } xl={ 3 }>
         <p className="text-left">
           {result.milestoneName}: <br />
-          {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString()}`}
+          {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
         </p>
       </Col>
       <Col sm={ 10 } xl={ 7 } id={ result.elementId }>
