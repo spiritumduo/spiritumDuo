@@ -1,10 +1,10 @@
-from sqlalchemy import desc
-from models import User
+from models import Patient
 from SdTypes import MilestoneState
+from dataloaders import OnPathwayByIdLoader, PatientByIdLoader
 from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
 from trustadapter.trustadapter import TrustAdapter, TestResultRequest_IE
-from models import Milestone, MilestoneType
+from models import Milestone
 
 @inject
 async def ImportMilestone(
@@ -28,11 +28,15 @@ async def ImportMilestone(
     Returns:
         Milestone: newly created milestone object
     """
+    patient_id=(await OnPathwayByIdLoader.load_from_id(context=context, id=int(on_pathway_id))).patient_id
+    patient:Patient = await PatientByIdLoader.load_from_id(dbontext=context, id=int(patient_id))
+
     testResult=await trust_adapter.create_test_result(
         TestResultRequest_IE(
             type_id=milestone_type_id,
             description=description,
             current_state=current_state,
+            hospital_number=patient.hospital_number
         ), auth_token=context['request'].cookies['SDSESSION']
     )
     

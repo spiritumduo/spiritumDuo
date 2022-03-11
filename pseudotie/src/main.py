@@ -17,7 +17,7 @@ from starlette.middleware.authentication import AuthenticationMiddleware
 from models import TestResult
 from typing import List, Optional, Union
 from RecordTypes import TestResultState
-from placeholder_data import TEST_RESULT_DATA
+from placeholder_data import TEST_RESULT_DATA, TEST_RESULT_DATA_SERIES
 import httpx
 
 log = logging.getLogger("uvicorn")
@@ -155,19 +155,26 @@ async def proc_wrapper(func):
     loop = asyncio.get_event_loop()
     loop.create_task(func)
 
-async def updateTestResultAtRandomTime(testResultId:int=None):
+async def updateTestResultAtRandomTime(testResultId:int=None, series_id:str=None):
     # delay=randint(30, 60)
     delay=0
     await asyncio.sleep(delay)
     testResult=await TestResult.get(testResultId)
 
-    # Generate test result description
-    description=""
-    if testResult.type_reference_name in TEST_RESULT_DATA:
-        description=TEST_RESULT_DATA[testResult.type_reference_name]['result']
-    else:
-        log.warn(f"TYPE REFERENCE '{testResult.type_reference_name} HAS NO DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
-        description="Vitae itaque illo ut. Non voluptatum aut qui porro dolores autem saepe."
+    # get data from last two digits of hospital number
+    description=None
+    try:
+        series_id=int(series_id)
+        description=TEST_RESULT_DATA_SERIES[series_id - 1][testResult.type_reference_name]['result']
+    except:
+        log.warn(f"Error when pulling data from data series, falling back to milestone_demo_data.json")
+
+    if description is None:
+        if testResult.type_reference_name in TEST_RESULT_DATA:
+            description=TEST_RESULT_DATA[testResult.type_reference_name]['result']
+        else:
+            log.warn(f"TYPE REFERENCE '{testResult.type_reference_name} HAS NO DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
+            description="Vitae itaque illo ut. Non voluptatum aut qui porro dolores autem saepe." 
     
     await testResult.update(
         current_state=TestResultState.COMPLETED,
@@ -195,6 +202,7 @@ class TestResultRequest(BaseModel):
     addedAt: Optional[datetime]
     updatedAt: Optional[datetime]
     description: Optional[str]
+    hospitalNumber: Optional[str]
 
 @app.post("/testresult")
 @needs_authentication
@@ -204,7 +212,7 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
     :return: JSONResponse containing ID of created test result or error data
     """
     data={
-        "type_reference_name": input.typeReferenceName
+        "type_reference_name": input.typeReferenceName,
     }
     if input.currentState is not None:
         data["current_state"] = input.currentState
@@ -215,7 +223,12 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
 
     if input.description is None and (input.currentState is not None and input.currentState=="COMPLETED"):
         if input.typeReferenceName in TEST_RESULT_DATA:
-            data["description"]=TEST_RESULT_DATA[input.typeReferenceName]['result']
+            try:
+                series_id=int(input.hospitalNumber[-2:])
+                data["description"]=TEST_RESULT_DATA_SERIES[series_id - 1][input.typeReferenceName]['result']
+            except Exception as e:
+                log.warn(f"Error when pulling data from data series, falling back to milestone_demo_data.json\nERROR: {e}")
+                data["description"]=TEST_RESULT_DATA[input.typeReferenceName]['result']
         else:
             log.warn(f"TYPE REFERENCE '{input.typeReferenceName} HAS NO DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
             data["description"]="Vitae itaque illo ut. Non voluptatum aut qui porro dolores autem saepe."
@@ -228,7 +241,7 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
 
     bg=BackgroundTasks()
     if "description" not in data:
-        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(testResultId=testResult.id))
+        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(testResultId=testResult.id, series_id=input.hospitalNumber[-2:]))
 
     return JSONResponse({
         "id":testResult.id,

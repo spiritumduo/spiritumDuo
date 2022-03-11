@@ -1,4 +1,5 @@
-from models import DecisionPoint, Milestone, OnPathway, MilestoneType
+from dataloaders import OnPathwayByIdLoader, PatientByIdLoader
+from models import DecisionPoint, Milestone, OnPathway, MilestoneType, Patient
 from gettext import gettext as _
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -57,13 +58,15 @@ async def CreateDecisionPoint(
     _decisionPoint:DecisionPoint=await DecisionPoint.create(
         **decision_point_details
     )
-
+    patient_id=(await OnPathwayByIdLoader.load_from_id(context=context, id=int(on_pathway_id))).patient_id
+    patient:Patient = await PatientByIdLoader.load_from_id(context=context, id=int(patient_id))
     if milestone_requests is not None:
         for requestInput in milestone_requests:
             testResultRequest=TestResultRequest_IE()
             testResultRequest.added_at=datetime.now()
             testResultRequest.updated_at=datetime.now()
             testResultRequest.type_id=requestInput['milestoneTypeId']
+            testResultRequest.hospital_number=patient.hospital_number
 
             # TODO: batch these
             if "currentState" in requestInput:

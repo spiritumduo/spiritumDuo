@@ -152,6 +152,7 @@ async def CreatePatient(
         test_result:TestResult_IE=await trust_adapter.create_test_result(TestResultRequest_IE(
             type_id=milestone["milestoneTypeId"],
             current_state=milestone["currentState"],
+            hospital_number=hospital_number
         ), auth_token=auth_token)
         await Milestone.create(
             on_pathway_id=int(_pathwayInstance.id),

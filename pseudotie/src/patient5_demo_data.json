@@ -1,0 +1,98 @@
+{
+    "Referral letter (record artifact)": {
+        "name": "Referral letter",
+        "result": "Previously treatment for lung cancer, relapse in left upper lobe, see CT result."
+    },
+    "Plain chest X-ray (procedure)": {
+        "name": "Chest X-ray",
+        "result": "Dense left upper lobe consolidation with volume loss is concerning, no appreciable mass on plain film. Right lung and pleural space appear clear."
+    },    
+    "Computed tomography of chest (procedure)": {
+        "name": "CT chest",
+        "result": "1. Features suggest significant malignant relapse in the left upper lobe; difficult to measure accurately, but there is early occlusion of that lobes bronchus with lobulated heterogeneous malignant tissue arising from this, and invading the left upper mediastinal border, with a little narrowing of the distal pulmonary trunk and proximal upper lobe pulmonary artery, and small volume adjacent lymph nodes. Measures approximately 97 x 43 mm in axial dimensions. Some distal obstructive collapse identified, but there is a little tissue crossing the major fissure into the apical segment of the left lower lobe, although this was present previously.\n2. Significant N2 adenopathy, up to 8 mm right paratracheal and 19 mm at the subcarinal station. No supraclavicular or cephalic adenopathy is detected. Hazy 14 mm hypodensity in hepatic segment 5 is potentially metastatic, but probably long-standing on balance. 19 mm left adrenal nodule is also long-standing and unchanged. No convincing lymphangitis or malignant effusion, no pulmonary or destructive bone metastases identified.\n3. Allowing for nonprepared bowel technique, there is a little faecal loading, but no new or significant pathology is detected otherwise.\nFeatures suggests significant malignant relapse/recurrence in the left upper lobe, provisional staging T4 N2 Mx (equivocal liver lesion)."
+    },
+    "Positron emission tomography with computed tomography (procedure)": {
+        "name": "PET-CT",
+        "result": "There is a 65 mass in the left upper lobe which is intensely avid (SUV max 15.0). This is occluding the left upper lobe bronchus with associated complete collapse of the left upper lobe. THe mass is involving the left pulmonary artery. There is a separate pleural based 21 mm module in the medical left lung apex (SUV max 19.5).\nThere are avid mediastinal nodes, for example there is a 21 mm avid subcarinal node (maximum SUV 17.3) and an adjacent avid node just inferior to the left main bronchus.\nFocal uptake in the right lung apex does nto correlate with corresponding abnormality on the CT component and liekly refelcts misreigstrered activity from a 9 mm node adjacent to the right brachiocephalic vein (SUV max 7.1). There are further avid right paratrachael nodes which, again, are misregistered (SUV max 10.1).\nAllowing for significant misregistration, no abnormal uptake is seen in the liver. The left adrenal nodule is not avid and is unchanged, in keeping with an adenoma.\nNo new finding in the abdomen, pelvis, skeletal system of brain.\nConclusio\nAvid T4 left upper lobe tumour with N3 nodal disease and pleural-based metastasis in the left lung apex."
+    },
+    "Computed tomography of head with contrast (procedure)": {
+        "name": "CT head - contrast",
+        "result": "No intracranial changes seen."
+    },
+    "Magnetic resonance imaging of head (procedure)": {
+        "name": "MRI head",
+        "result": "No intracranial changes seen."
+    },
+    "Measurement of respiratory function (procedure)": {
+        "name": "Lung function tests",
+        "result": "Grossly normal spirometry (but low MEF) and mildly reduced gas transfers. FEV1 2.31 (97%), FVC 3.70 (114%), FEV1/FVC 63, MEF 1.11 (45%), TLCO 4.87 (66%) and KCO 0.99 (85%)."
+    },
+    "Echocardiography (procedure)": {
+        "name": "ECHO",
+        "result": "Very mild movement abnormality in apex. Ejection fracture 55-65%."
+    },
+    "Biopsy of thorax using computed tomography guidance (procedure)": {
+        "name": "CT guided biopsy thorax",
+        "result": "CT guided biopsy was cancelled after discussion with cancer lead. EBUS would be recommended for mediastinal nodal sampling."
+    },
+    "Pathology report (record artifact)": {
+        "name": "Pathology",
+        "result": "Haemorrhagic fragments showing evidence of lymph node sampling. In addition are micro-biopsies of non-small cell carcinoma associated with stromal fragments. The carcinoma shows a hint of intracellular bridge formation indicative of squamous cell carcinoma. Confirmatory immunohistochemistry is in progress.\nThe carcinoma cells express p40. Staining for TTF-1 and CK7 is negative. This immunophenotype is entirely consistent with squamous cell carcinoma. Mutational analysis for PD-L1 will be requested. Please await a supplementary report."
+    },
+    "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
+        "name": "EBUS",
+        "result": "EBUS undertaken with sampling of stations 7 and 11L. Pathology: non-small cell carcinoma"
+    },
+    "Electrocardiogram analysis (qualifier value)": {
+        "name": "ECG",
+        "result": "Normal sinus rhythm."
+    },
+    "Prehabilitation (regime/therapy)": {
+        "name": "Prehad referral",
+        "result": "Many thanks for referring this patient to physiotherapy for prehab. We have now accessed the patient and have given them an exercise routine to help build up their muscle strength."
+    },
+    "Patient referral to dietitian (procedure)": {
+        "name": "Dietician referral",
+        "result": "Many thanks for referring this patient to us for a dietetic assessment. We have now assessed the patient and have provided them with some high energy drinks."
+    },
+    "Thoracoscopy (procedure)": {
+        "name": "Thoracoscopy",
+        "result": "We have cancelled the thoracoscopy. On reviewing the radiology, there is no pleural fluid or pleural involvement."
+    },
+    "Bronchoscopy (procedure)": {
+        "name": "Bronchoscopy",
+        "result": "We have cancelled the bronchoscopy. We would recommend an EBUS instead."
+    },
+    "Thoracentesis (procedure)": {
+        "name": "Pleural tap",
+        "result": "Having looked at the imaging for this patient, there appears to be no evidence of pleural fluid. Hence the pleural tap was cancelled."
+    },
+    "Cardiopulmonary exercise test (procedure)": {
+        "name": "CPET",
+        "result": "Results within acceptable limits."
+    },
+    "Referral to smoking cessation service (procedure)": {
+        "name": "Smoking cessation referral",
+        "result": "Many thanks for your referral. We spoke to the patient over the phone and they tell us that they quit in 2008. Hence we will undertake no further input."
+    },
+    "Blood test (procedure)": {
+        "name": "Bloods",
+        "result": "Mild chronic kidney disease only."
+    },
+    "Assessment by multidisciplinary team (procedure)": {
+        "name": "Add to MDT",
+        "result": "MDT recommends referral to oncology for chemotherapy and consideration of immunotherapy."
+    },
+    "Appointment (record artifact)": {
+        "name": "Book clinic appointment",
+        "result": "Patient is now in clinic with you."
+    },
+    "Clinical history": { 
+        "name": "Clinical history", 
+        "result": "Left upper lobe collapse secondary to likely lung cancer" 
+    },
+    "Comorbidities": { 
+        "name": "Comorbidities", 
+        "result": "Previous T4-N0-M0 squamous carcinoma of the lung treated with CHART and chemotherapy 2008. Atrial flutter and on apixaban." 
+    }
+}

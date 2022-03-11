@@ -14,6 +14,7 @@ from trustadapter.trustadapter import Patient_IE, TestResult_IE, TestResultReque
 from config import config
 from base64 import b64encode
 from typing import Dict, List
+from bcrypt import hashpw, gensalt
 
 faker=Faker()
 app.container=SDContainer()
@@ -36,6 +37,22 @@ _CONTEXT={
     "db": db,
     "request":RequestPlaceholder()
 }
+
+CLINIC_HISTORY=[
+    "Likely right upper lobe lung cancer.",
+    "Proximal large lung cancer. Likely palliative.",
+    "Left lower lobe mass, likely primary lung cancer. Stopped smoking 5 years ago",
+    "Metastatic disease of likely lung origin.",
+    "Left upper lobe collapse secondary to likely lung cancer",
+]
+
+COMORBIDITIES=[
+    "Chronic obstructive pulmonary disease, osteoporosis and a previous cardioversion 2 years ago for atrial fibrillation.",
+    "Hartmann's procedure for lower bowel cancer. Hypertension and type 2 diabetes",
+    "Glaucoma, hysterectomy and fibromyalgia.",
+    "Current smoker (50 pack years) and COPD.",
+    "Previous T4-N0-M0 squamous carcinoma of the lung treated with CHART and chemotherapy 2008. Atrial flutter and on apixaban."
+]
 
 signer=TimestampSigner(config['SESSION_SECRET_KEY'])
 SESSION_COOKIE=signer.sign(b64encode(str(getrandbits(64)).encode("utf-8"))).decode("utf-8")
@@ -208,9 +225,10 @@ async def insert_demo_data():
         )
         print(f"pathway id {sd_pathway.id} name {sd_pathway.name}")
 
-        sd_user:User=await CreateUser(
+        sd_user:User=await User.create(
+            id = int(i),
             username = f"user{i}",
-            password = f"22password{i}",
+            password = hashpw(f"22password{i}".encode('utf-8'), gensalt()).decode('utf-8'),
             first_name = "Demo",
             last_name = f"User {i}",
             department = "Demo user",
@@ -225,17 +243,15 @@ async def insert_demo_data():
                 padded_user_id = "0" + str(padded_user_id)
 
         for i in range(1, NUMBER_OF_PATIENTS_PER_USER+1):
-            """
-            fMRNIDxxID
-            fNHSIDxxxxID
-            """
-            
-            padded_patient_id = i
-            if len(str(padded_patient_id)) == 1:
-                padded_patient_id = "0" + str(padded_patient_id)
+            padded_patient_index = i
+            if len(str(padded_patient_index)) == 1:
+                padded_patient_index = "0" + str(padded_patient_index)
 
-            hospital_number = "fMRN"+str(padded_user_id) + str(randint(10, 99)) + str(padded_patient_id)
-            national_number = "fNHS"+str(padded_user_id) + str(randint(10000, 99909)) + str(padded_patient_id)
+            # hospital_number = "fMRN"+str(padded_user_id) + str(randint(10, 99)) + str(padded_patient_index)
+            # national_number = "fNHS"+str(padded_user_id) + str(randint(10000, 99909)) + str(padded_patient_index)
+
+            hospital_number = "fMRN"+str(randint(1000, 9999)) + str(padded_patient_index)
+            national_number = "fNHS"+str(randint(100000, 999999)) + str(padded_patient_index)
 
             date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
 
@@ -264,7 +280,8 @@ async def insert_demo_data():
             tie_testresult_ref:TestResult_IE = await PseudoTrustAdapter().create_test_result(
                 testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["referral_letter"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ),
                 auth_token=SESSION_COOKIE
             )
@@ -278,7 +295,8 @@ async def insert_demo_data():
             tie_testresult_cxr:TestResult_IE = await PseudoTrustAdapter().create_test_result(
                 testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["chest_xray"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), 
                 auth_token=SESSION_COOKIE
             )
@@ -300,8 +318,8 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.TRIAGE.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==sd_milestone_ref.id).gino.status()
@@ -309,7 +327,8 @@ async def insert_demo_data():
 
                 tie_testresult_ct:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["ct_chest"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
@@ -326,15 +345,16 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.CLINIC.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_ct.id).gino.status()
 
                 tie_testresult_bronch:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = selectable_milestone_types["bronchoscopy"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
@@ -352,15 +372,16 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.AD_HOC.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_bronch.id).gino.status()
 
                 tie_testresult_mdt:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = general_milestone_types["mdt"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
@@ -377,15 +398,16 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.MDT.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_mdt.id).gino.status()
 
                 tie_testresult_cpet:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
                     type_id = selectable_milestone_types["cpet"].id,
-                    current_state = MilestoneState.COMPLETED
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
                 ), auth_token = SESSION_COOKIE)
                 await Milestone.create(
                     on_pathway_id=sd_onpathway.id,
