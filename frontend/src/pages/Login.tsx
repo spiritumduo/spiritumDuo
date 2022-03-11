@@ -6,7 +6,8 @@ import * as yup from 'yup';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { AuthContext, PathwayContext } from 'app/context';
-import { Button, Container, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-react-components';
+import { Button, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-react-components';
+import { Container } from 'react-bootstrap';
 import { Input } from 'components/nhs-style';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -92,7 +93,7 @@ const LoginPage = (): JSX.Element => {
 
   return (
     <>
-      <Container className="py-5 h-100">
+      <Container style={ { maxWidth: '750px' } } className="py-5">
         <Form onSubmit={ handleSubmit( () => {
           doLogin(getValues());
         } ) }
