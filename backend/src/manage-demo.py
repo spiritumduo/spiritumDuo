@@ -38,6 +38,22 @@ _CONTEXT={
     "request":RequestPlaceholder()
 }
 
+CLINIC_HISTORY=[
+    "Likely right upper lobe lung cancer.",
+    "Proximal large lung cancer. Likely palliative.",
+    "Left lower lobe mass, likely primary lung cancer. Stopped smoking 5 years ago",
+    "Metastatic disease of likely lung origin.",
+    "Left upper lobe collapse secondary to likely lung cancer",
+]
+
+COMORBIDITIES=[
+    "Chronic obstructive pulmonary disease, osteoporosis and a previous cardioversion 2 years ago for atrial fibrillation.",
+    "Hartmann's procedure for lower bowel cancer. Hypertension and type 2 diabetes",
+    "Glaucoma, hysterectomy and fibromyalgia.",
+    "Current smoker (50 pack years) and COPD.",
+    "Previous T4-N0-M0 squamous carcinoma of the lung treated with CHART and chemotherapy 2008. Atrial flutter and on apixaban."
+]
+
 signer=TimestampSigner(config['SESSION_SECRET_KEY'])
 SESSION_COOKIE=signer.sign(b64encode(str(getrandbits(64)).encode("utf-8"))).decode("utf-8")
 _CONTEXT['request'].cookies={
@@ -302,8 +318,8 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.TRIAGE.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==sd_milestone_ref.id).gino.status()
@@ -329,8 +345,8 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.CLINIC.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_ct.id).gino.status()
@@ -356,8 +372,8 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.AD_HOC.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_bronch.id).gino.status()
@@ -382,8 +398,8 @@ async def insert_demo_data():
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.MDT.value,
-                    clinic_history = "We need to get fake data for this",
-                    comorbidities = "and fake data for this too",
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
                 )
 
                 await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_mdt.id).gino.status()
