@@ -1,90 +1,98 @@
 {
     "Referral letter (record artifact)": {
         "name": "Referral letter",
-        "result": "Patient three test stuff"
+        "result": "Incidental finding of lung mass on CT in the emergency department, not resolving on follow up scan, 2 week wait referral advised."
     },
     "Plain chest X-ray (procedure)": {
         "name": "Chest X-ray",
-        "result": "Patient three test stuff"
+        "result": "Left lower zone opacification. Would advise a CT thorax."
     },    
     "Computed tomography of chest (procedure)": {
         "name": "CT chest",
-        "result": "Patient three test stuff"
+        "result": "1. The lesion in the apical segment of the left lower lobe is very difficult to measure accurately with volumetric analysis, due to its morphology. Current volumetric analysis is approximately 1987 mm3 compared with 2075 mm3 3 months previously. On axial images, it is fairly stable at 22 mm long axis. The degree of surrounding architectural distortion persists, but is also fairly stable.\n2. Allowing for non-contrast technique, no significant adenopathy or other pulmonary pathology has developed. Stable mediastinal appearances.\n3. Limited non-contrast subphrenic and skeletal appearances are unchanged also."
     },
     "Positron emission tomography with computed tomography (procedure)": {
         "name": "PET-CT",
-        "result": "Patient three test stuff"
+        "result": "There is focal avid uptake (SUV max 7.4) around the roots of the most posterior right lower tooth with a suggestion of perapical lucency on the low-dose CT component. Appearances most likely represent a periapical inflammatory change / infection.\nAn 8 mm short axis right submandibular lymph node is a little larger than on the previous study and demonstrates new modearte uptake (SUV max 3.9). This is equivocal, but in view of the suspeted dental patholgoy just above this, it is most likely reactive. \nThe irrefular elongated lesion in the left lower lobe apical segment measures 23 mm (previously measured at 18 mm) and remains midly avid (SUV max 2.7, previously 3.7).\nNo new abnormal uptake seen elsewhere"
     },
     "Computed tomography of head with contrast (procedure)": {
         "name": "CT head - contrast",
-        "result": "Patient three test stuff"
+        "result": "No intracranial changes seen."
     },
     "Magnetic resonance imaging of head (procedure)": {
         "name": "MRI head",
-        "result": "Patient three test stuff"
+        "result": "No intracranial changes seen."
     },
     "Measurement of respiratory function (procedure)": {
         "name": "Lung function tests",
-        "result": "Patient three test stuff"
+        "result": "Normal spirometry but reduced gas transfer. FEV1 1.75(93%) FVC 2.24 (98%) FEV1/FVC RATIO 78% TLco 3.44 (51%) Kco 0.91 (62%)."
     },
     "Echocardiography (procedure)": {
         "name": "ECHO",
-        "result": "Patient three test stuff"
+        "result": "Normal left ventricular cavity size and good systolic function. Visual ejection fracture = 55-65%."
     },
     "Biopsy of thorax using computed tomography guidance (procedure)": {
         "name": "CT guided biopsy thorax",
-        "result": "Patient three test stuff"
+        "result": "Written consent. Left posterior intercostal. 10 mL Lidocaine 1%. There was some difficulty with reproducing held respiration. 3 passes with an 18 gauge cutting needle yielded one core. Small immediate pneumothorax. Pathology: adenocarcinoma."
     },
     "Pathology report (record artifact)": {
         "name": "Pathology",
-        "result": "Patient three test stuff"
+        "result": "This lung biopsy is diffusely infiltrated by an adenocarcinoma with acinar and micropapillary growth patterns, with at least focal invasion although a proportion may be intra-alveolar (non-mucinous). Immunohistochemistry will follow to help confirm a primary lung origin although this appears likely given the radiological appearances. The sample is also being sent for EGFR, ALK, ROS1 and PDL1 analysis and a further report will then be issued."
     },
     "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
         "name": "EBUS",
-        "result": "Patient three test stuff"
+        "result": "We have reviewed the images and there is no mass accessible via EBUS. We would recommend a CT guided biopsy instead."
     },
     "Electrocardiogram analysis (qualifier value)": {
         "name": "ECG",
-        "result": "Patient three test stuff"
+        "result": "Normal sinus rhythm."
     },
     "Prehabilitation (regime/therapy)": {
         "name": "Prehad referral",
-        "result": "Patient three test stuff"
+        "result": "Many thanks for referring this patient to physiotherapy for prehab. We have now accessed the patient and have given them an exercise routine to help build up their muscle strength."
     },
     "Patient referral to dietitian (procedure)": {
         "name": "Dietician referral",
-        "result": "Patient three test stuff"
+        "result": "Many thanks for referring this patient to us for a dietetic assessment. We have now assessed the patient and have provided them with some high energy drinks."
     },
     "Thoracoscopy (procedure)": {
         "name": "Thoracoscopy",
-        "result": "Patient three test stuff"
+        "result": "We have looked at the CT for this patient. There is no pleural involvement and so a thoracoscopy would not be indicated. This request has been cancelled."
     },
     "Bronchoscopy (procedure)": {
         "name": "Bronchoscopy",
-        "result": "Patient three test stuff"
+        "result": "We have looked at the CT for this patient. There is no nodular disease that would be accessible via transbronchial biopsy. Hence, bronchoscopy is not indicated and we have cancelled this request"
     },
     "Thoracentesis (procedure)": {
         "name": "Pleural tap",
-        "result": "Patient three test stuff"
+        "result": "We have looked at the CT for this patient. There is no pleural involvement and no pleural fluid. Hence, we have cancelled this request."
     },
     "Cardiopulmonary exercise test (procedure)": {
         "name": "CPET",
-        "result": "Patient three test stuff"
+        "result": "Satisfactory results."
     },
     "Referral to smoking cessation service (procedure)": {
         "name": "Smoking cessation referral",
-        "result": "Patient three test stuff"
+        "result": "Many thanks for a referral for this patient. They inform us that they are still smoking 1 cigarette a day. We will work with them to help them quit."
     },
     "Blood test (procedure)": {
         "name": "Bloods",
-        "result": "Patient three test stuff"
+        "result": "Full blood count, urea & electrolytes and liver function tests were normal."
     },
     "Assessment by multidisciplinary team (procedure)": {
         "name": "Add to MDT",
-        "result": "Patient three test stuff"
+        "result": "MDT recommend Stereotactic ablative radiotherapy (SABR)."
     },
     "Appointment (record artifact)": {
         "name": "Book clinic appointment",
-        "result": "Patient three test stuff"
+        "result": "Patient now with you in clinic."
+    },
+    "Clinical history": { 
+        "name": "Clinical history", 
+        "result": "Left lower lobe mass, likely primary lung cancer. Stopped smoking 5 years ago" 
+    },
+    "Comorbidities": { 
+        "name": "Comorbidities", 
+        "result": "Glaucoma, hysterectomy and fibromyalgia." 
     }
 }

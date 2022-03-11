@@ -1,90 +1,98 @@
 {
     "Referral letter (record artifact)": {
         "name": "Referral letter",
-        "result": "Patient four test stuff"
+        "result": "Previously fit and well. Chronic smoker (50 pack years). Over the 6 months has become increasingly short of breath and lost 2 stone in weight. Also noticed several firm masses have appeared on their torso. On examination today cachexic and shortness of breath walking into clinic. Heart rate 91, saturations 94% on air, BP 129/85. Diffuse wheeze. 2 x 3-4cm tethered firm masses to central chest wall and right abdomen. Living alone, not currently working. History of mild COPD - previously controlled with PRN salbutamol only."
     },
     "Plain chest X-ray (procedure)": {
         "name": "Chest X-ray",
-        "result": "Patient four test stuff"
+        "result": "Large mass in medial right lower zone. In light of the history of new abdominal skin lesions, this raises the suspicion of metastatic cancer. An urgent CT is advised."
     },    
     "Computed tomography of chest (procedure)": {
         "name": "CT chest",
-        "result": "Patient four test stuff"
+        "result": "Due to the history of abdominal involvement, the CT was extended to include the abdomen and pelvis.\nThorax: Large mass in the left axilla, about 84 mm. Additional subcutaneous masses in the axilla, overlying medial end of left clavicle, lower sternum and right axilla. Within the chest, a lobulated mass, 45 mm diameter, in the right lower lobe, contiguous with bulky right hilar lymphadenopathy stenosing the right lower lobe bronchus. Small peripheral area of atelectasis right lung base. Extensive emphysema in the upper lobes.\nAbdomen and pelvis: Multiple retroperitoneal masses tending to surround the kidneys, contributing to moderate right hydronephrosis. No primary renal tumour. Bilateral adrenal masses. Tumour masses in midline anterior to the bladder, involving the anterior abdominal wall and on the right posterior aspect of the bladder. Bulky right common iliac nodes. Additional substantial soft tissue masses in the subcutaneous regions of the right flank, left flank, and overlying both buttocks. Soft tissue nodules in the left inguinal canal. Liver, biliary tract and pancreas normal. No primary tumour arising from the gut.\nSkeletal review: No skeletal involvement or fracture.\nConclusion: Widespread intrathoracic and intra-abdominal mostly retroperitoneal tumour, with multiple subcutaneous tumour nodules. Potential primary sites are lung, from the right lower lobe. This distribution of disease can also be found in metastatic melanoma."
     },
     "Positron emission tomography with computed tomography (procedure)": {
         "name": "PET-CT",
-        "result": "Patient four test stuff"
+        "result": "PET-CT shows a large 47 mm avid (SUV max 14.8) right lower lobe mass and widespread metastatic disease (SUV range 1.6-9.3). There is significant stenosis of the right lower lobe bronchus. "
     },
     "Computed tomography of head with contrast (procedure)": {
         "name": "CT head - contrast",
-        "result": "Patient four test stuff"
+        "result": "Several small subcutaneous lesions seen but no brain parenchymal involvement."
     },
     "Magnetic resonance imaging of head (procedure)": {
         "name": "MRI head",
-        "result": "Patient four test stuff"
+        "result": "Several small subcutaneous lesions seen but no brain parenchymal involvement."
     },
     "Measurement of respiratory function (procedure)": {
         "name": "Lung function tests",
-        "result": "Patient four test stuff"
+        "result": "Severe obstrutive picture with markedly reduced gas transfer. FEV1 0.90 (43% predicted), FVC 1.88 (76% predicted), FEV1/FVC ratio 48, TLCO 1.39 (20% predicted) and KCO 0.26 (17% predicted). No marked hyperinflation but bullae possible. TLC 5.43 (119% predicted), TGV 4.03 (156% predicted), RV 3.54 (194% predicted) and RV/TLC ratio 65 (164% predicted)."
     },
     "Echocardiography (procedure)": {
         "name": "ECHO",
-        "result": "Patient four test stuff"
+        "result": "Moderate systolic dysfunction, ejection fraction 40%. Mild atrial stenosis and mitral regurgitation."
     },
     "Biopsy of thorax using computed tomography guidance (procedure)": {
         "name": "CT guided biopsy thorax",
-        "result": "Patient four test stuff"
+        "result": "CT guided biopsy was cancelled after discussion with cancer lead. There are several skin lesions that would easily be accessible via fine needle aspiration."
     },
     "Pathology report (record artifact)": {
         "name": "Pathology",
-        "result": "Patient four test stuff"
+        "result": "This chest wall FNA contains a predominant population of poorly differentiated single cells, with pleomorphic, hyperchromatic nuclei, clumped irregular chromatin and scant basophilic cytoplasm. These features are in keeping with an origin from a poorly differentiated malignancy. A cell block and immunocytochemistry will be prepared to further characterise these cells."
     },
     "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
         "name": "EBUS",
-        "result": "Patient four test stuff"
+        "result": "EBUS was cancelled after discussion with cancer lead. There are several skin lesions that would easily be accessible via fine needle aspiration."
     },
     "Electrocardiogram analysis (qualifier value)": {
         "name": "ECG",
-        "result": "Patient four test stuff"
+        "result": "Mild sinus tachycardia at 102 bpm."
     },
     "Prehabilitation (regime/therapy)": {
         "name": "Prehad referral",
-        "result": "Patient four test stuff"
+        "result": "Many thanks for referring this patient to physiotherapy for prehab. We have now accessed the patient and have given them an exercise routine to help build up their muscle strength."
     },
     "Patient referral to dietitian (procedure)": {
         "name": "Dietician referral",
-        "result": "Patient four test stuff"
+        "result": "Many thanks for referring this patient to us for a dietetic assessment. We have now assessed the patient and have provided them with some high energy drinks."
     },
     "Thoracoscopy (procedure)": {
         "name": "Thoracoscopy",
-        "result": "Patient four test stuff"
+        "result": "Thoracoscopy was cancelled after discussion with cancer lead. There are several skin lesions that would easily be accessible via fine needle aspiration."
     },
     "Bronchoscopy (procedure)": {
         "name": "Bronchoscopy",
-        "result": "Patient four test stuff"
+        "result": "Bronchoscopy was cancelled after discussion with cancer lead. There are several skin lesions that would easily be accessible via fine needle aspiration."
     },
     "Thoracentesis (procedure)": {
         "name": "Pleural tap",
-        "result": "Patient four test stuff"
+        "result": "Pleural tap was cancelled after discussion with cancer lead. There are several skin lesions that would easily be accessible via fine needle aspiration."
     },
     "Cardiopulmonary exercise test (procedure)": {
         "name": "CPET",
-        "result": "Patient four test stuff"
+        "result": "Patient declined to attend for this investigation."
     },
     "Referral to smoking cessation service (procedure)": {
         "name": "Smoking cessation referral",
-        "result": "Patient four test stuff"
+        "result": "Many thanks for referring to us. We have spoken with the patient and they strong are against stopping smoking and do not wish our involvement. We will therefore discharge them from our care."
     },
     "Blood test (procedure)": {
         "name": "Bloods",
-        "result": "Patient four test stuff"
+        "result": "Stage 3B chronic kidney disease and markedly raised liver function tests. eGFR 30, ALT 80, ALP 279 and bilirubin 51."
     },
     "Assessment by multidisciplinary team (procedure)": {
         "name": "Add to MDT",
-        "result": "Patient four test stuff"
+        "result": "MDT advises chemotherapy. However, the patient has informed the lung cancer nurses that he would not want treatment. Hence, for best supportive care."
     },
     "Appointment (record artifact)": {
         "name": "Book clinic appointment",
-        "result": "Patient four test stuff"
+        "result": "The patient is now with you in clinic. You undertake a fine needle aspiration. This later shows: poorly differentiated malignancy."
+    },
+    "Clinical history": { 
+        "name": "Clinical history", 
+        "result": "Metastatic disease of likely lung origin." 
+    },
+    "Comorbidities": { 
+        "name": "Comorbidities", 
+        "result": "Current smoker (50 pack years) and COPD." 
     }
 }
