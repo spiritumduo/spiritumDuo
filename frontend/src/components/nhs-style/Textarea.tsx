@@ -4,7 +4,7 @@ import FormGroup, { FormElementProps } from './FormGroup';
 
 type TextareaProps = HTMLProps<HTMLTextAreaElement> & FormElementProps;
 
-const Textarea = forwardRef<HTMLTextAreaElement>(
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   // eslint-disable-next-line prefer-arrow-callback
   function Textarea(props: TextareaProps, ref) {
     return (
