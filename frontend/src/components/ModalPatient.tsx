@@ -12,7 +12,7 @@ interface ModalPatientProps {
 }
 
 const ModalPatient = ({ patient, closeCallback }: ModalPatientProps) => (
-  <Modal size="xl" fullscreen="md-down" show onHide={ closeCallback }>
+  <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
     <Modal.Header closeButton>
       <Modal.Title>{patient.firstName} {patient.lastName} - {patient.hospitalNumber} </Modal.Title>
     </Modal.Header>
@@ -24,19 +24,19 @@ const ModalPatient = ({ patient, closeCallback }: ModalPatientProps) => (
           <Tab disabled>Messages</Tab>
           <Tab disabled>Notes</Tab>
         </TabList>
-        <TabPanel>
+        <TabPanel forceRender>
           <DecisionPointPage
             hospitalNumber={ patient.hospitalNumber }
             decisionType={ DecisionPointType.TRIAGE }
           />
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender>
           <PreviousDecisionPoints hospitalNumber={ patient.hospitalNumber } />
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender>
           test message
         </TabPanel>
-        <TabPanel>
+        <TabPanel forceRender>
           test notes
         </TabPanel>
       </Tabs>
