@@ -25,7 +25,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
       <Container>
         <Tabs>
           <TabList>
-            <Tab>Outstanding patients</Tab>
+            <Tab>To do</Tab>
             <Tab>All patients</Tab>
           </TabList>
           <div>
