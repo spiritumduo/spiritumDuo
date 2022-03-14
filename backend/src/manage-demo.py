@@ -238,20 +238,16 @@ async def insert_demo_data():
 
         print(f"Creating user {sd_user.username}")
 
-        padded_user_id = i
-        if len(str(padded_user_id)) == 1:
-                padded_user_id = "0" + str(padded_user_id)
+        # padded_user_id = i
+        # if len(str(padded_user_id)) == 1:
+        #         padded_user_id = "0" + str(padded_user_id)
 
         for i in range(1, NUMBER_OF_PATIENTS_PER_USER+1):
-            padded_patient_index = i
-            if len(str(padded_patient_index)) == 1:
-                padded_patient_index = "0" + str(padded_patient_index)
-
             # hospital_number = "fMRN"+str(padded_user_id) + str(randint(10, 99)) + str(padded_patient_index)
             # national_number = "fNHS"+str(padded_user_id) + str(randint(10000, 99909)) + str(padded_patient_index)
 
-            hospital_number = "fMRN"+str(randint(1000, 9999)) + str(padded_patient_index)
-            national_number = "fNHS"+str(randint(100000, 999999)) + str(padded_patient_index)
+            hospital_number = "fMRN"+str(randint(10000, 99999)) + str(i)
+            national_number = "fNHS"+str(randint(1000000, 9999999)) + str(i)
 
             date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
 
@@ -307,14 +303,90 @@ async def insert_demo_data():
                 milestone_type_id = general_milestone_types["chest_xray"].id
             )
 
+            tie_testresult_ctx:TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                testResult=TestResultRequest_IE(
+                    type_id = general_milestone_types["ct_chest"].id,
+                    current_state = MilestoneState.COMPLETED,
+                    hospital_number=hospital_number
+                ), 
+                auth_token=SESSION_COOKIE
+            )
+            sd_milestone_ctx:Milestone = await Milestone.create(
+                on_pathway_id = sd_onpathway.id,
+                test_result_reference_id = str(tie_testresult_ctx.id),
+                current_state = MilestoneState.COMPLETED,
+                milestone_type_id = general_milestone_types["ct_chest"].id
+            )
+
             if isinstance(patient, DataCreatorInputErrors):
                 raise Exception(patient.errorList)
 
-            if i > 1:
+            """
+            Everyone needs
+                Referral
+                CXR
+                CTx
+            """
+
+            if i == 1:
                 """
-                has been triaged
+                Acknowledged:
+                    Referral
+                    Chest X-ray
+                    CT chest
+                Waiting confirmation:
+                    PET-CT
                 """
-                decision_point:DecisionPoint = await DecisionPoint.create(
+                sd_decisionpoint:DecisionPoint = await DecisionPoint.create(
+                    clinician_id = sd_user.id,
+                    on_pathway_id = sd_onpathway.id,
+                    decision_type = DecisionTypes.TRIAGE.value,
+                    clinic_history = CLINIC_HISTORY[i-1],
+                    comorbidities = COMORBIDITIES[i-1]
+                )
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_ref.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_cxr.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_ctx.id).gino.status()
+
+                
+                tie_testresult_petct:TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                    testResult=TestResultRequest_IE(
+                        type_id = selectable_milestone_types["pet_ct"].id,
+                        current_state = MilestoneState.COMPLETED,
+                        hospital_number=hospital_number
+                    ),
+                    auth_token=SESSION_COOKIE
+                )
+                sd_testresult_petct:Milestone = await Milestone.create(
+                    milestone_type_id=selectable_milestone_types["pet_ct"].id,
+                    on_pathway_id=sd_onpathway.id,
+                    decision_point_id=sd_decisionpoint.id,
+                    test_result_reference_id=str(tie_testresult_petct.id),
+                    current_state=MilestoneState.COMPLETED
+                )
+            
+            elif i == 2:
+                """
+                Acknowledged:
+                    Referral
+                    Chest X-ray
+                    CT chest
+                Waiting confirmation:
+                    None
+                """
+               
+            elif i == 3:
+                """
+                Acknowledged:
+                    Referral
+                    Chest X-ray
+                    CT chest
+                    PET-CT
+                Waiting confirmation:
+                    CT-Bx
+                """
+
+                sd_decisionpoint:DecisionPoint = await DecisionPoint.create(
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
                     decision_type = DecisionTypes.TRIAGE.value,
@@ -322,100 +394,100 @@ async def insert_demo_data():
                     comorbidities = COMORBIDITIES[i-1]
                 )
 
-                await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==sd_milestone_ref.id).gino.status()
-                await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==sd_milestone_cxr.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_ref.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_cxr.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_ctx.id).gino.status()
 
-                tie_testresult_ct:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
-                    type_id = general_milestone_types["ct_chest"].id,
-                    current_state = MilestoneState.COMPLETED,
-                    hospital_number=hospital_number
-                ), auth_token = SESSION_COOKIE)
-                await Milestone.create(
-                    on_pathway_id=sd_onpathway.id,
-                    decision_point_id = decision_point.id,
-                    test_result_reference_id=str(tie_testresult_ct.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=general_milestone_types["ct_chest"].id
+                tie_testresult_petct:TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                    testResult=TestResultRequest_IE(
+                        type_id = selectable_milestone_types["pet_ct"].id,
+                        current_state = MilestoneState.COMPLETED,
+                        hospital_number=hospital_number
+                    ),
+                    auth_token=SESSION_COOKIE
                 )
-            if i > 2:
-                """
-                has been triaged, attends clinic, bronchoscopy ordered
-                """
-                decision_point:DecisionPoint = await DecisionPoint.create(
+                sd_testresult_petct:Milestone = await Milestone.create(
+                    milestone_type_id=selectable_milestone_types["pet_ct"].id,
+                    on_pathway_id=sd_onpathway.id,
+                    decision_point_id=sd_decisionpoint.id,
+                    test_result_reference_id=str(tie_testresult_petct.id),
+                    current_state=MilestoneState.COMPLETED
+                )
+
+                sd_decisionpoint:DecisionPoint = await DecisionPoint.create(
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
-                    decision_type = DecisionTypes.CLINIC.value,
+                    decision_type = DecisionTypes.TRIAGE.value,
                     clinic_history = CLINIC_HISTORY[i-1],
                     comorbidities = COMORBIDITIES[i-1]
                 )
 
-                await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_ct.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_testresult_petct.id).gino.status()
 
-                tie_testresult_bronch:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
-                    type_id = selectable_milestone_types["bronchoscopy"].id,
-                    current_state = MilestoneState.COMPLETED,
-                    hospital_number=hospital_number
-                ), auth_token = SESSION_COOKIE)
-                await Milestone.create(
+                tie_testresult_ctbx:TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                    testResult=TestResultRequest_IE(
+                        type_id = selectable_milestone_types["ct_biopsy_thorax"].id,
+                        current_state = MilestoneState.COMPLETED,
+                        hospital_number=hospital_number
+                    ),
+                    auth_token=SESSION_COOKIE
+                )
+                sd_testresult_ctbx:Milestone = await Milestone.create(
+                    milestone_type_id=selectable_milestone_types["ct_biopsy_thorax"].id,
                     on_pathway_id=sd_onpathway.id,
-                    decision_point_id = decision_point.id,
-                    test_result_reference_id=str(tie_testresult_bronch.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=selectable_milestone_types["bronchoscopy"].id
+                    decision_point_id=sd_decisionpoint.id,
+                    test_result_reference_id=str(tie_testresult_ctbx.id),
+                    current_state=MilestoneState.COMPLETED
                 )
 
-            if i > 3:
+
+            elif i == 4:
                 """
-                has been triaged, MDT done
+                Acknowledged:
+                    Referral
+                    Chest X-ray
+                    CT chest
+                Waiting confirmation:
+                    PET-CT
                 """
-                decision_point:DecisionPoint = await DecisionPoint.create(
+
+                sd_decisionpoint:DecisionPoint = await DecisionPoint.create(
                     clinician_id = sd_user.id,
                     on_pathway_id = sd_onpathway.id,
-                    decision_type = DecisionTypes.AD_HOC.value,
+                    decision_type = DecisionTypes.TRIAGE.value,
                     clinic_history = CLINIC_HISTORY[i-1],
                     comorbidities = COMORBIDITIES[i-1]
                 )
 
-                await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_bronch.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_ref.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_cxr.id).gino.status()
+                await Milestone.update.values(fwd_decision_point_id=sd_decisionpoint.id).where(Milestone.id==sd_milestone_ctx.id).gino.status()
 
-                tie_testresult_mdt:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
-                    type_id = general_milestone_types["mdt"].id,
-                    current_state = MilestoneState.COMPLETED,
-                    hospital_number=hospital_number
-                ), auth_token = SESSION_COOKIE)
-                await Milestone.create(
+                tie_testresult_petct:TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                    testResult=TestResultRequest_IE(
+                        type_id = selectable_milestone_types["pet_ct"].id,
+                        current_state = MilestoneState.COMPLETED,
+                        hospital_number=hospital_number
+                    ),
+                    auth_token=SESSION_COOKIE
+                )
+                sd_testresult_petct:Milestone = await Milestone.create(
+                    milestone_type_id=selectable_milestone_types["pet_ct"].id,
                     on_pathway_id=sd_onpathway.id,
-                    decision_point_id = decision_point.id,
-                    test_result_reference_id=str(tie_testresult_mdt.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=general_milestone_types["mdt"].id
-                )
-            if i > 4: 
-                """
-                has been triaged, MDT done, CPET, waiting for discharge
-                """
-                decision_point:DecisionPoint = await DecisionPoint.create(
-                    clinician_id = sd_user.id,
-                    on_pathway_id = sd_onpathway.id,
-                    decision_type = DecisionTypes.MDT.value,
-                    clinic_history = CLINIC_HISTORY[i-1],
-                    comorbidities = COMORBIDITIES[i-1]
+                    decision_point_id=sd_decisionpoint.id,
+                    test_result_reference_id=str(tie_testresult_petct.id),
+                    current_state=MilestoneState.COMPLETED
                 )
 
-                await Milestone.update.values(fwd_decision_point_id=decision_point.id).where(Milestone.id==tie_testresult_mdt.id).gino.status()
-
-                tie_testresult_cpet:TestResult_IE = await PseudoTrustAdapter().create_test_result(testResult=TestResultRequest_IE(
-                    type_id = selectable_milestone_types["cpet"].id,
-                    current_state = MilestoneState.COMPLETED,
-                    hospital_number=hospital_number
-                ), auth_token = SESSION_COOKIE)
-                await Milestone.create(
-                    on_pathway_id=sd_onpathway.id,
-                    decision_point_id = decision_point.id,
-                    test_result_reference_id=str(tie_testresult_cpet.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=selectable_milestone_types["cpet"].id
-                )
+            elif i == 5:
+                """
+                Acknowledged:
+                    None
+                Waiting confirmation:
+                    Referral
+                    Chest X-ray
+                    CT chest
+                """
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
