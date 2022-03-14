@@ -9,7 +9,7 @@ export const cache: InMemoryCache = new InMemoryCache({
       fields: {
         pathwayOptions: { read: () => pathwayOptionsVar() },
         loggedInUser: { read: () => pathwayOptionsVar() },
-        getPatientOnPathwayConnection: relayStylePagination(['pathwayId', 'awaitingDecisionType']),
+        getPatientOnPathwayConnection: relayStylePagination(['outstanding', 'pathwayId', 'underCareOf', 'includeDischarged']),
       },
     },
   },
