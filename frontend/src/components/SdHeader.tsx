@@ -73,8 +73,8 @@ const SdHeader = ({
           </p>
           <ul className="nhsuk-header__navigation-list">
             <Header.NavItem style={{ fontSize: '1.1875rem' }} href="">Home</Header.NavItem>
-            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="mdt">MDT</Header.NavItem>
-            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="add-patient" disabled>Add Patient</Header.NavItem>
+            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="#">MDT</Header.NavItem>
+            <Header.NavItem style={{ fontSize: '1.1875rem' }} href="#" disabled>Add Patient</Header.NavItem>
             <Header.NavItem style={{ fontSize: '1.1875rem' }} href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</Header.NavItem>
           </ul>
         </Container>
