@@ -1,11 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
-import { MockedProvider } from '@apollo/client/testing';
-import PageLayout, { PageLayoutProps } from 'components/PageLayout';
-import { DefaultLayout } from 'components/PageLayout.stories';
-import { MemoryRouter } from 'react-router';
-import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
+import { MockPathwayProvider } from 'test/mocks/mockContext';
 import PreviousDecisionPoints, { PreviousDecisionPointsProps, PREVIOUS_DECISION_POINTS_QUERY } from './PreviousDecisionPoints';
 
 const patient = {
@@ -137,15 +133,9 @@ export default {
   component: PreviousDecisionPoints,
   decorators: [
     (DecisionPointPageStory) => (
-      <MemoryRouter>
-        <MockAuthProvider>
-          <MockPathwayProvider>
-            <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-              <DecisionPointPageStory />
-            </PageLayout>
-          </MockPathwayProvider>
-        </MockAuthProvider>
-      </MemoryRouter>
+      <MockPathwayProvider>
+        <DecisionPointPageStory />
+      </MockPathwayProvider>
     ),
   ],
 } as Meta<typeof PreviousDecisionPoints>;
