@@ -100,8 +100,8 @@ const LoginPage = (): JSX.Element => {
         >
           <Fieldset disabled={ loading }>
             <Fieldset.Legend isPageHeading>Enter credentials here</Fieldset.Legend>
-            <Input id="username" type="text" label="Username" error={ errors.username?.message } { ...register('username', { required: true }) } />
-            <Input id="password" type="password" label="Password" error={ errors.password?.message } { ...register('password', { required: true }) } />
+            <Input id="username" type="text" label="Username" autocapitalize="off" autoCorrect="username" error={ errors.username?.message } { ...register('username', { required: true }) } />
+            <Input id="password" type="password" label="Password" autocapitalize="off" autoCorrect="password" error={ errors.password?.message } { ...register('password', { required: true }) } />
             {error?.message ? <ErrorMessage>{error?.message}</ErrorMessage> : ''}
             <p>{ loading ? 'Loading' : '' }</p>
             <Button className="float-end" id="submit">Login</Button>
