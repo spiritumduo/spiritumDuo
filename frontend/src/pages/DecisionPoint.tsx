@@ -272,13 +272,13 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             : ''
         }
       </Col>
-      <Col sm={ 11 } xl={ 3 }>
+      <Col xs={ 12 } sm={ 11 } xl={ 3 }>
         <p className="text-left">
           {result.milestoneName}: <br />
           {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
         </p>
       </Col>
-      <Col sm={ 10 } xl={ 7 } id={ result.elementId }>
+      <Col xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
         {
           result.description.length < 75
             ? <>{result.description}</>
@@ -298,7 +298,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             )
       }
       </Col>
-      <Col sm={ 2 } xl={ 1 } className="position-relative">
+      <Col xs={ 2 } sm={ 2 } xl={ 1 } className="position-relative">
         {
           result.description.length < 75
             ? ''
@@ -580,11 +580,11 @@ const DecisionPointPage = (
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
             <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
-              <Row xs={ 2 } sm={ 12 }>
-                <Col xs={ 3 } sm={ 2 }>
+              <Row xs={ 12 } sm={ 12 }>
+                <Col xs={ 4 } sm={ 2 }>
                   Decision:
                 </Col>
-                <Col xs={ 5 } sm={ 3 }>
+                <Col xs={ 8 } sm={ 3 }>
                   <Select
                     className="d-inline-block float-left mx-2"
                     id="decisionType"
@@ -595,11 +595,11 @@ const DecisionPointPage = (
                     { decisionSelectOptions }
                   </Select>
                 </Col>
-                <Col xs={ 4 } sm={ 1 } />
-                <Col xs={ 3 } sm={ 2 }>
+                <Col xs={ 0 } sm={ 1 } />
+                <Col xs={ 4 } sm={ 2 }>
                   Under care of:
                 </Col>
-                <Col xs={ 3 } sm={ 3 }>
+                <Col xs={ 8 } sm={ 3 }>
                   <Select
                     className="d-inline-block float-left mx-2"
                     disabled
