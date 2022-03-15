@@ -31,6 +31,7 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
           hospitalNumber
           dateOfBirth
           onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
+            id
             decisionPoints {
               milestones {
                 id

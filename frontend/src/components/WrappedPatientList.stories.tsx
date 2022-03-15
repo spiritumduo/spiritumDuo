@@ -52,6 +52,7 @@ for (let i = 0; i < 15; ++i) {
     dateOfBirth: new Date('1970-01-01'),
     onPathways: [
       {
+        id: i.toString(),
         decisionPoints: [
           {
             milestones: milestones,

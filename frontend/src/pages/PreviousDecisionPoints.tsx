@@ -13,6 +13,7 @@ export const PREVIOUS_DECISION_POINTS_QUERY = gql`
   query previousDecisionPoints($hospitalNumber: String!, $pathwayId: ID!, $includeDischarged: Boolean = false) {
     getPatient(hospitalNumber: $hospitalNumber) {
       onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
+        id
         decisionPoints {
           id
           decisionType

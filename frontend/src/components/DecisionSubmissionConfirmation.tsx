@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Button, Container } from 'react-bootstrap';
 
-export interface DecisionSubmissionSuccessProps {
+export interface DecisionSubmissionConfirmationProps {
+  cancelCallback: () => void;
+  okCallback: () => void;
   milestones?: {
     id: string;
     name: string;
@@ -10,8 +11,9 @@ export interface DecisionSubmissionSuccessProps {
   milestoneResolutions?: string[];
 }
 
-const DecisionSubmissionSuccess = (
-  { milestones, milestoneResolutions }: DecisionSubmissionSuccessProps,
+const DecisionSubmissionConfirmation = (
+  { milestones, milestoneResolutions,
+    cancelCallback, okCallback }: DecisionSubmissionConfirmationProps,
 ): JSX.Element => {
   const milestonesElement: JSX.Element[] | undefined = milestones?.map(
     (m) => (<li key={ m.id }>{m.name}</li>),
@@ -20,12 +22,12 @@ const DecisionSubmissionSuccess = (
     <Container className="d-flex align-items-center justify-content-left mt-5">
       <div className="d-flex align-items-center">
         <div>
-          <h2>Decision Submitted</h2>
+          <h2>Submit these requests?</h2>
           {
             milestonesElement
               ? (
                 <>
-                  <strong>Requests sent:</strong>
+                  <strong>Requests:</strong>
                   <ul>
                     { milestonesElement }
                   </ul>
@@ -36,7 +38,7 @@ const DecisionSubmissionSuccess = (
           {
             milestoneResolutions
               ? (
-                <div>These results will be acknowledged and no longer marked as new:
+                <div>These results will be acknowledged and will no longer be marked as new:
                   <ul>
                     {
                       milestoneResolutions?.map((m) => (
@@ -48,13 +50,10 @@ const DecisionSubmissionSuccess = (
               )
               : false
           }
-          <div className="mt-lg-4">
-            <p>
-              Your decision has now been submitted. You shall
-              receive confirmation of any requests shortly.
-            </p>
-          </div>
-          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" href="/app/">
+          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" onClick={ cancelCallback }>
+            Cancel
+          </Button>
+          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" onClick={ okCallback }>
             OK
           </Button>
         </div>
@@ -63,4 +62,4 @@ const DecisionSubmissionSuccess = (
   );
 };
 
-export default DecisionSubmissionSuccess;
+export default DecisionSubmissionConfirmation;

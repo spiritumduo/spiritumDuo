@@ -2,22 +2,20 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
-import { MemoryRouter } from 'react-router';
+import DecisionSubmissionConfirmation from 'components/DecisionSubmissionConfirmation';
 
 export default {
-  title: 'Components/DecisionSubmissionSuccess',
-  component: DecisionSubmissionSuccess,
-  decorators: [(DecisionSubmissionSuccessStory) => (
-    <MemoryRouter>
-      <DecisionSubmissionSuccessStory />
-    </MemoryRouter>
-  )],
-} as ComponentMeta<typeof DecisionSubmissionSuccess>;
+  title: 'Components/DecisionSubmissionConfirmation',
+  component: DecisionSubmissionConfirmation,
+  argTypes: {
+    okCallback: { action: 'clicked' },
+    cancelCallback: { action: 'clicked' },
+  },
+} as ComponentMeta<typeof DecisionSubmissionConfirmation>;
 
 const Template: ComponentStory<
-  typeof DecisionSubmissionSuccess
-> = (args) => <DecisionSubmissionSuccess { ...args } />;
+  typeof DecisionSubmissionConfirmation
+> = (args) => <DecisionSubmissionConfirmation { ...args } />;
 
 export const Default = Template.bind({});
 

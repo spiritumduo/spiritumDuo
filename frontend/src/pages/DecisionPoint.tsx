@@ -19,6 +19,7 @@ import { enumKeys } from 'sdutils';
 
 // COMPONENTS
 import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
+import DecisionSubmissionConfirmation from 'components/DecisionSubmissionConfirmation';
 import PathwayComplete from 'components/PathwayComplete';
 import { Select, Textarea } from 'components/nhs-style';
 
@@ -134,8 +135,9 @@ type DecisionPointPageForm = {
     discharge: boolean;
     isTestRequest: boolean;
   }[];
-  milestoneResolutions: {
+  milestoneResolutions?: {
     id: string;
+    name: string;
   }[];
 };
 
@@ -188,6 +190,7 @@ interface ConfirmNoMilestonesProps {
   confirmFn: (value: boolean) => void;
   submitFn: () => void;
   cancelFn: (value: boolean) => void;
+  milestoneResolutions?: string[];
 }
 
 /**
@@ -196,7 +199,7 @@ interface ConfirmNoMilestonesProps {
  * @returns JSX.Element
  */
 const ConfirmNoMilestones = (
-  { confirmFn, submitFn, cancelFn }: ConfirmNoMilestonesProps,
+  { confirmFn, submitFn, cancelFn, milestoneResolutions }: ConfirmNoMilestonesProps,
 ): JSX.Element => (
   <Container className="d-flex align-items-center justify-content-left mt-5">
     <div className="d-flex align-items-center">
@@ -208,6 +211,21 @@ const ConfirmNoMilestones = (
             you want to continue?
           </p>
         </div>
+        {
+          milestoneResolutions
+            ? (
+              <div>These results will be acknowledged and no longer marked as new:
+                <ul>
+                  {
+                    milestoneResolutions?.map((m) => (
+                      <li key={ m }>{m}</li>
+                    ))
+                  }
+                </ul>
+              </div>
+            )
+            : false
+        }
         <Button
           className="float-end w-25 mt-lg-4 ms-4"
           onClick={ () => {
@@ -348,7 +366,7 @@ const DecisionPointPage = (
 
   // FORM HOOK & VALIDATION
   const [confirmNoRequests, setConfirmNoRequests] = useState<boolean>(false);
-  const [requestConfirmation, setRequestConfirmation] = useState<boolean>(false);
+  const [requestConfirmation, setRequestConfirmation] = useState<number | boolean>(false);
   const newDecisionPointSchema = yup.object({
     decisionType: yup.mixed().oneOf([Object.keys(DecisionPointType)]).required(),
     clinicHistory: yup.string().required('A clinical history is required'),
@@ -406,6 +424,7 @@ const DecisionPointPage = (
         !ms.forwardDecisionPoint && ms.testResult
           ? {
             id: ms.id,
+            name: ms.milestoneType.name,
           }
           : []
       ),
@@ -425,7 +444,12 @@ const DecisionPointPage = (
     }));
     return _milestones?.find((ms) => ms.isDischarge)
       ? <PathwayComplete />
-      : <DecisionSubmissionSuccess milestones={ _milestones } />;
+      : (
+        <DecisionSubmissionSuccess
+          milestones={ _milestones }
+          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+        />
+      );
   }
 
   const patient: Patient = {
@@ -436,7 +460,9 @@ const DecisionPointPage = (
   };
 
   // FORM SUBMISSION
-  const onSubmitFn = (mutation: typeof createDecision, values: DecisionPointPageForm) => {
+  const onSubmitFn = (
+    mutation: typeof createDecision, values: DecisionPointPageForm, isConfirmed = false,
+  ) => {
     const milestoneRequests: MilestoneRequestInput[] = values.milestoneRequests?.filter(
       (m) => (m.checked !== false),
     ).map((m) => ({
@@ -445,8 +471,9 @@ const DecisionPointPage = (
       milestoneTypeId: m.checked as unknown as string,
     }));
 
-    if (milestoneRequests.length === 0 && !confirmNoRequests) {
-      setRequestConfirmation(true);
+    if (!confirmNoRequests && !isConfirmed) {
+      console.log('asdasdasdasdasd');
+      setRequestConfirmation(milestoneRequests.length);
     } else {
       const variables: createDecisionPointVariables = {
         input: {
@@ -455,19 +482,44 @@ const DecisionPointPage = (
           comorbidities: values.comorbidities,
           decisionType: values.decisionType,
           milestoneRequests: milestoneRequests,
-          milestoneResolutions: values.milestoneResolutions.map((mr) => mr.id),
+          milestoneResolutions: values.milestoneResolutions?.map((mr) => mr.id),
         },
       };
       mutation({ variables: variables });
     }
   };
 
-  if (requestConfirmation) {
+  // CONFIRM SUBMISSION DIALOGUES
+  if (requestConfirmation !== false) {
+    // NO REQUESTS SELECTED
+    if (requestConfirmation === 0 || requestConfirmation === true) {
+      return (
+        <ConfirmNoMilestones
+          confirmFn={ setConfirmNoRequests }
+          cancelFn={ setRequestConfirmation }
+          submitFn={ () => {
+            setConfirmNoRequests(true);
+            onSubmitFn(createDecision, getValues(), true);
+          } }
+          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+        />
+      );
+    }
+    // REQUESTS SELECTED
+    const milestones = getValues()
+      .milestoneRequests
+      .filter((m) => m.checked)
+      .map((m) => ({ id: m.id, name: m.name }));
     return (
-      <ConfirmNoMilestones
-        confirmFn={ setConfirmNoRequests }
-        cancelFn={ setRequestConfirmation }
-        submitFn={ () => { onSubmitFn(createDecision, getValues()); } }
+      <DecisionSubmissionConfirmation
+        cancelCallback={ () => setRequestConfirmation(false) }
+        okCallback={ () => {
+          console.log('wwwww');
+          setConfirmNoRequests(true);
+          onSubmitFn(createDecision, getValues(), true);
+        } }
+        milestones={ milestones }
+        milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
       />
     );
   }
@@ -484,10 +536,28 @@ const DecisionPointPage = (
   const onPathwayId = data.getPatient.onPathways?.[0].id;
   const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 
-  const testOptions = requestFields.filter((ck) => ck.isTestRequest === true);
-  const referNoDischargeOptions = requestFields.filter((ck) => ck.isTestRequest === false)
-    .filter((ck) => ck.discharge === false);
-  const referAndDischargeOptions = requestFields.filter((ck) => ck.discharge === true);
+  // CHECKBOX COLUMNS
+  const testOptionsElements: JSX.Element[] = [];
+  const referNoDischargeOptionsElements: JSX.Element[] = [];
+  const referAndDischargeOptionsElements: JSX.Element[] = [];
+
+  requestFields.forEach((field, index) => {
+    const element = (
+      <div className="form-check" key={ `ms-check-${field.id}` }>
+        <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+          <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
+          { field.name }
+        </label>
+      </div>
+    );
+    if (field.isTestRequest) {
+      testOptionsElements.push(element);
+    } else if (!field.isTestRequest && !field.discharge) {
+      referNoDischargeOptionsElements.push(element);
+    } else if (field.discharge) {
+      referAndDischargeOptionsElements.push(element);
+    }
+  });
 
   return (
     <div>
@@ -499,16 +569,22 @@ const DecisionPointPage = (
             <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
             {
               hiddenConfirmationFields.map((field, index) => (
-                <input key={ `hidden-test-confirmation-${field.id}` } type="hidden" value={ field.id } { ...register(`milestoneResolutions.${index}.id`) } />
+                <input
+                  key={ `hidden-test-confirmation-${field.id}` }
+                  type="hidden"
+                  value={ field.id }
+                  data-result-name={ field.name }
+                  { ...register(`milestoneResolutions.${index}.id`) }
+                />
               ))
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
             <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
               <Row xs={ 2 } sm={ 12 }>
-                <Col xs={ 3 }>
+                <Col xs={ 3 } sm={ 2 }>
                   Decision:
                 </Col>
-                <Col xs={ 5 }>
+                <Col xs={ 5 } sm={ 3 }>
                   <Select
                     className="d-inline-block float-left mx-2"
                     id="decisionType"
@@ -519,11 +595,11 @@ const DecisionPointPage = (
                     { decisionSelectOptions }
                   </Select>
                 </Col>
-                <Col xs={ 4 } />
-                <Col xs={ 3 }>
+                <Col xs={ 4 } sm={ 1 } />
+                <Col xs={ 3 } sm={ 2 }>
                   Under care of:
                 </Col>
-                <Col xs={ 5 }>
+                <Col xs={ 3 } sm={ 3 }>
                   <Select
                     className="d-inline-block float-left mx-2"
                     disabled
@@ -572,40 +648,25 @@ const DecisionPointPage = (
                 <Col>
                   <h5>Tests</h5>
                   {
-                    testOptions.map((field, index) => (
-                      <div className="form-check" key={ `ms-check-${field.id}` }>
-                        <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                          <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
-                          { field.name }
-                        </label>
-                      </div>
-                    ))
+                    testOptionsElements.length !== 0
+                      ? testOptionsElements
+                      : false
                   }
                 </Col>
                 <Col>
                   <h5>Internal Referrals</h5>
                   {
-                    referNoDischargeOptions.map((field, index) => (
-                      <div className="form-check" key={ `ms-check-${field.id}` }>
-                        <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                          <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index + testOptions.length}.checked` as const) } defaultChecked={ false } />
-                          { field.name }
-                        </label>
-                      </div>
-                    ))
+                    referNoDischargeOptionsElements.length !== 0
+                      ? referNoDischargeOptionsElements
+                      : false
                   }
                 </Col>
                 <Col>
                   <h5>External Referrals</h5>
                   {
-                    referAndDischargeOptions.map((field, index) => (
-                      <div className="form-check" key={ `ms-check-${field.id}` }>
-                        <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-                          <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index + testOptions.length + referNoDischargeOptions.length}.checked` as const) } defaultChecked={ false } />
-                          { field.name }
-                        </label>
-                      </div>
-                    ))
+                    referAndDischargeOptionsElements.length !== 0
+                      ? referAndDischargeOptionsElements
+                      : false
                   }
                 </Col>
               </Row>
