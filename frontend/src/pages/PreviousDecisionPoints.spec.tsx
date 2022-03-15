@@ -20,7 +20,6 @@ it('Should display loading while waiting for data', () => {
 it('Should display the page with previous decision points', async () => {
   renderDefault();
   await waitFor(() => {
-    expect(screen.getByText(/Previous Decision Points/i)).toBeInTheDocument();
     const decisionPoints = Default.parameters?.apolloClient.mocks[0]
       .result.data.getPatient.onPathways[0].decisionPoints;
     decisionPoints.forEach((dp: any) => {
