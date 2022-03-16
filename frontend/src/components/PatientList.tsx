@@ -69,10 +69,10 @@ const PatientList = (
       pageClassName="page-item"
       previousClassName="page-item"
       nextClassName="page-item"
-      previousLinkClassName="colour-nhs-blue page-link"
-      nextLinkClassName="page-link colour-nhs-blue"
-      pageLinkClassName="page-link colour-nhs-blue"
-      activeLinkClassName="bkcolour-nhs-blue text-white"
+      previousLinkClassName="colour-nhs-blue page-link paginator-button"
+      nextLinkClassName="page-link colour-nhs-blue paginator-button"
+      pageLinkClassName="page-link colour-nhs-blue paginator-button"
+      activeLinkClassName="bkcolour-nhs-blue text-white paginator-button"
     />
   </div>
 );

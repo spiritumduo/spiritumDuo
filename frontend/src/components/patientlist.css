@@ -5,6 +5,11 @@
 .colour-nhs-blue{
     color: #005EB8;
 }
+
 .bkcolour-nhs-blue{
     background-color: #005EB8;
+}
+
+.paginator-button:hover{
+    background-color: #0072CE;
 }
