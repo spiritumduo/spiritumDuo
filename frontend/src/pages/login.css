@@ -5,3 +5,20 @@
 .login-input {
     max-width: 25rem;
 }
+
+.nhsuk-details__summary:hover{
+    color: #8A1538
+}
+
+.nhsuk-details__summary:focus{
+    background-color: initial;
+    box-shadow: initial;
+    text-decoration: underline;
+    outline: initial;
+    color: rgb(0, 94, 184);
+}
+
+.nhsuk-details__summary:focus:hover{
+    text-decoration: none;
+    color: #8A1538
+}
