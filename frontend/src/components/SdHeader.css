@@ -1,0 +1,30 @@
+
+.header__navigation-link{
+    font-weight: 400;
+    font-size: 14px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+    color: white !important;
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+}
+.header__navigation-link:hover{
+    /* color:black !important; */
+    /* background-color: #FAE100; */
+    text-decoration: underline;
+
+}
+
+a:focus{
+    background-color: initial;
+    /* border: initial; */
+    color: initial;
+    outline: initial;
+    box-shadow: initial;
+}
+a:focus:hover{
+    text-decoration: underline;
+}
