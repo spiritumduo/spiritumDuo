@@ -261,7 +261,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <Row className={ classNames('my-5', 'my-xl-2', { 'test-new': !result.forwardDecisionPointId }) }>
+    <Row className={ classNames('my-3', { 'test-new': !result.forwardDecisionPointId }) }>
       <Col>
         {
           !result.forwardDecisionPointId
@@ -563,7 +563,7 @@ const DecisionPointPage = (
     <div>
       <section>
         <Container fluid>
-          <form className="card p-0 px-4 pt-md-2" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
+          <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
             <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
             <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
             <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
@@ -580,13 +580,13 @@ const DecisionPointPage = (
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
             <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
-              <Row xs={ 12 } sm={ 12 }>
-                <Col xs={ 4 } sm={ 2 }>
+              <Row className="mt-4 align-items-center">
+                <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
                   Decision:
                 </Col>
-                <Col xs={ 8 } sm={ 3 }>
+                <Col xs={ 7 } sm={ 6 } md={ 3 }>
                   <Select
-                    className="d-inline-block float-left mx-2"
+                    className="d-inline-block w-100"
                     id="decisionType"
                     defaultValue={ decisionType.toUpperCase() }
                     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -595,13 +595,12 @@ const DecisionPointPage = (
                     { decisionSelectOptions }
                   </Select>
                 </Col>
-                <Col xs={ 0 } sm={ 1 } />
-                <Col xs={ 4 } sm={ 2 }>
+                <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
                   Under care of:
                 </Col>
-                <Col xs={ 8 } sm={ 3 }>
+                <Col xs={ 7 } sm={ 6 } md={ 3 }>
                   <Select
-                    className="d-inline-block float-left mx-2"
+                    className="d-inline-block w-100"
                     disabled
                   >
                     {
@@ -615,7 +614,7 @@ const DecisionPointPage = (
                 </Col>
               </Row>
             </Fieldset>
-            <hr />
+            <hr className="mt-0 mb-1" />
             <PreviousTestResultsElement data={ data } />
             <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
               <Row>
