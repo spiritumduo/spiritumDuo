@@ -9,6 +9,7 @@ import { AuthContext, PathwayContext } from 'app/context';
 import { Button, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-react-components';
 import { Container } from 'react-bootstrap';
 import { Input } from 'components/nhs-style';
+import './login.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface LoginPageProps { }
@@ -93,15 +94,15 @@ const LoginPage = (): JSX.Element => {
 
   return (
     <>
-      <Container style={ { maxWidth: '600px' } } className="py-5">
+      <Container className="py-5 login-container">
         <Form onSubmit={ handleSubmit( () => {
           doLogin(getValues());
         } ) }
         >
           <Fieldset disabled={ loading }>
             <Fieldset.Legend isPageHeading>Enter credentials here</Fieldset.Legend>
-            <Input id="username" type="text" label="Username" autoCapitalize="off" autoCorrect="username" error={ errors.username?.message } { ...register('username', { required: true }) } />
-            <Input id="password" type="password" label="Password" autoCapitalize="off" autoCorrect="password" error={ errors.password?.message } { ...register('password', { required: true }) } />
+            <Input className="login-input" id="username" type="text" label="Username" autoCapitalize="off" autoCorrect="username" error={ errors.username?.message } { ...register('username', { required: true }) } />
+            <Input className="login-input" id="password" type="password" label="Password" autoCapitalize="off" autoCorrect="password" error={ errors.password?.message } { ...register('password', { required: true }) } />
             {error?.message ? <ErrorMessage>{error?.message}</ErrorMessage> : ''}
             <p>{ loading ? 'Loading' : '' }</p>
             <Button className="float-end" id="submit">Login</Button>
