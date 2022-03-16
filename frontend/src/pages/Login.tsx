@@ -93,7 +93,7 @@ const LoginPage = (): JSX.Element => {
 
   return (
     <>
-      <Container style={ { maxWidth: '750px' } } className="py-5">
+      <Container style={ { maxWidth: '600px' } } className="py-5">
         <Form onSubmit={ handleSubmit( () => {
           doLogin(getValues());
         } ) }
