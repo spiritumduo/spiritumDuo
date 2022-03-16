@@ -34,6 +34,11 @@ export function register(config?: Config) {
       return;
     }
 
+    navigator.serviceWorker.ready.then((registration) => {
+      console.log('updating service worker');
+      registration.update();
+    });
+
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
 
@@ -51,10 +56,6 @@ export function register(config?: Config) {
         });
       } else {
         // Is not localhost. Just register service worker
-        navigator.serviceWorker.ready.then((registration) => {
-          console.log('updating service worker');
-          registration.update();
-        });
         registerValidSW(swUrl, config);
       }
     });
