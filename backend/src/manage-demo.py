@@ -27,7 +27,7 @@ Each patient on different stage
 """
 
 
-NUMBER_OF_USERS=5
+NUMBER_OF_USERS=99
 NUMBER_OF_PATIENTS_PER_USER=5
 
 class RequestPlaceholder(dict):
