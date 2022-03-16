@@ -17,7 +17,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   const pathwayId = currentPathwayId as number;
 
   const modalCloseCallback = () => {
-    setPatient(null);
+    window.location.reload();
   };
 
   return (
@@ -28,27 +28,25 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
             <Tab>To do</Tab>
             <Tab>All patients</Tab>
           </TabList>
-          <div>
-            <TabPanel>
-              <WrappedPatientList
-                pathwayId={ pathwayId.toString() }
-                patientsToDisplay={ patientsPerPage }
-                outstanding
-                underCareOf
-                patientOnClick={ setPatient }
-              />
-            </TabPanel>
-            <TabPanel>
-              <WrappedPatientList
-                pathwayId={ pathwayId.toString() }
-                patientsToDisplay={ patientsPerPage }
-                outstanding={ false }
-                underCareOf={ false }
-                includeDischarged
-                patientOnClick={ setPatient }
-              />
-            </TabPanel>
-          </div>
+          <TabPanel>
+            <WrappedPatientList
+              pathwayId={ pathwayId.toString() }
+              patientsToDisplay={ patientsPerPage }
+              outstanding
+              underCareOf
+              patientOnClick={ setPatient }
+            />
+          </TabPanel>
+          <TabPanel>
+            <WrappedPatientList
+              pathwayId={ pathwayId.toString() }
+              patientsToDisplay={ patientsPerPage }
+              outstanding={ false }
+              underCareOf={ false }
+              includeDischarged
+              patientOnClick={ setPatient }
+            />
+          </TabPanel>
         </Tabs>
       </Container>
       {
