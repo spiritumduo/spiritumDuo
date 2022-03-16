@@ -38,7 +38,7 @@ const DecisionSubmissionConfirmation = (
           {
             milestoneResolutions
               ? (
-                <div>These results will be acknowledged and will no longer be marked as new:
+                <div>These results have now been acknowledged:
                   <ul>
                     {
                       milestoneResolutions?.map((m) => (

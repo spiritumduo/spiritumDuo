@@ -215,7 +215,7 @@ const ConfirmNoMilestones = (
         {
           milestoneResolutions
             ? (
-              <div>These results will be acknowledged and no longer marked as new:
+              <div>These results have now been acknowledged:
                 <ul>
                   {
                     milestoneResolutions?.map((m) => (
