@@ -13,3 +13,7 @@
 .paginator-button:hover{
     background-color: #0072CE;
 }
+
+.paginator-button:focus{
+    background-color: initial;
+}
