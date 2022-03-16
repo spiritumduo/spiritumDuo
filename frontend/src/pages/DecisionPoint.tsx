@@ -35,6 +35,7 @@ import './decisionpoint.css';
 export interface DecisionPointPageProps {
   hospitalNumber: string;
   decisionType: DecisionPointType;
+  tabStateCallback: (state: boolean) => void;
 }
 
 export const GET_PATIENT_QUERY = gql`
@@ -339,7 +340,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, tabStateCallback }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
@@ -437,6 +438,7 @@ const DecisionPointPage = (
   if (loading) return <h1>Loading!</h1>;
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
   if (isSubmitted) {
+    tabStateCallback(false);
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
       id: ms.id,
       name: ms.milestoneType.name,
@@ -472,7 +474,6 @@ const DecisionPointPage = (
     }));
 
     if (!confirmNoRequests && !isConfirmed) {
-      console.log('asdasdasdasdasd');
       setRequestConfirmation(milestoneRequests.length);
     } else {
       const variables: createDecisionPointVariables = {
@@ -491,6 +492,7 @@ const DecisionPointPage = (
 
   // CONFIRM SUBMISSION DIALOGUES
   if (requestConfirmation !== false) {
+    tabStateCallback(true);
     // NO REQUESTS SELECTED
     if (requestConfirmation === 0 || requestConfirmation === true) {
       return (
@@ -514,7 +516,6 @@ const DecisionPointPage = (
       <DecisionSubmissionConfirmation
         cancelCallback={ () => setRequestConfirmation(false) }
         okCallback={ () => {
-          console.log('wwwww');
           setConfirmNoRequests(true);
           onSubmitFn(createDecision, getValues(), true);
         } }

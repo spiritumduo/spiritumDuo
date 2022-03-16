@@ -72,12 +72,7 @@ const DecisionPointPageRoute = () => {
     return (
       <>
         <RequireAuth>
-          <PageLayout>
-            <DecisionPointPage
-              decisionType={ decisionTypeEnum }
-              hospitalNumber={ hospitalNumber as string }
-            />
-          </PageLayout>
+          <PageLayout />
         </RequireAuth>
       </>
     );
