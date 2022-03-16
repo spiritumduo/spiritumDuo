@@ -9,7 +9,7 @@ const PathwayComplete = (): JSX.Element => (
         <div className="mt-lg-4">
           <p>
             The pathway is now complete! Congratulations on completing
-            the demo!
+            the pathway for this patient!
           </p>
         </div>
         <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" href="/app/">
