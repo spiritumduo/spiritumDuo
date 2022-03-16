@@ -302,6 +302,7 @@ export const Default = Template.bind({});
 Default.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
+  tabStateCallback: () => {},
 };
 Default.parameters = {
   milestones: milestones,
