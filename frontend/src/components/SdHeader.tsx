@@ -77,19 +77,19 @@ const SdHeader = ({
           <ul className="nhsuk-header__navigation-list">
             <li className="nhsuk-header__navigation-item">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a className="header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app">Home</a>
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app">Home</a>
             </li>
             <li className="nhsuk-header__navigation-item">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a className="header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#mdt">MDT</a>
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#mdt">MDT</a>
             </li>
             <li className="nhsuk-header__navigation-item">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a className="header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
             </li>
             <li className="nhsuk-header__navigation-item">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-              <a className="header__navigation-link" style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</a>
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</a>
             </li>
           </ul>
         </Container>
