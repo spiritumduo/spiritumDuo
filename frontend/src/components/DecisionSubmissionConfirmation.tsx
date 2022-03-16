@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+import { Button } from 'nhsuk-react-components';
 
 export interface DecisionSubmissionConfirmationProps {
   cancelCallback: () => void;
@@ -50,10 +51,10 @@ const DecisionSubmissionConfirmation = (
               )
               : false
           }
-          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" onClick={ cancelCallback }>
+          <Button className="float-end mt-lg-4" secondary onClick={ cancelCallback }>
             Cancel
           </Button>
-          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" onClick={ okCallback }>
+          <Button className="float-end mt-lg-4 me-1" onClick={ okCallback }>
             OK
           </Button>
         </div>
