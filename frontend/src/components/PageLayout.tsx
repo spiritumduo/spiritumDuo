@@ -31,7 +31,7 @@ const PageLayout = ({
       />
       {children}
       <SdFooter />
-      <Notification />
+      {/* <Notification /> */}
     </div>
   );
 };
