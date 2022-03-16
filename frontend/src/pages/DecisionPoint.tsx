@@ -438,7 +438,6 @@ const DecisionPointPage = (
   if (loading) return <h1>Loading!</h1>;
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
   if (isSubmitted) {
-    tabStateCallback(false);
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
       id: ms.id,
       name: ms.milestoneType.name,
