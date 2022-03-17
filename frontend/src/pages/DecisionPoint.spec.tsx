@@ -74,6 +74,23 @@ describe('When page loads', () => {
     expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument();
   });
 
+  it('Should ask for confirmation on form submission with milestones', async () => {
+    const clinicalHistoryText = '{selectall}New Clinic History';
+    const comorbiditiesText = '{selectall}New Comorbidities';
+    // wait for page to render fully
+    await waitFor(() => expect(
+      screen.getByText((t) => /submit/i.test(t)),
+    ).toBeInTheDocument());
+    await waitFor(() => {
+      userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
+      userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
+      const requestCheckboxes = screen.getAllByRole('checkbox');
+      requestCheckboxes.forEach((cb) => userEvent.click(cb));
+      userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    });
+    expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument();
+  });
+
   it('Should report success on form submission with milestones', async () => {
     const clinicalHistoryText = '{selectall}New Clinic History';
     const comorbiditiesText = '{selectall}New Comorbidities';
@@ -88,6 +105,7 @@ describe('When page loads', () => {
       requestCheckboxes.forEach((cb) => userEvent.click(cb));
       userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     });
-    expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
+    userEvent.click(screen.getByRole('button', { name: 'OK' }));
+    await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
   });
 });

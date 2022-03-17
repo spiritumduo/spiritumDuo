@@ -3,8 +3,6 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { DecisionPointType } from 'types/DecisionPoint';
-import PageLayout, { PageLayoutProps } from 'components/PageLayout';
-import { DefaultLayout } from 'components/PageLayout.stories';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Standard } from 'components/Notification.stories';
@@ -245,13 +243,13 @@ const apolloMocks = [
               milestoneTypeId: milestoneTypes[1].id,
             },
             {
-              milestoneTypeId: milestoneTypes[4].id,
-            },
-            {
               milestoneTypeId: milestoneTypes[2].id,
             },
             {
               milestoneTypeId: milestoneTypes[3].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[4].id,
             },
           ],
         },
