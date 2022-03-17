@@ -215,7 +215,7 @@ const ConfirmNoMilestones = (
         {
           milestoneResolutions
             ? (
-              <div>These results have now been acknowledged:
+              <div>By clicking &apos;Submit&apos; you are acknowledging:
                 <ul>
                   {
                     milestoneResolutions?.map((m) => (

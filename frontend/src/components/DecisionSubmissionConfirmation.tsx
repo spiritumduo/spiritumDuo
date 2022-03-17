@@ -39,7 +39,7 @@ const DecisionSubmissionConfirmation = (
           {
             milestoneResolutions
               ? (
-                <div>These results have now been acknowledged:
+                <div>By clicking &apos;OK&apos; you are acknowledging:
                   <ul>
                     {
                       milestoneResolutions?.map((m) => (
