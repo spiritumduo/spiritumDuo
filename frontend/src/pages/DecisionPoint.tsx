@@ -518,7 +518,7 @@ const DecisionPointPage = (
     const milestones = getValues()
       .milestoneRequests
       .filter((m) => m.checked)
-      .map((m) => ({ id: m.id, name: m.name }));
+      .map((m) => ({ id: m.milestoneTypeId, name: m.name }));
     return (
       <DecisionSubmissionConfirmation
         cancelCallback={ () => {

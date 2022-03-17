@@ -17,20 +17,21 @@ const DecisionSubmissionConfirmation = (
     cancelCallback, okCallback }: DecisionSubmissionConfirmationProps,
 ): JSX.Element => {
   const [disabledState, setDisabledState] = useState<boolean>(false);
-  const milestonesElement: JSX.Element[] | undefined = milestones?.map(
-    (m) => (<li key={ m.id }>{m.name}</li>),
-  );
   return (
     <Container className="d-flex align-items-center justify-content-left mt-5">
       <div>
         <h2>Submit these requests?</h2>
         {
-          milestonesElement
+          milestones
             ? (
               <>
                 <strong>Requests:</strong>
                 <ul>
-                  { milestonesElement }
+                  {
+                    milestones?.map((m) => (
+                      <li key={ m.id }>{m.name}</li>
+                    ))
+                  }
                 </ul>
               </>
             )
@@ -42,8 +43,9 @@ const DecisionSubmissionConfirmation = (
               <div>By clicking &apos;OK&apos; you are acknowledging:
                 <ul>
                   {
-                    milestoneResolutions?.map((m) => (
-                      <li key={ Math.random() }>{m}</li>
+                    milestoneResolutions?.map((m, index) => (
+                      // eslint-disable-next-line react/no-array-index-key
+                      <li key={ `resolution-${index}}` }>{m}</li>
                     ))
                   }
                 </ul>
