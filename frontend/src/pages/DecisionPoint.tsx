@@ -201,53 +201,59 @@ interface ConfirmNoMilestonesProps {
  */
 const ConfirmNoMilestones = (
   { confirmFn, submitFn, cancelFn, milestoneResolutions }: ConfirmNoMilestonesProps,
-): JSX.Element => (
-  <Container className="d-flex align-items-center justify-content-left mt-5">
-    <div className="d-flex align-items-center">
-      <div>
-        <strong>No requests selected!</strong>
-        <div className="mt-lg-4">
-          <p>
-            No requests have been selected. Are you sure
-            you want to continue?
-          </p>
+): JSX.Element => {
+  const [disabledState, setDisabledState] = useState<boolean>(false);
+  return (
+    <Container className="d-flex align-items-center justify-content-left mt-5">
+      <div className="d-flex align-items-center">
+        <div>
+          <strong>No requests selected!</strong>
+          <div className="mt-lg-4">
+            <p>
+              No requests have been selected. Are you sure
+              you want to continue?
+            </p>
+          </div>
+          {
+            milestoneResolutions
+              ? (
+                <div>These results will be acknowledged and no longer marked as new:
+                  <ul>
+                    {
+                      milestoneResolutions?.map((m) => (
+                        <li key={ m }>{m}</li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              )
+              : false
+          }
+          <Button
+            className="float-end w-25 mt-lg-4 ms-4"
+            disabled={ disabledState }
+            onClick={ () => {
+              setDisabledState(true);
+              confirmFn(true);
+              submitFn();
+            } }
+          >
+            Submit
+          </Button>
+          <Button
+            disabled={ disabledState }
+            onClick={ () => {
+              cancelFn(false);
+            } }
+            className="float-end w-25 mt-lg-4"
+          >
+            Cancel
+          </Button>
         </div>
-        {
-          milestoneResolutions
-            ? (
-              <div>These results will be acknowledged and no longer marked as new:
-                <ul>
-                  {
-                    milestoneResolutions?.map((m) => (
-                      <li key={ m }>{m}</li>
-                    ))
-                  }
-                </ul>
-              </div>
-            )
-            : false
-        }
-        <Button
-          className="float-end w-25 mt-lg-4 ms-4"
-          onClick={ () => {
-            confirmFn(true);
-            submitFn();
-          } }
-        >
-          Submit
-        </Button>
-        <Button
-          onClick={ () => {
-            cancelFn(false);
-          } }
-          className="float-end w-25 mt-lg-4"
-        >
-          Cancel
-        </Button>
       </div>
-    </div>
-  </Container>
-);
+    </Container>
+  );
+};
 
 interface PreviousTestResultsElementProps {
   data: GetPatient | undefined;

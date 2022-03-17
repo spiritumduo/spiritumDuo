@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
 
 export interface DecisionSubmissionConfirmationProps {
@@ -15,6 +15,7 @@ const DecisionSubmissionConfirmation = (
   { milestones, milestoneResolutions,
     cancelCallback, okCallback }: DecisionSubmissionConfirmationProps,
 ): JSX.Element => {
+  const [disabledState, setDisabledState] = useState<boolean>(false);
   const milestonesElement: JSX.Element[] | undefined = milestones?.map(
     (m) => (<li key={ m.id }>{m.name}</li>),
   );
@@ -50,10 +51,23 @@ const DecisionSubmissionConfirmation = (
               )
               : false
           }
-          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" onClick={ cancelCallback }>
+          <Button
+            disabled={ disabledState }
+            className="float-end w-25 mt-lg-4"
+            variant="outline-secondary"
+            onClick={ cancelCallback }
+          >
             Cancel
           </Button>
-          <Button className="float-end w-25 mt-lg-4" variant="outline-secondary" onClick={ okCallback }>
+          <Button
+            disabled={ disabledState }
+            className="float-end w-25 mt-lg-4"
+            variant="outline-secondary"
+            onClick={ () => {
+              setDisabledState(true);
+              okCallback();
+            } }
+          >
             OK
           </Button>
         </div>
