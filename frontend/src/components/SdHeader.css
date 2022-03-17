@@ -1,0 +1,38 @@
+.header__navigation-link{
+    font-weight: 400;
+    font-size: 14px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-bottom: 4px solid transparent;
+    border-top: 4px solid transparent;
+    color: white !important;
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+} 
+
+.nhsuk-header__navigation-link:focus{
+    background-color: initial;
+    border-bottom: none;
+}
+.nhsuk-header__navigation-link:focus:hover{
+    background-color: initial;
+    text-decoration: underline;
+}
+
+@media (min-width: 61.875em){
+    .nhsuk-header__navigation-link:focus:visited{
+        background-color: initial;
+        color: white;
+    }
+}
+@media (max-width: 61.875em){
+    .nhsuk-header__navigation-link:focus:visited{
+        background-color: initial;
+        color: #005eb8;
+        margin-bottom: 6px;
+    }
+    .nhsuk-header__navigation-link:focus{
+        margin-bottom: 4px;
+    }
+}

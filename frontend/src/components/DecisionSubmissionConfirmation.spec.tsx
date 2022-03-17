@@ -22,7 +22,7 @@ test('Should display provided milestones', () => {
 
 test('Should display provided resolutions', () => {
   render(<WithMilestonesAndConfirmations />);
-  expect(screen.getByText(/These results will be acknowledged/i)).toBeInTheDocument();
+  expect(screen.getByText(/By clicking &apos;OK&apos; you are acknowledging:/i)).toBeInTheDocument();
   WithMilestonesAndConfirmations.args?.milestoneResolutions?.forEach((m) => {
     expect(screen.getByText(m)).toBeInTheDocument();
   });

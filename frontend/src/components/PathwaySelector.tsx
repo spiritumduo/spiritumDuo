@@ -26,11 +26,11 @@ const PathwaySelector = ({
 }: PathwaySelectorProps): JSX.Element => {
   // filter out the current option from the item list
   const itemList = options.map((pathway) => (
-    pathway !== currentOption ? <Select.Option key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option> : <Select.Option selected key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option>
+    pathway !== currentOption ? <Select.Option key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option> : <Select.Option value={ pathway.id } key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option>
   ));
 
   return (
-    <select className="nhsuk-select float-end" disabled onChange={ (e) => onItemSelect(e.currentTarget.value) }>
+    <select className="nhsuk-select float-end" disabled defaultValue={ currentOption?.id } onChange={ (e) => onItemSelect(e.currentTarget.value) }>
       {itemList}
     </select>
   );

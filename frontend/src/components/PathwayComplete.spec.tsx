@@ -7,5 +7,5 @@ const { Default } = composeStories(stories);
 
 it('Should display pathway completed', () => {
   render(<Default />);
-  expect(screen.getByText(/The pathway is now complete!/i)).toBeInTheDocument();
+  expect(screen.getByText(/Congratulations on completing the pathway for this patient!/i)).toBeInTheDocument();
 });

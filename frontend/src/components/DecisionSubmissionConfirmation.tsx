@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+import { Button } from 'nhsuk-react-components';
 
 export interface DecisionSubmissionConfirmationProps {
   cancelCallback: () => void;
@@ -39,7 +40,7 @@ const DecisionSubmissionConfirmation = (
           {
             milestoneResolutions
               ? (
-                <div>These results will be acknowledged and will no longer be marked as new:
+                <div>By clicking &apos;OK&apos; you are acknowledging:
                   <ul>
                     {
                       milestoneResolutions?.map((m) => (
@@ -53,16 +54,15 @@ const DecisionSubmissionConfirmation = (
           }
           <Button
             disabled={ disabledState }
-            className="float-end w-25 mt-lg-4"
-            variant="outline-secondary"
+            className="float-end mt-lg-4"
+            secondary
             onClick={ cancelCallback }
           >
             Cancel
           </Button>
           <Button
             disabled={ disabledState }
-            className="float-end w-25 mt-lg-4"
-            variant="outline-secondary"
+            className="float-end mt-lg-4 me-1"
             onClick={ () => {
               setDisabledState(true);
               okCallback();

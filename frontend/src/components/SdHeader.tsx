@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable react/button-has-type */
 import React, { useState } from 'react';
 import { Header, SearchIcon, CloseIcon, Container } from 'nhsuk-react-components';
@@ -7,6 +8,8 @@ import User from '../types/Users';
 import PathwayOption from '../types/PathwayOption';
 import PathwaySelector from './PathwaySelector';
 import sdInvertedImage from '../static/i/sd_inverted.png';
+
+import './SdHeader.css';
 
 export interface SdHeaderProps {
   pathwayOptions: PathwayOption[];
@@ -72,10 +75,22 @@ const SdHeader = ({
             <span>Menu</span>
           </p>
           <ul className="nhsuk-header__navigation-list">
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="">Home</Header.NavItem>
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="#">MDT</Header.NavItem>
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="#" disabled>Add Patient</Header.NavItem>
-            <Header.NavItem style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</Header.NavItem>
+            <li className="nhsuk-header__navigation-item">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app">Home</a>
+            </li>
+            <li className="nhsuk-header__navigation-item">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#mdt">MDT</a>
+            </li>
+            <li className="nhsuk-header__navigation-item">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
+            </li>
+            <li className="nhsuk-header__navigation-item">
+              {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</a>
+            </li>
           </ul>
         </Container>
       </nav>
