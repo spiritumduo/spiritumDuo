@@ -108,7 +108,7 @@ const milestones = [
   },
   {
     id: '6',
-    forwardDecisionPoint: null,
+    forwardDecisionPoint: null, // THIS SHOULD BE NEW
     testResult: {
       id: '4',
       description: 'Lung function description from DP3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
@@ -120,7 +120,7 @@ const milestones = [
   },
   {
     id: '7',
-    forwardDecisionPoint: null,
+    forwardDecisionPoint: null, // THIS SHOULD BE NEW
     testResult: {
       id: '5',
       description: 'PET-CT description from DP3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel malesuada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
