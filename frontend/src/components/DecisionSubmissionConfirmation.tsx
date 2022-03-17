@@ -22,55 +22,53 @@ const DecisionSubmissionConfirmation = (
   );
   return (
     <Container className="d-flex align-items-center justify-content-left mt-5">
-      <div className="d-flex align-items-center">
-        <div>
-          <h2>Submit these requests?</h2>
-          {
-            milestonesElement
-              ? (
-                <>
-                  <strong>Requests:</strong>
-                  <ul>
-                    { milestonesElement }
-                  </ul>
-                </>
-              )
-              : ''
-          }
-          {
-            milestoneResolutions
-              ? (
-                <div>By clicking &apos;OK&apos; you are acknowledging:
-                  <ul>
-                    {
-                      milestoneResolutions?.map((m) => (
-                        <li key={ Math.random() }>{m}</li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              )
-              : false
-          }
-          <Button
-            disabled={ disabledState }
-            className="float-end mt-lg-4"
-            secondary
-            onClick={ cancelCallback }
-          >
-            Cancel
-          </Button>
-          <Button
-            disabled={ disabledState }
-            className="float-end mt-lg-4 me-1"
-            onClick={ () => {
-              setDisabledState(true);
-              okCallback();
-            } }
-          >
-            OK
-          </Button>
-        </div>
+      <div>
+        <h2>Submit these requests?</h2>
+        {
+          milestonesElement
+            ? (
+              <>
+                <strong>Requests:</strong>
+                <ul>
+                  { milestonesElement }
+                </ul>
+              </>
+            )
+            : ''
+        }
+        {
+          milestoneResolutions
+            ? (
+              <div>By clicking &apos;OK&apos; you are acknowledging:
+                <ul>
+                  {
+                    milestoneResolutions?.map((m) => (
+                      <li key={ Math.random() }>{m}</li>
+                    ))
+                  }
+                </ul>
+              </div>
+            )
+            : false
+        }
+        <Button
+          disabled={ disabledState }
+          className="float-end mt-lg-4"
+          secondary
+          onClick={ cancelCallback }
+        >
+          Cancel
+        </Button>
+        <Button
+          disabled={ disabledState }
+          className="float-end mt-lg-4 me-1"
+          onClick={ () => {
+            setDisabledState(true);
+            okCallback();
+          } }
+        >
+          OK
+        </Button>
       </div>
     </Container>
   );

@@ -188,9 +188,9 @@ const usePreviousTestResults = (data: GetPatient | undefined ) => {
 };
 
 interface ConfirmNoMilestonesProps {
-  confirmFn: (value: boolean) => void;
+  confirmFn: () => void;
   submitFn: () => void;
-  cancelFn: (value: boolean) => void;
+  cancelFn: () => void;
   milestoneResolutions?: string[];
 }
 
@@ -204,15 +204,15 @@ const ConfirmNoMilestones = (
 ): JSX.Element => {
   const [disabledState, setDisabledState] = useState<boolean>(false);
   return (
-    <Container className="d-flex align-items-center justify-content-left mt-5">
-      <div className="d-flex align-items-center">
+    <Container>
+      <Row>
         <strong>No requests selected!</strong>
-        <div className="mt-lg-4">
-          <p>
-            No requests have been selected. Are you sure
-            you want to continue?
-          </p>
-        </div>
+        <p>
+          No requests have been selected. Are you sure
+          you want to continue?
+        </p>
+      </Row>
+      <Row>
         {
           milestoneResolutions
             ? (
@@ -228,27 +228,28 @@ const ConfirmNoMilestones = (
             )
             : false
         }
-        <Button
-          className="float-end w-25 mt-lg-4 ms-4"
-          disabled={ disabledState }
-          onClick={ () => {
-            setDisabledState(true);
-            confirmFn(true);
-            submitFn();
-          } }
-        >
-          Submit
-        </Button>
-        <Button
-          disabled={ disabledState }
-          onClick={ () => {
-            cancelFn(false);
-          } }
-          className="float-end w-25 mt-lg-4"
-        >
-          Cancel
-        </Button>
-      </div>
+      </Row>
+      <Button
+        className="float-end w-25 mt-lg-4 ms-4"
+        disabled={ disabledState }
+        onClick={ () => {
+          setDisabledState(true);
+          confirmFn();
+          submitFn();
+        } }
+        secondary
+      >
+        Submit
+      </Button>
+      <Button
+        disabled={ disabledState }
+        onClick={ () => {
+          cancelFn();
+        } }
+        className="float-end w-25 mt-lg-4"
+      >
+        Cancel
+      </Button>
     </Container>
   );
 };
@@ -500,8 +501,11 @@ const DecisionPointPage = (
     if (requestConfirmation === 0 || requestConfirmation === true) {
       return (
         <ConfirmNoMilestones
-          confirmFn={ setConfirmNoRequests }
-          cancelFn={ setRequestConfirmation }
+          confirmFn={ () => setConfirmNoRequests(true) }
+          cancelFn={ () => {
+            tabStateCallback(false);
+            setRequestConfirmation(false);
+          } }
           submitFn={ () => {
             setConfirmNoRequests(true);
             onSubmitFn(createDecision, getValues(), true);
@@ -517,7 +521,10 @@ const DecisionPointPage = (
       .map((m) => ({ id: m.id, name: m.name }));
     return (
       <DecisionSubmissionConfirmation
-        cancelCallback={ () => setRequestConfirmation(false) }
+        cancelCallback={ () => {
+          tabStateCallback(false);
+          setRequestConfirmation(false);
+        } }
         okCallback={ () => {
           setConfirmNoRequests(true);
           onSubmitFn(createDecision, getValues(), true);
