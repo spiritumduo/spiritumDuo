@@ -266,8 +266,8 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <Row className={ classNames('my-3', { 'test-new': !result.forwardDecisionPointId }) }>
-      <Col>
+    <Row role="row" className={ classNames('my-3', { 'test-new': !result.forwardDecisionPointId }) }>
+      <Col role="cell">
         {
           !result.forwardDecisionPointId
             ? (
@@ -275,16 +275,16 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 <img src={ newResultImage } alt="New Result" />
               </>
             )
-            : ''
+            : false
         }
       </Col>
-      <Col xs={ 12 } sm={ 11 } xl={ 3 }>
+      <Col role="cell" xs={ 12 } sm={ 11 } xl={ 3 }>
         <p className="text-left">
           {result.milestoneName}: <br />
           {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
         </p>
       </Col>
-      <Col xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
+      <Col role="cell" xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
         {
           result.description.length < 75
             ? <>{result.description}</>
@@ -304,7 +304,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             )
       }
       </Col>
-      <Col xs={ 2 } sm={ 2 } xl={ 1 } className="position-relative">
+      <Col role="cell" xs={ 2 } sm={ 2 } xl={ 1 } className="position-relative">
         {
           result.description.length < 75
             ? ''
@@ -338,8 +338,17 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   const elements = previousTestResults?.map((result) => <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />);
 
   return (
-    <div className="">
-      { elements }
+    <div role="table" aria-label="Previous Test Results">
+      <div role="rowgroup" className="visually-hidden">
+        <div role="row">
+          <div role="columnheader">New?</div>
+          <div role="columnheader">Name</div>
+          <div role="columnheader">Description</div>
+        </div>
+      </div>
+      <div role="rowgroup">
+        { elements }
+      </div>
     </div>
   );
 };

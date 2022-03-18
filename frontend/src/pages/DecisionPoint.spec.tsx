@@ -37,8 +37,12 @@ describe('When page loads', () => {
     await waitFor(() => {
       Default.parameters?.milestones.forEach((ms) => {
         if (ms.testResult) {
-          expect(screen.getAllByText(new RegExp(ms.milestoneType.name, 'i')).length).toBeGreaterThan(0);
-          expect(screen.getByText(new RegExp(ms.testResult.description, 'i'))).toBeVisible();
+          expect(screen.getAllByRole('cell', {
+            name: new RegExp(ms.milestoneType.name, 'i'),
+          }).length).toBeGreaterThan(0);
+          expect(screen.getByRole('cell', {
+            name: new RegExp(ms.testResult.description.slice(0, 75), 'i'),
+          })).toBeVisible();
         }
       });
     });
