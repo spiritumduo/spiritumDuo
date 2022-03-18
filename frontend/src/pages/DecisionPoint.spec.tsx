@@ -59,7 +59,7 @@ describe('When page loads', () => {
       .parameters?.apolloClient.mocks[0]
       .result.data.getPatient.onPathways?.[0].underCareOf;
     await waitFor(() => {
-      expect(screen.getByText(new RegExp(`under care of:\\s${clinician.firstName}\\s${clinician.lastName}`, 'i')));
+      expect(screen.getByRole('option', { name: new RegExp(`${clinician.firstName} ${clinician.lastName}`, 'i') }));
     });
   });
 });
