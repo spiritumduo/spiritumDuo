@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { Button } from 'nhsuk-react-components';
 
@@ -16,48 +16,61 @@ const DecisionSubmissionConfirmation = (
   { milestones, milestoneResolutions,
     cancelCallback, okCallback }: DecisionSubmissionConfirmationProps,
 ): JSX.Element => {
-  const milestonesElement: JSX.Element[] | undefined = milestones?.map(
-    (m) => (<li key={ m.id }>{m.name}</li>),
-  );
+  const [disabledState, setDisabledState] = useState<boolean>(false);
   return (
     <Container className="d-flex align-items-center justify-content-left mt-5">
-      <div className="d-flex align-items-center">
-        <div>
-          <h2>Submit these requests?</h2>
-          {
-            milestonesElement
-              ? (
-                <>
-                  <strong>Requests:</strong>
-                  <ul>
-                    { milestonesElement }
-                  </ul>
-                </>
-              )
-              : ''
-          }
-          {
-            milestoneResolutions
-              ? (
-                <div>These results have now been acknowledged:
-                  <ul>
-                    {
-                      milestoneResolutions?.map((m) => (
-                        <li key={ Math.random() }>{m}</li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              )
-              : false
-          }
-          <Button className="float-end mt-lg-4" secondary onClick={ cancelCallback }>
-            Cancel
-          </Button>
-          <Button className="float-end mt-lg-4 me-1" onClick={ okCallback }>
-            OK
-          </Button>
-        </div>
+      <div>
+        <h2>Submit these requests?</h2>
+        {
+          milestones
+            ? (
+              <>
+                <strong>Requests:</strong>
+                <ul>
+                  {
+                    milestones?.map((m) => (
+                      <li key={ m.id }>{m.name}</li>
+                    ))
+                  }
+                </ul>
+              </>
+            )
+            : ''
+        }
+        {
+          milestoneResolutions
+            ? (
+              <div>By clicking &apos;OK&apos; you are acknowledging:
+                <ul>
+                  {
+                    milestoneResolutions?.map((m, index) => (
+                      // eslint-disable-next-line react/no-array-index-key
+                      <li key={ `resolution-${index}}` }>{m}</li>
+                    ))
+                  }
+                </ul>
+              </div>
+            )
+            : false
+        }
+        <Button
+          disabled={ disabledState }
+          className="float-end mt-lg-4"
+          secondary
+          onClick={ cancelCallback }
+        >
+          Cancel
+        </Button>
+        <Button
+          disabled={ disabledState }
+          className="float-end mt-lg-4 me-1"
+          onClick={ () => {
+            setDisabledState(true);
+            okCallback();
+          } }
+        >
+          OK
+        </Button>
       </div>
     </Container>
   );

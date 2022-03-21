@@ -188,9 +188,9 @@ const usePreviousTestResults = (data: GetPatient | undefined ) => {
 };
 
 interface ConfirmNoMilestonesProps {
-  confirmFn: (value: boolean) => void;
+  confirmFn: () => void;
   submitFn: () => void;
-  cancelFn: (value: boolean) => void;
+  cancelFn: () => void;
   milestoneResolutions?: string[];
 }
 
@@ -201,21 +201,22 @@ interface ConfirmNoMilestonesProps {
  */
 const ConfirmNoMilestones = (
   { confirmFn, submitFn, cancelFn, milestoneResolutions }: ConfirmNoMilestonesProps,
-): JSX.Element => (
-  <Container className="d-flex align-items-center justify-content-left mt-5">
-    <div className="d-flex align-items-center">
-      <div>
+): JSX.Element => {
+  const [disabledState, setDisabledState] = useState<boolean>(false);
+  return (
+    <Container>
+      <Row>
         <strong>No requests selected!</strong>
-        <div className="mt-lg-4">
-          <p>
-            No requests have been selected. Are you sure
-            you want to continue?
-          </p>
-        </div>
+        <p>
+          No requests have been selected. Are you sure
+          you want to continue?
+        </p>
+      </Row>
+      <Row>
         {
           milestoneResolutions
             ? (
-              <div>These results have now been acknowledged:
+              <div>By clicking &apos;Submit&apos; you are acknowledging:
                 <ul>
                   {
                     milestoneResolutions?.map((m) => (
@@ -227,27 +228,31 @@ const ConfirmNoMilestones = (
             )
             : false
         }
-        <Button
-          className="float-end w-25 mt-lg-4 ms-4"
-          onClick={ () => {
-            confirmFn(true);
-            submitFn();
-          } }
-        >
-          Submit
-        </Button>
-        <Button
-          onClick={ () => {
-            cancelFn(false);
-          } }
-          className="float-end w-25 mt-lg-4"
-        >
-          Cancel
-        </Button>
-      </div>
-    </div>
-  </Container>
-);
+      </Row>
+      <Button
+        className="float-end w-25 mt-lg-4 ms-4"
+        disabled={ disabledState }
+        onClick={ () => {
+          setDisabledState(true);
+          confirmFn();
+          submitFn();
+        } }
+        secondary
+      >
+        Submit
+      </Button>
+      <Button
+        disabled={ disabledState }
+        onClick={ () => {
+          cancelFn();
+        } }
+        className="float-end w-25 mt-lg-4"
+      >
+        Cancel
+      </Button>
+    </Container>
+  );
+};
 
 interface PreviousTestResultsElementProps {
   data: GetPatient | undefined;
@@ -261,8 +266,8 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   } = usePreviousTestResults(data);
 
   const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <Row className={ classNames('my-3', { 'test-new': !result.forwardDecisionPointId }) }>
-      <Col>
+    <Row role="row" className={ classNames('my-3', { 'test-new': !result.forwardDecisionPointId }) }>
+      <Col role="cell">
         {
           !result.forwardDecisionPointId
             ? (
@@ -270,16 +275,16 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
                 <img src={ newResultImage } alt="New Result" />
               </>
             )
-            : ''
+            : false
         }
       </Col>
-      <Col xs={ 12 } sm={ 11 } xl={ 3 }>
+      <Col role="cell" xs={ 12 } sm={ 11 } xl={ 3 }>
         <p className="text-left">
           {result.milestoneName}: <br />
           {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
         </p>
       </Col>
-      <Col xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
+      <Col role="cell" xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
         {
           result.description.length < 75
             ? <>{result.description}</>
@@ -299,7 +304,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             )
       }
       </Col>
-      <Col xs={ 2 } sm={ 2 } xl={ 1 } className="position-relative">
+      <Col role="cell" xs={ 2 } sm={ 2 } xl={ 1 } className="position-relative">
         {
           result.description.length < 75
             ? ''
@@ -333,8 +338,17 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   const elements = previousTestResults?.map((result) => <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />);
 
   return (
-    <div className="">
-      { elements }
+    <div role="table" aria-label="Previous Test Results">
+      <div role="rowgroup" className="visually-hidden">
+        <div role="row">
+          <div role="columnheader">New?</div>
+          <div role="columnheader">Name</div>
+          <div role="columnheader">Description</div>
+        </div>
+      </div>
+      <div role="rowgroup">
+        { elements }
+      </div>
     </div>
   );
 };
@@ -496,8 +510,11 @@ const DecisionPointPage = (
     if (requestConfirmation === 0 || requestConfirmation === true) {
       return (
         <ConfirmNoMilestones
-          confirmFn={ setConfirmNoRequests }
-          cancelFn={ setRequestConfirmation }
+          confirmFn={ () => setConfirmNoRequests(true) }
+          cancelFn={ () => {
+            tabStateCallback(false);
+            setRequestConfirmation(false);
+          } }
           submitFn={ () => {
             setConfirmNoRequests(true);
             onSubmitFn(createDecision, getValues(), true);
@@ -510,10 +527,13 @@ const DecisionPointPage = (
     const milestones = getValues()
       .milestoneRequests
       .filter((m) => m.checked)
-      .map((m) => ({ id: m.id, name: m.name }));
+      .map((m) => ({ id: m.milestoneTypeId, name: m.name }));
     return (
       <DecisionSubmissionConfirmation
-        cancelCallback={ () => setRequestConfirmation(false) }
+        cancelCallback={ () => {
+          tabStateCallback(false);
+          setRequestConfirmation(false);
+        } }
         okCallback={ () => {
           setConfirmNoRequests(true);
           onSubmitFn(createDecision, getValues(), true);
