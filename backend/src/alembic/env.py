@@ -14,11 +14,31 @@ config = context.config
 # this is the replacement of variables in alembic.ini for
 # their substituted environment variables
 section = config.config_ini_section
-config.set_section_option(section, "DATABASE_HOSTNAME", environ.get("DATABASE_HOSTNAME"))
-config.set_section_option(section, "DATABASE_PORT", environ.get("DATABASE_PORT"))
-config.set_section_option(section, "DATABASE_USERNAME", environ.get("DATABASE_USERNAME"))
-config.set_section_option(section, "DATABASE_PASSWORD", environ.get("DATABASE_PASSWORD"))
-config.set_section_option(section, "DATABASE_NAME", environ.get("DATABASE_NAME"))
+config.set_section_option(
+    section,
+    "DATABASE_HOSTNAME",
+    environ.get("DATABASE_HOSTNAME")
+)
+config.set_section_option(
+    section,
+    "DATABASE_PORT",
+    environ.get("DATABASE_PORT")
+)
+config.set_section_option(
+    section,
+    "DATABASE_USERNAME",
+    environ.get("DATABASE_USERNAME")
+)
+config.set_section_option(
+    section,
+    "DATABASE_PASSWORD",
+    environ.get("DATABASE_PASSWORD")
+)
+config.set_section_option(
+    section,
+    "DATABASE_NAME",
+    environ.get("DATABASE_NAME")
+)
 
 
 # Interpret the config file for Python logging.

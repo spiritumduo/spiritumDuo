@@ -1,11 +1,11 @@
 from models import Pathway
-from gettext import gettext as _
 from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
 from asyncpg.exceptions import UniqueViolationError
 
+
 async def CreatePathway(
-    context:dict=None,
-    name:str=None
+    context: dict = None,
+    name: str = None
 ):
     """
     Creates a decision point object in the local database
@@ -14,7 +14,8 @@ async def CreatePathway(
         context (dict): the current request context
         name (string): the name of the pathway
     Returns:
-        Pathway/DataCreatorInputErrors: newly created pathway object/errors object
+        Pathway/DataCreatorInputErrors: newly created pathway object/errors
+            object
     """
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
@@ -26,4 +27,7 @@ async def CreatePathway(
             name=name
         )
     except UniqueViolationError:
-        return DataCreatorInputErrors().addError(field="name", message="A pathway with this name already exists")
+        return DataCreatorInputErrors().addError(
+            field="name",
+            message="A pathway with this name already exists"
+        )

@@ -1,7 +1,8 @@
 import json
 import pytest
-from models import *
-from hamcrest import *
+from models import MilestoneType
+from hamcrest import assert_that, equal_to, has_entries, has_items
+
 
 # Feature: Test get milestone types
 # Scenario: the GraphQL query for getMilestoneTypes is executed
@@ -26,16 +27,15 @@ async def test_add_new_patient_to_system(context):
 
     context.inserted_milestone_types = milestone_types
 
-
     res = await context.client.post(
         url="graphql",
         json={
             "query": (
                 """query getMilestoneTypes {
                     getMilestoneTypes {
-                        id 
-                        name 
-                        refName 
+                        id
+                        name
+                        refName
                     }
                 }"""
             )
@@ -50,4 +50,7 @@ async def test_add_new_patient_to_system(context):
     Then: We get the MilestoneTypes in the system
     """
     for mst in context.inserted_milestone_types:
-        assert_that(context.received_milestone_types, has_items(has_entries(mst)))
+        assert_that(
+            context.received_milestone_types,
+            has_items(has_entries(mst))
+        )

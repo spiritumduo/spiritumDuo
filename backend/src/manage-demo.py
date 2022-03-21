@@ -172,7 +172,7 @@ async def insert_demo_data():
         )
     }
 
-    selectable_milestone_types: Dict[str, MilestoneType]={
+    selectable_milestone_types: Dict[str, MilestoneType] = {
         "pet_ct": await MilestoneType.create(
             name="PET-CT",
             ref_name="Positron emission tomography with computed tomography (procedure)",
