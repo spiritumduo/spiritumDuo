@@ -29,7 +29,7 @@ async def ImportMilestone(
         Milestone: newly created milestone object
     """
     patient_id=(await OnPathwayByIdLoader.load_from_id(context=context, id=int(on_pathway_id))).patient_id
-    patient:Patient = await PatientByIdLoader.load_from_id(dbontext=context, id=int(patient_id))
+    patient:Patient = await PatientByIdLoader.load_from_id(context=context, id=int(patient_id))
 
     testResult=await trust_adapter.create_test_result(
         TestResultRequest_IE(
