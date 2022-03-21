@@ -33,7 +33,7 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS = 99
+NUMBER_OF_USERS = 5
 NUMBER_OF_PATIENTS_PER_USER = 5
 
 
@@ -41,12 +41,6 @@ class RequestPlaceholder(dict):
     """
     This is a test
     """
-
-
-_CONTEXT = {
-    "db": db,
-    "request": RequestPlaceholder()
-}
 
 
 CLINIC_HISTORY = [
@@ -69,9 +63,15 @@ COMORBIDITIES = [
     chemotherapy 2008. Atrial flutter and on apixaban."""
 ]
 
+_CONTEXT = {
+    "db": db,
+    "request": RequestPlaceholder()
+}
+
 signer = TimestampSigner(config['SESSION_SECRET_KEY'])
 random_cookie_value = b64encode(str(getrandbits(64)).encode("utf-8"))
 SESSION_COOKIE = signer.sign(random_cookie_value).decode("utf-8")
+
 _CONTEXT['request'].cookies = {
     "SDSESSION": SESSION_COOKIE
 }
@@ -242,7 +242,6 @@ async def insert_demo_data():
 
     for i in range(1, NUMBER_OF_USERS+1):
         sd_pathway: Pathway = await Pathway.create(
-            context=_CONTEXT,
             name=f"Lung cancer demo {i}"
         )
         print(f"pathway id {sd_pathway.id} name {sd_pathway.name}")
@@ -337,6 +336,7 @@ async def insert_demo_data():
                 current_state=MilestoneState.COMPLETED,
                 milestone_type_id=general_milestone_types["ct_chest"].id
             )
+            await asyncio.sleep(0.1)
 
             if isinstance(sd_patient, DataCreatorInputErrors):
                 raise Exception(sd_patient.errorList)
@@ -391,7 +391,7 @@ async def insert_demo_data():
                     test_result_reference_id=str(tie_testresult_petct.id),
                     current_state=MilestoneState.COMPLETED
                 )
-            
+
             elif i == 2:
                 """
                 Acknowledged:
@@ -401,7 +401,7 @@ async def insert_demo_data():
                 Waiting confirmation:
                     None
                 """
-               
+
             elif i == 3:
                 """
                 Acknowledged:
@@ -432,7 +432,6 @@ async def insert_demo_data():
                 await Milestone.update.values(
                     fwd_decision_point_id=sd_decisionpoint.id
                 ).where(Milestone.id == sd_milestone_ctx.id).gino.status()
-
 
                 tie_testresult_petct: TestResult_IE = await PseudoTrustAdapter().create_test_result(
                     testResult=TestResultRequest_IE(

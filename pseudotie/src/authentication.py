@@ -1,14 +1,17 @@
 import inspect
-import json
 from functools import wraps
 from typing import Callable
-from starlette.authentication import has_required_scope, AuthenticationBackend, AuthCredentials
+from starlette.authentication import (
+    has_required_scope,
+    AuthenticationBackend,
+    AuthCredentials
+)
 from starlette.requests import HTTPConnection
 from starlette.responses import JSONResponse
 
 
 class PseudoAuth(AuthenticationBackend):
-    async def authenticate(self, request:HTTPConnection):
+    async def authenticate(self, request: HTTPConnection):
         if "Authorization" not in request.headers:
             if request['session']:
                 return AuthCredentials(
