@@ -1,23 +1,24 @@
 import json
 import pytest
-from models import *
+from models import Patient, OnPathway
 from trustadapter.trustadapter import Patient_IE
 from SdTypes import MilestoneState
-from hamcrest import *
+from hamcrest import assert_that, equal_to, not_none
+
 
 # Feature: testing importMilestone
 # Scenario: a milestone has to be imported onto a patient;s record
 @pytest.mark.asyncio
 async def test_get_patients_on_pathway(context):
-    context.trust_adapter_mock.test_connection.return_value=True
+    context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have a patient on a pathway
     """
-    PATIENT=await Patient.create(
+    PATIENT = await Patient.create(
         hospital_number="fMRN123456",
         national_number="fNHS12345678"
     )
-    PATIENT_IE=Patient_IE(
+    PATIENT_IE = Patient_IE(
         id=1000,
         hospital_number="fMRN123456",
         national_number="fNHS12345678",
@@ -26,16 +27,15 @@ async def test_get_patients_on_pathway(context):
         date_of_birth="2000-01-01"
     )
 
-    ONPATHWAY=await OnPathway.create(
+    ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
         pathway_id=context.PATHWAY.id
     )
 
     async def load_patient(): return PATIENT_IE
     async def load_many_patients(): return [PATIENT_IE]
-    context.trust_adapter_mock.load_patient=load_patient
-    context.trust_adapter_mock.load_many_patients=load_many_patients
-
+    context.trust_adapter_mock.load_patient = load_patient
+    context.trust_adapter_mock.load_many_patients = load_many_patients
 
     """
     When: we import a milestone onto the patient
@@ -44,7 +44,7 @@ async def test_get_patients_on_pathway(context):
     import_milestone_mutation = await context.client.post(
         url="graphql",
         json={
-            "query":"""
+            "query": """
                 mutation importMilestone(
                     $onPathwayId: ID!
                     $milestoneTypeId: ID!
@@ -77,7 +77,9 @@ async def test_get_patients_on_pathway(context):
     )
 
     assert_that(import_milestone_mutation.status_code, equal_to(200))
-    import_milestone_mutation = json.loads(import_milestone_mutation.text)['data']['importMilestone']
+    import_milestone_mutation = json.loads(
+        import_milestone_mutation.text
+    )['data']['importMilestone']
 
     """
     Then: we get the milestone information back

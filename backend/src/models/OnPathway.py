@@ -25,8 +25,8 @@ class OnPathway(db.Model):
         db.DateTime(), server_default=func.now(), nullable=False
     )
     updated_at = db.Column(
-        db.DateTime, server_default=func.now(), onupdate=func.now(),
-        nullable=False
+        db.DateTime, server_default=func.now(),
+        onupdate=func.now(), nullable=False
     )
     referred_at = db.Column(
         db.DateTime(), server_default=func.now(), nullable=False
@@ -34,7 +34,3 @@ class OnPathway(db.Model):
     under_care_of_id = db.Column(
         db.Integer(), db.ForeignKey('tbl_user.id'), nullable=True
     )
-    lock_user_id = db.Column(
-        db.Integer(), db.ForeignKey('tbl_user.id'), nullable=True
-    )
-    lock_end_time = db.Column(db.DateTime(), nullable=True)

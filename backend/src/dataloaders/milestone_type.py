@@ -3,14 +3,16 @@ from aiodataloader import DataLoader
 from models import MilestoneType
 import logging
 
+
 class MilestoneTypeLoader(DataLoader):
     """
-        This is class for loading MilestoneType objects and 
+        This is class for loading MilestoneType objects and
         caching the result in the request context
 
         Attributes:
             loader_name (str): unique name of loader to cache data under
     """
+
     loader_name = "_milestone_type_loader"
     _db = None
 
@@ -44,14 +46,18 @@ class MilestoneTypeLoader(DataLoader):
         return sortedData
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None) -> Optional[MilestoneType]:
+    async def load_from_id(
+        cls,
+        context=None,
+        id=None
+    ) -> Optional[MilestoneType]:
         """
             Load a single entry from its record ID
-            
+
             Parameters:
                 context (dict): request context
                 id (int): ID to find
-            Returns: 
+            Returns:
                 MilestoneType/None
         """
         if not id:
@@ -59,14 +65,18 @@ class MilestoneTypeLoader(DataLoader):
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None) -> Optional[List[MilestoneType]]:
+    async def load_many_from_id(
+        cls,
+        context=None,
+        ids=None
+    ) -> Optional[List[MilestoneType]]:
         """
             Load a multiple entries from their record IDs
-            
+
             Parameters:
                 context (dict): request context
                 id (List[int]): IDs to find
-            Returns: 
+            Returns:
                 List[MilestoneType]/None
         """
         if not ids:
@@ -77,7 +87,7 @@ class MilestoneTypeLoader(DataLoader):
     async def load_all(cls, context=None):
         """
             Loads all MilestoneType records
-            
+
             Parameters:
                 context (dict): request context
             Returns:

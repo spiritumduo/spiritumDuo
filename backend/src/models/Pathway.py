@@ -1,5 +1,6 @@
 from . import db
 
+
 class Pathway(db.Model):
     __tablename__ = "tbl_pathway"
 

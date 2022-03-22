@@ -1,6 +1,4 @@
-import logging.config
 from dependency_injector import containers, providers
-
 import sdpubsub
 import services
 import trustadapter
@@ -11,7 +9,9 @@ class SDContainer(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "dataloaders", "datacreators", "gql.mutation.create_decision_point", "gql.query",
+            "dataloaders", "datacreators",
+            "gql.mutation.create_decision_point",
+            "gql.query",
             "gql.subscription.milestone_resolved",
             "rest.update_test_result",
         ]
@@ -29,5 +29,11 @@ class SDContainer(containers.DeclarativeContainer):
 
     # Services
 
-    trust_adapter_service = providers.Factory(services.TrustAdapterService, trust_adapter_client=trust_adapter_client)
-    pubsub_service = providers.Factory(services.PubSubService, pubsub_client=pubsub_client)
+    trust_adapter_service = providers.Factory(
+        services.TrustAdapterService,
+        trust_adapter_client=trust_adapter_client
+    )
+    pubsub_service = providers.Factory(
+        services.PubSubService,
+        pubsub_client=pubsub_client
+    )

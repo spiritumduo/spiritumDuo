@@ -1,3 +1,3 @@
 from ariadne.objects import ObjectType
 
-PathwayObjectType=ObjectType("Pathway")
+PathwayObjectType = ObjectType("Pathway")

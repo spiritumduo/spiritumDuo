@@ -1,9 +1,10 @@
 import json
 
+
 def _loadFromFile(fileName: str):
-    returnValue:list = []
+    returnValue: list = []
     try:
-        _file=open(fileName, "r")
+        _file = open(fileName, "r")
         returnValue = json.load(_file)
         _file.close()
     except FileNotFoundError:
@@ -14,7 +15,7 @@ def _loadFromFile(fileName: str):
 
 TEST_RESULT_DATA = _loadFromFile('milestone_demo_data.json')
 
-TEST_RESULT_DATA_SERIES=[
+TEST_RESULT_DATA_SERIES = [
     _loadFromFile('patient1_demo_data.json'),
     _loadFromFile('patient2_demo_data.json'),
     _loadFromFile('patient3_demo_data.json'),
