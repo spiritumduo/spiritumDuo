@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from config import config
 from common import DataCreatorInputErrors
 
+
 @mutation.field("lockOnPathway")
 @needsAuthorization(["authenticated"])
 async def resolve_lock_on_pathway(
