@@ -43,7 +43,7 @@ type Mutation {
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
     importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
-    lockOnPathway(input:LockOnPathwayInput!): OnPathway!
+    lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
 }
 
 type Subscription {
@@ -81,6 +81,10 @@ type AddDecisionPointPayload{
 }
 type ImportMilestonePayload{
     milestone: Milestone
+    userErrors:[UserError!]
+}
+type LockOnPathwayPayload{
+    onPathway: OnPathway
     userErrors:[UserError!]
 }
 
