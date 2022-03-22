@@ -40,6 +40,11 @@ export interface DecisionPointInput {
   milestoneResolutions?: string[] | null;
 }
 
+export interface LockOnPathwayInput {
+  onPathwayId: string;
+  unlock?: boolean | null;
+}
+
 export interface MilestoneRequestInput {
   milestoneTypeId: string;
   currentState?: MilestoneState | null;
