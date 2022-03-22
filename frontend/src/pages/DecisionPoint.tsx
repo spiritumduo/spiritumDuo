@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { Collapse, Container, Row, Col, Button as BootstrapButton } from 'react-bootstrap';
+import { Collapse, Container, Row, Col, Button as BootstrapButton, Modal } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 import { Button, Fieldset, ErrorMessage } from 'nhsuk-react-components';
 import * as yup from 'yup';
@@ -31,6 +31,7 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
 
 import './decisionpoint.css';
+import { lockOnPathway } from './__generated__/lockOnPathway';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -50,6 +51,13 @@ export const GET_PATIENT_QUERY = gql`
 
         onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
           id
+          lockUser{
+            id
+            firstName
+            lastName
+            username
+          }
+          lockEndTime
           underCareOf {
             firstName
             lastName
@@ -114,6 +122,25 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
       userErrors {
         message
         field
+      }
+    }
+  }
+`;
+
+export const LOCK_ON_PATHWAY_MUTATION = gql`
+  mutation lockOnPathway($input: LockOnPathwayInput!){
+    lockOnPathway(input: $input){
+      onPathway{
+        id
+        lockUser{
+          id
+          firstName
+          lastName
+        }
+      }
+      userErrors{
+        field
+        message
       }
     }
   }
@@ -373,10 +400,16 @@ const DecisionPointPage = (
     },
   );
 
+  // ATTEMPT TO LOCK THE ONPATHWAY INSTANCE
+  const [lockOnPathwayFunc, {
+    data: lockData, loading: lockLoading, error: lockError,
+  }] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
+
   // CREATE DECISION POINT MUTATION
   const [createDecision, {
     data: mutateData, loading: mutateLoading, error: mutateError,
   }] = useMutation<createDecisionPoint>(CREATE_DECISION_POINT_MUTATION);
+
   const isSubmitted = mutateData?.createDecisionPoint?.decisionPoint?.id !== undefined;
 
   // FORM HOOK & VALIDATION
@@ -432,6 +465,23 @@ const DecisionPointPage = (
     name: 'milestoneResolutions',
     control: control,
   });
+
+  const [lockWarningModal, setLockWarningModal] = useState(false);
+  useEffect(() => {
+    if (data?.getPatient?.onPathways?.[0].id) {
+      lockOnPathwayFunc({
+        variables: {
+          input: {
+            onPathwayId: data?.getPatient?.onPathways?.[0].id,
+          },
+        },
+      });
+    }
+    setLockWarningModal(!!lockData?.lockOnPathway?.userErrors?.[0]);
+    console.log('error', lockError);
+    console.log('loading', lockLoading);
+    console.log('data', lockData);
+  }, [data, lockOnPathwayFunc]);
 
   useEffect(() => {
     const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
@@ -583,7 +633,21 @@ const DecisionPointPage = (
     <div>
       <section>
         <Container fluid>
-          <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
+          {
+            lockData?.lockOnPathway?.userErrors?.[0].message ? (
+              <Modal show={ lockWarningModal } onHide={ (() => { setLockWarningModal(false); }) }>
+                <Modal.Header closeButton>
+                  <Modal.Title>This patient is locked</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  This patient&apos;s record is current locked by
+                  {`${lockData.lockOnPathway.onPathway?.lockUser?.firstName} ${lockData.lockOnPathway.onPathway?.lockUser?.lastName}`}. This lock will expire at
+                  {/* { lockData?.lockOnPathway?.onPathway?.lockEndTime.toLocaleDateString() } */}
+                </Modal.Body>
+              </Modal>
+            ) : ''
+          }
+          <form className={ `card px-4 ${lockWarningModal ? 'd-none' : 'd-block'}` } onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
             <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
             <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
             <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
