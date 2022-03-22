@@ -21,7 +21,7 @@ async def update_test_result(
 ):
     if ('SDTIEKEY' not in request.cookies or
         request.cookies['SDTIEKEY'] != config['UPDATE_ENDPOINT_KEY'])\
-            and config['TESTING'] is None:
+            and 'TESTING' not in config:
         return Response(status_code=401)
     milestone = await Milestone.query.where(
         Milestone.test_result_reference_id == str(data.id)

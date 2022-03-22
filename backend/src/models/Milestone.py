@@ -19,7 +19,8 @@ class Milestone(db.Model):
     test_result_reference_id = db.Column(
         db.String(), unique=True, nullable=False)
     current_state = db.Column(
-        Enum(MilestoneState, native_enum=False), default=MilestoneState.INIT.value,
+        Enum(MilestoneState, native_enum=False),
+        default=MilestoneState.INIT.value,
         server_default=MilestoneState.INIT.value, nullable=False
     )
     milestone_type_id = db.Column(

@@ -8,13 +8,18 @@ class DecisionPoint(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     clinician_id = db.Column(
-        'user_id', db.Integer(), db.ForeignKey('tbl_user.id'), nullable=False)
+        'user_id', db.Integer(), db.ForeignKey('tbl_user.id'),
+        nullable=False
+    )
     on_pathway_id = db.Column(
-        db.Integer(), db.ForeignKey('tbl_on_pathway.id'), nullable=False)
+        db.Integer(), db.ForeignKey('tbl_on_pathway.id'),
+        nullable=False
+    )
     decision_type = db.Column(
         Enum(DecisionTypes, native_enum=False),
         default=DecisionTypes.TRIAGE.value,
-        server_default=DecisionTypes.TRIAGE.value, nullable=False
+        server_default=DecisionTypes.TRIAGE.value,
+        nullable=False
     )
     added_at = db.Column(
         db.DateTime(), server_default=func.now(),
