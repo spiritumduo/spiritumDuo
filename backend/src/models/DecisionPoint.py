@@ -18,15 +18,15 @@ class DecisionPoint(db.Model):
     decision_type = db.Column(
         Enum(DecisionTypes, native_enum=False),
         default=DecisionTypes.TRIAGE.value,
-        server_default=DecisionTypes.TRIAGE.value, nullable=False
+        server_default=DecisionTypes.TRIAGE.value,
+        nullable=False
     )
     added_at = db.Column(
         db.DateTime(), server_default=func.now(),
-        nullable=False
-    )
+        nullable=False)
     updated_at = db.Column(
-        db.DateTime(), server_default=func.now(), onupdate=func.now(),
-        nullable=False
+        db.DateTime(), server_default=func.now(),
+        onupdate=func.now(), nullable=False
     )
     clinic_history = db.Column(db.String(), nullable=False)
     comorbidities = db.Column(db.String(), nullable=False)

@@ -4,12 +4,13 @@ from models import DecisionPoint
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 
+
 @mutation.field("createDecisionPoint")
 @needsAuthorization(["authenticated"])
 async def resolve_create_decision(
-    obj=None, info:GraphQLResolveInfo=None, input:dict=None,
-):
-    decision_point_details={
+    obj=None, info: GraphQLResolveInfo = None, input: dict = None,
+) -> DecisionPoint:
+    decision_point_details = {
         "context": info.context,
         "clinician_id": info.context['request']['user'].id,
         "on_pathway_id": input['onPathwayId'],
@@ -18,11 +19,13 @@ async def resolve_create_decision(
         "comorbidities": input['comorbidities'],
     }
     if "milestoneResolutions" in input:
-        decision_point_details['milestone_resolutions']=input['milestoneResolutions']
+        decision_point_details['milestone_resolutions'] = \
+            input['milestoneResolutions']
     if "milestoneRequests" in input:
-        decision_point_details['milestone_requests']=input['milestoneRequests']
+        decision_point_details['milestone_requests'] = \
+            input['milestoneRequests']
 
-    decision_point:DecisionPoint=await CreateDecisionPoint(
+    decision_point: DecisionPoint = await CreateDecisionPoint(
         **decision_point_details
     )
 

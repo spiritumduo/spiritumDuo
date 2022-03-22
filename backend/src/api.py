@@ -1,7 +1,4 @@
-import asyncio
-import logging
 
-from starlette.endpoints import WebSocketEndpoint
 from starlette.applications import Starlette
 from starlette.routing import Route, WebSocketRoute
 from starlette.middleware import Middleware
@@ -16,7 +13,11 @@ from containers import SDContainer
 
 
 starlette_middleware = [
-    Middleware(SessionMiddleware, secret_key=config['SESSION_SECRET_KEY'], session_cookie="SDSESSION", max_age=60*60*6),
+    Middleware(
+        SessionMiddleware,
+        secret_key=config['SESSION_SECRET_KEY'],
+        session_cookie="SDSESSION", max_age=60*60*6
+    ),
     Middleware(AuthenticationMiddleware, backend=SDAuthentication()),
 ]
 
@@ -25,7 +26,11 @@ starlette_routes = [
     WebSocketRoute("/subscription", endpoint=_graphql)
 ]
 
-app = Starlette(debug=True, middleware=starlette_middleware, routes=starlette_routes)
+app = Starlette(
+    debug=True,
+    middleware=starlette_middleware,
+    routes=starlette_routes
+)
 app.mount("/rest", _FastAPI)
 app.container = SDContainer()
 db.init_app(app)
