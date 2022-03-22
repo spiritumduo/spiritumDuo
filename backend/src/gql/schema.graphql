@@ -43,6 +43,7 @@ type Mutation {
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
     importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
+    lockOnPathway(input:LockOnPathwayInput!): OnPathway!
 }
 
 type Subscription {
@@ -148,6 +149,8 @@ type OnPathway {
     decisionPoints: [DecisionPoint!]
     milestones(notOnDecisionPoint: Boolean = True): [Milestone!]
     underCareOf: User
+    lockUser: User
+    lockEndTime: DateTime
 }
 
 type User {
@@ -245,6 +248,10 @@ input DecisionPointInput{
     comorbidities: String
     milestoneRequests: [MilestoneRequestInput!]
     milestoneResolutions: [ID!]
+}
+input LockOnPathwayInput{
+    onPathwayId: ID!
+    unlock: Boolean
 }
 
 input PathwayInput{
