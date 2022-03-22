@@ -7,7 +7,7 @@ from hamcrest import assert_that, equal_to
 # Feature: User account operations
 # Scenario: a new user needs to be added into the system
 @pytest.mark.asyncio
-async def test_add_new_patient_to_system(context):
+async def test_create_user(context):
     """
     When: we create their user account
     """

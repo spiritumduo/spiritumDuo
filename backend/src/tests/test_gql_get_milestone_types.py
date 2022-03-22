@@ -7,7 +7,7 @@ from hamcrest import assert_that, equal_to, has_entries, has_items
 # Feature: Test get milestone types
 # Scenario: the GraphQL query for getMilestoneTypes is executed
 @pytest.mark.asyncio
-async def test_add_new_patient_to_system(context):
+async def test_get_milestone_types(context):
     """
     Given: MilestoneTypes are in the system
     """

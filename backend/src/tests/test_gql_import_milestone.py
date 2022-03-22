@@ -9,7 +9,7 @@ from hamcrest import assert_that, equal_to, not_none
 # Feature: testing importMilestone
 # Scenario: a milestone has to be imported onto a patient;s record
 @pytest.mark.asyncio
-async def test_get_patients_on_pathway(context):
+async def test_import_milestone(context):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have a patient on a pathway
