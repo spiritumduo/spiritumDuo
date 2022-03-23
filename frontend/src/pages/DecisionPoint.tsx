@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Collapse, Container, Row, Col, Button as BootstrapButton, Modal } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
-import { Button, Fieldset, ErrorMessage } from 'nhsuk-react-components';
+import { Button, Fieldset, ErrorMessage, ErrorSummary } from 'nhsuk-react-components';
 import * as yup from 'yup';
 import classNames from 'classnames';
 
@@ -134,8 +134,6 @@ export const LOCK_ON_PATHWAY_MUTATION = gql`
         id
         lockUser{
           id
-          firstName
-          lastName
         }
       }
       userErrors{
@@ -466,7 +464,6 @@ const DecisionPointPage = (
     control: control,
   });
 
-  const [lockWarningModal, setLockWarningModal] = useState(false);
   useEffect(() => {
     if (data?.getPatient?.onPathways?.[0].id) {
       lockOnPathwayFunc({
@@ -477,10 +474,6 @@ const DecisionPointPage = (
         },
       });
     }
-    setLockWarningModal(!!lockData?.lockOnPathway?.userErrors?.[0]);
-    console.log('error', lockError);
-    console.log('loading', lockLoading);
-    console.log('data', lockData);
   }, [data, lockOnPathwayFunc]);
 
   useEffect(() => {
@@ -628,26 +621,35 @@ const DecisionPointPage = (
       referAndDischargeOptionsElements.push(element);
     }
   });
-
+  const isPageLockedByOther = !!lockData?.lockOnPathway?.userErrors;
+  const lockUser = isPageLockedByOther ? data?.getPatient?.onPathways?.[0]?.lockUser : null;
+  const lockEndTime = isPageLockedByOther ? data?.getPatient?.onPathways?.[0]?.lockEndTime : null;
   return (
     <div>
       <section>
         <Container fluid>
-          {
-            lockData?.lockOnPathway?.userErrors?.[0].message ? (
-              <Modal show={ lockWarningModal } onHide={ (() => { setLockWarningModal(false); }) }>
-                <Modal.Header closeButton>
-                  <Modal.Title>This patient is locked</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  This patient&apos;s record is current locked by
-                  {`${lockData.lockOnPathway.onPathway?.lockUser?.firstName} ${lockData.lockOnPathway.onPathway?.lockUser?.lastName}`}. This lock will expire at
-                  {/* { lockData?.lockOnPathway?.onPathway?.lockEndTime.toLocaleDateString() } */}
-                </Modal.Body>
-              </Modal>
-            ) : ''
-          }
-          <form className={ `card px-4 ${lockWarningModal ? 'd-none' : 'd-block'}` } onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
+          <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ !isPageLockedByOther }>
+            <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
+            <ErrorSummary.Body>
+              This patient is currently locked by {lockUser?.firstName} {lockUser?.lastName} (
+              {lockUser?.username}). This record will be unlocked
+              after the other user has become inactive,
+              or if they submit this form. You will not be able to make edits to
+              this page until is it unlocked.
+              <br />
+              <br />
+              <strong>
+                Current unlock time:
+              </strong> {new Date(lockEndTime).toLocaleString()}
+              <br />
+              NOTE: this time may update if the other user is still active on this page.
+              {/*
+                TODO: not sure why I'm having to re-create the date object, I thought
+                Apollo should do that for us? ~JC
+              */}
+            </ErrorSummary.Body>
+          </ErrorSummary>
+          <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
             <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
             <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
             <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
