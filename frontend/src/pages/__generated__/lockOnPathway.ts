@@ -12,8 +12,6 @@ import { LockOnPathwayInput } from "./../../../__generated__/globalTypes";
 export interface lockOnPathway_lockOnPathway_onPathway_lockUser {
   __typename: "User";
   id: string;
-  firstName: string;
-  lastName: string;
 }
 
 export interface lockOnPathway_lockOnPathway_onPathway {
