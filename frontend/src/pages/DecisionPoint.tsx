@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import React, { useContext, useEffect, useState } from 'react';
 
 // LIBRARIES
@@ -134,7 +135,11 @@ export const LOCK_ON_PATHWAY_MUTATION = gql`
         id
         lockUser{
           id
+          firstName
+          lastName
+          username 
         }
+        lockEndTime
       }
       userErrors{
         field
@@ -398,7 +403,7 @@ const DecisionPointPage = (
     },
   );
 
-  // ATTEMPT TO LOCK THE ONPATHWAY INSTANCE
+  // LOCK ONPATHWAY MUTATION
   const [lockOnPathwayFunc, {
     data: lockData, loading: lockLoading, error: lockError,
   }] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
@@ -465,16 +470,22 @@ const DecisionPointPage = (
   });
 
   useEffect(() => {
+    // This effect happens on render, and only once
     if (data?.getPatient?.onPathways?.[0].id) {
-      lockOnPathwayFunc({
-        variables: {
-          input: {
-            onPathwayId: data?.getPatient?.onPathways?.[0].id,
-          },
-        },
-      });
+      lockOnPathwayFunc(
+        { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0].id } } },
+      );
     }
-  }, [data, lockOnPathwayFunc]);
+  }, []);
+
+  useEffect(() => {
+    // This effect happens after 5 seconds, not immediately
+    // Hence the need for the two effects
+    const lockInterval = setInterval(() => lockOnPathwayFunc(
+      { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0].id } } },
+    ), 2.5 * 60 * 1000);
+    return () => clearInterval(lockInterval);
+  });
 
   useEffect(() => {
     const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
@@ -621,6 +632,7 @@ const DecisionPointPage = (
       referAndDischargeOptionsElements.push(element);
     }
   });
+
   const isPageLockedByOther = !!lockData?.lockOnPathway?.userErrors;
   const lockUser = isPageLockedByOther ? data?.getPatient?.onPathways?.[0]?.lockUser : null;
   const lockEndTime = isPageLockedByOther ? data?.getPatient?.onPathways?.[0]?.lockEndTime : null;
@@ -631,9 +643,11 @@ const DecisionPointPage = (
           <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ !isPageLockedByOther }>
             <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
             <ErrorSummary.Body>
-              This patient is currently locked by {lockUser?.firstName} {lockUser?.lastName} (
-              {lockUser?.username}). This record will be unlocked
-              after the other user has become inactive,
+              {/* This patient is currently locked by {lockUser?.firstName} {lockUser?.lastName} (
+              {lockUser?.username}). */}
+              {lockData?.lockOnPathway?.userErrors?.[0].message}
+              <br />
+              This record will be unlocked after the other user has become inactive,
               or if they submit this form. You will not be able to make edits to
               this page until is it unlocked.
               <br />
@@ -642,7 +656,7 @@ const DecisionPointPage = (
                 Current unlock time:
               </strong> {new Date(lockEndTime).toLocaleString()}
               <br />
-              NOTE: this time may update if the other user is still active on this page.
+              NOTE: this time may extend if the other user is still active on this page.
               {/*
                 TODO: not sure why I'm having to re-create the date object, I thought
                 Apollo should do that for us? ~JC
@@ -665,7 +679,7 @@ const DecisionPointPage = (
               ))
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted || isPageLockedByOther }>
               <Row className="mt-4 align-items-center">
                 <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
                   Decision:
@@ -702,7 +716,7 @@ const DecisionPointPage = (
             </Fieldset>
             <hr className="mt-0 mb-1" />
             <PreviousTestResultsElement data={ data } />
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted || isPageLockedByOther }>
               <Row>
                 <Textarea
                   className="form-control"
@@ -728,7 +742,7 @@ const DecisionPointPage = (
                 />
               </Row>
             </Fieldset>
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted }>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted || isPageLockedByOther }>
               <Row>
                 <Col>
                   <h5>Tests</h5>
@@ -763,6 +777,7 @@ const DecisionPointPage = (
                 type="submit"
                 name="submitBtn"
                 className="btn btn-outline-secondary px-4 my-4 float-end ms-1"
+                disabled={ isPageLockedByOther }
               >
                 Submit
               </Button>
