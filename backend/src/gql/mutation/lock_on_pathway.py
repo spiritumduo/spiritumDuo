@@ -52,7 +52,7 @@ async def resolve_lock_on_pathway(
         else:
             errors.addError(
                 "lock_user_id",
-                "You cannot unlock a lock that belongs to you!"
+                "You cannot unlock a lock that doesn't belong to you!"
             )
             return errors
 
