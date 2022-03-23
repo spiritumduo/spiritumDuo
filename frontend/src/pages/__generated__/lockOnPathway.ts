@@ -12,12 +12,16 @@ import { LockOnPathwayInput } from "./../../../__generated__/globalTypes";
 export interface lockOnPathway_lockOnPathway_onPathway_lockUser {
   __typename: "User";
   id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
 }
 
 export interface lockOnPathway_lockOnPathway_onPathway {
   __typename: "OnPathway";
   id: string;
   lockUser: lockOnPathway_lockOnPathway_onPathway_lockUser | null;
+  lockEndTime: any | null;
 }
 
 export interface lockOnPathway_lockOnPathway_userErrors {
