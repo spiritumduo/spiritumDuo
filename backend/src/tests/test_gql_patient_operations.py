@@ -1,5 +1,6 @@
 import json
 import pytest
+from config import config
 from datetime import datetime
 from random import randint
 from models import *
@@ -431,7 +432,8 @@ async def test_add_decision_point_to_patient(context, create_test_data):
         json={
             "id":SECOND_TEST_RESULT.id,
             "new_state": MilestoneState.COMPLETED.value
-        }
+        },
+        cookies={"SDTIEKEY": config['UPDATE_ENDPOINT_KEY']}
     )
     assert_that(res.status_code, equal_to(200))
     assert_that(

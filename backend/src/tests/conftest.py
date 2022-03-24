@@ -34,8 +34,8 @@ async def db_start_transaction():
 
 @pytest_asyncio.fixture
 async def create_test_database():
-    # drop_database(TEST_DATABASE_URL)
-    assert not database_exists(TEST_DATABASE_URL)
+    if database_exists(TEST_DATABASE_URL):
+        drop_database(TEST_DATABASE_URL)
     create_database(TEST_DATABASE_URL)
     ContextStorage.engine = await db.set_bind(TEST_DATABASE_URL)
     await db.gino.create_all()

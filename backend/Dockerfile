@@ -14,3 +14,4 @@ RUN ["crontab", "/etc/cron.d/container_cronjob"]
 RUN ["chmod", "+x", "/app/core/entrypoint"]
 WORKDIR /app/src
 ENTRYPOINT [ "/app/core/entrypoint" ]
+CMD ["start"]

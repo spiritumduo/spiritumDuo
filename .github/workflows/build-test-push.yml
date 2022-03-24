@@ -1,0 +1,181 @@
+name: 'Build - Test - Push'
+on:
+  push:
+    branches: actions-dev
+  pull_request:
+    branches: actions-dev
+
+jobs:
+  frontend-test:
+    defaults:
+      run:
+        working-directory: frontend
+
+    runs-on: ubuntu-latest
+    environment: staging
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'yarn'
+        cache-dependency-path: frontend/yarn.lock
+    - run: yarn install --frozen-lockfile
+    - run: yarn test
+
+  backend:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    services:
+      # Label used to access the service container
+      testdb:
+        # Docker Hub image
+        image: postgres:14.0-alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
+        name: Build and export to Docker
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}:backend"
+          load: true
+          tags: staging-test
+      -
+        name: Test
+        run: > # folded style for multiline run
+          docker run --rm
+          --network ${{ job.services.testdb.network }}
+          -e DATABASE_HOSTNAME=testdb
+          -e DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+          -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          -e DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+          -e HOSPITAL_NUMBER_NAME=${{ secrets.HOSPITAL_NUMBER_NAME }}
+          -e HOSPITAL_NUMBER_REGEX=${{ secrets.HOSPITAL_NUMBER_REGEX }}
+          -e NATIONAL_NUMBER_NAME=${{ secrets.NATIONAL_NUMBER_NAME }}
+          -e NATIONAL_NUMBER_REGEX=${{ secrets.NATIONAL_NUMBER_REGEX }}
+          -e SESSION_SECRET_KEY=${{ secrets.SESSION_SECRET_KEY }}
+          -e SESSION_EXPIRY_LENGTH=${{ secrets.SESSION_EXPIRY_LENGTH }}
+          -e TRUST_ADAPTER_NAME=${{ secrets.TRUST_ADAPTER_NAME }}
+          -e UPDATE_ENDPOINT_KEY=${{ secrets.UPDATE_ENDPOINT_KEY }}
+          staging-test test
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}:backend"
+          push: true
+          tags: spiritumduo/sd-backend:latest
+
+  pseudotie:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}:pseudotie"
+          push: true
+          tags: spiritumduo/sd-pseudotie:latest
+
+
+  nginx:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: frontend-test
+
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}"
+          push: true
+          tags: spiritumduo/sd-nginx:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: [nginx, backend, pseudotie]
+    
+    steps:
+      -
+        name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/staging.key
+          END
+          echo "$SSH_HOST_KEY" >> ~/.ssh/known_hosts
+        env:
+          SSH_USER: ${{ secrets.STAGING_SERVER_USERNAME }}
+          SSH_KEY: ${{ secrets.STAGING_SERVER_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_SERVER_HOSTNAME }}
+          SSH_HOST_KEY: ${{ secrets.STAGING_SERVER_HOST_KEY }}
+      -
+        name: Login to Docker
+        run: ssh staging 'docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}'
+      -
+        name: Pull containers
+        run: ssh staging 'docker pull spiritumduo/sd-nginx && docker pull spiritumduo/sd-backend && docker pull spiritumduo/sd-pseudotie'
+      -
+        name: Restart services
+        run: ssh staging 'cd spiritumDuo && docker-compose down && docker-compose up -d'
+      -
+        name: Migrate databases
+        run: >
+          ssh staging 'docker exec sd-backend alembic revision -m commit-${{ github.ref }} --autogenerate --head head
+          && docker exec sd-backend alembic upgrade head
+          && docker exec sd-pseudotie alembic revision -m commit-${{ github.ref }} --autogenerate --head head
+          && docker exec sd-pseudotie alembic upgrade head'

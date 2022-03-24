@@ -1,5 +1,15 @@
 #!/bin/bash
-
-cron
-cd /app/src
-uvicorn --host 0.0.0.0 --reload --port 8080 api:app
+case $1 in
+    start)
+        cron
+        cd /app/src
+        uvicorn --host 0.0.0.0 --reload --port 8080 api:app
+        ;;
+    test)
+        cd /app/src
+        pytest
+        ;;
+    *)
+        echo -n "Please provide option - start or test"
+        ;;
+esac
