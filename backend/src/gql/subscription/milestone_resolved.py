@@ -1,4 +1,3 @@
-import json
 import logging
 from typing import Any, AsyncGenerator
 
@@ -13,7 +12,10 @@ from .subscription_type import subscription
 @subscription.source("milestoneResolved")
 @inject
 async def milestone_resolved_generator(
-        _: Any = None, info: GraphQLResolveInfo = None, clinicianID = None, pub=Provide[SDContainer.pubsub_service]
+    _: Any = None,
+    info: GraphQLResolveInfo = None,
+    clinicianID=None,
+    pub=Provide[SDContainer.pubsub_service]
 ) -> AsyncGenerator:
     topic = pub.subscribe("milestone-resolutions")
     log = logging.getLogger("uvicorn")
@@ -25,5 +27,8 @@ async def milestone_resolved_generator(
 
 
 @subscription.field("milestoneResolved")
-async def milestone_resolved_field(obj: Milestone = None, info: GraphQLResolveInfo = None):
+async def milestone_resolved_field(
+    obj: Milestone = None,
+    info: GraphQLResolveInfo = None
+):
     return obj

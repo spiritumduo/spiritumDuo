@@ -7,4 +7,3 @@ class TestResultState(enum.Enum):
     WAITING = "WAITING"
     ERROR = "ERROR"
     COMPLETED = "COMPLETED"
-    

@@ -4,10 +4,11 @@ from trustadapter.trustadapter import TrustAdapter, TestResult_IE
 from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
 
+
 class TestResultByReferenceIdFromIELoader(DataLoader):
     """
-        This is class for loading test results by their 
-        reference IDs and caching the result in 
+        This is class for loading test results by their
+        reference IDs and caching the result in
         the request context
 
         Attributes:
@@ -17,11 +18,13 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
 
     def __init__(self, context=None):
         super().__init__()
-        self._context=context
+        self._context = context
 
     @inject
     async def fetch(
-            self, keys, trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
+            self, keys, trust_adapter: TrustAdapter = Provide[
+                SDContainer.trust_adapter_service
+            ]
     ) -> Dict[int, TestResult_IE]:
         result = await trust_adapter.load_many_test_results(
             recordIds=keys,
@@ -40,37 +43,51 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
         return sortedData
 
     @classmethod
-    def _get_loader_from_context(cls, context) -> "TestResultByReferenceIdFromIELoader":
+    def _get_loader_from_context(
+        cls,
+        context
+    ) -> "TestResultByReferenceIdFromIELoader":
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(context=context)
         return context[cls.loader_name]
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None)->Optional[TestResult_IE]:
+    async def load_from_id(
+        cls,
+        context=None,
+        id=None
+    ) -> Optional[TestResult_IE]:
         """
             Load a single entry from its reference ID
-            
+
             Parameters:
                 context (dict): request context
                 id (int): ID to find
-            Returns: 
+            Returns:
                 TestResult_IE/None
         """
+
         if not id:
             return None
         return await cls._get_loader_from_context(context).load(int(id))
 
     @classmethod
-    async def load_many_from_id(cls, context=None, ids=None)->List[Optional[TestResult_IE]]:
+    async def load_many_from_id(
+        cls,
+        context=None,
+        ids=None
+    ) -> List[Optional[TestResult_IE]]:
         """
             Loads many entries from their reference ID
-            
+
             Parameters:
                 context (dict): request context
                 id (List[int]): IDs to find
-            Returns: 
+            Returns:
                 List[TestResult_IE]/None
         """
         if not ids:
             return None
-        return await cls._get_loader_from_context(context).load_many([int(x) for x in ids])
+        return await cls._get_loader_from_context(context).load_many(
+            [int(x) for x in ids]
+        )

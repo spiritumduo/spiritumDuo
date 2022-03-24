@@ -1,7 +1,8 @@
 import json
 import pytest
-from models import *
-from hamcrest import *
+from models import Pathway
+from hamcrest import assert_that, equal_to, not_none
+
 
 # Feature: Test createPathway GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
@@ -10,14 +11,14 @@ async def test_add_new_pathway(context):
     """
     When: we create a pathway
     """
-    PATHWAY=Pathway(
+    PATHWAY = Pathway(
         name="Test pathway"
     )
 
     create_pathway_query = await context.client.post(
         url="graphql",
         json={
-            "query":"""
+            "query": """
                 mutation createPathway(
                     $name: String!
                 ){
@@ -42,21 +43,33 @@ async def test_add_new_pathway(context):
     )
 
     assert_that(create_pathway_query.status_code, equal_to(200))
-    create_pathway_query = json.loads(create_pathway_query.text)['data']['createPathway']
+    create_pathway_query = json.loads(
+        create_pathway_query.text
+    )['data']['createPathway']
 
     """
     Then: We get the returned pathway data
     """
-    assert_that(create_pathway_query['pathway'], not_none())
-    assert_that(create_pathway_query['pathway']['id'], not_none())
-    assert_that(create_pathway_query['pathway']['name'], equal_to(PATHWAY.name))
+    assert_that(
+        create_pathway_query['pathway'],
+        not_none()
+    )
+    assert_that(
+        create_pathway_query['pathway']['id'],
+        not_none()
+    )
+    assert_that(
+        create_pathway_query['pathway']['name'],
+        equal_to(PATHWAY.name)
+    )
+
 
 @pytest.mark.asyncio
 async def test_get_pathway(context):
     """
     Given: a pathway exists
     """
-    PATHWAY=await Pathway.create(
+    PATHWAY = await Pathway.create(
         name="Test pathway"
     )
 
@@ -67,7 +80,7 @@ async def test_get_pathway(context):
     get_pathway_query = await context.client.post(
         url="graphql",
         json={
-            "query":"""
+            "query": """
                 query getPathway(
                     $id: ID!
                 ){
@@ -84,7 +97,9 @@ async def test_get_pathway(context):
     )
 
     assert_that(get_pathway_query.status_code, equal_to(200))
-    get_pathway_query = json.loads(get_pathway_query.text)['data']['getPathway']
+    get_pathway_query = json.loads(
+        get_pathway_query.text
+    )['data']['getPathway']
 
     """
     Then: we get the pathway data
@@ -93,6 +108,7 @@ async def test_get_pathway(context):
     assert_that(get_pathway_query['id'], not_none())
     assert_that(get_pathway_query['name'], equal_to(PATHWAY.name))
 
+
 # Feature: Test getPathways GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
 @pytest.mark.asyncio
@@ -100,10 +116,10 @@ async def test_get_pathways(context):
     """
     Given: MilestoneTypes are in the system
     """
-    PATHWAY_ONE=await Pathway.create(
+    PATHWAY_ONE = await Pathway.create(
         name="Test pathway one"
     )
-    PATHWAY_TWO=await Pathway.create(
+    PATHWAY_TWO = await Pathway.create(
         name="Test pathway two"
     )
     """
@@ -113,7 +129,7 @@ async def test_get_pathways(context):
     get_pathway_query = await context.client.post(
         url="graphql",
         json={
-            "query":"""
+            "query": """
                 query getPathways{
                     getPathways{
                         id
@@ -125,16 +141,18 @@ async def test_get_pathways(context):
     )
 
     assert_that(get_pathway_query.status_code, equal_to(200))
-    get_pathway_query = json.loads(get_pathway_query.text)['data']['getPathways']
+    get_pathway_query = json.loads(
+        get_pathway_query.text
+    )['data']['getPathways']
 
     """
     Then: we get all pathways
     """
 
     # NOTE: the list indicies start at one and not zero because a user
-    # is required to login, and that user is required to have a `default_pathway_id`
-    # and so a pathway has to be created in `conftest.py` to authenticate on the
-    # graphql endpoint
+    # is required to login, and that user is required to have a
+    # `default_pathway_id` and so a pathway has to be created in `conftest.py`
+    # to authenticate on the graphql endpoint
     assert_that(get_pathway_query[1]['id'], not_none())
     assert_that(get_pathway_query[1]['name'], equal_to(PATHWAY_ONE.name))
     assert_that(get_pathway_query[2]['id'], not_none())
