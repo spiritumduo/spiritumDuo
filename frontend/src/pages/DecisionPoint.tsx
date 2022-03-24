@@ -406,23 +406,28 @@ const DecisionPointPage = (
     control: control,
   });
 
+  const [hasBuiltCheckboxes, updateHasBuiltCheckboxes] = useState<boolean>(false);
+
   useEffect(() => {
-    const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-      ? data?.getMilestoneTypes?.flatMap((milestoneType) => (
-        !milestoneType.isCheckboxHidden
-          ? {
-            id: '',
-            milestoneTypeId: milestoneType.id,
-            name: milestoneType.name,
-            checked: false,
-            discharge: milestoneType.isDischarge,
-            isTestRequest: milestoneType.isTestRequest,
-          }
-          : []
-      ))
-      : [];
-    appendRequestFields(fieldProps);
-  }, [data, appendRequestFields]);
+    if (!hasBuiltCheckboxes && data) {
+      const fieldProps: DecisionPointPageForm['milestoneRequests'] = data.getMilestoneTypes
+        ? data.getMilestoneTypes?.flatMap((milestoneType) => (
+          !milestoneType.isCheckboxHidden
+            ? {
+              id: '',
+              milestoneTypeId: milestoneType.id,
+              name: milestoneType.name,
+              checked: false,
+              discharge: milestoneType.isDischarge,
+              isTestRequest: milestoneType.isTestRequest,
+            }
+            : []
+        ))
+        : [];
+      appendRequestFields(fieldProps);
+      updateHasBuiltCheckboxes(true);
+    }
+  }, [data, appendRequestFields, hasBuiltCheckboxes]);
 
   // CONFIRM PREVIOUS TEST RESULTS HIDDEN INPUTS
   const {
