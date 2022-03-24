@@ -404,7 +404,7 @@ const DecisionPointPage = (
   );
 
   // LOCK ONPATHWAY MUTATION
-  const [lockOnPathwayFunc, {
+  const [lockOnPathwayWithCacheUpdate, {
     data: lockData, loading: lockLoading, error: lockError,
   }] = useMutation<lockOnPathway>(
     LOCK_ON_PATHWAY_MUTATION,
@@ -432,7 +432,7 @@ const DecisionPointPage = (
               onPathways: {
                 id: data?.getPatient?.onPathways?.[0].id,
                 lockEndTime: lockData?.lockOnPathway.onPathway?.lockEndTime
-                  ? lockData?.lockOnPathway.onPathway?.lockEndTime : false,
+                  ? lockData?.lockOnPathway.onPathway?.lockEndTime : null,
               },
             },
           },
@@ -480,23 +480,28 @@ const DecisionPointPage = (
     control: control,
   });
 
+  const [hasBuiltCheckboxes, setHasBuildCheckboxes] = useState<boolean>(false);
+
   useEffect(() => {
-    const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
-      ? data?.getMilestoneTypes?.flatMap((milestoneType) => (
-        !milestoneType.isCheckboxHidden
-          ? {
-            id: '',
-            milestoneTypeId: milestoneType.id,
-            name: milestoneType.name,
-            checked: false,
-            discharge: milestoneType.isDischarge,
-            isTestRequest: milestoneType.isTestRequest,
-          }
-          : []
-      ))
-      : [];
-    appendRequestFields(fieldProps);
-  }, [data, appendRequestFields]);
+    if (!hasBuiltCheckboxes && data) {
+      setHasBuildCheckboxes(true);
+      const fieldProps: DecisionPointPageForm['milestoneRequests'] = data?.getMilestoneTypes
+        ? data?.getMilestoneTypes?.flatMap((milestoneType) => (
+          !milestoneType.isCheckboxHidden
+            ? {
+              id: '',
+              milestoneTypeId: milestoneType.id,
+              name: milestoneType.name,
+              checked: false,
+              discharge: milestoneType.isDischarge,
+              isTestRequest: milestoneType.isTestRequest,
+            }
+            : []
+        ))
+        : [];
+      appendRequestFields(fieldProps);
+    }
+  }, [data, appendRequestFields, hasBuiltCheckboxes]);
 
   // CONFIRM PREVIOUS TEST RESULTS HIDDEN INPUTS
   const {
@@ -509,7 +514,7 @@ const DecisionPointPage = (
 
   useEffect(() => {
     if (data?.getPatient?.onPathways?.[0].id) {
-      lockOnPathwayFunc(
+      lockOnPathwayWithCacheUpdate(
         { variables: { input: { onPathwayId: data.getPatient.onPathways[0].id } } },
       );
     }
@@ -520,7 +525,7 @@ const DecisionPointPage = (
     // Hence the need for the two effects
     const lockInterval = setInterval(() => {
       if (data?.getPatient?.onPathways?.[0].id) {
-        lockOnPathwayFunc(
+        lockOnPathwayWithCacheUpdate(
           { variables: { input: { onPathwayId: data.getPatient.onPathways[0].id } } },
         );
       }
@@ -531,19 +536,25 @@ const DecisionPointPage = (
     };
   }, [data?.getPatient?.onPathways?.[0].id]);
 
+  const [
+    hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
+  ] = useState<boolean>(false);
   useEffect(() => {
-    const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
-      (ms) => (
-        !ms.forwardDecisionPoint && ms.testResult
-          ? {
-            id: ms.id,
-            name: ms.milestoneType.name,
-          }
-          : []
-      ),
-    );
-    if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
-  }, [data, appendHiddenConfirmationFields]);
+    if (!hasBuiltHiddenConfirmationFields && data) {
+      const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
+        (ms) => (
+          !ms.forwardDecisionPoint && ms.testResult
+            ? {
+              id: ms.id,
+              name: ms.milestoneType.name,
+            }
+            : []
+        ),
+      );
+      if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
+      updateHasBuiltHiddenConfirmationFields(true);
+    }
+  }, [data, appendHiddenConfirmationFields, hasBuiltHiddenConfirmationFields]);
 
   // DO NOT PUT HOOKS AFTER HERE
 
@@ -587,6 +598,9 @@ const DecisionPointPage = (
     if (!confirmNoRequests && !isConfirmed) {
       setRequestConfirmation(milestoneRequests.length);
     } else {
+      lockOnPathwayWithCacheUpdate(
+        { variables: { input: { onPathwayId: values.onPathwayId, unlock: true } } },
+      );
       const variables: createDecisionPointVariables = {
         input: {
           onPathwayId: values.onPathwayId,
@@ -677,8 +691,6 @@ const DecisionPointPage = (
     }
   });
 
-  // const isPageLockedByOther = !!lockData?.lockOnPathway?.userErrors;
-  // eslint-disable-next-line max-len
   const isPageLockedByOther = data?.getPatient?.onPathways?.[0]?.lockUser?.id
     ? !(user.id === parseInt(data?.getPatient?.onPathways?.[0]?.lockUser?.id, 10)) : false;
   return (
