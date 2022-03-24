@@ -406,7 +406,45 @@ const DecisionPointPage = (
   // LOCK ONPATHWAY MUTATION
   const [lockOnPathwayFunc, {
     data: lockData, loading: lockLoading, error: lockError,
-  }] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
+  }] = useMutation<lockOnPathway>(
+    LOCK_ON_PATHWAY_MUTATION,
+    {
+      update(cache) {
+        cache.writeQuery({
+          query: gql`
+            query UpdatePatientAfterLockMutation(
+              $hospitalNumber: String,
+              $pathwayId: ID,
+              $includeDischarged: Boolean,
+            ){
+              getPatient(hospitalNumber: $hospitalNumber){
+                id
+                onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged){
+                  id
+                  lockEndTime
+                }
+              }
+            }
+          `,
+          data: {
+            getPatient: {
+              id: data?.getPatient?.id,
+              onPathways: {
+                id: data?.getPatient?.onPathways?.[0].id,
+                lockEndTime: lockData?.lockOnPathway.onPathway?.lockEndTime
+                  ? lockData?.lockOnPathway.onPathway?.lockEndTime : false,
+              },
+            },
+          },
+          variables: {
+            hospitalNumber: data?.getPatient?.hospitalNumber,
+            pathwayId: data?.getPatient?.onPathways?.[0]?.id,
+            includeDischarged: true,
+          },
+        });
+      },
+    },
+  );
 
   // CREATE DECISION POINT MUTATION
   const [createDecision, {
@@ -470,22 +508,28 @@ const DecisionPointPage = (
   });
 
   useEffect(() => {
-    // This effect happens on render, and only once
     if (data?.getPatient?.onPathways?.[0].id) {
       lockOnPathwayFunc(
-        { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0].id } } },
+        { variables: { input: { onPathwayId: data.getPatient.onPathways[0].id } } },
       );
     }
-  }, []);
+  }, [data?.getPatient?.onPathways?.[0].id]);
 
   useEffect(() => {
-    // This effect happens after 5 seconds, not immediately
+    // This effect happens ever x milliseconds after x ms has passed, not immediately
     // Hence the need for the two effects
-    const lockInterval = setInterval(() => lockOnPathwayFunc(
-      { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0].id } } },
-    ), 2.5 * 60 * 1000);
-    return () => clearInterval(lockInterval);
-  });
+    const lockInterval = setInterval(() => {
+      if (data?.getPatient?.onPathways?.[0].id) {
+        lockOnPathwayFunc(
+          { variables: { input: { onPathwayId: data.getPatient.onPathways[0].id } } },
+        );
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(lockInterval);
+    };
+  }, [data?.getPatient?.onPathways?.[0].id]);
 
   useEffect(() => {
     const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
@@ -633,9 +677,10 @@ const DecisionPointPage = (
     }
   });
 
-  const isPageLockedByOther = !!lockData?.lockOnPathway?.userErrors;
-  const lockUser = isPageLockedByOther ? data?.getPatient?.onPathways?.[0]?.lockUser : null;
-  const lockEndTime = isPageLockedByOther ? data?.getPatient?.onPathways?.[0]?.lockEndTime : null;
+  // const isPageLockedByOther = !!lockData?.lockOnPathway?.userErrors;
+  // eslint-disable-next-line max-len
+  const isPageLockedByOther = data?.getPatient?.onPathways?.[0]?.lockUser?.id
+    ? !(user.id === parseInt(data?.getPatient?.onPathways?.[0]?.lockUser?.id, 10)) : false;
   return (
     <div>
       <section>
@@ -643,8 +688,6 @@ const DecisionPointPage = (
           <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ !isPageLockedByOther }>
             <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
             <ErrorSummary.Body>
-              {/* This patient is currently locked by {lockUser?.firstName} {lockUser?.lastName} (
-              {lockUser?.username}). */}
               {lockData?.lockOnPathway?.userErrors?.[0].message}
               <br />
               This record will be unlocked after the other user has become inactive,
@@ -654,7 +697,7 @@ const DecisionPointPage = (
               <br />
               <strong>
                 Current unlock time:
-              </strong> {new Date(lockEndTime).toLocaleString()}
+              </strong> {new Date(data?.getPatient?.onPathways?.[0]?.lockEndTime).toLocaleString()}
               <br />
               NOTE: this time may extend if the other user is still active on this page.
               {/*
