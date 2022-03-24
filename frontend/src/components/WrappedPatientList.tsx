@@ -154,9 +154,8 @@ const WrappedPatientList = ({
           if (milestone) lastMilestone = milestone;
         }
         const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
-
-        const updatedAt = lastMilestone
-          ? `${lastMilestone?.updatedAt.toLocaleDateString()} ${lastMilestone?.updatedAt.toLocaleTimeString()}`
+        const updatedAt = lastMilestone?.updatedAt
+          ? `${lastMilestone.updatedAt.toLocaleDateString()} ${lastMilestone.updatedAt.toLocaleTimeString()}`
           : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
 
         return (
