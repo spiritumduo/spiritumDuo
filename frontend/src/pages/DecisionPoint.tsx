@@ -438,19 +438,26 @@ const DecisionPointPage = (
     control: control,
   });
 
+  const [
+    hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
+  ] = useState<boolean>(false);
+
   useEffect(() => {
-    const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
-      (ms) => (
-        !ms.forwardDecisionPoint && ms.testResult
-          ? {
-            id: ms.id,
-            name: ms.milestoneType.name,
-          }
-          : []
-      ),
-    );
-    if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
-  }, [data, appendHiddenConfirmationFields]);
+    if (!hasBuiltHiddenConfirmationFields && data) {
+      const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
+        (ms) => (
+          !ms.forwardDecisionPoint && ms.testResult
+            ? {
+              id: ms.id,
+              name: ms.milestoneType.name,
+            }
+            : []
+        ),
+      );
+      if (outstandingTestResultIds) appendHiddenConfirmationFields(outstandingTestResultIds);
+      updateHasBuiltHiddenConfirmationFields(true);
+    }
+  }, [data, appendHiddenConfirmationFields, hasBuiltHiddenConfirmationFields]);
 
   // DO NOT PUT HOOKS AFTER HERE
 
