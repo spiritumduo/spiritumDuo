@@ -5,6 +5,8 @@ on:
   pull_request:
     branches: main
 
+concurrency: staging-environment
+
 jobs:
   frontend-test:
     defaults:
@@ -175,7 +177,7 @@ jobs:
       -
         name: Migrate databases
         run: >
-          ssh staging 'docker exec sd-backend alembic revision -m commit-${{ github.ref }} --autogenerate --head head
+          ssh staging 'docker exec sd-backend alembic revision -m commit-${{ github.ref }}-${{ github.sha }} --autogenerate --head head
           && docker exec sd-backend alembic upgrade head
-          && docker exec sd-pseudotie alembic revision -m commit-${{ github.ref }} --autogenerate --head head
+          && docker exec sd-pseudotie alembic revision -m commit-${{ github.ref }}-${{ github.sha }} --autogenerate --head head
           && docker exec sd-pseudotie alembic upgrade head'
