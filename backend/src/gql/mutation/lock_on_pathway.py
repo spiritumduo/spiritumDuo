@@ -33,7 +33,6 @@ async def resolve_lock_on_pathway(
                 "lock_user_id",
                 "You cannot unlock a lock that doesn't belong to you!"
             )
-            return errors
     else:
         if (
             pathway.lock_end_time is not None and
@@ -44,16 +43,17 @@ async def resolve_lock_on_pathway(
                 "lock_end_time",
                 "A lock is already in place by another user!"
             )
-            return errors
-
-        await pathway.update(
-            lock_user_id=userId,
-            lock_end_time=(
-                datetime.now() +
-                timedelta(
-                    seconds=int(config['DECISION_POINT_LOCKOUT_DURATION'])
+        else:
+            await pathway.update(
+                lock_user_id=userId,
+                lock_end_time=(
+                    datetime.now() +
+                    timedelta(
+                        seconds=int(config['DECISION_POINT_LOCKOUT_DURATION'])
+                    )
                 )
-            )
-        ).apply()
+            ).apply()
+    print("pathway", pathway.lock_user_id, pathway.lock_end_time)
+    print("errors", errors.errorList)
 
-    return pathway
+    return {"onPathway": pathway, "userErrors": errors.errorList}

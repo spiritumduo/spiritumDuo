@@ -10,15 +10,11 @@ LockOnPathwayPayloadObjectType = ObjectType("LockOnPathwayPayload")
 async def resolve_on_pathway(
     obj: Union[OnPathway, DataCreatorInputErrors] = None, *_
 ):
-    if type(obj) == OnPathway:
-        return obj
-    return None
+    return obj['onPathway']
 
 
 @LockOnPathwayPayloadObjectType.field("userErrors")
 async def resolve_user_errors(
     obj: Union[OnPathway, DataCreatorInputErrors] = None, *_
 ):
-    if type(obj) == DataCreatorInputErrors:
-        return obj.errorList
-    return None
+    return obj['userErrors']
