@@ -131,6 +131,87 @@ const milestones = [
     },
   },
 ];
+
+const CREATE_DECISION_NO_MILESTONE_MOCK = {
+  // CREATE DECISION - NO MILESTONES
+  request: {
+    query: CREATE_DECISION_POINT_MUTATION,
+    variables: {
+      input: {
+        onPathwayId: '1',
+        clinicHistory: 'New Clinic History',
+        comorbidities: 'New Comorbidities',
+        decisionType: DecisionPointType.TRIAGE.toString(),
+        milestoneRequests: [],
+        milestoneResolutions: ['6', '7'],
+      },
+    },
+  },
+  result: {
+    data: {
+      createDecisionPoint: {
+        decisionPoint: {
+          id: '1',
+          milestones: null,
+        },
+        userErrors: null,
+      },
+    },
+  },
+};
+
+const CREATE_DECISION_WITH_MILESTONE_MOCK = {
+  // CREATE DECISION - WITH MILESTONES
+  request: {
+    query: CREATE_DECISION_POINT_MUTATION,
+    variables: {
+      input: {
+        onPathwayId: '1',
+        clinicHistory: 'New Clinic History',
+        comorbidities: 'New Comorbidities',
+        decisionType: DecisionPointType.TRIAGE.toString(),
+        milestoneResolutions: ['6', '7'],
+        milestoneRequests: [ // the order of these requests in this mock matters for some reason
+          {
+            milestoneTypeId: milestoneTypes[0].id,
+          },
+          {
+            milestoneTypeId: milestoneTypes[1].id,
+          },
+          {
+            milestoneTypeId: milestoneTypes[2].id,
+          },
+          {
+            milestoneTypeId: milestoneTypes[3].id,
+          },
+          {
+            milestoneTypeId: milestoneTypes[4].id,
+          },
+        ],
+      },
+    },
+  },
+  result: {
+    data: {
+      createDecisionPoint: {
+        decisionPoint: {
+          id: '1',
+          milestones: [
+            {
+              id: '1',
+              milestoneType: {
+                name: 'TypeName',
+                isDischarge: false,
+              },
+            },
+          ],
+        },
+        userErrors: null,
+      },
+    },
+  },
+};
+
 const apolloMocksNoLock = [
   {
     request: {
@@ -199,84 +280,8 @@ const apolloMocksNoLock = [
       },
     },
   },
-  {
-    // CREATE DECISION - NO MILESTONES
-    request: {
-      query: CREATE_DECISION_POINT_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-          clinicHistory: 'New Clinic History',
-          comorbidities: 'New Comorbidities',
-          decisionType: DecisionPointType.TRIAGE.toString(),
-          milestoneRequests: [],
-          milestoneResolutions: ['6', '7'],
-        },
-      },
-    },
-    result: {
-      data: {
-        createDecisionPoint: {
-          decisionPoint: {
-            id: '1',
-            milestones: null,
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // CREATE DECISION - WITH MILESTONES
-    request: {
-      query: CREATE_DECISION_POINT_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-          clinicHistory: 'New Clinic History',
-          comorbidities: 'New Comorbidities',
-          decisionType: DecisionPointType.TRIAGE.toString(),
-          milestoneResolutions: ['6', '7'],
-          milestoneRequests: [ // the order of these requests in this mock matters for some reason
-            {
-              milestoneTypeId: milestoneTypes[0].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[1].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[2].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[3].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[4].id,
-            },
-          ],
-        },
-      },
-    },
-    result: {
-      data: {
-        createDecisionPoint: {
-          decisionPoint: {
-            id: '1',
-            milestones: [
-              {
-                id: '1',
-                milestoneType: {
-                  name: 'TypeName',
-                  isDischarge: false,
-                },
-              },
-            ],
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
+  CREATE_DECISION_NO_MILESTONE_MOCK,
+  CREATE_DECISION_WITH_MILESTONE_MOCK,
   {
     // LOCK ONPATHWAY
     request: {
@@ -380,84 +385,8 @@ const apolloMocksWithLock = [
       },
     },
   },
-  {
-    // CREATE DECISION - NO MILESTONES
-    request: {
-      query: CREATE_DECISION_POINT_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-          clinicHistory: 'New Clinic History',
-          comorbidities: 'New Comorbidities',
-          decisionType: DecisionPointType.TRIAGE.toString(),
-          milestoneRequests: [],
-          milestoneResolutions: ['6', '7'],
-        },
-      },
-    },
-    result: {
-      data: {
-        createDecisionPoint: {
-          decisionPoint: {
-            id: '1',
-            milestones: null,
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // CREATE DECISION - WITH MILESTONES
-    request: {
-      query: CREATE_DECISION_POINT_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-          clinicHistory: 'New Clinic History',
-          comorbidities: 'New Comorbidities',
-          decisionType: DecisionPointType.TRIAGE.toString(),
-          milestoneResolutions: ['6', '7'],
-          milestoneRequests: [ // the order of these requests in this mock matters for some reason
-            {
-              milestoneTypeId: milestoneTypes[0].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[1].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[2].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[3].id,
-            },
-            {
-              milestoneTypeId: milestoneTypes[4].id,
-            },
-          ],
-        },
-      },
-    },
-    result: {
-      data: {
-        createDecisionPoint: {
-          decisionPoint: {
-            id: '1',
-            milestones: [
-              {
-                id: '1',
-                milestoneType: {
-                  name: 'TypeName',
-                  isDischarge: false,
-                },
-              },
-            ],
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
+  CREATE_DECISION_NO_MILESTONE_MOCK,
+  CREATE_DECISION_WITH_MILESTONE_MOCK,
   {
     // LOCK ONPATHWAY
     request: {
