@@ -499,7 +499,6 @@ const DecisionPointPage = (
             input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id, unlock: true },
           } },
         );
-        }
       };
     }
   }, [data?.getPatient?.onPathways, lockOnPathwayMutation]);
