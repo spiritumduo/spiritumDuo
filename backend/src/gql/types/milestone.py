@@ -59,7 +59,7 @@ async def resolve_test_result(
 async def resolve_current_state(
     obj: Milestone = None, info: GraphQLResolveInfo = None, *_
 ):
-    return obj.current_state
+    return obj.current_state.value
 
 
 @MilestoneObjectType.field("addedAt")
