@@ -297,10 +297,10 @@ const apolloMocksNoLock = [
       data: {
         lockOnPathway: {
           onPathway: {
-            id: 1,
+            id: '1',
             lockEndTime: new Date('2030-01-01'),
             lockUser: {
-              id: 1,
+              id: '1',
               firstName: 'Test-John',
               lastName: 'Test-Doe',
               username: 'test-john-doe',
@@ -326,7 +326,7 @@ const apolloMocksNoLock = [
       data: {
         lockOnPathway: {
           onPathway: {
-            id: 1,
+            id: '1',
             lockEndTime: null,
             lockUser: null,
           },
@@ -343,7 +343,7 @@ const apolloMocksWithLock = [
       query: GET_PATIENT_QUERY,
       variables: {
         hospitalNumber: patientHospitalNumber,
-        pathwayId: 1, // this is a brittle, improve this
+        pathwayId: '1', // this is a brittle, improve this
         includeDischarged: true,
       },
     },
