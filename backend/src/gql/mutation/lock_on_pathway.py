@@ -22,7 +22,19 @@ async def resolve_lock_on_pathway(
         OnPathway.id == onPathwayId
     ).gino.one()
 
-    if not unlock:
+    if unlock:
+        if userId == pathway.lock_user_id:
+            await pathway.update(
+                lock_user_id=None,
+                lock_end_time=None
+            ).apply()
+        else:
+            errors.addError(
+                "lock_user_id",
+                "You cannot unlock a lock that doesn't belong to you!"
+            )
+            return errors
+    else:
         if (
             pathway.lock_end_time is not None and
             pathway.lock_end_time > datetime.now() and
@@ -43,17 +55,5 @@ async def resolve_lock_on_pathway(
                 )
             )
         ).apply()
-    else:
-        if userId == pathway.lock_user_id:
-            await pathway.update(
-                lock_user_id=None,
-                lock_end_time=None
-            ).apply()
-        else:
-            errors.addError(
-                "lock_user_id",
-                "You cannot unlock a lock that doesn't belong to you!"
-            )
-            return errors
 
     return pathway
