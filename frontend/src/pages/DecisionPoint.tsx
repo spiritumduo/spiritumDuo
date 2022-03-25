@@ -403,48 +403,9 @@ const DecisionPointPage = (
     },
   );
 
-  // LOCK ONPATHWAY MUTATION
-  const [lockOnPathwayWithCacheUpdate, {
-    data: lockData, loading: lockLoading, error: lockError,
-  }] = useMutation<lockOnPathway>(
-    LOCK_ON_PATHWAY_MUTATION,
-    {
-      update(cache) {
-        cache.writeQuery({
-          query: gql`
-            query UpdatePatientAfterLockMutation(
-              $hospitalNumber: String,
-              $pathwayId: ID,
-              $includeDischarged: Boolean,
-            ){
-              getPatient(hospitalNumber: $hospitalNumber){
-                id
-                onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged){
-                  id
-                  lockEndTime
-                }
-              }
-            }
-          `,
-          data: {
-            getPatient: {
-              id: data?.getPatient?.id,
-              onPathways: {
-                id: data?.getPatient?.onPathways?.[0].id,
-                lockEndTime: lockData?.lockOnPathway.onPathway?.lockEndTime
-                  ? lockData?.lockOnPathway.onPathway?.lockEndTime : null,
-              },
-            },
-          },
-          variables: {
-            hospitalNumber: data?.getPatient?.hospitalNumber,
-            pathwayId: data?.getPatient?.onPathways?.[0]?.id,
-            includeDischarged: true,
-          },
-        });
-      },
-    },
-  );
+  const [lockOnPathwayWithoutCacheUpdate, {
+    data: lockDataNoCache, loading: lockLoadingNoCache, error: lockErrorNoCache,
+  }] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
 
   // CREATE DECISION POINT MUTATION
   const [createDecision, {
@@ -512,42 +473,35 @@ const DecisionPointPage = (
     control: control,
   });
 
+  // LOCK ONPATHWAY
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (data?.getPatient?.onPathways?.[0].id) {
-      lockOnPathwayWithCacheUpdate(
-        { variables: { input: { onPathwayId: data.getPatient.onPathways[0].id } } },
+      console.log('running first mutation');
+      lockOnPathwayWithoutCacheUpdate(
+        { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
       );
-    }
-  }, [data?.getPatient?.onPathways?.[0].id]);
 
-  useEffect(() => {
-    // This effect happens ever x milliseconds after x ms has passed, not immediately
-    // Hence the need for the two effects
-    const lockInterval = setInterval(() => {
-      if (data?.getPatient?.onPathways?.[0].id) {
-        lockOnPathwayWithCacheUpdate(
-          { variables: { input: { onPathwayId: data.getPatient.onPathways[0].id } } },
+      const lockInterval = setInterval(() => {
+        console.log('running looped mutation');
+        lockOnPathwayWithoutCacheUpdate(
+          { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
         );
-      }
-    }, 5000);
+      }, 10 * 1000);
 
-    return () => {
-      clearInterval(lockInterval);
-    };
-  }, [data?.getPatient?.onPathways?.[0].id]);
+      return () => {
+        console.log('clearing mutation');
+        clearInterval(lockInterval);
+        console.log('running unlock mutation on unmount');
 
-  // eslint-disable-next-line arrow-body-style
-  useEffect(() => {
-    return () => {
-      if (data?.getPatient?.onPathways?.[0].id) {
-        lockOnPathwayWithCacheUpdate(
+        lockOnPathwayWithoutCacheUpdate(
           { variables: {
-            input: { onPathwayId: data.getPatient.onPathways[0].id, unlock: true },
+            input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id, unlock: true },
           } },
         );
-      }
-    };
-  }, [data?.getPatient?.onPathways?.[0].id]);
+      };
+    }
+  }, [data?.getPatient?.onPathways?.[0]?.id, lockOnPathwayWithoutCacheUpdate]);
 
   const [
     hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
@@ -611,7 +565,7 @@ const DecisionPointPage = (
     if (!confirmNoRequests && !isConfirmed) {
       setRequestConfirmation(milestoneRequests.length);
     } else {
-      lockOnPathwayWithCacheUpdate(
+      lockOnPathwayWithoutCacheUpdate(
         { variables: { input: { onPathwayId: values.onPathwayId, unlock: true } } },
       );
       const variables: createDecisionPointVariables = {
@@ -704,8 +658,8 @@ const DecisionPointPage = (
     }
   });
 
-  const isPageLockedByOther = data?.getPatient?.onPathways?.[0]?.lockUser?.id
-    ? !(user.id === parseInt(data?.getPatient?.onPathways?.[0]?.lockUser?.id, 10)) : false;
+  const isPageLockedByOther = lockDataNoCache?.lockOnPathway?.onPathway?.lockUser?.id
+    ? !(user.id === parseInt(lockDataNoCache.lockOnPathway.onPathway.lockUser.id, 10)) : false;
   return (
     <div>
       <section>
@@ -713,7 +667,7 @@ const DecisionPointPage = (
           <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ !isPageLockedByOther }>
             <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
             <ErrorSummary.Body>
-              {lockData?.lockOnPathway?.userErrors?.[0].message}
+              {lockDataNoCache?.lockOnPathway?.userErrors?.[0]?.message}
               <br />
               This record will be unlocked after the other user has become inactive,
               or if they submit this form. You will not be able to make edits to
@@ -722,7 +676,9 @@ const DecisionPointPage = (
               <br />
               <strong>
                 Current unlock time:
-              </strong> {new Date(data?.getPatient?.onPathways?.[0]?.lockEndTime).toLocaleString()}
+              </strong> {
+                new Date(lockDataNoCache?.lockOnPathway?.onPathway?.lockEndTime).toLocaleString()
+              }
               <br />
               NOTE: this time may extend if the other user is still active on this page.
               {/*
