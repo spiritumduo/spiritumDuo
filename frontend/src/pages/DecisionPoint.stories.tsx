@@ -6,7 +6,7 @@ import { DecisionPointType } from 'types/DecisionPoint';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Standard } from 'components/Notification.stories';
-import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY } from './DecisionPoint';
+import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, LOCK_ON_PATHWAY_MUTATION } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
 const milestoneTypes = [
@@ -131,7 +131,7 @@ const milestones = [
     },
   },
 ];
-const apolloMocks = [
+const apolloMocksNoLock = [
   {
     request: {
       query: GET_PATIENT_QUERY,
@@ -158,6 +158,8 @@ const apolloMocks = [
                 firstName: 'John',
                 lastName: 'Doe',
               },
+              lockUser: null,
+              lockEndTime: null,
               decisionPoints: [
                 {
                   clinicHistory: 'Clinic History 1',
@@ -275,6 +277,204 @@ const apolloMocks = [
       },
     },
   },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: null,
+            lockUser: null,
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+];
+
+const apolloMocksWithLock = [
+  {
+    request: {
+      query: GET_PATIENT_QUERY,
+      variables: {
+        hospitalNumber: patientHospitalNumber,
+        pathwayId: 1, // this is a brittle, improve this
+        includeDischarged: true,
+      },
+    },
+    result: {
+      data: {
+        getPatient: {
+          hospitalNumber: 'MRN1234567-36',
+          id: '1637',
+          communicationMethod: 'LETTER',
+          firstName: 'John 36',
+          lastName: 'Doe 36',
+          dateOfBirth: new Date('1970-06-12'),
+          onPathways: [
+            {
+              id: '1',
+              milestones: milestones,
+              underCareOf: {
+                firstName: 'John',
+                lastName: 'Doe',
+              },
+              lockUser: {
+                id: 1000,
+                firstName: 'Johnny',
+                lastName: 'Locker',
+                username: 'jlocker',
+              },
+              lockEndTime: new Date('2030-01-01'),
+              decisionPoints: [
+                {
+                  clinicHistory: 'Clinic History 1',
+                  comorbidities: 'Comorbidities 1',
+                  milestones: [
+                    milestones[0],
+                    milestones[1],
+                    milestones[2],
+                  ],
+                },
+                {
+                  clinicHistory: 'Clinic History 2',
+                  comorbidities: 'Comorbidities 2',
+                  milestones: [
+                    milestones[3],
+                    milestones[4],
+                  ],
+                },
+                {
+                  clinicHistory: 'Clinic History 3',
+                  comorbidities: 'Comorbidities 3',
+                  milestones: [
+                    milestones[5],
+                    milestones[6],
+                  ],
+                },
+                {
+                  clinicHistory: 'Clinic History 4',
+                  comorbidities: 'Comorbidities 4',
+                  milestones: null,
+                },
+              ],
+            },
+          ],
+        },
+        getMilestoneTypes: milestoneTypes,
+      },
+    },
+  },
+  {
+    // CREATE DECISION - NO MILESTONES
+    request: {
+      query: CREATE_DECISION_POINT_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+          clinicHistory: 'New Clinic History',
+          comorbidities: 'New Comorbidities',
+          decisionType: DecisionPointType.TRIAGE.toString(),
+          milestoneRequests: [],
+          milestoneResolutions: ['6', '7'],
+        },
+      },
+    },
+    result: {
+      data: {
+        createDecisionPoint: {
+          decisionPoint: {
+            id: '1',
+            milestones: null,
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // CREATE DECISION - WITH MILESTONES
+    request: {
+      query: CREATE_DECISION_POINT_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+          clinicHistory: 'New Clinic History',
+          comorbidities: 'New Comorbidities',
+          decisionType: DecisionPointType.TRIAGE.toString(),
+          milestoneResolutions: ['6', '7'],
+          milestoneRequests: [ // the order of these requests in this mock matters for some reason
+            {
+              milestoneTypeId: milestoneTypes[0].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[1].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[2].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[3].id,
+            },
+            {
+              milestoneTypeId: milestoneTypes[4].id,
+            },
+          ],
+        },
+      },
+    },
+    result: {
+      data: {
+        createDecisionPoint: {
+          decisionPoint: {
+            id: '1',
+            milestones: [
+              {
+                id: '1',
+                milestoneType: {
+                  name: 'TypeName',
+                  isDischarge: false,
+                },
+              },
+            ],
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: null,
+          userErrors: {
+            message: 'Another user has already locked this patient!',
+            field: 'lock_user_id',
+          },
+        },
+      },
+    },
+  },
 ];
 
 export default {
@@ -297,6 +497,8 @@ export default {
 const Template: ComponentStory<typeof DecisionPointPage> = (args) => <DecisionPointPage { ...args } />;
 
 export const Default = Template.bind({});
+export const Locked = Template.bind({});
+
 Default.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
@@ -306,7 +508,22 @@ Default.parameters = {
   milestones: milestones,
   apolloClient: {
     mocks: [
-      ...apolloMocks,
+      ...apolloMocksNoLock,
+      Standard.parameters?.apolloClient.mocks[0], // notification mock
+    ],
+  },
+};
+
+Locked.args = {
+  hospitalNumber: patientHospitalNumber,
+  decisionType: DecisionPointType.TRIAGE,
+  tabStateCallback: () => {},
+};
+Locked.parameters = {
+  milestones: milestones,
+  apolloClient: {
+    mocks: [
+      ...apolloMocksWithLock,
       Standard.parameters?.apolloClient.mocks[0], // notification mock
     ],
   },
