@@ -38,7 +38,6 @@ export interface DecisionPointPageProps {
   hospitalNumber: string;
   decisionType: DecisionPointType;
   tabStateCallback: (state: boolean) => void;
-  onClose: (callback: any) => void;
 }
 
 export const GET_PATIENT_QUERY = gql`
@@ -385,7 +384,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType, tabStateCallback, onClose }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, tabStateCallback }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
@@ -539,13 +538,6 @@ const DecisionPointPage = (
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
-    if (data?.getPatient?.onPathways?.[0].id) {
-      onClose(() => lockOnPathwayWithCacheUpdate(
-        { variables: {
-          input: { onPathwayId: data?.getPatient?.onPathways?.[0].id, unlock: true },
-        } },
-      ));
-    }
     return () => {
       if (data?.getPatient?.onPathways?.[0].id) {
         lockOnPathwayWithCacheUpdate(

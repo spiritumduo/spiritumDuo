@@ -17,7 +17,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   const pathwayId = currentPathwayId as number;
 
   const modalCloseCallback = () => {
-    window.location.reload();
+    setPatient(null);
   };
 
   return (
