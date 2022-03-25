@@ -77,7 +77,7 @@ describe('When page loads and a user submits the form without milestones', () =>
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
     await waitFor(() => expect(
-      screen.getByText((t) => /submit/i.test(t)),
+      screen.getByRole('button', { name: 'Submit' }),
     ).toBeInTheDocument());
     await waitFor(() => {
       userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
@@ -138,7 +138,7 @@ describe('When page loads and a user submits the form with milestones', () =>{
     const comorbiditiesText = '{selectall}New Comorbidities';
     // wait for page to render fully
     await waitFor(() => expect(
-      screen.getByText((t) => /submit/i.test(t)),
+      screen.getByRole('button', { name: 'Submit' }),
     ).toBeInTheDocument());
     await waitFor(() => {
       userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
