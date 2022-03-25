@@ -403,8 +403,8 @@ const DecisionPointPage = (
     },
   );
 
-  const [lockOnPathwayWithoutCacheUpdate, {
-    data: lockDataNoCache, loading: lockLoadingNoCache, error: lockErrorNoCache,
+  const [lockOnPathwayMutation, {
+    data: lockData, loading: lockLoading, error: lockError,
   }] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
 
   // CREATE DECISION POINT MUTATION
@@ -478,13 +478,13 @@ const DecisionPointPage = (
   useEffect(() => {
     if (data?.getPatient?.onPathways?.[0].id) {
       console.log('running first mutation');
-      lockOnPathwayWithoutCacheUpdate(
+      lockOnPathwayMutation(
         { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
       );
 
       const lockInterval = setInterval(() => {
         console.log('running looped mutation');
-        lockOnPathwayWithoutCacheUpdate(
+        lockOnPathwayMutation(
           { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
         );
       }, 10 * 1000);
@@ -494,14 +494,15 @@ const DecisionPointPage = (
         clearInterval(lockInterval);
         console.log('running unlock mutation on unmount');
 
-        lockOnPathwayWithoutCacheUpdate(
+        lockOnPathwayMutation(
           { variables: {
             input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id, unlock: true },
           } },
         );
+        }
       };
     }
-  }, [data?.getPatient?.onPathways, lockOnPathwayWithoutCacheUpdate]);
+  }, [data?.getPatient?.onPathways, lockOnPathwayMutation]);
 
   const [
     hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
@@ -565,7 +566,7 @@ const DecisionPointPage = (
     if (!confirmNoRequests && !isConfirmed) {
       setRequestConfirmation(milestoneRequests.length);
     } else {
-      lockOnPathwayWithoutCacheUpdate(
+      lockOnPathwayMutation(
         { variables: { input: { onPathwayId: values.onPathwayId, unlock: true } } },
       );
       const variables: createDecisionPointVariables = {
@@ -658,16 +659,17 @@ const DecisionPointPage = (
     }
   });
 
-  const isPageLockedByOther = lockDataNoCache?.lockOnPathway?.onPathway?.lockUser?.id
-    ? !(user.id === parseInt(lockDataNoCache.lockOnPathway.onPathway.lockUser.id, 10)) : false;
+  const weHaveLock = lockData?.lockOnPathway?.onPathway?.lockUser?.id
+    ? (user.id === parseInt(lockData.lockOnPathway.onPathway.lockUser.id, 10))
+    : false;
   return (
     <div>
       <section>
         <Container fluid>
-          <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ !isPageLockedByOther }>
+          <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ weHaveLock }>
             <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
             <ErrorSummary.Body>
-              {lockDataNoCache?.lockOnPathway?.userErrors?.[0]?.message}
+              {lockData?.lockOnPathway?.userErrors?.[0]?.message}
               <br />
               This record will be unlocked after the other user has become inactive,
               or if they submit this form. You will not be able to make edits to
@@ -677,7 +679,7 @@ const DecisionPointPage = (
               <strong>
                 Current unlock time:
               </strong> {
-                new Date(lockDataNoCache?.lockOnPathway?.onPathway?.lockEndTime).toLocaleString()
+                new Date(lockData?.lockOnPathway?.onPathway?.lockEndTime).toLocaleString()
               }
               <br />
               NOTE: this time may extend if the other user is still active on this page.
@@ -703,7 +705,7 @@ const DecisionPointPage = (
               ))
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted || isPageLockedByOther }>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted || !weHaveLock }>
               <Row className="mt-4 align-items-center">
                 <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
                   Decision:
@@ -740,7 +742,7 @@ const DecisionPointPage = (
             </Fieldset>
             <hr className="mt-0 mb-1" />
             <PreviousTestResultsElement data={ data } />
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted || isPageLockedByOther }>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted || !weHaveLock }>
               <Row>
                 <Textarea
                   className="form-control"
@@ -766,7 +768,7 @@ const DecisionPointPage = (
                 />
               </Row>
             </Fieldset>
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted || isPageLockedByOther }>
+            <Fieldset disabled={ loading || mutateLoading || isSubmitted || !weHaveLock }>
               <Row>
                 <Col>
                   <h5>Tests</h5>
@@ -801,7 +803,7 @@ const DecisionPointPage = (
                 type="submit"
                 name="submitBtn"
                 className="btn btn-outline-secondary px-4 my-4 float-end ms-1"
-                disabled={ isPageLockedByOther }
+                disabled={ !weHaveLock }
               >
                 Submit
               </Button>
