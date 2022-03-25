@@ -13,8 +13,18 @@ interface ModalPatientProps {
 
 const ModalPatient = ({ patient, closeCallback }: ModalPatientProps) => {
   const [tabState, setTabState] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const [decisionPointOnClose, setDecisionPointOnClose] = useState(() => () => {});
+  const decisionPointClose = (callback: () => void) => {
+    setDecisionPointOnClose(() => callback);
+  };
+  const onHide = () => {
+    decisionPointOnClose();
+    closeCallback();
+  };
+
   return (
-    <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
+    <Modal size="xl" fullscreen="lg-down" show onHide={ onHide }>
       <Modal.Header closeButton>
         <Modal.Title>
           {patient.firstName} {patient.lastName} - {patient.hospitalNumber}
@@ -33,6 +43,7 @@ const ModalPatient = ({ patient, closeCallback }: ModalPatientProps) => {
               hospitalNumber={ patient.hospitalNumber }
               decisionType={ DecisionPointType.TRIAGE }
               tabStateCallback={ setTabState }
+              onClose={ decisionPointClose }
             />
           </TabPanel>
           <TabPanel>
