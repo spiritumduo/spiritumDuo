@@ -1,2 +1,1 @@
 * * * * * export $(xargs -0 -a "/proc/1/environ"); /usr/local/bin/python /app/src/cleanup_sessions.py
-*/1 * * * * export $(xargs -0 -a "/proc/1/environ"); /usr/local/bin/python /app/src/cleanup_locks.py
