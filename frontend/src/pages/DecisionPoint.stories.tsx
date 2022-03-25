@@ -6,6 +6,7 @@ import { DecisionPointType } from 'types/DecisionPoint';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Standard } from 'components/Notification.stories';
+import { cache } from 'app/cache';
 import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, LOCK_ON_PATHWAY_MUTATION } from './DecisionPoint';
 
 const patientHospitalNumber = 'MRN1234567-36';
@@ -310,6 +311,30 @@ const apolloMocksNoLock = [
       },
     },
   },
+  {
+    // UNLOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+          unlock: true,
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: 1,
+            lockEndTime: null,
+            lockUser: null,
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
 ];
 
 const apolloMocksWithLock = [
@@ -388,7 +413,7 @@ const apolloMocksWithLock = [
   CREATE_DECISION_NO_MILESTONE_MOCK,
   CREATE_DECISION_WITH_MILESTONE_MOCK,
   {
-    // LOCK ONPATHWAY
+    // LOCK ONPATHWAY - 1
     request: {
       query: LOCK_ON_PATHWAY_MUTATION,
       variables: {
@@ -402,12 +427,67 @@ const apolloMocksWithLock = [
         lockOnPathway: {
           onPathway: {
             lockUser: {
-              id: 1000,
+              id: '1000',
               firstName: 'Johnny',
               lastName: 'Locker',
               username: 'jlocker',
             },
-            lockEndTime: new Date('2030-01-01'),
+            lockEndTime: new Date('2030-01-01T14:40:00'),
+          },
+          userErrors: [{
+            field: 'lock_user_id',
+            message: 'Another user has already locked this patient!',
+          }],
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY - 1
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            lockUser: {
+              id: '1000',
+              firstName: 'Johnny',
+              lastName: 'Locker',
+              username: 'jlocker',
+            },
+            lockEndTime: new Date('2030-01-01T15:40:00'),
+          },
+          userErrors: [{
+            field: 'lock_user_id',
+            message: 'Another user has already locked this patient!',
+          }],
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY - 2
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            lockUser: null,
+            lockEndTime: null,
           },
           userErrors: [{
             field: 'lock_user_id',
@@ -423,15 +503,18 @@ export default {
   title: 'Pages/Decision point',
   component: DecisionPointPage,
   decorators: [
-    (DecisionPointPageStory) => (
-      <MemoryRouter>
-        <MockAuthProvider>
-          <MockPathwayProvider>
-            <DecisionPointPageStory />
-          </MockPathwayProvider>
-        </MockAuthProvider>
-      </MemoryRouter>
-    ),
+    (DecisionPointPageStory) => {
+      cache.reset();
+      return (
+        <MemoryRouter>
+          <MockAuthProvider>
+            <MockPathwayProvider>
+              <DecisionPointPageStory />
+            </MockPathwayProvider>
+          </MockAuthProvider>
+        </MemoryRouter>
+      );
+    },
   ],
 } as ComponentMeta<typeof DecisionPointPage>;
 
