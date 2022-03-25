@@ -501,7 +501,7 @@ const DecisionPointPage = (
         );
       };
     }
-  }, [data?.getPatient?.onPathways?.[0]?.id, lockOnPathwayWithoutCacheUpdate]);
+  }, [data?.getPatient?.onPathways, lockOnPathwayWithoutCacheUpdate]);
 
   const [
     hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
