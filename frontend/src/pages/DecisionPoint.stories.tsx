@@ -325,6 +325,7 @@ const apolloMocksNoLock = [
     result: {
       data: {
         lockOnPathway: {
+          id: '1',
           onPathway: {
             id: '1',
             lockEndTime: null,
@@ -343,7 +344,7 @@ const apolloMocksWithLock = [
       query: GET_PATIENT_QUERY,
       variables: {
         hospitalNumber: patientHospitalNumber,
-        pathwayId: '1', // this is a brittle, improve this
+        pathwayId: 1, // this is a brittle, improve this
         includeDischarged: true,
       },
     },
@@ -426,6 +427,7 @@ const apolloMocksWithLock = [
       data: {
         lockOnPathway: {
           onPathway: {
+            id: '1',
             lockUser: {
               id: '1000',
               firstName: 'Johnny',
@@ -456,6 +458,7 @@ const apolloMocksWithLock = [
       data: {
         lockOnPathway: {
           onPathway: {
+            id: '1',
             lockUser: {
               id: '1000',
               firstName: 'Johnny',
@@ -485,6 +488,7 @@ const apolloMocksWithLock = [
     result: {
       data: {
         lockOnPathway: {
+          id: '1',
           onPathway: {
             lockUser: null,
             lockEndTime: null,
