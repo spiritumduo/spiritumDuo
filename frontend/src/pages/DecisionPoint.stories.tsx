@@ -400,7 +400,15 @@ const apolloMocksWithLock = [
     result: {
       data: {
         lockOnPathway: {
-          onPathway: null,
+          onPathway: {
+            lockUser: {
+              id: 1000,
+              firstName: 'Johnny',
+              lastName: 'Locker',
+              username: 'jlocker',
+            },
+            lockEndTime: new Date('2030-01-01'),
+          },
           userErrors: [{
             field: 'lock_user_id',
             message: 'Another user has already locked this patient!',
