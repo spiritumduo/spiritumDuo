@@ -312,6 +312,174 @@ const apolloMocksNoLock = [
     },
   },
   {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: new Date('2030-01-01'),
+            lockUser: {
+              id: '1',
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+              username: 'test-john-doe',
+            },
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: new Date('2030-01-01'),
+            lockUser: {
+              id: '1',
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+              username: 'test-john-doe',
+            },
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: new Date('2030-01-01'),
+            lockUser: {
+              id: '1',
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+              username: 'test-john-doe',
+            },
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: new Date('2030-01-01'),
+            lockUser: {
+              id: '1',
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+              username: 'test-john-doe',
+            },
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: new Date('2030-01-01'),
+            lockUser: {
+              id: '1',
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+              username: 'test-john-doe',
+            },
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
+    // LOCK ONPATHWAY
+    request: {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      variables: {
+        input: {
+          onPathwayId: '1',
+        },
+      },
+    },
+    result: {
+      data: {
+        lockOnPathway: {
+          onPathway: {
+            id: '1',
+            lockEndTime: new Date('2030-01-01'),
+            lockUser: {
+              id: '1',
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+              username: 'test-john-doe',
+            },
+          },
+          userErrors: null,
+        },
+      },
+    },
+  },
+  {
     // UNLOCK ONPATHWAY
     request: {
       query: LOCK_ON_PATHWAY_MUTATION,
@@ -488,10 +656,14 @@ const apolloMocksWithLock = [
     result: {
       data: {
         lockOnPathway: {
-          id: '1',
           onPathway: {
-            lockUser: null,
-            lockEndTime: null,
+            id: '1',
+            lockUser: {
+              id: 1,
+              firstName: 'Test-John',
+              lastName: 'Test-Doe',
+            },
+            lockEndTime: new Date('2030-01-01T16:40:00'),
           },
           userErrors: [{
             field: 'lock_user_id',

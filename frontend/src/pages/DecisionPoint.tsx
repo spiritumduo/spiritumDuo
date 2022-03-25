@@ -474,26 +474,49 @@ const DecisionPointPage = (
   });
 
   // LOCK ONPATHWAY
-  // eslint-disable-next-line consistent-return
+  const [weHaveLock, setWeHaveLock] = useState<boolean>(false);
+
+  // check patient query to see if we already have the lock
   useEffect(() => {
-    if (data?.getPatient?.onPathways?.[0].id) {
-      console.log('running first mutation');
+    const lock = data?.getPatient?.onPathways?.[0].lockUser?.id
+      ? (user.id === parseInt(data.getPatient.onPathways[0].lockUser.id, 10))
+      : false;
+    setWeHaveLock(lock);
+  }, [user.id, data?.getPatient?.onPathways]);
+
+  // if we don't have the lock, try and get it
+  useEffect(() => {
+    if (!weHaveLock && data?.getPatient?.onPathways?.[0]?.id) {
       lockOnPathwayMutation(
         { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
       );
+    }
+  }, [data?.getPatient?.onPathways, lockOnPathwayMutation, weHaveLock]);
 
-      const lockInterval = setInterval(() => {
-        console.log('running looped mutation');
+  // Check to see if we have the lock from the mutation
+  useEffect(() => {
+    if (lockData) {
+      const mutationLock = lockData?.lockOnPathway?.onPathway?.lockUser?.id
+        ? (user.id === parseInt(lockData.lockOnPathway.onPathway.lockUser.id, 10))
+        : false;
+      setWeHaveLock(mutationLock);
+    }
+  }, [lockData, user.id]);
+
+  // poll to either keep the lock, or try and acquire it
+  useEffect(() => {
+    let lockInterval: ReturnType<typeof setTimeout>;
+    if (data?.getPatient?.onPathways?.[0]?.id) {
+      lockInterval = setInterval(() => {
         lockOnPathwayMutation(
           { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
         );
-      }, 10 * 1000);
+      }, 150 * 1000);
+    }
 
+    if (weHaveLock) {
       return () => {
-        console.log('clearing mutation');
         clearInterval(lockInterval);
-        console.log('running unlock mutation on unmount');
-
         lockOnPathwayMutation(
           { variables: {
             input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id, unlock: true },
@@ -501,7 +524,14 @@ const DecisionPointPage = (
         );
       };
     }
-  }, [data?.getPatient?.onPathways, lockOnPathwayMutation]);
+    return () => {
+      clearInterval(lockInterval);
+    };
+  }, [
+    data?.getPatient?.onPathways,
+    lockOnPathwayMutation, user.id,
+    weHaveLock,
+  ]);
 
   const [
     hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
@@ -658,9 +688,9 @@ const DecisionPointPage = (
     }
   });
 
-  const weHaveLock = lockData?.lockOnPathway?.onPathway?.lockUser?.id
-    ? (user.id === parseInt(lockData.lockOnPathway.onPathway.lockUser.id, 10))
-    : false;
+  // const weHaveLock = lockData?.lockOnPathway?.onPathway?.lockUser?.id
+  //  ? (user.id === parseInt(lockData.lockOnPathway.onPathway.lockUser.id, 10))
+  // : false;
   return (
     <div>
       <section>
