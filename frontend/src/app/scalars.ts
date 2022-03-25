@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { withScalars } from 'apollo-link-scalars';
 import { ApolloLink } from '@apollo/client';
 import { buildASTSchema, GraphQLScalarType } from 'graphql';
