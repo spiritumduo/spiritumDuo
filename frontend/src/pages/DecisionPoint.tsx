@@ -503,13 +503,14 @@ const DecisionPointPage = (
     }
   }, [lockData, user.id]);
 
+  const currentOnPathwayId = data?.getPatient?.onPathways?.[0]?.id;
   // poll to either keep the lock, or try and acquire it
   useEffect(() => {
     let lockInterval: ReturnType<typeof setTimeout>;
-    if (data?.getPatient?.onPathways?.[0]?.id) {
+    if (currentOnPathwayId) {
       lockInterval = setInterval(() => {
         lockOnPathwayMutation(
-          { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
+          { variables: { input: { onPathwayId: currentOnPathwayId } } },
         );
       }, 150 * 1000);
     }
@@ -519,7 +520,7 @@ const DecisionPointPage = (
         clearInterval(lockInterval);
         lockOnPathwayMutation(
           { variables: {
-            input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id, unlock: true },
+            input: { onPathwayId: currentOnPathwayId, unlock: true },
           } },
         );
       };
@@ -528,7 +529,7 @@ const DecisionPointPage = (
       clearInterval(lockInterval);
     };
   }, [
-    data?.getPatient?.onPathways?.[0]?.id,
+    currentOnPathwayId,
     lockOnPathwayMutation, user.id,
     weHaveLock,
   ]);

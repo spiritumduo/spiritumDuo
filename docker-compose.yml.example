@@ -29,7 +29,7 @@ services:
     env_file: ./backend/.env
     volumes:
       - ./backend/:/app
-      - sd_alembic_backend_data:/alembic_versions
+      - sd_alembic_backend_data:/app/src/alembic/versions
 
     expose:
       - 8080
