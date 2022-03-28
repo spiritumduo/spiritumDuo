@@ -56,4 +56,11 @@ async def resolve_lock_on_pathway(
     print("pathway", pathway.lock_user_id, pathway.lock_end_time)
     print("errors", errors.errorList)
 
-    return {"onPathway": pathway, "userErrors": errors.errorList}
+    returnErrors = None
+    if errors.hasErrors():
+        returnErrors = errors.errorList
+
+    return {
+        "onPathway": pathway, 
+        "userErrors": returnErrors
+    }
