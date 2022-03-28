@@ -265,7 +265,7 @@ async def test_locked_lock_on_pathway(context):
         lock_on_pathway_mutation.text
     )['data']['lockOnPathway']
     onPathway = result['onPathway']
-    assert_that(onPathway, none())
+    assert_that(onPathway, not_none())
 
     userErrors = result['userErrors']
     assert_that(userErrors, not_none())
@@ -358,7 +358,7 @@ async def test_unlocked_locked_lock_on_pathway(context):
         lock_on_pathway_mutation.text
     )['data']['lockOnPathway']
     onPathway = result['onPathway']
-    assert_that(onPathway, none())
+    assert_that(onPathway, not_none())
 
     userErrors = result['userErrors']
     assert_that(userErrors, not_none())
