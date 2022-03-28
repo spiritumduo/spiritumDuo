@@ -528,7 +528,7 @@ const DecisionPointPage = (
       clearInterval(lockInterval);
     };
   }, [
-    data?.getPatient?.onPathways,
+    data?.getPatient?.onPathways?.[0]?.id,
     lockOnPathwayMutation, user.id,
     weHaveLock,
   ]);
