@@ -21,7 +21,7 @@ async def resolve_current_state(
 ):
     record = await TestResultByReferenceIdFromIELoader.load_from_id(
         context=info.context, id=obj.id)
-    return record.current_state
+    return record.current_state.value
 
 
 @TestResultObjectType.field("typeReferenceName")
