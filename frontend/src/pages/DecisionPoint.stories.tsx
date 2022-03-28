@@ -665,10 +665,7 @@ const apolloMocksWithLock = [
             },
             lockEndTime: new Date('2030-01-01T16:40:00'),
           },
-          userErrors: [{
-            field: 'lock_user_id',
-            message: 'Another user has already locked this patient!',
-          }],
+          userErrors: null,
         },
       },
     },
