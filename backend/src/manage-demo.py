@@ -33,7 +33,7 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS = 5
+NUMBER_OF_USERS = 100
 NUMBER_OF_PATIENTS_PER_USER = 5
 
 
