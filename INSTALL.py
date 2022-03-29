@@ -1,6 +1,10 @@
 import os
 import subprocess
-from typing import Union
+import string
+import secrets
+from typing import Callable, Union
+from shutil import copyfile
+from time import sleep
 
 
 class ComponentNotFound(Exception):
@@ -16,12 +20,14 @@ class EnvironmentVariable(object):
         name: str = None,
         default: Union[str, None] = None,
         description: str = None,
-        cryptographic: Union[bool, None] = False
+        cryptographic: Union[bool, None] = False,
+        inputGenerator: Callable = None
     ):
-        self.name = name
-        self.default = default
-        self.description = description
-        self.cryptographic = cryptographic
+        self.name: str = name
+        self.default: Union[str, None] = default
+        self.description: str = description
+        self.cryptographic: Union[bool, None] = cryptographic
+        self.inputGenerator: Union[Callable, None] = inputGenerator
 
         self.userInput = ""
 
@@ -30,12 +36,21 @@ class EnvironmentVariable(object):
         userInput = None
         while (
             (userInput is None) or
-            (userInput == "" and self.default is None) or
-            (self.cryptographic and len(userInput) % 16 != 0)
+            (userInput == "" and (
+                self.default is None and self.inputGenerator is None
+            )) or (self.cryptographic and len(userInput) % 16 != 0)
         ):
-            userInput = input(f"Enter value ({self.default}): ")
+            if self.default:
+                userPrompt = f"Enter value ({self.default}): "
+            elif self.inputGenerator:
+                userPrompt = f"Enter value (generates random string if no input): "
+            else:
+                userPrompt = "Enter value (no default): "
+            userInput = input(userPrompt)
 
-        self.userInput = userInput if userInput != "" else self.default
+        self.userInput = userInput if userInput != "" else (
+            self.default or self.inputGenerator()
+        )
 
 
 def validateInput(message: str, selection: list):
@@ -46,6 +61,11 @@ def validateInput(message: str, selection: list):
     return userInput
 
 
+def generateRandomKey():
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return ''.join(secrets.choice(chars) for _ in range(32))
+
+
 # CONFIGURATION
 ENV_DEFS = {
     "backend": {
@@ -53,16 +73,6 @@ ENV_DEFS = {
             name="DATABASE_NAME",
             default="sd_backend",
             description="Name of database table"
-        ),
-        "DATABASE_USERNAME": EnvironmentVariable(
-            name="DATABASE_USERNAME",
-            default="sd_backend",
-            description="Username of database account"
-        ),
-        "DATABASE_PASSWORD": EnvironmentVariable(
-            name="DATABASE_PASSWORD",
-            default=None,
-            description="Password of database account"
         ),
         "DECISION_POINT_LOCKOUT_DURATION": EnvironmentVariable(
             name="DECISION_POINT_LOCKOUT_DURATION",
@@ -96,16 +106,6 @@ ENV_DEFS = {
             default="sd_pseudotie",
             description="Name of database table"
         ),
-        "DATABASE_USERNAME": EnvironmentVariable(
-            name="DATABASE_USERNAME",
-            default="sd_postgres",
-            description="Username of database account"
-        ),
-        "DATABASE_PASSWORD": EnvironmentVariable(
-            name="DATABASE_PASSWORD",
-            default=None,
-            description="Password of database account"
-        ),
     },
     "backend-and-pseudotie": {
         "DATABASE_HOSTNAME": EnvironmentVariable(
@@ -118,6 +118,16 @@ ENV_DEFS = {
             default="5432",
             description="Port of postgres database"
         ),
+        "DATABASE_USERNAME": EnvironmentVariable(
+            name="DATABASE_USERNAME",
+            default="sd_postgres",
+            description="Username of database account"
+        ),
+        "DATABASE_PASSWORD": EnvironmentVariable(
+            name="DATABASE_PASSWORD",
+            default=None,
+            description="Password of database account"
+        ),
         "SESSION_SECRET_KEY": EnvironmentVariable(
             name="SESSION_SECRET_KEY",
             default=None,
@@ -125,7 +135,8 @@ ENV_DEFS = {
                 "Secret key for session key signatures"
                 " (MUST BE MULTIPLE OF SIXTEEN)"
             ),
-            cryptographic=True
+            cryptographic=True,
+            inputGenerator=generateRandomKey
         ),
         "SESSION_EXPIRY_LENGTH": EnvironmentVariable(
             name="SESSION_EXPIRY_LENGTH",
@@ -139,7 +150,8 @@ ENV_DEFS = {
                 "Key to authenticate between backend and pseudotie"
                 " (MUST BE MULTIPLE OF SIXTEEN)"
             ),
-            cryptographic=True
+            cryptographic=True,
+            inputGenerator=generateRandomKey
         ),
     },
     "nginx": {
@@ -197,13 +209,14 @@ print("""
     1. Check Docker's installed
     2. Check Docker Compose is installed
     3. Gather environment variables
-    4. Build frontend node modules
-    5. Start containers
-    6. Migrate database schemas
-    7. Restart containers
-    8. Give option between manage + manage-demo scripts
-    9. Display endpoint + login information
-    10. Profit
+    4. Configuring docker compose file from template
+    5. Build frontend node modules
+    6. Build containers
+    7. Migrate database schemas
+    8. Restart containers
+    9. Give option between manage + manage-demo scripts
+    10. Display endpoint + login information
+    11. Profit
 
 """)
 
@@ -219,7 +232,7 @@ if DOCKER_PRESENT:
 else:
     raise ComponentNotFound("Docker cannot be found!")
 
-print("2. Check Docker Compose is installed")
+print("\n2. Check Docker Compose is installed")
 DOCKER_COMPOSE_PRESENT = "docker-compose version" in str(subprocess.getoutput(
     "docker-compose --version"
 )).lower()
@@ -228,8 +241,8 @@ if DOCKER_COMPOSE_PRESENT:
 else:
     raise ComponentNotFound("Docker Compose cannot be found!")
 
-print("3. Gather environment variables")
-print("NOTE: TO USE DEFAULT VALUE, LEAVE INPUT EMPTY")
+print("\n3. Gather environment variables")
+print("NOTE: TO USE DEFAULT OR GENERATED VALUE, LEAVE INPUT EMPTY")
 for serviceName, variableList in ENV_DEFS.items():
     print(f"\n##########\nVARIABLES FOR SERVICE: {serviceName}\n##########")
     for varName, varObject in variableList.items():
@@ -242,8 +255,8 @@ if os.path.exists("postgres/.env"):
     ).lower() == "y":
         buffer = []
         buffer.append(f"POSTGRES_DB = \"{ENV_DEFS['backend']['DATABASE_NAME'].userInput}\"\n")
-        buffer.append(f"POSTGRES_USER = \"{ENV_DEFS['backend']['DATABASE_USERNAME'].userInput}\"\n")
-        buffer.append(f"POSTGRES_PASSWORD = \"{ENV_DEFS['backend']['DATABASE_PASSWORD'].userInput}\"\n")
+        buffer.append(f"POSTGRES_USER = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_USERNAME'].userInput}\"\n")
+        buffer.append(f"POSTGRES_PASSWORD = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_PASSWORD'].userInput}\"\n")
         file = open("postgres/.env", "w")
         file.writelines(buffer)
         file.close()
@@ -261,6 +274,7 @@ if os.path.exists("backend/.env"):
 
         file = open("backend/.env", "w")
         file.writelines(buffer)
+        file.close()
 
 if os.path.exists("pseudotie/.env"):
     if validateInput(
@@ -275,6 +289,7 @@ if os.path.exists("pseudotie/.env"):
 
         file = open("pseudotie/.env", "w")
         file.writelines(buffer)
+        file.close()
 
 if os.path.exists("nginx/.env"):
     if validateInput(
@@ -287,6 +302,7 @@ if os.path.exists("nginx/.env"):
 
         file = open("nginx/.env", "w")
         file.writelines(buffer)
+        file.close()
 
 if os.path.exists("wordpress/.env"):
     if validateInput(
@@ -299,6 +315,7 @@ if os.path.exists("wordpress/.env"):
 
         file = open("wordpress/.env", "w")
         file.writelines(buffer)
+        file.close()
 
 if os.path.exists("mysql/.env"):
     if validateInput(
@@ -312,3 +329,47 @@ if os.path.exists("mysql/.env"):
         file = open("mysql/env", "w")
         file.writelines(buffer)
         file.close()
+
+print("4. Configuring docker compose file from template")
+
+copyfile("docker-compose.dev.yml.example", "docker-compose.dev.yml")
+
+print("5. Build frontend node modules")
+print("NOTE: this may take time, depending on computer configuration")
+
+sleep(2)
+os.chdir("frontend")
+subprocess.run("./bin/update-node-modules")
+sleep(2)
+
+print("6. Build containers")
+os.chdir("..")
+subprocess.run(["docker-compose -f docker-compose.dev.yml up -d --build sd-backend sd-pseudotie"], shell=True)
+sleep(5)
+
+print("7. Migrate database schemas")
+print("Waiting...")
+subprocess.run("docker exec -ti sd-backend bash -c 'chmod +x ./bin/container-migrate-alembic && ./bin/container-migrate-alembic'", shell=True)
+subprocess.run("docker exec -ti sd-pseudotie bash -c 'chmod +x ./bin/container-migrate-alembic && ./bin/container-migrate-alembic'", shell=True)
+
+print("8. Restart containers")
+subprocess.run(["docker-compose -f docker-compose.dev.yml down"], shell=True)
+sleep(5)
+subprocess.run(["docker-compose -f docker-compose.dev.yml up -d --build"], shell=True)
+sleep(10)
+
+print("9. Insert test data")
+print("NOTE: IF THE REGEX PATTERN FOR HOSPITAL OR NATIONAL NUMBER HAS CHANGED, THIS STEP WILL FAIL!")
+print("NOTE: TO REMEDY THIS, CHANGE THE FORMAT OF GENERATED STRINGS IN MANAGE.PY OR ADD DATA MANUALLY!")
+subprocess.run("docker exec -ti sd-backend bash -c 'python manage.py'", shell=True)
+
+print("""
+    ***************************
+            SPIRITUMDUO
+    ***************************
+
+    INSTALLATION SUCCESSFUL
+
+    LISTENING ON
+        - localhost/app
+""")
