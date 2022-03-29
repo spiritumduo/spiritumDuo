@@ -14,6 +14,13 @@ class ComponentNotFound(Exception):
     """
 
 
+class FolderNotFoundError(Exception):
+    """
+    Raised when a folder cannot be found
+    causing a fatal error.
+    """
+
+
 class EnvironmentVariable(object):
     def __init__(
         self,
@@ -43,7 +50,9 @@ class EnvironmentVariable(object):
             if self.default:
                 userPrompt = f"Enter value ({self.default}): "
             elif self.inputGenerator:
-                userPrompt = f"Enter value (generates random string if no input): "
+                userPrompt = (
+                    "Enter value (generates random string if no input): "
+                )
             else:
                 userPrompt = "Enter value (no default): "
             userInput = input(userPrompt)
@@ -224,14 +233,30 @@ print("""
     8. Restart containers
     9. Give option between manage + manage-demo scripts
     10. Display endpoint + login information
-    11. Profit
 
 """)
+
+print("\n1. Check project files exist")
+for path in [
+    "backend",
+    "frontend",
+    "mysql",
+    "nginx",
+    "postgres",
+    "pseudotie",
+    "wordpress"
+]:
+    if not os.path.exists(path):
+        raise FolderNotFoundError(
+            f"path '{path}' cannot be found! Program terminating"
+        )
+print("Success!")
+
 
 DOCKER_PRESENT = False
 DOCKER_COMPOSE_PRESENT = False
 
-print("1. Check Docker's installed")
+print("\n2. Check Docker's installed")
 DOCKER_PRESENT = "docker version" in str(subprocess.getoutput(
     "docker --version"
 )).lower()
@@ -240,7 +265,7 @@ if DOCKER_PRESENT:
 else:
     raise ComponentNotFound("Docker cannot be found!")
 
-print("\n2. Check Docker Compose is installed")
+print("\n3. Check Docker Compose is installed")
 DOCKER_COMPOSE_PRESENT = "docker-compose version" in str(subprocess.getoutput(
     "docker-compose --version"
 )).lower()
@@ -249,7 +274,7 @@ if DOCKER_COMPOSE_PRESENT:
 else:
     raise ComponentNotFound("Docker Compose cannot be found!")
 
-print("\n3. Gather environment variables")
+print("\n4. Gather environment variables")
 print("NOTE: TO USE DEFAULT OR GENERATED VALUE, LEAVE INPUT EMPTY")
 for serviceName, variableList in ENV_DEFS.items():
     print(f"\n##########\nVARIABLES FOR SERVICE: {serviceName}\n##########")
@@ -266,9 +291,17 @@ if os.path.exists("postgres/.env"):
 
 if createOrOverrideEnvFile:
     buffer = []
-    buffer.append(f"POSTGRES_DB = \"{ENV_DEFS['backend']['DATABASE_NAME'].userInput}\"\n")
-    buffer.append(f"POSTGRES_USER = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_USERNAME'].userInput}\"\n")
-    buffer.append(f"POSTGRES_PASSWORD = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_PASSWORD'].userInput}\"\n")
+    buffer.append(
+        f"POSTGRES_DB = \"{ENV_DEFS['backend']['DATABASE_NAME'].userInput}\"\n"
+    )
+    buffer.append(
+        "POSTGRES_USER = "
+        f"\"{ENV_DEFS['backend-and-pseudotie']['DATABASE_USERNAME'].userInput}"
+        "\"\n")
+    buffer.append(
+        "POSTGRES_PASSWORD = "
+        f"\"{ENV_DEFS['backend-and-pseudotie']['DATABASE_PASSWORD'].userInput}"
+        "\"\n")
     file = open("postgres/.env", "w")
     file.writelines(buffer)
     file.close()
@@ -355,46 +388,74 @@ if os.path.exists("mysql/.env"):
 
 if createOrOverrideEnvFile:
     buffer = []
-    buffer.append(f"MYSQL_USER = \"{ENV_DEFS['wordpress']['WORDPRESS_DB_USER'].userInput}\"\n")
-    buffer.append(f"MYSQL_PASSWORD = \"{ENV_DEFS['wordpress']['WORDPRESS_DB_PASSWORD'].userInput}\"\n")
-    buffer.append(f"MYSQL_ROOT_PASSWORD = \"{ENV_DEFS['mysql']['MYSQL_ROOT_PASSWORD'].userInput}\"\n")
+    buffer.append(
+        "MYSQL_USER = "
+        f"\"{ENV_DEFS['wordpress']['WORDPRESS_DB_USER'].userInput}\"\n")
+    buffer.append(
+        "MYSQL_PASSWORD = "
+        f"\"{ENV_DEFS['wordpress']['WORDPRESS_DB_PASSWORD'].userInput}\"\n")
+    buffer.append(
+        "MYSQL_ROOT_PASSWORD = "
+        f"\"{ENV_DEFS['mysql']['MYSQL_ROOT_PASSWORD'].userInput}\"\n")
     file = open("mysql/.env", "w")
     file.writelines(buffer)
     file.close()
 
 
-print("4. Configuring docker compose file from template")
+print("\n5. Configuring docker compose file from template")
 
 copyfile("docker-compose.dev.yml.example", "docker-compose.dev.yml")
+print("Success!")
 
-print("5. Build frontend node modules")
-print("NOTE: this may take time, depending on computer configuration")
+
+print("\n6. Build frontend node modules")
+print("NOTE: this may take time, depending on computer configuration\n")
 
 sleep(2)
 os.chdir("frontend")
 subprocess.run("./bin/update-node-modules")
 sleep(2)
 
-print("6. Build containers")
+print("\n7. Build containers")
 os.chdir("..")
-subprocess.run(["docker-compose -f docker-compose.dev.yml up -d --build sd-backend sd-pseudotie"], shell=True)
+subprocess.run(
+    "docker-compose -f docker-compose.dev.yml up -d --build"
+    " sd-backend sd-pseudotie", shell=True)
 sleep(5)
 
-print("7. Migrate database schemas")
+print("\n8. Migrate database schemas")
 print("Waiting...")
-subprocess.run("docker exec -ti sd-backend bash -c 'chmod +x ./bin/container-migrate-alembic && ./bin/container-migrate-alembic'", shell=True)
-subprocess.run("docker exec -ti sd-pseudotie bash -c 'chmod +x ./bin/container-migrate-alembic && ./bin/container-migrate-alembic'", shell=True)
+subprocess.run(
+    "docker exec -ti sd-backend"
+    " bash -c 'chmod +x ./bin/container-migrate-alembic &&"
+    " ./bin/container-migrate-alembic'", shell=True)
+subprocess.run(
+    "docker exec -ti sd-pseudotie"
+    " bash -c 'chmod +x ./bin/container-migrate-alembic &&"
+    " ./bin/container-migrate-alembic'", shell=True)
 
-print("8. Restart containers")
-subprocess.run(["docker-compose -f docker-compose.dev.yml down"], shell=True)
+print("\n9. Restart containers")
+subprocess.run(
+    "docker-compose -f docker-compose.dev.yml down",
+    shell=True)
 sleep(5)
-subprocess.run(["docker-compose -f docker-compose.dev.yml up -d --build"], shell=True)
+subprocess.run(
+    "docker-compose -f docker-compose.dev.yml up -d --build",
+    shell=True)
+
 sleep(10)
 
-print("9. Insert test data")
-print("NOTE: IF THE REGEX PATTERN FOR HOSPITAL OR NATIONAL NUMBER HAS CHANGED, THIS STEP WILL FAIL!")
-print("NOTE: TO REMEDY THIS, CHANGE THE FORMAT OF GENERATED STRINGS IN MANAGE.PY OR ADD DATA MANUALLY!")
-subprocess.run("docker exec -ti sd-backend bash -c 'python manage.py'", shell=True)
+print("\n10. Insert test data")
+print(
+    "NOTE: IF THE REGEX PATTERN FOR HOSPITAL OR NATIONAL NUMBER HAS CHANGED,"
+    " THIS STEP WILL FAIL!"
+)
+print(
+    "NOTE: TO REMEDY THIS, CHANGE THE FORMAT OF GENERATED STRINGS IN"
+    " MANAGE.PY OR ADD DATA MANUALLY!")
+subprocess.run(
+    "docker exec -ti sd-backend bash -c 'python manage.py'",
+    shell=True)
 
 print("""
     ***************************
@@ -405,4 +466,9 @@ print("""
 
     LISTENING ON
         - localhost/app
+
+    NOTE: it may take anywhere
+    from a few seconds to
+    minutes for the frontend to
+    launch for the first time
 """)
