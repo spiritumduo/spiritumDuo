@@ -66,6 +66,11 @@ def generateRandomKey():
     return ''.join(secrets.choice(chars) for _ in range(32))
 
 
+def generateRandomPassword():
+    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
+    return ''.join(secrets.choice(chars) for _ in range(8))
+
+
 # CONFIGURATION
 ENV_DEFS = {
     "backend": {
@@ -126,7 +131,8 @@ ENV_DEFS = {
         "DATABASE_PASSWORD": EnvironmentVariable(
             name="DATABASE_PASSWORD",
             default=None,
-            description="Password of database account"
+            description="Password of database account",
+            inputGenerator=generateRandomPassword
         ),
         "SESSION_SECRET_KEY": EnvironmentVariable(
             name="SESSION_SECRET_KEY",
@@ -192,6 +198,7 @@ ENV_DEFS = {
             name="WORDPRESS_DB_PASSWORD",
             default=None,
             description="Wordpress database password",
+            inputGenerator=generateRandomPassword
         ),
     },
     "mysql": {
@@ -199,6 +206,7 @@ ENV_DEFS = {
             name="MYSQL_ROOT_PASSWORD",
             default=None,
             description="Wordpress database server root password",
+            inputGenerator=generateRandomPassword
         ),
     }
 }
@@ -248,87 +256,112 @@ for serviceName, variableList in ENV_DEFS.items():
     for varName, varObject in variableList.items():
         varObject.getEnvironmentVariableInput()
 
+
+createOrOverrideEnvFile = True
 if os.path.exists("postgres/.env"):
-    if validateInput(
+    createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (postgres/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y":
-        buffer = []
-        buffer.append(f"POSTGRES_DB = \"{ENV_DEFS['backend']['DATABASE_NAME'].userInput}\"\n")
-        buffer.append(f"POSTGRES_USER = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_USERNAME'].userInput}\"\n")
-        buffer.append(f"POSTGRES_PASSWORD = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_PASSWORD'].userInput}\"\n")
-        file = open("postgres/.env", "w")
-        file.writelines(buffer)
-        file.close()
+    ).lower() == "y"
 
+if createOrOverrideEnvFile:
+    buffer = []
+    buffer.append(f"POSTGRES_DB = \"{ENV_DEFS['backend']['DATABASE_NAME'].userInput}\"\n")
+    buffer.append(f"POSTGRES_USER = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_USERNAME'].userInput}\"\n")
+    buffer.append(f"POSTGRES_PASSWORD = \"{ENV_DEFS['backend-and-pseudotie']['DATABASE_PASSWORD'].userInput}\"\n")
+    file = open("postgres/.env", "w")
+    file.writelines(buffer)
+    file.close()
+
+
+createOrOverrideEnvFile = True
 if os.path.exists("backend/.env"):
-    if validateInput(
+    createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (backend/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y":
-        buffer = []
-        for varName, varObject in ENV_DEFS["backend"].items():
-            buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
-        for varName, varObject in ENV_DEFS["backend-and-pseudotie"].items():
-            buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
+    ).lower() == "y"
 
-        file = open("backend/.env", "w")
-        file.writelines(buffer)
-        file.close()
+if createOrOverrideEnvFile:
+    buffer = []
+    for varName, varObject in ENV_DEFS["backend"].items():
+        buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
+    for varName, varObject in ENV_DEFS["backend-and-pseudotie"].items():
+        buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
 
+    file = open("backend/.env", "w")
+    file.writelines(buffer)
+    file.close()
+
+
+createOrOverrideEnvFile = True
 if os.path.exists("pseudotie/.env"):
-    if validateInput(
+    createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (pseudotie/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y":
-        buffer = []
-        for varName, varObject in ENV_DEFS["pseudotie"].items():
-            buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
-        for varName, varObject in ENV_DEFS["backend-and-pseudotie"].items():
-            buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
+    ).lower() == "y"
 
-        file = open("pseudotie/.env", "w")
-        file.writelines(buffer)
-        file.close()
+if createOrOverrideEnvFile:
+    buffer = []
+    for varName, varObject in ENV_DEFS["pseudotie"].items():
+        buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
+    for varName, varObject in ENV_DEFS["backend-and-pseudotie"].items():
+        buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
 
+    file = open("pseudotie/.env", "w")
+    file.writelines(buffer)
+    file.close()
+
+
+createOrOverrideEnvFile = True
 if os.path.exists("nginx/.env"):
-    if validateInput(
+    createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (nginx/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y":
-        buffer = []
-        for varName, varObject in ENV_DEFS["nginx"].items():
-            buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
+    ).lower() == "y"
 
-        file = open("nginx/.env", "w")
-        file.writelines(buffer)
-        file.close()
+if createOrOverrideEnvFile:
+    buffer = []
+    for varName, varObject in ENV_DEFS["nginx"].items():
+        buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
 
+    file = open("nginx/.env", "w")
+    file.writelines(buffer)
+    file.close()
+
+
+createOrOverrideEnvFile = True
 if os.path.exists("wordpress/.env"):
-    if validateInput(
+    createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (wordpress/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y":
-        buffer = []
-        for varName, varObject in ENV_DEFS["wordpress"].items():
-            buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
+    ).lower() == "y"
 
-        file = open("wordpress/.env", "w")
-        file.writelines(buffer)
-        file.close()
+if createOrOverrideEnvFile:
+    buffer = []
+    for varName, varObject in ENV_DEFS["wordpress"].items():
+        buffer.append(f"{varName} = \"{varObject.userInput}\"\n")
 
+    file = open("wordpress/.env", "w")
+    file.writelines(buffer)
+    file.close()
+
+
+createOrOverrideEnvFile = True
 if os.path.exists("mysql/.env"):
-    if validateInput(
+    createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (mysql/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y":
-        buffer = []
-        buffer.append(f"MYSQL_USER = \"{ENV_DEFS['wordpress']['WORDPRESS_DB_USER'].userInput}\"\n")
-        buffer.append(f"MYSQL_PASSWORD = \"{ENV_DEFS['wordpress']['WORDPRESS_DB_PASSWORD'].userInput}\"\n")
-        buffer.append(f"MYSQL_ROOT_PASSWORD = \"{ENV_DEFS['mysql']['MYSQL_ROOT_PASSWORD'].userInput}\"\n")
-        file = open("mysql/env", "w")
-        file.writelines(buffer)
-        file.close()
+    ).lower() == "y"
+
+if createOrOverrideEnvFile:
+    buffer = []
+    buffer.append(f"MYSQL_USER = \"{ENV_DEFS['wordpress']['WORDPRESS_DB_USER'].userInput}\"\n")
+    buffer.append(f"MYSQL_PASSWORD = \"{ENV_DEFS['wordpress']['WORDPRESS_DB_PASSWORD'].userInput}\"\n")
+    buffer.append(f"MYSQL_ROOT_PASSWORD = \"{ENV_DEFS['mysql']['MYSQL_ROOT_PASSWORD'].userInput}\"\n")
+    file = open("mysql/.env", "w")
+    file.writelines(buffer)
+    file.close()
+
 
 print("4. Configuring docker compose file from template")
 
