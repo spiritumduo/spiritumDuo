@@ -21,12 +21,12 @@ const getPatientMock = {
   ),
 };
 
-describe('When page loads and user gets the lock', async () => {
+describe('When page loads and user gets the lock', () => {
   let mocks: {
     query: DocumentNode;
     mockFn: RequestHandler<any, any>;
   }[];
-  beforeEach(() => {
+  beforeEach( async () => {
     mocks = [
       {
         query: LOCK_ON_PATHWAY_MUTATION,
@@ -68,18 +68,22 @@ describe('When page loads and user gets the lock', async () => {
       },
       getPatientMock,
     ];
-    render(
-      <NewMockSdApolloProvider mocks={ mocks }>
-        <Default />
-      </NewMockSdApolloProvider>,
-    );
+    await waitFor(() => {
+      render(
+        <NewMockSdApolloProvider mocks={ mocks }>
+          <Default />
+        </NewMockSdApolloProvider>,
+      );
+    });
   });
 
-  it('Should display the patient', () => {
+  it('Should display the patient', async () => {
     const patient = Default.parameters?.patient;
-    expect(screen.getByText(
-      new RegExp(`${patient.firstName}\\s${patient.lastName}.+${patient.hospitalNumber}`, 'i'),
-    )).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(
+        new RegExp(`${patient.firstName}\\s${patient.lastName}.+${patient.hospitalNumber}`, 'i'),
+      )).toBeInTheDocument();
+    });
   });
 
   it('Should display the New Decision tab', async () => {
@@ -107,7 +111,7 @@ describe('When the page loads and the user does not get the lock', () => {
     query: DocumentNode;
     mockFn: RequestHandler<any, any>;
   }[];
-  beforeEach(() => {
+  beforeEach(async () => {
     mocks = [
       {
         query: LOCK_ON_PATHWAY_MUTATION,
@@ -132,11 +136,13 @@ describe('When the page loads and the user does not get the lock', () => {
       },
       getPatientMock,
     ];
-    render(
-      <NewMockSdApolloProvider mocks={ mocks }>
-        <Default />
-      </NewMockSdApolloProvider>,
-    );
+    await waitFor(() => {
+      render(
+        <NewMockSdApolloProvider mocks={ mocks }>
+          <Default />
+        </NewMockSdApolloProvider>,
+      );
+    });
   });
 
   it('Should display the patient', () => {
