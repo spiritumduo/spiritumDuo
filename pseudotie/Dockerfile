@@ -4,8 +4,12 @@ RUN apt update && apt install -y gcc libpq-dev cron
 
 WORKDIR /app
 COPY . .
+COPY core/cronjob /etc/cron.d/container_cronjob
 
 RUN python -m pip install --upgrade pip && pip install -r core/requirements.txt
+
+RUN ["chmod", "0644", "/etc/cron.d/container_cronjob"]
+RUN ["crontab", "/etc/cron.d/container_cronjob"]
 
 RUN ["chmod", "+x", "/app/core/entrypoint"]
 WORKDIR /app/src
