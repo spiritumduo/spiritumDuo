@@ -1,5 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+import { ApolloProvider, DocumentNode } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { createMockClient, IMockSubscription, RequestHandler, RequestHandlerResponse } from 'mock-apollo-client';
 import { cache } from 'app/cache';
 
 interface MockSdApolloProviderProps{
@@ -7,7 +10,7 @@ interface MockSdApolloProviderProps{
   mocks: MockedResponse<Record<string, any>>[] | undefined;
 }
 
-const MockSdApolloProvider = ({ children, mocks }: MockSdApolloProviderProps) => {
+const MockSdApolloProvider = ({ children, mocks }: MockSdApolloProviderProps): JSX.Element => {
   cache.reset();
   return (
     <MockedProvider
@@ -16,6 +19,27 @@ const MockSdApolloProvider = ({ children, mocks }: MockSdApolloProviderProps) =>
     >
       { children }
     </MockedProvider>
+  );
+};
+
+interface NewMockSdApolloProviderProps{
+  children: JSX.Element;
+  mocks: {
+    query: DocumentNode;
+    mockFn: RequestHandler<any, any>;
+  }[];
+}
+
+export const NewMockSdApolloProvider = (
+  { children, mocks }: NewMockSdApolloProviderProps,
+): JSX.Element => {
+  cache.reset();
+  const client = createMockClient();
+  mocks.forEach((m) => client.setRequestHandler(m.query, m.mockFn));
+  return (
+    <ApolloProvider client={ client }>
+      { children }
+    </ApolloProvider>
   );
 };
 
