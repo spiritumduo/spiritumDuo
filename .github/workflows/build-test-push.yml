@@ -86,6 +86,7 @@ jobs:
           -e SESSION_EXPIRY_LENGTH=${{ secrets.SESSION_EXPIRY_LENGTH }}
           -e TRUST_ADAPTER_NAME=${{ secrets.TRUST_ADAPTER_NAME }}
           -e UPDATE_ENDPOINT_KEY=${{ secrets.UPDATE_ENDPOINT_KEY }}
+          -e DECISION_POINT_LOCKOUT_DURATION=${{ secrets.DECISION_POINT_LOCKOUT_DURATION }}
           staging-test test
       -
         name: Build and push
