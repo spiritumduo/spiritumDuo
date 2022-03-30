@@ -9,14 +9,6 @@ import { PatientCommunicationMethods } from "./../../../__generated__/globalType
 // GraphQL query operation: GetPatient
 // ====================================================
 
-export interface GetPatient_getPatient_onPathways_lockUser {
-  __typename: "User";
-  id: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-}
-
 export interface GetPatient_getPatient_onPathways_underCareOf {
   __typename: "User";
   firstName: string;
@@ -83,8 +75,6 @@ export interface GetPatient_getPatient_onPathways_decisionPoints {
 export interface GetPatient_getPatient_onPathways {
   __typename: "OnPathway";
   id: string;
-  lockUser: GetPatient_getPatient_onPathways_lockUser | null;
-  lockEndTime: any | null;
   underCareOf: GetPatient_getPatient_onPathways_underCareOf | null;
   milestones: GetPatient_getPatient_onPathways_milestones[] | null;
   decisionPoints: GetPatient_getPatient_onPathways_decisionPoints[] | null;

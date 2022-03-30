@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { Collapse, Container, Row, Col, Button as BootstrapButton, Modal } from 'react-bootstrap';
+import { Collapse, Container, Row, Col, Button as BootstrapButton } from 'react-bootstrap';
 import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 import { Button, Fieldset, ErrorMessage, ErrorSummary } from 'nhsuk-react-components';
 import * as yup from 'yup';
@@ -32,11 +32,18 @@ import { GetPatient } from 'pages/__generated__/GetPatient';
 import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
 
 import './decisionpoint.css';
-import { lockOnPathway } from './__generated__/lockOnPathway';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
   decisionType: DecisionPointType;
+  onPathwayLock?: {
+    lockUser: {
+      id: string;
+      firstName: string;
+      lastName: string;
+    };
+    lockEndTime: Date;
+  }
   tabStateCallback: (state: boolean) => void;
 }
 
@@ -52,13 +59,6 @@ export const GET_PATIENT_QUERY = gql`
 
         onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
           id
-          lockUser{
-            id
-            firstName
-            lastName
-            username
-          }
-          lockEndTime
           underCareOf {
             firstName
             lastName
@@ -123,27 +123,6 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
       userErrors {
         message
         field
-      }
-    }
-  }
-`;
-
-export const LOCK_ON_PATHWAY_MUTATION = gql`
-  mutation lockOnPathway($input: LockOnPathwayInput!){
-    lockOnPathway(input: $input){
-      onPathway{
-        id
-        lockUser{
-          id
-          firstName
-          lastName
-          username 
-        }
-        lockEndTime
-      }
-      userErrors{
-        field
-        message
       }
     }
   }
@@ -384,7 +363,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType, tabStateCallback }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, tabStateCallback, onPathwayLock }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
@@ -402,10 +381,6 @@ const DecisionPointPage = (
       },
     },
   );
-
-  const [lockOnPathwayMutation, {
-    data: lockData, loading: lockLoading, error: lockError,
-  }] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
 
   // CREATE DECISION POINT MUTATION
   const [createDecision, {
@@ -476,68 +451,6 @@ const DecisionPointPage = (
   const [
     hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
   ] = useState<boolean>(false);
-
-  // LOCK ONPATHWAY
-  const [weHaveLock, setWeHaveLock] = useState<boolean>(false);
-
-  // check patient query to see if we already have the lock
-  useEffect(() => {
-    const lock = data?.getPatient?.onPathways?.[0].lockUser?.id
-      ? (user.id === parseInt(data.getPatient.onPathways[0].lockUser.id, 10))
-      : false;
-    setWeHaveLock(lock);
-  }, [user.id, data?.getPatient?.onPathways]);
-
-  // if we don't have the lock, try and get it
-  useEffect(() => {
-    if (!weHaveLock && data?.getPatient?.onPathways?.[0]?.id) {
-      lockOnPathwayMutation(
-        { variables: { input: { onPathwayId: data?.getPatient?.onPathways?.[0]?.id } } },
-      );
-    }
-  }, [data?.getPatient?.onPathways, lockOnPathwayMutation, weHaveLock]);
-
-  // Check to see if we have the lock from the mutation
-  useEffect(() => {
-    if (lockData) {
-      const mutationLock = lockData?.lockOnPathway?.onPathway?.lockUser?.id
-        ? (user.id === parseInt(lockData.lockOnPathway.onPathway.lockUser.id, 10))
-        : false;
-      setWeHaveLock(mutationLock);
-    }
-  }, [lockData, user.id]);
-
-  const currentOnPathwayId = data?.getPatient?.onPathways?.[0]?.id;
-  // poll to either keep the lock, or try and acquire it
-  useEffect(() => {
-    let lockInterval: ReturnType<typeof setTimeout>;
-    if (currentOnPathwayId) {
-      lockInterval = setInterval(() => {
-        lockOnPathwayMutation(
-          { variables: { input: { onPathwayId: currentOnPathwayId } } },
-        );
-      }, 150 * 1000);
-    }
-
-    if (weHaveLock) {
-      return () => {
-        clearInterval(lockInterval);
-        lockOnPathwayMutation(
-          { variables: {
-            input: { onPathwayId: currentOnPathwayId, unlock: true },
-          } },
-        );
-      };
-    }
-    return () => {
-      clearInterval(lockInterval);
-    };
-  }, [
-    currentOnPathwayId,
-    lockOnPathwayMutation, user.id,
-    weHaveLock,
-  ]);
-
   useEffect(() => {
     if (!hasBuiltHiddenConfirmationFields && data) {
       const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
@@ -597,9 +510,6 @@ const DecisionPointPage = (
     if (!confirmNoRequests && !isConfirmed) {
       setRequestConfirmation(milestoneRequests.length);
     } else {
-      lockOnPathwayMutation(
-        { variables: { input: { onPathwayId: values.onPathwayId, unlock: true } } },
-      );
       const variables: createDecisionPointVariables = {
         input: {
           onPathwayId: values.onPathwayId,
@@ -690,17 +600,13 @@ const DecisionPointPage = (
     }
   });
 
-  // const weHaveLock = lockData?.lockOnPathway?.onPathway?.lockUser?.id
-  //  ? (user.id === parseInt(lockData.lockOnPathway.onPathway.lockUser.id, 10))
-  // : false;
   return (
     <div>
       <section>
         <Container fluid>
-          <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ weHaveLock }>
+          <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ onPathwayLock === undefined }>
             <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
             <ErrorSummary.Body>
-              {lockData?.lockOnPathway?.userErrors?.[0]?.message}
               <br />
               This record will be unlocked after the other user has become inactive,
               or if they submit this form. You will not be able to make edits to
@@ -709,15 +615,9 @@ const DecisionPointPage = (
               <br />
               <strong>
                 Current unlock time:
-              </strong> {
-                new Date(lockData?.lockOnPathway?.onPathway?.lockEndTime).toLocaleString()
-              }
+              </strong> { onPathwayLock?.lockEndTime.toLocaleString() }
               <br />
               NOTE: this time may extend if the other user is still active on this page.
-              {/*
-                TODO: not sure why I'm having to re-create the date object, I thought
-                Apollo should do that for us? ~JC
-              */}
             </ErrorSummary.Body>
           </ErrorSummary>
           <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
@@ -736,7 +636,10 @@ const DecisionPointPage = (
               ))
             }
             { error ? <ErrorMessage>{error.message}</ErrorMessage> : false }
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted || !weHaveLock }>
+            <Fieldset disabled={
+              loading || mutateLoading || isSubmitted || onPathwayLock !== undefined
+              }
+            >
               <Row className="mt-4 align-items-center">
                 <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
                   Decision:
@@ -773,7 +676,10 @@ const DecisionPointPage = (
             </Fieldset>
             <hr className="mt-0 mb-1" />
             <PreviousTestResultsElement data={ data } />
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted || !weHaveLock }>
+            <Fieldset disabled={
+              loading || mutateLoading || isSubmitted || onPathwayLock !== undefined
+              }
+            >
               <Row>
                 <Textarea
                   className="form-control"
@@ -799,7 +705,10 @@ const DecisionPointPage = (
                 />
               </Row>
             </Fieldset>
-            <Fieldset disabled={ loading || mutateLoading || isSubmitted || !weHaveLock }>
+            <Fieldset disabled={
+              loading || mutateLoading || isSubmitted || onPathwayLock !== undefined
+              }
+            >
               <Row>
                 <Col>
                   <h5>Tests</h5>
@@ -834,7 +743,7 @@ const DecisionPointPage = (
                 type="submit"
                 name="submitBtn"
                 className="btn btn-outline-secondary px-4 my-4 float-end ms-1"
-                disabled={ !weHaveLock }
+                disabled={ onPathwayLock !== undefined }
               >
                 Submit
               </Button>
