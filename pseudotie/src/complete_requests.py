@@ -1,0 +1,58 @@
+import os
+import httpx
+from models.db import db, DATABASE_URL
+from models import TestResult, Patient
+from asyncio import get_event_loop
+from datetime import datetime
+from RecordTypes import TestResultState
+from main import getTestResultDescription
+from placeholder_data import TEST_RESULT_DATA, TEST_RESULT_DATA_SERIES
+
+UPDATE_ENDPOINT_KEY = os.getenv("UPDATE_ENDPOINT_KEY")
+
+
+async def cleanup():
+    """
+    TODO: add note how this works, you will forget in a couple of weeks
+    """
+    await db.set_bind(DATABASE_URL)
+
+    # testResults: List[TestResult] = await TestResult.query.where(
+    #     TestResult.planned_return_time > datetime.now()
+    # ).gino.all()
+    testResultsWithPatient = await db.select(
+        [TestResult, Patient.hospital_number]
+    ).where(
+        TestResult.planned_return_time < datetime.now()
+    ).where(
+        TestResult.current_state == TestResultState.INIT
+    ).where(
+        TestResult.patient_id == Patient.id
+    ).gino.all()
+
+    for record in testResultsWithPatient:
+        async with httpx.AsyncClient() as client:
+            res = await client.post(
+                url="http://sd-backend:8080/rest/testresult/update",
+                json={
+                    "id": record.id,
+                    "new_state": TestResultState.COMPLETED.value
+                },
+                cookies={
+                    "SDTIEKEY": UPDATE_ENDPOINT_KEY
+                }
+            )
+            if res.status_code == 200:
+                await TestResult.update.values(
+                    description=getTestResultDescription(
+                        typeName=record.type_reference_name,
+                        hospitalNumber=record.hospital_number
+                    ),
+                    current_state=TestResultState.COMPLETED
+                ).where(
+                    TestResult.id == record.id
+                ).gino.status()
+
+
+loop = get_event_loop()
+loop.run_until_complete(cleanup())
