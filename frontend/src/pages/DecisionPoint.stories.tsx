@@ -7,9 +7,9 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Standard } from 'components/Notification.stories';
 import { cache } from 'app/cache';
-import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, LOCK_ON_PATHWAY_MUTATION } from './DecisionPoint';
+import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY } from './DecisionPoint';
 
-const patientHospitalNumber = 'MRN1234567-36';
+const patientHospitalNumber = 'fMRN1234567';
 const milestoneTypes = [
   {
     id: '1',
@@ -213,7 +213,7 @@ const CREATE_DECISION_WITH_MILESTONE_MOCK = {
   },
 };
 
-const apolloMocksNoLock = [
+const apolloMocks = [
   {
     request: {
       query: GET_PATIENT_QUERY,
@@ -240,8 +240,6 @@ const apolloMocksNoLock = [
                 firstName: 'John',
                 lastName: 'Doe',
               },
-              lockUser: null,
-              lockEndTime: null,
               decisionPoints: [
                 {
                   clinicHistory: 'Clinic History 1',
@@ -283,396 +281,6 @@ const apolloMocksNoLock = [
   },
   CREATE_DECISION_NO_MILESTONE_MOCK,
   CREATE_DECISION_WITH_MILESTONE_MOCK,
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // UNLOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-          unlock: true,
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          id: '1',
-          onPathway: {
-            id: '1',
-            lockEndTime: null,
-            lockUser: null,
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-];
-
-const apolloMocksWithLock = [
-  {
-    request: {
-      query: GET_PATIENT_QUERY,
-      variables: {
-        hospitalNumber: patientHospitalNumber,
-        pathwayId: 1, // this is a brittle, improve this
-        includeDischarged: true,
-      },
-    },
-    result: {
-      data: {
-        getPatient: {
-          hospitalNumber: 'MRN1234567-36',
-          id: '1637',
-          communicationMethod: 'LETTER',
-          firstName: 'John 36',
-          lastName: 'Doe 36',
-          dateOfBirth: new Date('1970-06-12'),
-          onPathways: [
-            {
-              id: '1',
-              milestones: milestones,
-              underCareOf: {
-                firstName: 'John',
-                lastName: 'Doe',
-              },
-              lockUser: {
-                id: 1000,
-                firstName: 'Johnny',
-                lastName: 'Locker',
-                username: 'jlocker',
-              },
-              lockEndTime: new Date('2030-01-01'),
-              decisionPoints: [
-                {
-                  clinicHistory: 'Clinic History 1',
-                  comorbidities: 'Comorbidities 1',
-                  milestones: [
-                    milestones[0],
-                    milestones[1],
-                    milestones[2],
-                  ],
-                },
-                {
-                  clinicHistory: 'Clinic History 2',
-                  comorbidities: 'Comorbidities 2',
-                  milestones: [
-                    milestones[3],
-                    milestones[4],
-                  ],
-                },
-                {
-                  clinicHistory: 'Clinic History 3',
-                  comorbidities: 'Comorbidities 3',
-                  milestones: [
-                    milestones[5],
-                    milestones[6],
-                  ],
-                },
-                {
-                  clinicHistory: 'Clinic History 4',
-                  comorbidities: 'Comorbidities 4',
-                  milestones: null,
-                },
-              ],
-            },
-          ],
-        },
-        getMilestoneTypes: milestoneTypes,
-      },
-    },
-  },
-  CREATE_DECISION_NO_MILESTONE_MOCK,
-  CREATE_DECISION_WITH_MILESTONE_MOCK,
-  {
-    // LOCK ONPATHWAY - 1
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockUser: {
-              id: '1000',
-              firstName: 'Johnny',
-              lastName: 'Locker',
-              username: 'jlocker',
-            },
-            lockEndTime: new Date('2030-01-01T14:40:00'),
-          },
-          userErrors: [{
-            field: 'lock_user_id',
-            message: 'Another user has already locked this patient!',
-          }],
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY - 1
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockUser: {
-              id: '1000',
-              firstName: 'Johnny',
-              lastName: 'Locker',
-              username: 'jlocker',
-            },
-            lockEndTime: new Date('2030-01-01T15:40:00'),
-          },
-          userErrors: [{
-            field: 'lock_user_id',
-            message: 'Another user has already locked this patient!',
-          }],
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY - 2
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockUser: {
-              id: 1,
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-            },
-            lockEndTime: new Date('2030-01-01T16:40:00'),
-          },
-          userErrors: [{
-            field: 'lock_user_id',
-            message: 'Another user has already locked this patient!',
-          }],
-        },
-      },
-    },
-  },
 ];
 
 export default {
@@ -709,7 +317,7 @@ Default.parameters = {
   milestones: milestones,
   apolloClient: {
     mocks: [
-      ...apolloMocksNoLock,
+      ...apolloMocks,
       Standard.parameters?.apolloClient.mocks[0], // notification mock
     ],
   },
@@ -719,12 +327,20 @@ Locked.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
   tabStateCallback: () => {},
+  onPathwayLock: {
+    lockUser: {
+      id: '1000',
+      firstName: 'Johnny',
+      lastName: 'Locker',
+    },
+    lockEndTime: new Date('2030-01-01'),
+  },
 };
 Locked.parameters = {
   milestones: milestones,
   apolloClient: {
     mocks: [
-      ...apolloMocksWithLock,
+      ...apolloMocks,
       Standard.parameters?.apolloClient.mocks[0], // notification mock
     ],
   },
