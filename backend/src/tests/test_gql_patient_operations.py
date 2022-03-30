@@ -3,7 +3,7 @@ import pytest
 from config import config
 from datetime import datetime
 from random import randint
-from models import Patient, OnPathway, DecisionPoint, Milestone
+from models import Patient
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, MilestoneState
 from hamcrest import assert_that, equal_to, not_none, none

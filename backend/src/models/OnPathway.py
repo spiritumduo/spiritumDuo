@@ -34,3 +34,9 @@ class OnPathway(db.Model):
     under_care_of_id = db.Column(
         db.Integer(), db.ForeignKey('tbl_user.id'), nullable=True
     )
+    lock_user_id = db.Column(
+        db.Integer(), db.ForeignKey('tbl_user.id'), nullable=True
+    )
+    lock_end_time = db.Column(
+        db.DateTime(), nullable=True
+    )

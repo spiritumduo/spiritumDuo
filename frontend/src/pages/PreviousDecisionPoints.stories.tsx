@@ -27,6 +27,7 @@ const apolloMocks = [
         getPatient: {
           onPathways: [
             {
+              id: '1',
               decisionPoints: [
                 {
                   id: '27',

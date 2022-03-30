@@ -33,7 +33,7 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS = 5
+NUMBER_OF_USERS = 100
 NUMBER_OF_PATIENTS_PER_USER = 5
 
 
@@ -46,21 +46,17 @@ class RequestPlaceholder(dict):
 CLINIC_HISTORY = [
     "Likely right upper lobe lung cancer.",
     "Proximal large lung cancer. Likely palliative.",
-    """Left lower lobe mass, likely primary lung cancer. Stopped smoking
-    5 years ago""",
+    "Left lower lobe mass, likely primary lung cancer. Stopped smoking 5 years ago",
     "Metastatic disease of likely lung origin.",
     "Left upper lobe collapse secondary to likely lung cancer",
 ]
 
 COMORBIDITIES = [
-    """Chronic obstructive pulmonary disease, osteoporosis and a previous
-    cardioversion 2 years ago for atrial fibrillation.""",
-    """Hartmann's procedure for lower bowel cancer. Hypertension and
-    type 2 diabetes""",
+    "Chronic obstructive pulmonary disease, osteoporosis and a previous cardioversion 2 years ago for atrial fibrillation.",
+    "Hartmann's procedure for lower bowel cancer. Hypertension and type 2 diabetes",
     "Glaucoma, hysterectomy and fibromyalgia.",
     "Current smoker (50 pack years) and COPD.",
-    """Previous T4-N0-M0 squamous carcinoma of the lung treated with CHART and
-    chemotherapy 2008. Atrial flutter and on apixaban."""
+    "Previous T4-N0-M0 squamous carcinoma of the lung treated with CHART and chemotherapy 2008. Atrial flutter and on apixaban."
 ]
 
 _CONTEXT = {

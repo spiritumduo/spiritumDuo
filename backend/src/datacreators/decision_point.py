@@ -9,6 +9,14 @@ from datetime import datetime
 from common import ReferencedItemDoesNotExistError
 
 
+class UserDoesNotOwnLock(Exception):
+    """
+    This is raised when the user attempts to
+    submit a decision point whilst not owning
+    the OnPathway lock
+    """
+
+
 @inject
 async def CreateDecisionPoint(
     context: dict = None,
@@ -45,6 +53,7 @@ async def CreateDecisionPoint(
     Returns:
         DecisionPoint: newly created decision point object
     """
+
     await trust_adapter.test_connection(
         auth_token=context['request'].cookies['SDSESSION']
     )
@@ -53,6 +62,13 @@ async def CreateDecisionPoint(
         raise ReferencedItemDoesNotExistError("Context is not provided")
     on_pathway_id = int(on_pathway_id)
     clinician_id = int(clinician_id)
+
+    on_pathway = await OnPathwayByIdLoader.load_from_id(
+        context=context,
+        id=on_pathway_id
+    )
+    if on_pathway.lock_user_id != clinician_id:
+        raise UserDoesNotOwnLock()
 
     decision_point_details = {
         "on_pathway_id": on_pathway_id,

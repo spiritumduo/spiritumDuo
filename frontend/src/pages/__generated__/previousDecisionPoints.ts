@@ -41,6 +41,7 @@ export interface previousDecisionPoints_getPatient_onPathways_decisionPoints {
 
 export interface previousDecisionPoints_getPatient_onPathways {
   __typename: "OnPathway";
+  id: string;
   decisionPoints: previousDecisionPoints_getPatient_onPathways_decisionPoints[] | null;
 }
 

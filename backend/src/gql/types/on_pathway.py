@@ -54,3 +54,14 @@ async def resolver(
         context=info.context, id=obj.id,
         notOnDecisionPoint=notOnDecisionPoint
     )
+
+
+@OnPathwayObjectType.field("lockUser")
+async def resolve_lock_user(
+    obj: OnPathway = None,
+    info: GraphQLResolveInfo = None, *_
+):
+    return await UserByIdLoader.load_from_id(
+        context=info.context,
+        id=obj.lock_user_id
+    )

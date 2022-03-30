@@ -21,7 +21,7 @@ from models import (
     Pathway
 )
 from random import randint, getrandbits
-from datetime import date
+from datetime import date, datetime
 from SdTypes import DecisionTypes, MilestoneState
 from datacreators import CreatePatient, CreateUser, CreateDecisionPoint
 from itsdangerous import TimestampSigner
@@ -258,7 +258,7 @@ async def insert_test_data():
             is_test_request=True
         ),
     ]
-    
+
     for i in range(0, 50):
         first_name = _Faker.first_name()
         last_name = _Faker.last_name()
@@ -303,6 +303,11 @@ async def insert_test_data():
             ]
         )
 
+        await OnPathway.update.values(
+            lock_end_time=datetime(3000, 1, 1, 3, 0, 0),
+            lock_user_id=_CONTEXT['request']['user'].id
+        ).where(OnPathway.patient_id == _patientObject.id).gino.status()
+
         on_pathways: Union[List[OnPathway], None] = {
             await OnPathway.query.where(
                 OnPathway.patient_id == _patientObject.id
@@ -318,6 +323,12 @@ async def insert_test_data():
         on_pathway_counter = 0
         for on_pathway in on_pathways:
             on_pathway_counter = on_pathway_counter + 1
+
+            await on_pathway.update(
+                lock_end_time=datetime(3000, 1, 1, 3, 0, 0),
+                lock_user_id=_CONTEXT['request']['user'].id
+            ).apply()
+
             if on_pathway_counter == 1 or (
                 on_pathway_counter != 1 and bool(getrandbits(1))
             ):
@@ -382,6 +393,12 @@ async def insert_test_data():
                         await on_pathway.update(
                             awaiting_decision_type=DecisionTypes.MDT
                         ).apply()
+
+        await OnPathway.update.values(
+            lock_end_time=None,
+            lock_user_id=None
+        ).where(OnPathway.patient_id == _patientObject.id).gino.status()
+
     print("Test data added. Success!")
 
 

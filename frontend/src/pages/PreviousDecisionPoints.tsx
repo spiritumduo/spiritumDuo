@@ -76,7 +76,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
                   <p><strong>Clinical History:</strong> {d.clinicHistory}</p>
                 </div>
                 <div className="row p-1">
-                  <p><strong>Comormidities:</strong> {d.comorbidities}</p>
+                  <p><strong>Comorbidities:</strong> {d.comorbidities}</p>
                 </div>
                 {
                   d.milestones?.length !== 0
