@@ -276,6 +276,7 @@ class PseudoTrustAdapter(TrustAdapter):
             int(testResult.type_id)
         )
         params['typeReferenceName'] = milestoneType.ref_name
+        params['hospitalNumber'] = testResult.hospital_number
 
         if testResult.current_state:
             params['currentState'] = testResult.current_state.value
@@ -285,8 +286,6 @@ class PseudoTrustAdapter(TrustAdapter):
             params['updatedAt'] = testResult.updated_at.isoformat()
         if testResult.description:
             params['description'] = testResult.description
-        if testResult.hospital_number:
-            params['hospitalNumber'] = testResult.hospital_number
 
         testResultRecord = await httpRequest(
             "post",
