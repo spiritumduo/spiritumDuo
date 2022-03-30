@@ -6,20 +6,23 @@ from asyncio import get_event_loop
 from datetime import datetime
 from RecordTypes import TestResultState
 from main import getTestResultDescription
-from placeholder_data import TEST_RESULT_DATA, TEST_RESULT_DATA_SERIES
 
 UPDATE_ENDPOINT_KEY = os.getenv("UPDATE_ENDPOINT_KEY")
 
 
 async def cleanup():
     """
-    TODO: add note how this works, you will forget in a couple of weeks
+    This script is necessary to facilitate the updating of test
+    results in the event that the system restarts or crashes so
+    the thread tasked with immediately returning the data 
+    cannot successfully complete. This script is run as a cron
+    job because when the system recovers, there may be tests
+    that need to be sent back immediately and some that aren't
+    ready just yet
     """
+
     await db.set_bind(DATABASE_URL)
 
-    # testResults: List[TestResult] = await TestResult.query.where(
-    #     TestResult.planned_return_time > datetime.now()
-    # ).gino.all()
     testResultsWithPatient = await db.select(
         [TestResult, Patient.hospital_number]
     ).where(
