@@ -51,7 +51,7 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
       </Container>
       {
         patient
-          ? <ModalPatient patient={ patient } closeCallback={ modalCloseCallback } />
+          ? <ModalPatient patient={ patient } closeCallback={ modalCloseCallback } lock />
           : false
       }
     </>
