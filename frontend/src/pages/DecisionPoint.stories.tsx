@@ -226,8 +226,8 @@ const apolloMocks = [
     result: {
       data: {
         getPatient: {
-          hospitalNumber: 'MRN1234567-36',
-          id: '1637',
+          hospitalNumber: 'fMRN1234567',
+          id: '1',
           communicationMethod: 'LETTER',
           firstName: 'John 36',
           lastName: 'Doe 36',
