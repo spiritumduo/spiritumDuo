@@ -1,17 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
-import DecisionPointPage from 'pages/DecisionPoint';
-import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
+
+// LIBRARIES
 import { Modal } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+
+// APP
 import { DecisionPointType } from 'types/DecisionPoint';
 import Patient from 'types/Patient';
-import { AuthContext } from 'app/context';
-import { gql, useMutation } from '@apollo/client';
+import { AuthContext, PathwayContext } from 'app/context';
+
+// PAGES
+import DecisionPointPage from 'pages/DecisionPoint';
+import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
+
+// LOCAL
 import { lockOnPathway } from './__generated__/lockOnPathway';
+import { getPatientOnCurrentPathway } from './__generated__/getPatientOnCurrentPathway';
 
 interface ModalPatientProps {
   patient: Patient;
-  lockOnPathwayId?: string;
+  lock?: boolean;
   closeCallback: () => void;
 }
 
@@ -35,24 +44,53 @@ export const LOCK_ON_PATHWAY_MUTATION = gql`
   }
 `;
 
-const ModalPatient = ({ patient, lockOnPathwayId, closeCallback }: ModalPatientProps) => {
+export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
+  query getPatientOnCurrentPathway($hospitalNumber: String!, $pathwayId: ID!) {
+    getPatient(hospitalNumber: $hospitalNumber) {
+      id
+      onPathways(pathwayId: $pathwayId, includeDischarged: true) {
+        id
+      }
+    }
+  }
+`;
+
+const ModalPatient = ({ patient, closeCallback, lock }: ModalPatientProps) => {
+  // START HOOKS
   const [tabState, setTabState] = useState<boolean>(false);
-  const [lockState, updateLockState] = useState<lockOnPathway | null | undefined>();
+  const { currentPathwayId } = useContext(PathwayContext);
+  // const [lockState, updateLockState] = useState<lockOnPathway | null | undefined>();
   const { user } = useContext(AuthContext);
   const [
-    lockOnPathwayMutation, { data },
+    lockOnPathwayMutation, { data, loading, error },
   ] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
+  const {
+    data: getPatientOnCurrentPathwayData,
+    loading: patientLoading,
+  } = useQuery<getPatientOnCurrentPathway>(
+    GET_PATIENT_CURRENT_PATHWAY_QUERY, {
+      variables: {
+        hospitalNumber: patient.hospitalNumber,
+        pathwayId: currentPathwayId,
+      },
+    },
+  );
+  const lockOnPathwayId = lock
+    ? getPatientOnCurrentPathwayData?.getPatient?.onPathways?.[0].id
+    : undefined;
 
   const userId = user?.id.toString();
-  const dataOnPathwayUserId = data?.lockOnPathway.onPathway?.lockUser?.id;
-  const storedOnPathwayUserId = lockState?.lockOnPathway.onPathway?.lockUser?.id;
+  // const dataOnPathwayUserId = data?.lockOnPathway.onPathway?.lockUser?.id;
+  const storedOnPathwayUserId = data?.lockOnPathway.onPathway?.lockUser?.id;
+  /*
   if (dataOnPathwayUserId != null && storedOnPathwayUserId !== dataOnPathwayUserId) {
     updateLockState(data);
   }
+  */
 
   const hasLock = (
     (userId?.toString() === storedOnPathwayUserId)
-    && (lockState?.lockOnPathway.onPathway?.lockEndTime > Date.now())
+    && (data?.lockOnPathway.onPathway?.lockEndTime > Date.now())
   );
 
   // eslint-disable-next-line consistent-return
@@ -85,6 +123,8 @@ const ModalPatient = ({ patient, lockOnPathwayId, closeCallback }: ModalPatientP
       };
     }
   }, [hasLock, lockOnPathwayId, lockOnPathwayMutation]);
+  // NO MORE HOOKS AFTER HERE
+
   const onPathway = data?.lockOnPathway.onPathway;
   const onPathwayLock = onPathway?.lockEndTime && onPathway.lockUser
     ? {

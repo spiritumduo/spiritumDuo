@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import '@testing-library/jest-dom';
+import { act } from 'react-dom/test-utils';
 import { waitFor, render, screen, cleanup } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import { DocumentNode } from '@apollo/client';
@@ -8,7 +9,7 @@ import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { RequestHandler } from 'mock-apollo-client';
 import { GET_PATIENT_QUERY } from 'pages/DecisionPoint';
 import { Default as DecisionPointDefaultStory } from 'pages/DecisionPoint.stories';
-import { LOCK_ON_PATHWAY_MUTATION } from './ModalPatient';
+import { LOCK_ON_PATHWAY_MUTATION, GET_PATIENT_CURRENT_PATHWAY_QUERY } from './ModalPatient';
 import * as stories from './ModalPatient.stories';
 
 const { Default } = composeStories(stories);
@@ -19,6 +20,20 @@ const getPatientMock = {
     // from MockedProvider
     DecisionPointDefaultStory.parameters?.apolloClient.mocks[0].result,
   ),
+};
+
+const getPatientCurrentPathwayMock = {
+  query: GET_PATIENT_CURRENT_PATHWAY_QUERY,
+  mockFn: () => Promise.resolve({
+    data: {
+      getPatient: {
+        id: '1',
+        onPathways: [{
+          id: '1',
+        }],
+      },
+    },
+  }),
 };
 
 describe('When page loads and user gets the lock', () => {
@@ -67,8 +82,9 @@ describe('When page loads and user gets the lock', () => {
         }),
       },
       getPatientMock,
+      getPatientCurrentPathwayMock,
     ];
-    await waitFor(() => {
+    await act(async () => {
       render(
         <NewMockSdApolloProvider mocks={ mocks }>
           <Default />
@@ -135,8 +151,9 @@ describe('When the page loads and the user does not get the lock', () => {
         }),
       },
       getPatientMock,
+      getPatientCurrentPathwayMock,
     ];
-    await waitFor(() => {
+    await act(async () => {
       render(
         <NewMockSdApolloProvider mocks={ mocks }>
           <Default />
