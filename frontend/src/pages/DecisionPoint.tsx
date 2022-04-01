@@ -115,6 +115,7 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
         milestones {
           id
           milestoneType {
+            id
             name
             isDischarge
           }
