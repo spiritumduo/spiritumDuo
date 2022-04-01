@@ -201,6 +201,7 @@ const CREATE_DECISION_WITH_MILESTONE_MOCK = {
             {
               id: '1',
               milestoneType: {
+                id: '1',
                 name: 'TypeName',
                 isDischarge: false,
               },
