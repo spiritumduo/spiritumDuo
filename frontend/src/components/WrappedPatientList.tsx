@@ -107,6 +107,7 @@ const WrappedPatientList = ({
   patientOnClick,
 }: WrappedPatientListProps): JSX.Element => {
   const {
+    loading,
     error,
     data,
     fetchMore,
@@ -192,7 +193,7 @@ const WrappedPatientList = ({
       <div>{ error?.message }</div>
       <PatientList
         data={ listElements }
-        isLoading={ false }
+        isLoading={ loading }
         updateData={ ({ selected }) => {
           setCurrentPage(selected);
           if (selected > maxFetchedPage) {
