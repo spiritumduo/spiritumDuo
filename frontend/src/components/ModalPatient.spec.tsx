@@ -253,9 +253,7 @@ describe('When page loads and a user submits a decision without milestones', () 
 });
 
 describe('When page loads and a user submits a decision with milestones', () => {
-  let mockTabStateCallback: jest.Mock<(state: boolean) => void>;
   beforeEach( async () => {
-    mockTabStateCallback = jest.fn();
     render(
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
         <Default />
