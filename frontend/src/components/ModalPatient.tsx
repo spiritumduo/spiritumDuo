@@ -9,6 +9,8 @@ import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { DecisionPointType } from 'types/DecisionPoint';
 import Patient from 'types/Patient';
 import { AuthContext, PathwayContext } from 'app/context';
+import { useAppSelector } from 'app/hooks';
+import { RootState } from 'app/store';
 
 // PAGES
 import DecisionPointPage from 'pages/DecisionPoint';
@@ -57,10 +59,10 @@ export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
 
 const ModalPatient = ({ patient, closeCallback, lock }: ModalPatientProps) => {
   // START HOOKS
-  const [tabState, setTabState] = useState<boolean>(false);
+  const tabState = useAppSelector((state: RootState) => state.modalPatient.isTabDisabled);
   const { currentPathwayId } = useContext(PathwayContext);
-  // const [lockState, updateLockState] = useState<lockOnPathway | null | undefined>();
   const { user } = useContext(AuthContext);
+
   const [
     lockOnPathwayMutation, { data, loading, error },
   ] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
@@ -153,7 +155,6 @@ const ModalPatient = ({ patient, closeCallback, lock }: ModalPatientProps) => {
               hospitalNumber={ patient.hospitalNumber }
               decisionType={ DecisionPointType.TRIAGE }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
-              tabStateCallback={ setTabState }
             />
           </TabPanel>
           <TabPanel>

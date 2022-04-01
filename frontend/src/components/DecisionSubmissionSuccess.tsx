@@ -1,7 +1,8 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { Button } from 'nhsuk-react-components';
+import { useAppDispatch } from 'app/hooks';
+import { setIsTabDisabled } from 'components/ModalPatient.slice';
 
 export interface DecisionSubmissionSuccessProps {
   milestones?: {
@@ -17,6 +18,13 @@ const DecisionSubmissionSuccess = (
   const milestonesElement: JSX.Element[] | undefined = milestones?.map(
     (m) => (<li key={ m.id }>{m.name}</li>),
   );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setIsTabDisabled(true));
+    return () => {
+      dispatch(setIsTabDisabled(false));
+    };
+  }, [dispatch]);
   return (
     <Container className="d-flex align-items-center justify-content-left mt-5">
       <div className="d-flex align-items-center">

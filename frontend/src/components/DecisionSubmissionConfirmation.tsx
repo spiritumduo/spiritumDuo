@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import { Button } from 'nhsuk-react-components';
+import { useAppDispatch } from 'app/hooks';
+import { setIsTabDisabled } from 'components/ModalPatient.slice';
 
 export interface DecisionSubmissionConfirmationProps {
   cancelCallback: () => void;
@@ -17,6 +19,13 @@ const DecisionSubmissionConfirmation = (
     cancelCallback, okCallback }: DecisionSubmissionConfirmationProps,
 ): JSX.Element => {
   const [disabledState, setDisabledState] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setIsTabDisabled(true));
+    return () => {
+      dispatch(setIsTabDisabled(false));
+    };
+  }, [dispatch]);
   return (
     <Container className="d-flex align-items-center justify-content-left mt-5">
       <div>

@@ -311,7 +311,6 @@ export const Locked = Template.bind({});
 Default.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
-  tabStateCallback: () => {},
 };
 Default.parameters = {
   milestones: milestones,
@@ -326,7 +325,6 @@ Default.parameters = {
 Locked.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
-  tabStateCallback: () => {},
   onPathwayLock: {
     lockUser: {
       id: '1000',

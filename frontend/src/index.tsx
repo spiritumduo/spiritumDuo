@@ -3,27 +3,37 @@ import 'nhsuk-frontend/dist/nhsuk.css';
 
 // Bootstrap imports first so other modules can override
 import React from 'react';
+
+// LIBRARIES
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/client';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+
+// APP
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
 import client from 'app/sdApolloClient';
 import { AuthProvider, PathwayProvider } from 'app/context';
-import { BrowserRouter } from 'react-router-dom';
+import store from 'app/store';
+
+// LOCAL IMPORT
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={ client }>
-      <AuthProvider>
-        <PathwayProvider>
-          <BrowserRouter basename={ process.env.PUBLIC_URL }>
-            <App />
-          </BrowserRouter>
-        </PathwayProvider>
-      </AuthProvider>
-    </ApolloProvider>
+    <Provider store={ store }>
+      <ApolloProvider client={ client }>
+        <AuthProvider>
+          <PathwayProvider>
+            <BrowserRouter basename={ process.env.PUBLIC_URL }>
+              <App />
+            </BrowserRouter>
+          </PathwayProvider>
+        </AuthProvider>
+      </ApolloProvider>
+    </Provider>
   </React.StrictMode>,
   // eslint-disable-next-line no-undef
   document.getElementById('root'),

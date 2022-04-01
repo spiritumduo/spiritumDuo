@@ -17,6 +17,8 @@ import { DecisionPointType } from 'types/DecisionPoint';
 import Patient from 'types/Patient';
 import User from 'types/Users';
 import { enumKeys } from 'sdutils';
+import { setIsTabDisabled } from 'components/ModalPatient.slice';
+import { useAppDispatch } from 'app/hooks';
 
 // COMPONENTS
 import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
@@ -44,7 +46,6 @@ export interface DecisionPointPageProps {
     };
     lockEndTime: Date;
   }
-  tabStateCallback: (state: boolean) => void;
 }
 
 export const GET_PATIENT_QUERY = gql`
@@ -213,6 +214,13 @@ const ConfirmNoMilestones = (
   { confirmFn, submitFn, cancelFn, milestoneResolutions }: ConfirmNoMilestonesProps,
 ): JSX.Element => {
   const [disabledState, setDisabledState] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setIsTabDisabled(true));
+    return () => {
+      dispatch(setIsTabDisabled(false));
+    };
+  }, [dispatch]);
   return (
     <Container>
       <Row>
@@ -364,7 +372,7 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType, tabStateCallback, onPathwayLock }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, onPathwayLock }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
@@ -527,14 +535,12 @@ const DecisionPointPage = (
 
   // CONFIRM SUBMISSION DIALOGUES
   if (requestConfirmation !== false) {
-    tabStateCallback(true);
     // NO REQUESTS SELECTED
     if (requestConfirmation === 0 || requestConfirmation === true) {
       return (
         <ConfirmNoMilestones
           confirmFn={ () => setConfirmNoRequests(true) }
           cancelFn={ () => {
-            tabStateCallback(false);
             setRequestConfirmation(false);
           } }
           submitFn={ () => {
@@ -553,7 +559,6 @@ const DecisionPointPage = (
     return (
       <DecisionSubmissionConfirmation
         cancelCallback={ () => {
-          tabStateCallback(false);
           setRequestConfirmation(false);
         } }
         okCallback={ () => {
