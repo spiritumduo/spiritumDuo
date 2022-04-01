@@ -62,12 +62,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
-        name: Build and export to Docker
+        name: Build using testing dockerfile
         uses: docker/build-push-action@v2
         with:
           context: "{{defaultContext}}:backend"
           load: true
           tags: staging-test
+          file: "./rootuser.Dockerfile"
       -
         name: Test
         run: > # folded style for multiline run
@@ -86,14 +87,16 @@ jobs:
           -e SESSION_EXPIRY_LENGTH=${{ secrets.SESSION_EXPIRY_LENGTH }}
           -e TRUST_ADAPTER_NAME=${{ secrets.TRUST_ADAPTER_NAME }}
           -e UPDATE_ENDPOINT_KEY=${{ secrets.UPDATE_ENDPOINT_KEY }}
+          -e DECISION_POINT_LOCKOUT_DURATION=${{ secrets.DECISION_POINT_LOCKOUT_DURATION }}
           staging-test test
       -
-        name: Build and push
+        name: Build and push using primary dockerfile
         uses: docker/build-push-action@v2
         with:
           context: "{{defaultContext}}:backend"
           push: true
           tags: spiritumduo/sd-backend:latest
+          file: "./Dockerfile"
 
   pseudotie:
     runs-on: ubuntu-latest
@@ -110,12 +113,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
-        name: Build and push
+        name: Build and push using primary dockerfile
         uses: docker/build-push-action@v2
         with:
           context: "{{defaultContext}}:pseudotie"
           push: true
           tags: spiritumduo/sd-pseudotie:latest
+          file: "./Dockerfile"
 
 
   nginx:

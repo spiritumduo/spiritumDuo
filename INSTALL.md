@@ -1,5 +1,7 @@
 # Installation (development environment)
 
+NOTE: an assisted installation script is available in the form of a Python script in the base project directory (/INSTALL.py). This should be run on the host computer.
+
 ## Installation prerequisites
 
 1. Git
