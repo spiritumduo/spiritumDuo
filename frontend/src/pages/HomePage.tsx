@@ -1,11 +1,19 @@
 import React, { useContext, useState } from 'react';
-import './homepage.css';
-import { PathwayContext } from 'app/context';
-import WrappedPatientList from 'components/WrappedPatientList';
+
+// LIBRARIES
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Container } from 'nhsuk-react-components';
+
+// APP
+import { PathwayContext } from 'app/context';
 import Patient from 'types/Patient';
+
+// COMPONENTS
+import WrappedPatientList from 'components/WrappedPatientList';
 import ModalPatient from 'components/ModalPatient';
+
+// LOCAL IMPORT
+import './homepage.css';
 
 export interface HomePageProps {
   patientsPerPage: number;
