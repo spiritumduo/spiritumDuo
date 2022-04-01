@@ -1,14 +1,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
+
+// LIBRARIES
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { waitFor, render, screen, cleanup } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import { DocumentNode } from '@apollo/client';
-import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+import userEvent from '@testing-library/user-event';
 import { RequestHandler } from 'mock-apollo-client';
+
+// APP
+import MockSdApolloProvider, { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+
+// COMPONENTS
 import { GET_PATIENT_QUERY } from 'pages/DecisionPoint';
 import { Default as DecisionPointDefaultStory } from 'pages/DecisionPoint.stories';
+
+// LOCAL IMPORTS
 import { LOCK_ON_PATHWAY_MUTATION, GET_PATIENT_CURRENT_PATHWAY_QUERY } from './ModalPatient';
 import * as stories from './ModalPatient.stories';
 
@@ -181,5 +190,116 @@ describe('When the page loads and the user does not get the lock', () => {
         onPathwayId: '1',
       },
     }));
+  });
+});
+
+describe('When page loads and a user submits a decision without milestones', () => {
+  // let tabState: boolean;
+  beforeEach( async () => {
+    render(
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>,
+    );
+    const clinicalHistoryText = '{selectall}New Clinic History';
+    const comorbiditiesText = '{selectall}New Comorbidities';
+    // wait for page to render fully
+    await waitFor(() => expect(
+      screen.getByRole('button', { name: 'Submit' }),
+    ).toBeInTheDocument());
+    await waitFor(() => {
+      userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
+      userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
+    });
+    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Submit' })));
+  });
+
+  it('Should warn the user when they submit', async () => {
+    expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument();
+  });
+
+  it('Should succed when they click submit', async () => {
+    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Submit' })));
+    await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
+  });
+
+  it('Should return to the decision page when the user cancels', async () => {
+    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
+    });
+  });
+
+  it('Should display test results that have been acknowledged', async () => {
+    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Submit' })));
+    // This is from milestones 6 & 7 in the stories.
+    await waitFor(() => {
+      expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
+      expect(screen.getByText(/Lung function/i)).toBeInTheDocument();
+      expect(screen.getByText(/pet-ct/i)).toBeInTheDocument();
+    });
+  });
+
+  it('Should disable the tabs', () => {
+    expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('Should re-enable the tabs when the user cancels', () => {
+    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.getByRole('tab', { name: /new decision/i })).toBeEnabled();
+    expect(screen.getByRole('tab', { name: /previous decisions/i })).toBeEnabled();
+  });
+});
+
+describe('When page loads and a user submits a decision with milestones', () => {
+  let mockTabStateCallback: jest.Mock<(state: boolean) => void>;
+  beforeEach( async () => {
+    mockTabStateCallback = jest.fn();
+    render(
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>,
+    );
+    const clinicalHistoryText = '{selectall}New Clinic History';
+    const comorbiditiesText = '{selectall}New Comorbidities';
+    // wait for page to render fully
+    await waitFor(() => expect(
+      screen.getByRole('button', { name: 'Submit' }),
+    ).toBeInTheDocument());
+    await waitFor(() => {
+      userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
+      userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
+      const requestCheckboxes = screen.getAllByRole('checkbox');
+      requestCheckboxes.forEach((cb) => userEvent.click(cb));
+      userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    });
+  });
+
+  it('Should ask for confirmation', () => {
+    expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument();
+  });
+
+  it('Should succeed when user confirms submission', async () => {
+    userEvent.click(screen.getByRole('button', { name: 'OK' }));
+    await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
+  });
+
+  it('Should return to the decision page when the user cancels', async () => {
+    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
+    });
+  });
+
+  it('Should disable the tabs', () => {
+    expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('Should re-enable the tabs when the user cancels', () => {
+    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.getByRole('tab', { name: /new decision/i })).toBeEnabled();
+    expect(screen.getByRole('tab', { name: /previous decisions/i })).toBeEnabled();
   });
 });
