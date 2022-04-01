@@ -1,10 +1,15 @@
-/* eslint-disable camelcase */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+// LIBRARIES
 import { gql, useQuery } from '@apollo/client';
-import PatientList from 'components/PatientList';
-import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 import { Table } from 'nhsuk-react-components';
+
+// APP
+import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 import Patient from 'types/Patient';
+
+// COMPONENTS
+import PatientList from 'components/PatientList';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -102,15 +107,25 @@ const WrappedPatientList = ({
   patientOnClick,
 }: WrappedPatientListProps): JSX.Element => {
   const {
-    loading,
     error,
     data,
     fetchMore,
+    refetch,
   // eslint-disable-next-line max-len
   } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, !!outstanding, !!underCareOf, !!includeDischarged);
+
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+
   let listElements: JSX.Element[];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('refetching via timeout');
+      refetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsToDisplay);
   if (nodes) {
@@ -118,7 +133,7 @@ const WrappedPatientList = ({
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
         let lastMilestone = null;
-        // eslint-disable-next-line max-len
+        // eslint-disable-next-line camelcase, max-len
         type GraphQLMilestone = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones;
         if (n.onPathways?.[0].decisionPoints) {
           const decisionPoints = n.onPathways?.[0].decisionPoints;
@@ -177,7 +192,7 @@ const WrappedPatientList = ({
       <div>{ error?.message }</div>
       <PatientList
         data={ listElements }
-        isLoading={ loading }
+        isLoading={ false }
         updateData={ ({ selected }) => {
           setCurrentPage(selected);
           if (selected > maxFetchedPage) {
