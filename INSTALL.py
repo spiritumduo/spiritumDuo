@@ -266,13 +266,13 @@ else:
     raise ComponentNotFound("Docker cannot be found!")
 
 print("\n3. Check Docker Compose is installed")
-DOCKER_COMPOSE_PRESENT = "docker-compose version" in str(subprocess.getoutput(
-    "docker-compose --version"
+DOCKER_COMPOSE_PRESENT = "compose version" in str(subprocess.getoutput(
+   "docker-compose --version"
 )).lower()
 if DOCKER_COMPOSE_PRESENT:
-    print("Success! Docker Compose found!")
+   print("Success! Docker Compose found!")
 else:
-    raise ComponentNotFound("Docker Compose cannot be found!")
+   raise ComponentNotFound("Docker Compose cannot be found!")
 
 print("\n4. Gather environment variables")
 print("NOTE: TO USE DEFAULT OR GENERATED VALUE, LEAVE INPUT EMPTY")
