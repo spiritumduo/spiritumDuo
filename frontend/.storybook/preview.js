@@ -5,6 +5,16 @@ import 'nhsuk-frontend/dist/nhsuk.css';
 import '../src/index.css';
 import { MockedProvider } from '@apollo/client/testing';
 import { cache } from '../src/app/cache';
+import { Provider } from 'react-redux';
+import store from '../src/app/store';
+
+export const decorators = [
+  (Story) => (
+    <Provider store= { store }>
+      <Story />
+    </Provider>
+  ),
+];
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

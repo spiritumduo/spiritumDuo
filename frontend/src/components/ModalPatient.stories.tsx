@@ -5,7 +5,6 @@ import ModalPatient, { LOCK_ON_PATHWAY_MUTATION } from 'components/ModalPatient'
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Default as DecisionPointDefaultStory, Locked as DecisionPointLockedStory } from 'pages/DecisionPoint.stories';
 import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
-import PatientLinkStories from 'components/Link/PatientLink.stories';
 
 const userHasLockMocks = [
   {
@@ -230,7 +229,7 @@ const Template: ComponentStory<typeof ModalPatient> = (args) => <ModalPatient { 
 export const Default = Template.bind({});
 Default.args = {
   patient: mockPatient,
-  lockOnPathwayId: '1',
+  lock: true,
 };
 
 Default.parameters = {
@@ -247,7 +246,7 @@ Default.parameters = {
 export const LockedByOtherUser = Template.bind({});
 LockedByOtherUser.args = {
   patient: mockPatient,
-  lockOnPathwayId: '1',
+  lock: true,
 };
 
 LockedByOtherUser.parameters = {

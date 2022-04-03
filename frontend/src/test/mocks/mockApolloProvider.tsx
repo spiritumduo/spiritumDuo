@@ -34,7 +34,7 @@ export const NewMockSdApolloProvider = (
   { children, mocks }: NewMockSdApolloProviderProps,
 ): JSX.Element => {
   cache.reset();
-  const client = createMockClient();
+  const client = createMockClient({ cache: cache });
   mocks.forEach((m) => client.setRequestHandler(m.query, m.mockFn));
   return (
     <ApolloProvider client={ client }>

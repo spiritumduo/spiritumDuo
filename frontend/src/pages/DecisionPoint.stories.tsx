@@ -201,6 +201,7 @@ const CREATE_DECISION_WITH_MILESTONE_MOCK = {
             {
               id: '1',
               milestoneType: {
+                id: '1',
                 name: 'TypeName',
                 isDischarge: false,
               },
@@ -226,8 +227,8 @@ const apolloMocks = [
     result: {
       data: {
         getPatient: {
-          hospitalNumber: 'MRN1234567-36',
-          id: '1637',
+          hospitalNumber: 'fMRN1234567',
+          id: '1',
           communicationMethod: 'LETTER',
           firstName: 'John 36',
           lastName: 'Doe 36',
@@ -311,7 +312,6 @@ export const Locked = Template.bind({});
 Default.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
-  tabStateCallback: () => {},
 };
 Default.parameters = {
   milestones: milestones,
@@ -326,7 +326,6 @@ Default.parameters = {
 Locked.args = {
   hospitalNumber: patientHospitalNumber,
   decisionType: DecisionPointType.TRIAGE,
-  tabStateCallback: () => {},
   onPathwayLock: {
     lockUser: {
       id: '1000',

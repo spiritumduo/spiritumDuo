@@ -4,6 +4,7 @@ scalar DateTime
 schema {
     query: Query
     mutation: Mutation
+    subscription: Subscription
 }
 
 type Query {
@@ -26,7 +27,7 @@ type Query {
     getPatientOnPathwayConnection(
         pathwayId: ID!
         awaitingDecisionType: DecisionType
-        isDischarged: Boolean
+        includeDischarged: Boolean
         first: Int
         after: String
         last: Int
@@ -41,7 +42,8 @@ type Mutation {
     createPathway(input:PathwayInput!): AddPathwayPayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
-    importMilestone(input:MilestoneImportInput!): AddMilestonePayload!
+    importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
+    lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
 }
 
 type Subscription {
@@ -77,8 +79,12 @@ type AddDecisionPointPayload{
     decisionPoint:DecisionPoint
     userErrors:[UserError!]    
 }
-type AddMilestonePayload{
+type ImportMilestonePayload{
     milestone: Milestone
+    userErrors:[UserError!]
+}
+type LockOnPathwayPayload{
+    onPathway: OnPathway
     userErrors:[UserError!]
 }
 
@@ -105,7 +111,7 @@ type Patient {
 
     onPathways(
         pathwayId: ID,
-        isDischarged: Boolean = False,
+        includeDischarged: Boolean = False,
         awaitingDecisionType: DecisionType, 
         limit: Int
     ): [OnPathway!]
@@ -147,6 +153,8 @@ type OnPathway {
     decisionPoints: [DecisionPoint!]
     milestones(notOnDecisionPoint: Boolean = True): [Milestone!]
     underCareOf: User
+    lockUser: User
+    lockEndTime: DateTime
 }
 
 type User {
@@ -188,6 +196,7 @@ type MilestoneType {
     name: String!
     isDischarge: Boolean!
     isCheckboxHidden: Boolean!
+    isTestRequest: Boolean!
 }
 
 
@@ -243,6 +252,10 @@ input DecisionPointInput{
     comorbidities: String
     milestoneRequests: [MilestoneRequestInput!]
     milestoneResolutions: [ID!]
+}
+input LockOnPathwayInput{
+    onPathwayId: ID!
+    unlock: Boolean
 }
 
 input PathwayInput{
