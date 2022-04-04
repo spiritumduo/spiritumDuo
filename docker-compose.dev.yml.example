@@ -27,7 +27,7 @@ services:
     restart: unless-stopped
     build:
       context: ./backend
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.dev
     env_file: ./backend/.env
     volumes:
       - ./backend/:/app
@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
     build:
       context: ./pseudotie
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.dev
     env_file: ./pseudotie/.env
     volumes:
       - ./pseudotie:/app
