@@ -68,7 +68,7 @@ jobs:
           context: "{{defaultContext}}:backend"
           load: true
           tags: staging-test
-          file: "./rootuser.Dockerfile"
+          file: "./Dockerfile.dev"
       -
         name: Test
         run: > # folded style for multiline run
