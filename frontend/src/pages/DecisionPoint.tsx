@@ -610,7 +610,7 @@ const DecisionPointPage = (
     <div>
       <section>
         <Container fluid>
-          <ErrorSummary aria-labelledby="error-summary-title" role="alert" hidden={ onPathwayLock === undefined }>
+          <ErrorSummary className="sd-dp-errormessage" aria-labelledby="error-summary-title" role="alert" hidden={ onPathwayLock === undefined }>
             <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
             <ErrorSummary.Body>
               <br />

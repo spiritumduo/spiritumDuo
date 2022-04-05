@@ -18,4 +18,9 @@
     position: absolute;
     white-space: nowrap;
     width: 1px;
-  }
+}
+
+.sd-dp-errormessage {
+    background-color: red;
+    color: white;
+}
