@@ -1,5 +1,4 @@
-/* eslint-disable max-len */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 // LIBRARIES
 import { gql, useQuery } from '@apollo/client';
@@ -9,6 +8,8 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 // APP
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 import Patient from 'types/Patient';
+import User from 'types/Users';
+import { AuthContext } from 'app/context';
 
 // COMPONENTS
 import PatientList from 'components/PatientList';
@@ -50,6 +51,11 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
               }
             }
             lockEndTime
+            lockUser{
+              id
+              firstName
+              lastName
+            }
             updatedAt
           }
         }
@@ -120,7 +126,8 @@ const WrappedPatientList = ({
 
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const hoveredTooltipElement = React.useRef(null);
+  const { user: contextUser } = useContext(AuthContext);
+  const user = contextUser as User;
 
   let listElements: JSX.Element[];
 
@@ -177,13 +184,23 @@ const WrappedPatientList = ({
         const updatedAt = lastMilestone?.updatedAt
           ? `${lastMilestone.updatedAt.toLocaleDateString()} ${lastMilestone.updatedAt.toLocaleTimeString()}`
           : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
-        const isOnPathwayLocked = n.onPathways?.[0].lockEndTime > new Date();
+
+        const isOnPathwayLockedByOther = n.onPathways?.[0].lockEndTime > new Date() && (
+          n.onPathways?.[0]?.lockUser?.id
+            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) !== user.id
+            : false
+        );
+        const isOnPathwayLockedByMe = n.onPathways?.[0].lockEndTime > new Date() && (
+          n.onPathways?.[0]?.lockUser?.id
+            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) === user.id
+            : false
+        );
 
         return (
           <Table.Row
-            className={ isOnPathwayLocked ? 'disabled' : 'active' }
+            className={ isOnPathwayLockedByOther ? 'disabled' : 'active' }
             key={ `patient-list-key${n.id}` }
-            onClick={ () => !isOnPathwayLocked && patientOnClick && patientOnClick(n) }
+            onClick={ () => !isOnPathwayLockedByOther && patientOnClick && patientOnClick(n) }
           >
             <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
@@ -192,24 +209,45 @@ const WrappedPatientList = ({
             <Table.Cell>{updatedAt}</Table.Cell>
             <Table.Cell>
               <div className="d-md-none">
-                {isOnPathwayLocked ? <b>This patient is locked by another user</b> : <b>Not locked</b>}
+                {/* TODO: bring this out of a nested ternary */}
+                {
+                  isOnPathwayLockedByOther
+                    ? <b>This patient is locked by another user</b>
+                    : isOnPathwayLockedByMe
+                      ? <b>This patient is locked by you</b>
+                      : <b>Not locked</b>
+                }
               </div>
               <div className="d-none d-md-block pt-0 ps-2">
+                {/* TODO: bring this out of a nested ternary */}
                 {
-                isOnPathwayLocked
+                isOnPathwayLockedByOther
                   ? (
                     <OverlayTrigger
                       overlay={ (
                         <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
-                          This patient is locked by another user
+                          This patient is locked by
+                          &nbsp;{n.onPathways?.[0].lockUser?.firstName}
+                          &nbsp;{n.onPathways?.[0].lockUser?.lastName}
                         </Tooltip>
                       ) }
                     >
                       <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
                     </OverlayTrigger>
                   )
-                  // : <Circle size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } />
-                  : ''
+                  : isOnPathwayLockedByMe
+                    ? (
+                      <OverlayTrigger
+                        overlay={ (
+                          <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
+                            This patient is locked by you
+                          </Tooltip>
+                        ) }
+                      >
+                        <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
+                      </OverlayTrigger>
+                    )
+                    : ''
                 }
               </div>
             </Table.Cell>

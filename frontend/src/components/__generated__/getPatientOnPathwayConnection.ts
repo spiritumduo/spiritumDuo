@@ -31,11 +31,19 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edg
   milestones: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones[] | null;
 }
 
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_lockUser {
+  __typename: "User";
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways {
   __typename: "OnPathway";
   id: string;
   decisionPoints: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints[] | null;
   lockEndTime: any | null;
+  lockUser: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_lockUser | null;
   updatedAt: any;
 }
 
