@@ -19,6 +19,7 @@ const fakeUser: User = {
   lastName: 'Test-Doe',
   department: 'Respiratory',
   roles: [],
+  defaultPathwayId: 1,
 };
 
 const fakePathways: PathwayOption[] = [
