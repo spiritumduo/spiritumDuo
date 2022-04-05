@@ -42,7 +42,18 @@
   display: block;
 }
 
-.nhsuk-table__body .nhsuk-table__row:hover {
-  background-image: linear-gradient(to right, rgba(0,0,0,0), rgb(255,255,255), rgb(255,255,255), rgb(255,255,255), rgb(255,255,255), rgba(0,0,0,0));
+.nhsuk-table__body .nhsuk-table__row.active:hover {
+  background-image: linear-gradient(
+    to right,
+    rgba(0,0,0,0), 
+    rgb(255,255,255),
+    rgb(255,255,255),
+    rgb(255,255,255),
+    rgb(255,255,255), 
+    rgba(0,0,0,0)
+  );
   cursor: pointer;
+}
+.nhsuk-table__body .nhsuk-table__row.disabled {
+  color: rgb(150,150,150);
 }
