@@ -44,6 +44,25 @@ const milestones = [
 ];
 
 for (let i = 0; i < 15; ++i) {
+  let lockUser = null;
+  let lockEndTime = null;
+  if (i === 0) {
+    lockUser = {
+      id: 1000,
+      firstName: 'Johnny',
+      lastName: 'Locker',
+      userName: 'JLocker',
+    };
+    lockEndTime = new Date(2030, 1, 1, 12, 0, 0);
+  } else if (i === 1) {
+    lockUser = {
+      id: 1,
+      firstName: 'Test-John',
+      lastName: 'Test-Doe',
+      userName: 'jdoe',
+    };
+    lockEndTime = new Date(2030, 1, 1, 12, 0, 0);
+  }
   const newPatient = {
     id: i.toString(),
     hospitalNumber: `${patient.hospitalNumber}-${i + 1}`,
@@ -59,6 +78,8 @@ for (let i = 0; i < 15; ++i) {
           },
         ],
         updatedAt: new Date(2021, 1, 10),
+        lockEndTime: lockEndTime,
+        lockUser: lockUser,
       },
     ],
   };

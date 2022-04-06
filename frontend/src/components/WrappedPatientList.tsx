@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 // LIBRARIES
 import { gql, useQuery } from '@apollo/client';
 import { Table } from 'nhsuk-react-components';
-
+import { CircleFill } from 'react-bootstrap-icons';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 // APP
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 import Patient from 'types/Patient';
+import User from 'types/Users';
+import { AuthContext } from 'app/context';
 
 // COMPONENTS
 import PatientList from 'components/PatientList';
@@ -46,6 +49,12 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
                   name
                 }
               }
+            }
+            lockEndTime
+            lockUser{
+              id
+              firstName
+              lastName
             }
             updatedAt
           }
@@ -117,6 +126,8 @@ const WrappedPatientList = ({
 
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const { user: contextUser } = useContext(AuthContext);
+  const user = contextUser as User;
 
   let listElements: JSX.Element[];
 
@@ -174,13 +185,68 @@ const WrappedPatientList = ({
           ? `${lastMilestone.updatedAt.toLocaleDateString()} ${lastMilestone.updatedAt.toLocaleTimeString()}`
           : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
 
+        const isOnPathwayLockedByOther = n.onPathways?.[0].lockEndTime > new Date() && (
+          n.onPathways?.[0]?.lockUser?.id
+            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) !== user?.id
+            : false
+        );
+        const isOnPathwayLockedByMe = n.onPathways?.[0].lockEndTime > new Date() && (
+          n.onPathways?.[0]?.lockUser?.id
+            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) === user?.id
+            : false
+        );
+
+        let lockTextElement = <b>Not locked</b>;
+        let lockIconElement = <></>;
+        if (isOnPathwayLockedByOther) {
+          lockTextElement = <b>This patient is locked by another user</b>;
+          lockIconElement = (
+            <OverlayTrigger
+              overlay={ (
+                <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
+                  This patient is locked by
+                  &nbsp;{n.onPathways?.[0].lockUser?.firstName}
+                  &nbsp;{n.onPathways?.[0].lockUser?.lastName}
+                </Tooltip>
+              ) }
+            >
+              <CircleFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
+            </OverlayTrigger>
+          );
+        } else if (isOnPathwayLockedByMe) {
+          lockTextElement = <b>This patient is locked by you</b>;
+          lockIconElement = (
+            <OverlayTrigger
+              overlay={ (
+                <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
+                  This patient is locked by you
+                </Tooltip>
+              ) }
+            >
+              <CircleFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
+            </OverlayTrigger>
+          );
+        }
+
         return (
-          <Table.Row key={ `patient-list-key${n.id}` } onClick={ () => patientOnClick && patientOnClick(n) }>
+          <Table.Row
+            className={ isOnPathwayLockedByOther ? 'disabled' : 'active' }
+            key={ `patient-list-key${n.id}` }
+            onClick={ () => !isOnPathwayLockedByOther && patientOnClick && patientOnClick(n) }
+          >
             <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
             <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
             <Table.Cell>{mostRecentStage}</Table.Cell>
             <Table.Cell>{updatedAt}</Table.Cell>
+            <Table.Cell>
+              <div className="d-md-none">
+                { lockTextElement }
+              </div>
+              <div className="d-none d-md-block pt-0 text-center">
+                { lockIconElement }
+              </div>
+            </Table.Cell>
           </Table.Row>
         );
       },
