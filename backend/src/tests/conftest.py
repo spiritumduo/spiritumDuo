@@ -1,4 +1,5 @@
 import dataclasses
+import os
 
 from gino_starlette import Gino
 from httpx import AsyncClient
@@ -7,14 +8,22 @@ import pytest_asyncio
 from starlette.config import environ
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
-from models.db import db, TEST_DATABASE_URL
+from models.db import db
 from models import User, Pathway, MilestoneType
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
 
-environ['TESTING'] = "True"
+DB_STR = "postgresql://{user}:{password}@{host}:{port}/{database}"
 
+# The database has 'test_' prepended here
+TEST_DATABASE_URL = DB_STR.format(
+    host=os.getenv("DATABASE_HOSTNAME"),
+    port=os.getenv("DATABASE_PORT"),
+    user=os.getenv("DATABASE_USERNAME"),
+    password=os.getenv("DATABASE_PASSWORD"),
+    database="test_" + os.getenv("DATABASE_NAME"),
+)
 
 class ContextStorage:
     """
