@@ -196,6 +196,38 @@ const WrappedPatientList = ({
             : false
         );
 
+        let lockTextElement = <b>Not locked</b>;
+        let lockIconElement = <></>;
+        if (isOnPathwayLockedByOther) {
+          lockTextElement = <b>This patient is locked by another user</b>;
+          lockIconElement = (
+            <OverlayTrigger
+              overlay={ (
+                <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
+                  This patient is locked by
+                  &nbsp;{n.onPathways?.[0].lockUser?.firstName}
+                  &nbsp;{n.onPathways?.[0].lockUser?.lastName}
+                </Tooltip>
+              ) }
+            >
+              <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
+            </OverlayTrigger>
+          );
+        } else if (isOnPathwayLockedByMe) {
+          lockTextElement = <b>This patient is locked by you</b>;
+          lockIconElement = (
+            <OverlayTrigger
+              overlay={ (
+                <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
+                  This patient is locked by you
+                </Tooltip>
+              ) }
+            >
+              <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
+            </OverlayTrigger>
+          );
+        }
+
         return (
           <Table.Row
             className={ isOnPathwayLockedByOther ? 'disabled' : 'active' }
@@ -209,46 +241,10 @@ const WrappedPatientList = ({
             <Table.Cell>{updatedAt}</Table.Cell>
             <Table.Cell>
               <div className="d-md-none">
-                {/* TODO: bring this out of a nested ternary */}
-                {
-                  isOnPathwayLockedByOther
-                    ? <b>This patient is locked by another user</b>
-                    : isOnPathwayLockedByMe
-                      ? <b>This patient is locked by you</b>
-                      : <b>Not locked</b>
-                }
+                { lockTextElement }
               </div>
               <div className="d-none d-md-block pt-0 ps-2">
-                {/* TODO: bring this out of a nested ternary */}
-                {
-                isOnPathwayLockedByOther
-                  ? (
-                    <OverlayTrigger
-                      overlay={ (
-                        <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
-                          This patient is locked by
-                          &nbsp;{n.onPathways?.[0].lockUser?.firstName}
-                          &nbsp;{n.onPathways?.[0].lockUser?.lastName}
-                        </Tooltip>
-                      ) }
-                    >
-                      <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
-                    </OverlayTrigger>
-                  )
-                  : isOnPathwayLockedByMe
-                    ? (
-                      <OverlayTrigger
-                        overlay={ (
-                          <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
-                            This patient is locked by you
-                          </Tooltip>
-                        ) }
-                      >
-                        <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
-                      </OverlayTrigger>
-                    )
-                    : ''
-                }
+                { lockIconElement }
               </div>
             </Table.Cell>
           </Table.Row>
