@@ -15,9 +15,10 @@ import './login.css';
 export interface LoginPageProps { }
 
 export type LoginData = {
-  user: User | null;
-  pathways: PathwayOption[] | null;
-  error: string;
+  user?: User;
+  pathways?: PathwayOption[];
+  token?: string;
+  error?: string;
 };
 
 export interface LoginFormInputs {
@@ -84,9 +85,10 @@ const LoginPage = (): JSX.Element => {
   const { updateUser } = useContext(AuthContext);
   const { updatePathwayOptions, updateCurrentPathwayId } = useContext(PathwayContext);
   useEffect(() => {
-    if (data?.user && data?.pathways) {
+    if (data?.user && data?.pathways && data?.token) {
       updateUser(data.user);
       updatePathwayOptions(data.pathways);
+      localStorage.setItem('token', data.token);
       updateCurrentPathwayId(data.user?.defaultPathwayId);
       navigate('/', { replace: true });
     }

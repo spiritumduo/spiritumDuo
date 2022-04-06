@@ -1,4 +1,5 @@
 import { split, HttpLink, ApolloClient, from, ServerError } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
@@ -8,6 +9,18 @@ import scalarLink from 'app/scalars';
 const httpLink = new HttpLink({
   uri: `${window.location.protocol}//${window.location.host}/api/graphql`,
   credentials: 'include',
+});
+
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem('token');
+  // return the headers to the context so httpLink can read them
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
 });
 
 const wsLink = window.location.host === 'localhost'
@@ -37,7 +50,7 @@ const splitLink = split(
       && definition.operation === 'subscription'
     );
   },
-  wsLink,
+  from([authLink, wsLink]),
   httpLink,
 );
 
