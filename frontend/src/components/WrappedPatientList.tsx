@@ -243,7 +243,7 @@ const WrappedPatientList = ({
               <div className="d-md-none">
                 { lockTextElement }
               </div>
-              <div className="d-none d-md-block pt-0 ps-2">
+              <div className="d-none d-md-block pt-0 text-center">
                 { lockIconElement }
               </div>
             </Table.Cell>
