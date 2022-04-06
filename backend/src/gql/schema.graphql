@@ -48,6 +48,7 @@ type Mutation {
 
 type Subscription {
     milestoneResolved(clinicianID: ID): Milestone!
+    onPathwayUpdated(pathwayId: ID): OnPathway!
 }
 
 enum PatientCommunicationMethods {
