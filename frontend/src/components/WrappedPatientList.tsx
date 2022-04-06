@@ -187,12 +187,12 @@ const WrappedPatientList = ({
 
         const isOnPathwayLockedByOther = n.onPathways?.[0].lockEndTime > new Date() && (
           n.onPathways?.[0]?.lockUser?.id
-            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) !== user.id
+            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) !== user?.id
             : false
         );
         const isOnPathwayLockedByMe = n.onPathways?.[0].lockEndTime > new Date() && (
           n.onPathways?.[0]?.lockUser?.id
-            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) === user.id
+            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) === user?.id
             : false
         );
 
@@ -210,7 +210,7 @@ const WrappedPatientList = ({
                 </Tooltip>
               ) }
             >
-              <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
+              <CircleFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
             </OverlayTrigger>
           );
         } else if (isOnPathwayLockedByMe) {
@@ -223,7 +223,7 @@ const WrappedPatientList = ({
                 </Tooltip>
               ) }
             >
-              <CircleFill size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
+              <CircleFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
             </OverlayTrigger>
           );
         }
