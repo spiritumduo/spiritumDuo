@@ -48,7 +48,7 @@ const PatientList = (
           <Table.Cell>Date of birth</Table.Cell>
           <Table.Cell>Most recent stage</Table.Cell>
           <Table.Cell>Last updated</Table.Cell>
-          <Table.Cell>Lock</Table.Cell>
+          <Table.Cell>Locked</Table.Cell>
         </Table.Row>
       </Table.Head>
       <Table.Body>
