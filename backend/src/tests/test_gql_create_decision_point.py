@@ -10,7 +10,7 @@ from hamcrest import assert_that, equal_to, not_none, none
 
 # Scenario: a patient needs a decision point added and milestones requested
 @pytest.mark.asyncio
-async def test_add_decision_point_to_patient(context, create_test_data):
+async def test_add_decision_point_to_patient(context):
     """
     When: we run the GraphQL mutation to add the decision point and milestones
     """

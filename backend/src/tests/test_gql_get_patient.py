@@ -10,7 +10,7 @@ from hamcrest import assert_that, equal_to, not_none
 
 # Scenario: a patient's record is searched for
 @pytest.mark.asyncio
-async def test_search_for_patient(context, create_test_data, login_user):
+async def test_search_for_patient(context):
     """
     When: we run the GraphQL mutation to search for a patient
     """
