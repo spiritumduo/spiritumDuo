@@ -8,11 +8,12 @@ from datetime import datetime, timedelta
 from config import config
 from common import DataCreatorInputErrors
 
+
 @mutation.field("lockOnPathway")
 @needsAuthorization(["authenticated"])
 @inject
 async def resolve_lock_on_pathway(
-    obj=None,
+    obj: OnPathway = None,
     info: GraphQLResolveInfo = None,
     input: dict = None,
     pub=Provide[SDContainer.pubsub_service]
@@ -56,8 +57,6 @@ async def resolve_lock_on_pathway(
                     )
                 )
             ).apply()
-    print("pathway", pathway.lock_user_id, pathway.lock_end_time)
-    print("errors", errors.errorList)
 
     returnErrors = None
     if errors.hasErrors():
@@ -67,6 +66,7 @@ async def resolve_lock_on_pathway(
         'on-pathway-updated',
         await OnPathway.get(int(input["onPathwayId"]))
     )
+
     return {
         "onPathway": pathway,
         "userErrors": returnErrors

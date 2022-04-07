@@ -28,7 +28,7 @@ async def update_test_result(
     await milestone.update(current_state=data.new_state).apply()
     await pub.publish(
         'on-pathway-updated',
-        await OnPathway.get(milestone.on_pathway_id)
+        await OnPathway.get(Milestone.on_pathway_id)
     )
     await pub.publish('milestone-resolutions', milestone)
     return Response(status_code=200)
