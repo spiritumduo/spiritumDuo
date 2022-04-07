@@ -3,7 +3,7 @@ from .api import _FastAPI
 from dependency_injector.wiring import Provide, inject
 from fastapi import Request
 from pydantic import BaseModel
-from models import Milestone
+from models import Milestone, OnPathway
 from fastapi.responses import Response
 from config import config
 
@@ -19,12 +19,16 @@ async def update_test_result(
     request: Request, data: TestResultUpdate,
     pub=Provide[SDContainer.pubsub_service]
 ):
-    if ('SDTIEKEY' not in request.cookies 
-    or request.cookies['SDTIEKEY'] != config['UPDATE_ENDPOINT_KEY']):
+    if ('SDTIEKEY' not in request.cookies
+            or request.cookies['SDTIEKEY'] != config['UPDATE_ENDPOINT_KEY']):
         return Response(status_code=401)
-    milestone = await Milestone.query.where(
+    milestone: Milestone = await Milestone.query.where(
         Milestone.test_result_reference_id == str(data.id)
     ).gino.one_or_none()
     await milestone.update(current_state=data.new_state).apply()
+    await pub.publish(
+        'on-pathway-updated',
+        await OnPathway.get(Milestone.on_pathway_id)
+    )
     await pub.publish('milestone-resolutions', milestone)
     return Response(status_code=200)

@@ -1,3 +1,5 @@
+from containers import SDContainer
+from dependency_injector.wiring import Provide, inject
 from models import OnPathway
 from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
@@ -9,10 +11,12 @@ from common import DataCreatorInputErrors
 
 @mutation.field("lockOnPathway")
 @needsAuthorization(["authenticated"])
+@inject
 async def resolve_lock_on_pathway(
-    obj=None,
+    obj: OnPathway = None,
     info: GraphQLResolveInfo = None,
-    input: dict = None
+    input: dict = None,
+    pub=Provide[SDContainer.pubsub_service]
 ) -> OnPathway:
     errors: DataCreatorInputErrors = DataCreatorInputErrors()
     userId = int(info.context['request'].user.id)
@@ -53,14 +57,17 @@ async def resolve_lock_on_pathway(
                     )
                 )
             ).apply()
-    print("pathway", pathway.lock_user_id, pathway.lock_end_time)
-    print("errors", errors.errorList)
 
     returnErrors = None
     if errors.hasErrors():
         returnErrors = errors.errorList
 
+    await pub.publish(
+        'on-pathway-updated',
+        await OnPathway.get(int(input["onPathwayId"]))
+    )
+
     return {
-        "onPathway": pathway, 
+        "onPathway": pathway,
         "userErrors": returnErrors
     }
