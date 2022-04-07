@@ -42,7 +42,7 @@
   display: block;
 }
 
-.nhsuk-table__body .nhsuk-table__row.active:hover {
+.nhsuk-table__body .nhsuk-table__row.active:hover, .nhsuk-table__body .nhsuk-table__row.active:focus {
   background-image: linear-gradient(
     to right,
     rgba(0,0,0,0), 

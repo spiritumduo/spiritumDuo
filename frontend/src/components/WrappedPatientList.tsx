@@ -250,6 +250,8 @@ const WrappedPatientList = ({
 
         return (
           <Table.Row
+            tabIndex={ 0 }
+            aria-label={ `${n.firstName} ${n.lastName}` }
             className={ isOnPathwayLockedByOther ? 'disabled' : 'active' }
             key={ `patient-list-key${n.id}` }
             onClick={ () => !isOnPathwayLockedByOther && patientOnClick && patientOnClick(n) }
