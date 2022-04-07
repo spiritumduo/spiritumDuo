@@ -7,9 +7,9 @@ from graphql.type import GraphQLResolveInfo
 from dependency_injector.wiring import Provide, inject
 
 
-@inject
 @mutation.field("importMilestone")
 @needsAuthorization(["authenticated"])
+@inject
 async def resolver(
     obj=None,
     info: GraphQLResolveInfo = None,
