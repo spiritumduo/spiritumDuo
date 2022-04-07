@@ -9,7 +9,7 @@ from starlette.websockets import HTTPConnection, WebSocket
 
 from typing import Any
 from ariadne.asgi import WebSocketConnectionError
-from threading import get_ident, get_native_id
+from pydantic import BaseModel
 
 log = logging.getLogger("uvicorn")
 
@@ -18,7 +18,7 @@ class SdWebsocketConnectionParams(BaseModel):
     token: str
 
 async def ws_on_connect(
-        websocket: WebSocket = None, params: Any = None
+        websocket: WebSocket = None, params: SdWebsocketConnectionParams = None
 ):
     if not isinstance(params, dict):
         raise WebSocketConnectionError("Invalid payload")
