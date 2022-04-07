@@ -119,10 +119,10 @@ class LoginController:
                 "firstName": sdUser.firstName,
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
-                "defaultPathwayId": sdUser.default_pathway_id
+                "defaultPathwayId": sdUser.default_pathway_id,
+                "token": str(sessionKey)
             },
             "pathways": preparedPathways,
-            "token": str(sessionKey)
         })
 
         signer = itsdangerous.TimestampSigner(
