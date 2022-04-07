@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
@@ -37,6 +37,14 @@ test('It should display the last completed milestone alongside the patient', asy
   const patientsPerPage = Default.args?.patientsToDisplay;
   renderDefault();
   await waitFor(() => expect(screen.getAllByText(/third milestone/i).length).toEqual(patientsPerPage));
+});
+
+test('Tooltip on hover of lock indicator should display Johnny Locker is locking', async () => {
+  renderDefault();
+  expect(screen.queryByText(/locked by Johnny Locker/i)).toBeNull();
+  await waitFor(() => expect(screen.getByTestId('lock-icon-0')).toBeInTheDocument());
+  fireEvent.mouseOver(screen.getByTestId('lock-icon-0'));
+  expect(await screen.findByText(/locked by Johnny Locker/i)).toBeInTheDocument();
 });
 
 test('Patient lists should paginate', async () => {
