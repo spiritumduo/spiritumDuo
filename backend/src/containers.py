@@ -11,8 +11,12 @@ class SDContainer(containers.DeclarativeContainer):
         modules=[
             "dataloaders", "datacreators",
             "gql.mutation.create_decision_point",
+            "gql.mutation.lock_on_pathway",
+            "gql.mutation.create_decision_point",
+            "gql.mutation.import_milestone",
             "gql.query",
             "gql.subscription.milestone_resolved",
+            "gql.subscription.onpathway_updated",
             "rest.update_test_result",
         ]
     )
