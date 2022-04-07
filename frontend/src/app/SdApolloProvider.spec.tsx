@@ -3,4 +3,6 @@
  * ws connection attempts
  */
 
-export {};
+test('Should have a test here', () => {
+
+});
