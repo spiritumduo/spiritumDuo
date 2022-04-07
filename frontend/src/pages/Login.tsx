@@ -85,10 +85,9 @@ const LoginPage = (): JSX.Element => {
   const { updateUser } = useContext(AuthContext);
   const { updatePathwayOptions, updateCurrentPathwayId } = useContext(PathwayContext);
   useEffect(() => {
-    if (data?.user && data?.pathways && data?.token) {
+    if (data?.user && data?.pathways) {
       updateUser(data.user);
       updatePathwayOptions(data.pathways);
-      localStorage.setItem('token', data.token);
       updateCurrentPathwayId(data.user?.defaultPathwayId);
       navigate('/', { replace: true });
     }
