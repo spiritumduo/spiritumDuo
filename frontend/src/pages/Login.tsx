@@ -15,9 +15,10 @@ import './login.css';
 export interface LoginPageProps { }
 
 export type LoginData = {
-  user: User | null;
-  pathways: PathwayOption[] | null;
-  error: string;
+  user?: User;
+  pathways?: PathwayOption[];
+  token?: string;
+  error?: string;
 };
 
 export interface LoginFormInputs {

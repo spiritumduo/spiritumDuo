@@ -139,6 +139,7 @@ const Logout = (): JSX.Element => {
     updateUser(undefined);
   });
   loggedInUserVar(null);
+  localStorage.clear();
   pathwayOptionsVar([]);
   return (<Navigate to="/login" />);
 };

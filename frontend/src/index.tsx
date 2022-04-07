@@ -6,14 +6,13 @@ import React from 'react';
 
 // LIBRARIES
 import ReactDOM from 'react-dom';
-import { ApolloProvider } from '@apollo/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 // APP
 import App from 'app/App';
 import reportWebVitals from 'reportWebVitals';
-import client from 'app/sdApolloClient';
+import SdApolloProvider from 'app/SdApolloProvider';
 import { AuthProvider, PathwayProvider } from 'app/context';
 import store from 'app/store';
 
@@ -24,15 +23,15 @@ import './index.css';
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={ store }>
-      <ApolloProvider client={ client }>
-        <AuthProvider>
-          <PathwayProvider>
+      <AuthProvider>
+        <PathwayProvider>
+          <SdApolloProvider>
             <BrowserRouter basename={ process.env.PUBLIC_URL }>
               <App />
             </BrowserRouter>
-          </PathwayProvider>
-        </AuthProvider>
-      </ApolloProvider>
+          </SdApolloProvider>
+        </PathwayProvider>
+      </AuthProvider>
     </Provider>
   </React.StrictMode>,
   // eslint-disable-next-line no-undef

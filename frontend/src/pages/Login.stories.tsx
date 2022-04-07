@@ -35,10 +35,17 @@ export default {
  * MOCK RESPONSES
  */
 
+type LoginPayload = {
+  user?: User;
+  pathways?: PathwayOption[];
+  token?: string;
+  error: string | null;
+};
+
 /**
  * Successful login
  */
-const successfulLoginMock: { user: User, pathways: PathwayOption[], error: string | null } = {
+const successfulLoginMock: LoginPayload = {
   user: {
     id: 1,
     firstName: 'John',
@@ -46,7 +53,7 @@ const successfulLoginMock: { user: User, pathways: PathwayOption[], error: strin
     department: 'Respiratory',
     roles: [],
     defaultPathwayId: 1,
-
+    token: 'authToken',
   },
   pathways: [
     {
@@ -64,11 +71,7 @@ const successfulLoginMock: { user: User, pathways: PathwayOption[], error: strin
 /**
  * Invalid login
  */
-const invalidLoginMock: {
-  user?: User,
-  pathways?: PathwayOption[],
-  error?: string;
-} = {
+const invalidLoginMock: LoginPayload = {
   error: 'Incorrect username and/or password',
 };
 

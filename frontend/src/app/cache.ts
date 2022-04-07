@@ -79,23 +79,27 @@ let sanitisedUser: User | null = {
   department: '',
   roles: [],
   defaultPathwayId: 0,
+  token: '',
 };
 
-const loggedInuserLocalStorage = localStorage.getItem('loggedInUser');
-if (loggedInuserLocalStorage) {
+const localStorageUserJson = localStorage.getItem('loggedInUser');
+if (localStorageUserJson) {
   try {
-    const loggedInUser: User = JSON.parse(loggedInuserLocalStorage) as User;
-    sanitisedUser.id = parseInt(loggedInUser.id.toString(), 10);
-    sanitisedUser.firstName = loggedInUser.firstName;
-    sanitisedUser.lastName = loggedInUser.lastName;
-    sanitisedUser.department = loggedInUser.department;
-    sanitisedUser.roles = loggedInUser.roles;
-    sanitisedUser.defaultPathwayId = loggedInUser.defaultPathwayId;
+    const localStorageUser: User = JSON.parse(localStorageUserJson) as User;
+    sanitisedUser.id = parseInt(localStorageUser.id.toString(), 10);
+    sanitisedUser.firstName = localStorageUser.firstName;
+    sanitisedUser.lastName = localStorageUser.lastName;
+    sanitisedUser.department = localStorageUser.department;
+    sanitisedUser.roles = localStorageUser.roles;
+    sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId;
+    sanitisedUser.token = localStorageUser.token;
   } catch (err) {
     sanitisedUser = null;
   }
 }
-sanitisedUser = sanitisedUser?.id === 0 ? null : sanitisedUser;
+sanitisedUser = sanitisedUser?.id === 0
+  ? null
+  : sanitisedUser;
 export const loggedInUserVar: ReactiveVar<User | null> = makePersistantVar<User | null>(
   sanitisedUser,
   'loggedInUser',

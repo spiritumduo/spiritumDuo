@@ -10,6 +10,6 @@ case $1 in
         pytest
         ;;
     *)
-        echo -n "Please provide option - start or test"
+        exec "$@"
         ;;
 esac

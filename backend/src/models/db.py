@@ -1,9 +1,10 @@
 import os
 from gino_starlette import Gino
+from starlette.config import environ
 
 DB_STR = "postgresql://{user}:{password}@{host}:{port}/{database}"
 
-TESTING = os.getenv('TESTING', default=False)
+TESTING = environ.get("TESTING", False)
 DATABASE_URL = DB_STR.format(
     host=os.getenv("DATABASE_HOSTNAME"),
     port=os.getenv("DATABASE_PORT"),
@@ -22,6 +23,10 @@ TEST_DATABASE_URL = DB_STR.format(
 )
 
 if TESTING:
-    db = Gino(dsn=TEST_DATABASE_URL)
+    db = Gino(
+        dsn=TEST_DATABASE_URL,
+        pool_max_size=25,
+        pool_min_size=10,
+    )
 else:
     db = Gino(dsn=DATABASE_URL)

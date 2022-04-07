@@ -46,5 +46,6 @@ Standard.args = {
     defaultPathwayId: 1,
     department: 'Test department',
     roles: [{ id: 1, name: 'test' }],
+    token: 'token',
   },
 };

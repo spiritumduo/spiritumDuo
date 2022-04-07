@@ -32,7 +32,7 @@ class LoginController:
         if not context:
             raise ContextNotDefined()
         self._context = context
-        self._db = context['db']
+        self._db: Gino = context['db']
 
     async def login(self, request: Request = None):
         """
@@ -119,9 +119,10 @@ class LoginController:
                 "firstName": sdUser.firstName,
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
-                "defaultPathwayId": sdUser.default_pathway_id
+                "defaultPathwayId": sdUser.default_pathway_id,
+                "token": str(sessionKey)
             },
-            "pathways": preparedPathways
+            "pathways": preparedPathways,
         })
 
         signer = itsdangerous.TimestampSigner(

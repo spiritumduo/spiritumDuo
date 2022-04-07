@@ -8,9 +8,8 @@ from models import db
 from rest.api import _FastAPI
 from authentication.authentication import SDAuthentication
 from config import config
-from gql.graphql import graphql, _graphql
+from gql.graphql import graphql, ws_graphql
 from containers import SDContainer
-
 
 starlette_middleware = [
     Middleware(
@@ -23,7 +22,7 @@ starlette_middleware = [
 
 starlette_routes = [
     Route("/graphql", endpoint=graphql, methods=["POST", "GET"]),
-    WebSocketRoute("/subscription", endpoint=_graphql)
+    WebSocketRoute("/subscription", endpoint=ws_graphql())
 ]
 
 app = Starlette(
