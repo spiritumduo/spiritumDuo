@@ -13,7 +13,7 @@ import scalarLink from 'app/scalars';
 import { AuthContext } from 'app/context';
 
 interface SdApolloProviderProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 const SdApolloProvider = ({ children }: SdApolloProviderProps): JSX.Element => {
