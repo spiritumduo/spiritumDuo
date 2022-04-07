@@ -66,8 +66,14 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
 `;
 
 export const ON_PATHWAY_UPDATED_SUBSCRIPTION = gql`
-  subscription onPathwayUpdated($pathwayId: ID!) {
-    onPathwayUpdated(pathwayId: $pathwayId){
+  subscription onPathwayUpdated(
+    $pathwayId:ID!,
+    $includeDischarged: Boolean
+  ) {
+    onPathwayUpdated(
+      pathwayId: $pathwayId,
+      includeDischarged: $includeDischarged
+    ){
       id
     }
   }
@@ -139,6 +145,7 @@ const WrappedPatientList = ({
   } = useSubscription<onPathwayUpdated>(ON_PATHWAY_UPDATED_SUBSCRIPTION, {
     variables: {
       pathwayId: pathwayId,
+      includeDischarged: includeDischarged,
     },
   });
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
@@ -149,13 +156,8 @@ const WrappedPatientList = ({
   let listElements: JSX.Element[];
 
   useEffect(() => {
-    // const interval = setInterval(() => {
-    //   console.log('refetching via timeout');
-    //   refetch();
-    // }, 30000);
-    // return () => clearInterval(interval);
     refetch();
-  }, [refetch, subscrData]);
+  }, [subscrData, refetch]);
 
   const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsToDisplay);
   if (nodes) {
