@@ -40,7 +40,8 @@ const PatientList = (
 ): JSX.Element => (
   <div>
     <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
-    <Table responsive>
+    <div className="nhsuk-u-visually-hidden" id="pt_todo_list_aria">Patient to-do list</div>
+    <Table responsive role="grid" aria-describedby="pt_todo_list_aria">
       <Table.Head>
         <Table.Row>
           <Table.Cell>Name</Table.Cell>

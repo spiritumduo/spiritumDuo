@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 
 // LIBRARIES
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery, useSubscription } from '@apollo/client';
 import { Table } from 'nhsuk-react-components';
 import { CircleFill } from 'react-bootstrap-icons';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -13,6 +13,7 @@ import { AuthContext } from 'app/context';
 
 // COMPONENTS
 import PatientList from 'components/PatientList';
+import { onPathwayUpdated } from './__generated__/onPathwayUpdated';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -60,6 +61,20 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
           }
         }
       }
+    }
+  }
+`;
+
+export const ON_PATHWAY_UPDATED_SUBSCRIPTION = gql`
+  subscription onPathwayUpdated(
+    $pathwayId:ID!,
+    $includeDischarged: Boolean
+  ) {
+    onPathwayUpdated(
+      pathwayId: $pathwayId,
+      includeDischarged: $includeDischarged
+    ){
+      id
     }
   }
 `;
@@ -124,6 +139,15 @@ const WrappedPatientList = ({
   // eslint-disable-next-line max-len
   } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, !!outstanding, !!underCareOf, !!includeDischarged);
 
+  const {
+    data: subscrData,
+    error: subscrError,
+  } = useSubscription<onPathwayUpdated>(ON_PATHWAY_UPDATED_SUBSCRIPTION, {
+    variables: {
+      pathwayId: pathwayId,
+      includeDischarged: includeDischarged,
+    },
+  });
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const { user: contextUser } = useContext(AuthContext);
@@ -132,12 +156,8 @@ const WrappedPatientList = ({
   let listElements: JSX.Element[];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('refetching via timeout');
-      refetch();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [refetch]);
+    refetch();
+  }, [subscrData, refetch]);
 
   const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsToDisplay);
   if (nodes) {
@@ -230,6 +250,8 @@ const WrappedPatientList = ({
 
         return (
           <Table.Row
+            tabIndex={ 0 }
+            aria-label={ `${n.firstName} ${n.lastName}` }
             className={ isOnPathwayLockedByOther ? 'disabled' : 'active' }
             key={ `patient-list-key${n.id}` }
             onClick={ () => !isOnPathwayLockedByOther && patientOnClick && patientOnClick(n) }
