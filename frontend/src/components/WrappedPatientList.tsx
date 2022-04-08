@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 // LIBRARIES
 import { gql, useQuery, useSubscription } from '@apollo/client';
 import { Table } from 'nhsuk-react-components';
-import { CircleFill } from 'react-bootstrap-icons';
+import { LockFill } from 'react-bootstrap-icons';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 // APP
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
@@ -210,17 +210,13 @@ const WrappedPatientList = ({
             ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) !== user?.id
             : false
         );
-        const isOnPathwayLockedByMe = n.onPathways?.[0].lockEndTime > new Date() && (
-          n.onPathways?.[0]?.lockUser?.id
-            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) === user?.id
-            : false
-        );
 
-        let lockTextElement = <b>Not locked</b>;
-        let lockIconElement = <></>;
+        const lockIconElement = isOnPathwayLockedByOther
+          ? <LockFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+          : <></>;
+        let lockIconTooltipElement = <></>;
         if (isOnPathwayLockedByOther) {
-          lockTextElement = <b>This patient is locked by another user</b>;
-          lockIconElement = (
+          lockIconTooltipElement = (
             <OverlayTrigger
               overlay={ (
                 <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
@@ -230,20 +226,7 @@ const WrappedPatientList = ({
                 </Tooltip>
               ) }
             >
-              <CircleFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="red" />
-            </OverlayTrigger>
-          );
-        } else if (isOnPathwayLockedByMe) {
-          lockTextElement = <b>This patient is locked by you</b>;
-          lockIconElement = (
-            <OverlayTrigger
-              overlay={ (
-                <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
-                  This patient is locked by you
-                </Tooltip>
-              ) }
-            >
-              <CircleFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="orange" />
+              { lockIconElement }
             </OverlayTrigger>
           );
         }
@@ -256,17 +239,19 @@ const WrappedPatientList = ({
             key={ `patient-list-key${n.id}` }
             onClick={ () => !isOnPathwayLockedByOther && patientOnClick && patientOnClick(n) }
           >
-            <Table.Cell>{`${n.firstName} ${n.lastName}`}</Table.Cell>
+            <Table.Cell>
+              <div>
+                {`${n.firstName} ${n.lastName}`}
+                <span className="d-md-none ps-2">{ lockIconElement }</span>
+              </div>
+            </Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>
             <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
             <Table.Cell>{mostRecentStage}</Table.Cell>
             <Table.Cell>{updatedAt}</Table.Cell>
             <Table.Cell>
-              <div className="d-md-none">
-                { lockTextElement }
-              </div>
-              <div className="d-none d-md-block pt-0 text-center">
-                { lockIconElement }
+              <div className="d-none d-md-block pt-0 pe-3 text-center">
+                { lockIconTooltipElement }
               </div>
             </Table.Cell>
           </Table.Row>
