@@ -21,6 +21,17 @@ class FolderNotFoundError(Exception):
     """
 
 
+"""
+we need to check if the development
+environment is as optimal as possible.
+Things to check are existing volumes
+under the expected names (existing database)
+will cause problems when building postgres 
+container as credentials for pg server when
+built will be different to creds stored in env
+"""
+
+
 class EnvironmentVariable(object):
     def __init__(
         self,
@@ -28,14 +39,15 @@ class EnvironmentVariable(object):
         default: Union[str, None] = None,
         description: str = None,
         cryptographic: Union[bool, None] = False,
-        inputGenerator: Callable = None
+        inputGenerator: Callable = None,
+        defaultPrompt: Union[str, None] = None
     ):
         self.name: str = name
         self.default: Union[str, None] = default
         self.description: str = description
         self.cryptographic: Union[bool, None] = cryptographic
         self.inputGenerator: Union[Callable, None] = inputGenerator
-
+        self.defaultPrompt: Union[str, None] = defaultPrompt
         self.userInput = ""
 
     def getEnvironmentVariableInput(self):
@@ -54,7 +66,8 @@ class EnvironmentVariable(object):
                     "Enter value (generates random string if no input): "
                 )
             else:
-                userPrompt = "Enter value (no default): "
+                userPrompt = \
+                    f"Enter value ({self.defaultPrompt or 'no default'}): "
             userInput = input(userPrompt)
 
         self.userInput = userInput if userInput != "" else (
@@ -62,11 +75,25 @@ class EnvironmentVariable(object):
         )
 
 
+class CommandFailed(Exception):
+    """
+    This is raised when a subprocess runs a
+    non-correct/complete exit code
+    """
+
+
+def runCommand(*args, **kwargs):
+    proc = subprocess.run(*args, **kwargs)
+    if str(proc.returncode) != "0":
+        raise CommandFailed(f"Process returned exit code {proc.returncode}")
+    return proc
+
+
 def validateInput(message: str, selection: list):
     userInput = None
     selection = [x.lower() for x in selection]
     while userInput not in selection:
-        userInput = input(message)
+        userInput = input(message).lower()
     return userInput
 
 
@@ -189,7 +216,8 @@ ENV_DEFS = {
             description=(
                 "Address for LetsEncrypt SSL certificates"
                 " (not used in dev environment)"
-            )
+            ),
+            defaultPrompt="please enter a valid email address"
         ),
     },
     "wordpress": {
@@ -270,9 +298,9 @@ DOCKER_COMPOSE_PRESENT = "compose version" in str(subprocess.getoutput(
    "docker-compose --version"
 )).lower()
 if DOCKER_COMPOSE_PRESENT:
-   print("Success! Docker Compose found!")
+    print("Success! Docker Compose found!")
 else:
-   raise ComponentNotFound("Docker Compose cannot be found!")
+    raise ComponentNotFound("Docker Compose cannot be found!")
 
 print("\n4. Gather environment variables")
 print("NOTE: TO USE DEFAULT OR GENERATED VALUE, LEAVE INPUT EMPTY")
@@ -311,7 +339,7 @@ createOrOverrideEnvFile = True
 if os.path.exists("backend/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (backend/.env)? (Y/n): ",
-        ["y", "n"]
+        ["y", "n"]      # add yes/no and more obvious options
     ).lower() == "y"
 
 if createOrOverrideEnvFile:
@@ -413,33 +441,33 @@ print("NOTE: this may take time, depending on computer configuration\n")
 
 sleep(2)
 os.chdir("frontend")
-subprocess.run("./bin/update-node-modules")
+runCommand("./bin/update-node-modules")
 sleep(2)
 
 print("\n7. Build containers")
 os.chdir("..")
-subprocess.run(
+runCommand(
     "docker-compose -f docker-compose.dev.yml up -d --build"
     " sd-backend sd-pseudotie", shell=True)
 sleep(5)
 
 print("\n8. Migrate database schemas")
 print("Waiting...")
-subprocess.run(
+runCommand(
     "docker exec -ti sd-backend"
     " bash -c 'chmod +x ./bin/container-migrate-alembic &&"
     " ./bin/container-migrate-alembic'", shell=True)
-subprocess.run(
+runCommand(
     "docker exec -ti sd-pseudotie"
     " bash -c 'chmod +x ./bin/container-migrate-alembic &&"
     " ./bin/container-migrate-alembic'", shell=True)
 
 print("\n9. Restart containers")
-subprocess.run(
+runCommand(
     "docker-compose -f docker-compose.dev.yml down",
     shell=True)
 sleep(5)
-subprocess.run(
+runCommand(
     "docker-compose -f docker-compose.dev.yml up -d --build",
     shell=True)
 
