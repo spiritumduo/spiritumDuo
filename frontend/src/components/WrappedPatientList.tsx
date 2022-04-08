@@ -211,8 +211,11 @@ const WrappedPatientList = ({
             : false
         );
 
-        const lockIconElement = isOnPathwayLockedByOther
-          ? <LockFill data-testid={ `lock-icon-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+        const lockIconElementDesktop = isOnPathwayLockedByOther
+          ? <LockFill data-testid={ `lock-icon-desktop-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+          : <></>;
+        const lockIconElementResponsive = isOnPathwayLockedByOther
+          ? <LockFill data-testid={ `lock-icon-responsive-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
           : <></>;
         let lockIconTooltipElement = <></>;
         if (isOnPathwayLockedByOther) {
@@ -226,7 +229,7 @@ const WrappedPatientList = ({
                 </Tooltip>
               ) }
             >
-              { lockIconElement }
+              { lockIconElementDesktop }
             </OverlayTrigger>
           );
         }
@@ -242,7 +245,7 @@ const WrappedPatientList = ({
             <Table.Cell>
               <div>
                 {`${n.firstName} ${n.lastName}`}
-                <span className="d-md-none ps-2">{ lockIconElement }</span>
+                <span className="d-md-none ps-2">{ lockIconElementResponsive }</span>
               </div>
             </Table.Cell>
             <Table.Cell>{n.hospitalNumber}</Table.Cell>

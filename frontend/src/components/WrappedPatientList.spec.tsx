@@ -4,6 +4,7 @@ import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
 import * as stories from './WrappedPatientList.stories';
+import { act } from 'react-dom/test-utils';
 
 const { Default } = composeStories(stories);
 const renderDefault = () => {
@@ -42,8 +43,8 @@ test('It should display the last completed milestone alongside the patient', asy
 test('Tooltip on hover of lock indicator should display Johnny Locker is locking', async () => {
   renderDefault();
   expect(screen.queryByText(/locked by Johnny Locker/i)).toBeNull();
-  await waitFor(() => expect(screen.getByTestId('lock-icon-0')).toBeInTheDocument());
-  fireEvent.mouseOver(screen.getByTestId('lock-icon-0'));
+  await waitFor(() => expect(screen.getByTestId('lock-icon-desktop-0')).toBeInTheDocument());
+  fireEvent.mouseOver(screen.getByTestId('lock-icon-desktop-0'));
   expect(await screen.findByText(/locked by Johnny Locker/i)).toBeInTheDocument();
 });
 
