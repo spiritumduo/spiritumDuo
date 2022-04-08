@@ -48,7 +48,7 @@ services:
     env_file: ./pseudotie/.env
     volumes:
       - ./pseudotie:/app
-      - sd_alembic_pseudotie_data:/alembic_versions
+      - sd_alembic_pseudotie_data:/app/src/alembic/versions
 
     expose:
       - 8080

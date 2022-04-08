@@ -611,20 +611,9 @@ const DecisionPointPage = (
       <section>
         <Container fluid>
           <ErrorSummary className="sd-dp-errormessage" aria-labelledby="error-summary-title" role="alert" hidden={ onPathwayLock === undefined }>
-            <ErrorSummary.Title id="error-summary-title">This patient is locked</ErrorSummary.Title>
-            <ErrorSummary.Body>
-              <br />
-              This record will be unlocked after the other user has become inactive,
-              or if they submit this form. You will not be able to make edits to
-              this page until is it unlocked.
-              <br />
-              <br />
-              <strong>
-                Current unlock time:
-              </strong> { onPathwayLock?.lockEndTime.toLocaleString() }
-              <br />
-              NOTE: this time may extend if the other user is still active on this page.
-            </ErrorSummary.Body>
+            <ErrorSummary.Title id="error-summary-title">
+              This patient is locked by { `${onPathwayLock?.lockUser.firstName} ${onPathwayLock?.lockUser.lastName}` }
+            </ErrorSummary.Title>
           </ErrorSummary>
           <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
             <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
