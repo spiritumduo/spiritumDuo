@@ -1,7 +1,5 @@
 # Installation (development environment)
 
-NOTE: an assisted installation script is available in the form of a Python script in the base project directory (/INSTALL.py). This should be run on the host computer.
-
 ## Installation prerequisites
 
 1. Git
@@ -13,6 +11,12 @@ NOTE: an assisted installation script is available in the form of a Python scrip
 |Term|Description
 ---|---|
 |Project's root directory|The topmost directory of the project (where the individual container folders are)
+
+## Automated installer
+
+For an automated install of a development environment please run the Python script in the project's root directory, `INSTALL.dev.py`.
+
+TODO: expand on this, for ex steps it takes, where to find env files, and a walkthrough
 
 ## Configuring environmental variables
 
