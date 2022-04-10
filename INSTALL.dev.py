@@ -557,3 +557,5 @@ print("""
     minutes for the frontend to
     launch for the first time
 """)
+
+# TODO: print all env variables out in a table?
