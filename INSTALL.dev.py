@@ -2,7 +2,7 @@ import os
 import subprocess
 import string
 import secrets
-from typing import Callable, Union
+from typing import Callable, Union, List
 from shutil import copyfile
 from time import sleep
 
@@ -21,6 +21,12 @@ class FolderNotFoundError(Exception):
     """
 
 
+class ComponentFailed(Exception):
+    """
+    Raised when a component failed
+    """
+
+
 class EnvironmentVariable(object):
     def __init__(
         self,
@@ -28,15 +34,18 @@ class EnvironmentVariable(object):
         default: Union[str, None] = None,
         description: str = None,
         cryptographic: Union[bool, None] = False,
-        inputGenerator: Callable = None
+        inputGenerator: Callable = None,
+        defaultPrompt: Union[str, None] = None,
+        display: bool = True
     ):
         self.name: str = name
         self.default: Union[str, None] = default
         self.description: str = description
         self.cryptographic: Union[bool, None] = cryptographic
         self.inputGenerator: Union[Callable, None] = inputGenerator
-
+        self.defaultPrompt: Union[str, None] = defaultPrompt
         self.userInput = ""
+        self.display = display
 
     def getEnvironmentVariableInput(self):
         print(f"\n{self.name}\n{self.description}\n")
@@ -46,7 +55,7 @@ class EnvironmentVariable(object):
             (userInput == "" and (
                 self.default is None and self.inputGenerator is None
             )) or (self.cryptographic and len(userInput) % 16 != 0)
-        ):
+        ) and self.display:
             if self.default:
                 userPrompt = f"Enter value ({self.default}): "
             elif self.inputGenerator:
@@ -54,28 +63,62 @@ class EnvironmentVariable(object):
                     "Enter value (generates random string if no input): "
                 )
             else:
-                userPrompt = "Enter value (no default): "
+                userPrompt = \
+                    f"Enter value ({self.defaultPrompt or 'no default'}): "
             userInput = input(userPrompt)
+        if not self.display:
+            print("No value required.")
 
         self.userInput = userInput if userInput != "" else (
             self.default or self.inputGenerator()
         )
 
 
-def validateInput(message: str, selection: list):
-    userInput = None
+class CommandFailed(Exception):
+    """
+    This is raised when a subprocess runs a
+    non-correct/complete exit code
+    """
+
+
+steps = 0
+
+
+def PrintHeading(text: str) -> None:
+    global steps
+    steps += 1
+    print(f"\n{steps}) {text}")
+
+
+def RunCommand(command, shell=None):
+    proc = subprocess.run(command, shell=shell)
+    if str(proc.returncode) != "0":
+        raise CommandFailed(f"Error running command \"{command}\"\nProcess returned exit code {proc.returncode}")
+    return proc
+
+
+def validateInput(message: str, selection: List[str]):
+    userInput = input(message).lower()
     selection = [x.lower() for x in selection]
     while userInput not in selection:
-        userInput = input(message)
+        print(f"ERROR: please enter one of the following: ", end="")
+        for i in range(0, len(selection)):
+            if i == 0:
+                print(selection[i], end="")
+            elif i == (len(selection) - 1):
+                print("/"+selection[i], end="\n\n")
+            else:
+                print(selection[i], end="/")
+        userInput = input(message).lower()
     return userInput
 
 
-def generateRandomKey():
+def GenerateRandomKey():
     chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
     return ''.join(secrets.choice(chars) for _ in range(32))
 
 
-def generateRandomPassword():
+def GenerateRandomPassword():
     chars = string.ascii_uppercase + string.ascii_lowercase + string.digits
     return ''.join(secrets.choice(chars) for _ in range(8))
 
@@ -141,7 +184,7 @@ ENV_DEFS = {
             name="DATABASE_PASSWORD",
             default=None,
             description="Password of database account",
-            inputGenerator=generateRandomPassword
+            inputGenerator=GenerateRandomPassword
         ),
         "SESSION_SECRET_KEY": EnvironmentVariable(
             name="SESSION_SECRET_KEY",
@@ -151,7 +194,7 @@ ENV_DEFS = {
                 " (MUST BE MULTIPLE OF SIXTEEN)"
             ),
             cryptographic=True,
-            inputGenerator=generateRandomKey
+            inputGenerator=GenerateRandomKey
         ),
         "SESSION_EXPIRY_LENGTH": EnvironmentVariable(
             name="SESSION_EXPIRY_LENGTH",
@@ -166,7 +209,7 @@ ENV_DEFS = {
                 " (MUST BE MULTIPLE OF SIXTEEN)"
             ),
             cryptographic=True,
-            inputGenerator=generateRandomKey
+            inputGenerator=GenerateRandomKey
         ),
     },
     "nginx": {
@@ -185,11 +228,13 @@ ENV_DEFS = {
         ),
         "SSL_EMAIL": EnvironmentVariable(
             name="SSL_EMAIL",
-            default=None,
+            default="NOTUSEDINDEVELOPMENT",
             description=(
                 "Address for LetsEncrypt SSL certificates"
                 " (not used in dev environment)"
-            )
+            ),
+            defaultPrompt="please enter a valid email address",
+            display=False
         ),
     },
     "wordpress": {
@@ -207,7 +252,7 @@ ENV_DEFS = {
             name="WORDPRESS_DB_PASSWORD",
             default=None,
             description="Wordpress database password",
-            inputGenerator=generateRandomPassword
+            inputGenerator=GenerateRandomPassword
         ),
     },
     "mysql": {
@@ -215,28 +260,12 @@ ENV_DEFS = {
             name="MYSQL_ROOT_PASSWORD",
             default=None,
             description="Wordpress database server root password",
-            inputGenerator=generateRandomPassword
+            inputGenerator=GenerateRandomPassword
         ),
     }
 }
 
-print("""
-    ##### SPIRITUM DUO INSTALLER #####
-
-    1. Check Docker's installed
-    2. Check Docker Compose is installed
-    3. Gather environment variables
-    4. Configuring docker compose file from template
-    5. Build frontend node modules
-    6. Build containers
-    7. Migrate database schemas
-    8. Restart containers
-    9. Give option between manage + manage-demo scripts
-    10. Display endpoint + login information
-
-""")
-
-print("\n1. Check project files exist")
+PrintHeading("Check project files exist")
 for path in [
     "backend",
     "frontend",
@@ -256,7 +285,7 @@ print("Success!")
 DOCKER_PRESENT = False
 DOCKER_COMPOSE_PRESENT = False
 
-print("\n2. Check Docker's installed")
+PrintHeading("Check Docker is installed")
 DOCKER_PRESENT = "docker version" in str(subprocess.getoutput(
     "docker --version"
 )).lower()
@@ -265,16 +294,68 @@ if DOCKER_PRESENT:
 else:
     raise ComponentNotFound("Docker cannot be found!")
 
-print("\n3. Check Docker Compose is installed")
+PrintHeading("Check Docker Compose is installed")
 DOCKER_COMPOSE_PRESENT = "compose version" in str(subprocess.getoutput(
    "docker-compose --version"
 )).lower()
 if DOCKER_COMPOSE_PRESENT:
-   print("Success! Docker Compose found!")
+    print("Success! Docker Compose found!")
 else:
-   raise ComponentNotFound("Docker Compose cannot be found!")
+    raise ComponentNotFound("Docker Compose cannot be found!")
 
-print("\n4. Gather environment variables")
+# check if container is running
+PrintHeading("Check if containers are running")
+runningContainersString = str(subprocess.getoutput(
+    "docker container ls"
+))
+isContainerRunning = False
+for containerName in [
+    "sd-backend",
+    "sd-frontend",
+    "sd-pseudotie",
+    "sd-nginx"
+]:
+    if containerName in runningContainersString:
+        isContainerRunning = True
+
+if isContainerRunning:
+    if validateInput(
+        """Containers using the same name as this project are already running. They must be stopped
+to continue. Do you wish to stop these containers? (Y/n) """,
+        ["y", "n"]
+    ) == "y":
+        RunCommand(
+            "docker-compose -f docker-compose.dev.yml down",
+            shell=True
+        )
+    else:
+        raise CommandFailed("Containers using the same name as this project are already running. They must be stopped to continue.")
+else:
+    print("Success! Containers are not running")
+
+PrintHeading("Check if database volume already exists")
+volumes = str(subprocess.getoutput(
+    "docker volume ls"
+))
+if "spiritumduo_sd_postgres_data" in volumes:
+    if validateInput(
+        """The volume `spiritumduo_sd_postgres_data` already exists. It is recommended to remove this container before continuing.
+Do you wish to remove the volume `spiritumduo_sd_postgres_data`? (Y/n): """,
+        ["y", "n"]
+    ) == "y":
+        result = str(subprocess.getoutput(
+            "docker volume rm spiritumduo_sd_postgres_data"
+        ))
+        print(result)
+        if result != "spiritumduo_sd_postgres_data":
+            if validateInput("""ERROR: an error has occured when deleting the volume `spiritumduo_sd_postgres_data`.
+Do you wish to continue? (Y/n)""") == "n":
+                raise ComponentFailed("an error has occured when deleting the volume `spiritumduo_sd_postgres_data`.")
+else:
+    print("Success! Volume does not already exist")
+
+
+PrintHeading("Gather environment variables")
 print("NOTE: TO USE DEFAULT OR GENERATED VALUE, LEAVE INPUT EMPTY")
 for serviceName, variableList in ENV_DEFS.items():
     print(f"\n##########\nVARIABLES FOR SERVICE: {serviceName}\n##########")
@@ -287,7 +368,7 @@ if os.path.exists("postgres/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (postgres/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y"
+    ) == "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -312,7 +393,7 @@ if os.path.exists("backend/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (backend/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y"
+    ) == "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -331,7 +412,7 @@ if os.path.exists("pseudotie/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (pseudotie/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y"
+    ) == "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -350,7 +431,7 @@ if os.path.exists("nginx/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (nginx/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y"
+    ) == "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -367,7 +448,7 @@ if os.path.exists("wordpress/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (wordpress/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y"
+    )== "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -384,7 +465,7 @@ if os.path.exists("mysql/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (mysql/.env)? (Y/n): ",
         ["y", "n"]
-    ).lower() == "y"
+    ) == "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -402,50 +483,50 @@ if createOrOverrideEnvFile:
     file.close()
 
 
-print("\n5. Configuring docker compose file from template")
+PrintHeading("Configuring Docker Compose file from template")
 
 copyfile("docker-compose.dev.yml.example", "docker-compose.dev.yml")
 print("Success!")
 
 
-print("\n6. Build frontend node modules")
+PrintHeading("Build frontend node modules")
 print("NOTE: this may take time, depending on computer configuration\n")
 
 sleep(2)
 os.chdir("frontend")
-subprocess.run("./bin/update-node-modules")
+RunCommand("./bin/update-node-modules")
 sleep(2)
 
-print("\n7. Build containers")
+PrintHeading("Build containers")
 os.chdir("..")
-subprocess.run(
+RunCommand(
     "docker-compose -f docker-compose.dev.yml up -d --build"
     " sd-backend sd-pseudotie", shell=True)
 sleep(5)
 
-print("\n8. Migrate database schemas")
+PrintHeading("Migrate database schemas")
 print("Waiting...")
-subprocess.run(
+RunCommand(
     "docker exec -ti sd-backend"
     " bash -c 'chmod +x ./bin/container-migrate-alembic &&"
     " ./bin/container-migrate-alembic'", shell=True)
-subprocess.run(
+RunCommand(
     "docker exec -ti sd-pseudotie"
     " bash -c 'chmod +x ./bin/container-migrate-alembic &&"
     " ./bin/container-migrate-alembic'", shell=True)
 
-print("\n9. Restart containers")
-subprocess.run(
+PrintHeading("Restart containers")
+RunCommand(
     "docker-compose -f docker-compose.dev.yml down",
     shell=True)
 sleep(5)
-subprocess.run(
+RunCommand(
     "docker-compose -f docker-compose.dev.yml up -d --build",
     shell=True)
 
 sleep(10)
-
-print("\n10. Insert test data")
+    
+PrintHeading("Insert test data")
 print(
     "NOTE: IF THE REGEX PATTERN FOR HOSPITAL OR NATIONAL NUMBER HAS CHANGED,"
     " THIS STEP WILL FAIL!"
