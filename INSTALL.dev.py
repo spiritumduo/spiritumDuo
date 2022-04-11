@@ -20,20 +20,11 @@ class FolderNotFoundError(Exception):
     causing a fatal error.
     """
 
+
 class ComponentFailed(Exception):
     """
-    Raised when a component failed    
+    Raised when a component failed
     """
-
-"""
-we need to check if the development
-environment is as optimal as possible.
-Things to check are existing volumes
-under the expected names (existing database)
-will cause problems when building postgres 
-container as credentials for pg server when
-built will be different to creds stored in env
-"""
 
 
 class EnvironmentVariable(object):
@@ -75,6 +66,8 @@ class EnvironmentVariable(object):
                 userPrompt = \
                     f"Enter value ({self.defaultPrompt or 'no default'}): "
             userInput = input(userPrompt)
+        if not self.display:
+            print("No value required.")
 
         self.userInput = userInput if userInput != "" else (
             self.default or self.inputGenerator()
@@ -87,7 +80,10 @@ class CommandFailed(Exception):
     non-correct/complete exit code
     """
 
+
 steps = 0
+
+
 def PrintHeading(text: str) -> None:
     global steps
     steps += 1
@@ -289,7 +285,7 @@ print("Success!")
 DOCKER_PRESENT = False
 DOCKER_COMPOSE_PRESENT = False
 
-PrintHeading("Check Docker's installed")
+PrintHeading("Check Docker is installed")
 DOCKER_PRESENT = "docker version" in str(subprocess.getoutput(
     "docker --version"
 )).lower()
@@ -487,7 +483,7 @@ if createOrOverrideEnvFile:
     file.close()
 
 
-PrintHeading("Configuring docker compose file from template")
+PrintHeading("Configuring Docker Compose file from template")
 
 copyfile("docker-compose.dev.yml.example", "docker-compose.dev.yml")
 print("Success!")
@@ -557,5 +553,3 @@ print("""
     minutes for the frontend to
     launch for the first time
 """)
-
-# TODO: print all env variables out in a table?
