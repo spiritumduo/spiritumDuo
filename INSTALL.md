@@ -16,7 +16,38 @@
 
 For an automated install of a development environment please run the Python script in the project's root directory, `INSTALL.dev.py`.
 
-TODO: expand on this, for ex steps it takes, where to find env files, and a walkthrough
+### Steps
+
+1. Check Docker is installed
+2. Check Docker Compose is installed
+3. Check if containers are running
+4. Check if database volume already exists
+5. Gather environment variables
+6. Configuring Docker Compose file from template
+7. Build frontend node modules
+8. Build containers
+9. Migrate database schema
+10. Restart containers
+11. Insert test data
+
+### Where to find generated strings
+
+If you have chosen to generate random strings for some variables, the value can be seen in the `.env` file in the service folder (backend/.env, etc).
+
+### Notes
+
+#### Gather environment variables
+
+Example
+
+```
+DATABASE_NAME
+Name of database table
+
+Enter value (sd_pseudotie):
+```
+
+The value in brackets is the default value. To continue using the default value, do not enter any data and press enter.
 
 ## Configuring environmental variables
 
