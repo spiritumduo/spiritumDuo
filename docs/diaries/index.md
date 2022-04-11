@@ -1,1 +1,1 @@
-Hi!
+#Diaries start page
