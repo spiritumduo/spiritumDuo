@@ -8,3 +8,5 @@ something else
 
 sdfsdf
 
+https://docs.google.com/viewer?url=https://github.com/spiritumduo/spiritumDuo/blob/main/docs/technical/backend.pdf
+
