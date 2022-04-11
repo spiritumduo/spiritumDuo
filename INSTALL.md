@@ -20,10 +20,10 @@ For an automated install of a development environment please run the Python scri
 
 1. Check Docker is installed
 2. Check Docker Compose is installed
-3. Check if containers are running
-4. Check if database volume already exists
-5. Gather environment variables
-6. Configuring Docker Compose file from template
+3. Configuring Docker Compose file from template
+4. Check if containers are running
+5. Check if database volume already exists
+6. Gather environment variables
 7. Build frontend node modules
 8. Build containers
 9. Migrate database schema
