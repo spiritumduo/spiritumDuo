@@ -303,6 +303,13 @@ if DOCKER_COMPOSE_PRESENT:
 else:
     raise ComponentNotFound("Docker Compose cannot be found!")
 
+
+PrintHeading("Configuring Docker Compose file from template")
+
+copyfile("docker-compose.dev.yml.example", "docker-compose.dev.yml")
+print("Success!")
+
+
 # check if container is running
 PrintHeading("Check if containers are running")
 runningContainersString = str(subprocess.getoutput(
@@ -333,26 +340,34 @@ to continue. Do you wish to stop these containers? (Y/n) """,
 else:
     print("Success! Containers are not running")
 
-PrintHeading("Check if database volume already exists")
+PrintHeading("Check if container volumes already exists")
 volumes = str(subprocess.getoutput(
     "docker volume ls"
 ))
-if "spiritumduo_sd_postgres_data" in volumes:
-    if validateInput(
-        """The volume `spiritumduo_sd_postgres_data` already exists. It is recommended to remove this container before continuing.
-Do you wish to remove the volume `spiritumduo_sd_postgres_data`? (Y/n): """,
-        ["y", "n"]
-    ) == "y":
-        result = str(subprocess.getoutput(
-            "docker volume rm spiritumduo_sd_postgres_data"
-        ))
-        print(result)
-        if result != "spiritumduo_sd_postgres_data":
-            if validateInput("""ERROR: an error has occured when deleting the volume `spiritumduo_sd_postgres_data`.
-Do you wish to continue? (Y/n)""") == "n":
-                raise ComponentFailed("an error has occured when deleting the volume `spiritumduo_sd_postgres_data`.")
-else:
-    print("Success! Volume does not already exist")
+for volumeName in [
+    "spiritumduo_sd_alembic_backend_data",
+    "spiritumduo_sd_alembic_pseudotie_data",
+    "spiritumduo_sd_postgres_data",
+    "spiritumduo_sd_wordpress",
+    "spiritumduo_sd_mysql_data"
+]:
+    if volumeName in volumes:
+        if validateInput(
+            f"""\nThe volume `{volumeName}` already exists. It is recommended to remove this container before continuing.
+    Do you wish to remove the volume `{volumeName}`? (Y/n): """,
+            ["y", "n"]
+        ) == "y":
+            result = str(subprocess.getoutput(
+                f"docker volume rm {volumeName}"
+            ))
+            if result != volumeName:
+                if validateInput(f"""ERROR: an error has occured when deleting the volume `{volumeName}`.
+    Do you wish to continue? (Y/n)""") == "n":
+                    raise ComponentFailed(f"an error has occured when deleting the volume `{volumeName}`.")
+            else:
+                print("\nSuccess! Volume deleted")
+    else:
+        print("Success! Volume does not already exist")
 
 
 PrintHeading("Gather environment variables")
@@ -481,12 +496,6 @@ if createOrOverrideEnvFile:
     file = open("mysql/.env", "w")
     file.writelines(buffer)
     file.close()
-
-
-PrintHeading("Configuring Docker Compose file from template")
-
-copyfile("docker-compose.dev.yml.example", "docker-compose.dev.yml")
-print("Success!")
 
 
 PrintHeading("Build frontend node modules")
