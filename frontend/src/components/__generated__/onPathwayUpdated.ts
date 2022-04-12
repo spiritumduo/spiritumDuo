@@ -17,5 +17,6 @@ export interface onPathwayUpdated {
 }
 
 export interface onPathwayUpdatedVariables {
-  onPathwayId: string;
+  pathwayId: string;
+  includeDischarged?: boolean | null;
 }

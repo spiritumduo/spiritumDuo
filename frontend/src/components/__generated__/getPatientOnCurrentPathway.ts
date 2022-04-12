@@ -15,6 +15,8 @@ export interface getPatientOnCurrentPathway_getPatient_onPathways {
 export interface getPatientOnCurrentPathway_getPatient {
   __typename: "Patient";
   id: string;
+  firstName: string;
+  lastName: string;
   onPathways: getPatientOnCurrentPathway_getPatient_onPathways[] | null;
 }
 
