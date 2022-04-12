@@ -120,6 +120,7 @@ class LoginController:
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
                 "defaultPathwayId": sdUser.default_pathway_id,
+                "isAdmin": sdUser.is_admin,
                 "token": str(sessionKey)
             },
             "pathways": preparedPathways,
