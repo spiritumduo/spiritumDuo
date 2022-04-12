@@ -36,7 +36,8 @@ class SDUser(BaseUser):
         firstName: str = None,
         lastName: str = None,
         department: str = None,
-        default_pathway_id: int = None
+        default_pathway_id: int = None,
+        isAdmin: bool = None
         # TODO: make all either camelcase or snakecase
     ) -> None:
         self.id = id
@@ -45,6 +46,7 @@ class SDUser(BaseUser):
         self.lastName = lastName
         self.department = department
         self.default_pathway_id = default_pathway_id
+        self.isAdmin = isAdmin
 
     @property
     def is_authenticated(self) -> bool:

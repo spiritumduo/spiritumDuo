@@ -19,3 +19,7 @@ class User(db.Model):
     default_pathway_id = db.Column(
         db.Integer(), db.ForeignKey('tbl_pathway.id'), nullable=False
     )
+    is_admin = db.Column(
+        db.Boolean(), nullable=True,
+        default=False, server_default="False"
+    )
