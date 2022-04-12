@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import ModalPatient, { LOCK_ON_PATHWAY_MUTATION } from 'components/ModalPatient';
+import ModalPatient, { LOCK_ON_PATHWAY_MUTATION, GET_PATIENT_CURRENT_PATHWAY_QUERY } from 'components/ModalPatient';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Default as DecisionPointDefaultStory, Locked as DecisionPointLockedStory } from 'pages/DecisionPoint.stories';
 import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
@@ -228,7 +228,7 @@ const Template: ComponentStory<typeof ModalPatient> = (args) => <ModalPatient { 
 
 export const Default = Template.bind({});
 Default.args = {
-  patient: mockPatient,
+  hospitalNumber: mockPatient.hospitalNumber,
   lock: true,
 };
 
@@ -245,7 +245,7 @@ Default.parameters = {
 
 export const LockedByOtherUser = Template.bind({});
 LockedByOtherUser.args = {
-  patient: mockPatient,
+  hospitalNumber: mockPatient.hospitalNumber,
   lock: true,
 };
 
