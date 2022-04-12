@@ -58,16 +58,14 @@ const PatientList = (
     <div className="nhsuk-u-visually-hidden" id="pt_click_hint_aria">Click to open patient</div>
     <Table responsive role="grid" aria-describedby="pt_todo_list_aria" aria-label="patient list">
       <Table.Head>
-        <div role="rowgroup">
-          <Table.Row>
-            <Table.Cell>Name</Table.Cell>
-            <Table.Cell>Patient number</Table.Cell>
-            <Table.Cell>Date of birth</Table.Cell>
-            <Table.Cell>Most recent stage</Table.Cell>
-            <Table.Cell>Last updated</Table.Cell>
-            <Table.Cell> </Table.Cell>
-          </Table.Row>
-        </div>
+        <Table.Row>
+          <Table.Cell>Name</Table.Cell>
+          <Table.Cell>Patient number</Table.Cell>
+          <Table.Cell>Date of birth</Table.Cell>
+          <Table.Cell>Most recent stage</Table.Cell>
+          <Table.Cell>Last updated</Table.Cell>
+          <Table.Cell> </Table.Cell>
+        </Table.Row>
       </Table.Head>
       <Table.Body>
         { data.map((p) => {
