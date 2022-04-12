@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable comma-dangle */
 import React from 'react';
 import '@testing-library/jest-dom';
@@ -30,8 +31,8 @@ test('Login should redirect to / on success', async () => {
   await waitFor(() => {
     userEvent.type(screen.getByRole('textbox', { name: /username/i }), 'Username');
     userEvent.type(screen.getByLabelText(/password/i), 'Password');
-    userEvent.click(screen.getByRole('button', { name: /login/i }));
   });
+  await waitFor(() => userEvent.click(screen.getByRole('button', { name: /login/i })));
   // We have a mock home page which is just this
   expect(screen.getByText(/Login success/i)).toBeInTheDocument();
 });
@@ -61,8 +62,8 @@ test('Error should display to user', async () => {
   await waitFor(() => {
     userEvent.type(usernameInput, 'Username');
     userEvent.type(passwordInput, 'Password');
-    userEvent.click(loginButton);
   });
+  await waitFor(() => userEvent.click(loginButton));
   expect(screen.getByText(/Error: /i)).toBeInTheDocument();
 });
 
@@ -75,7 +76,7 @@ test('Invalid login should display to user', async () => {
   await waitFor(() => {
     userEvent.type(usernameInput, 'Username');
     userEvent.type(passwordInput, 'Password');
-    userEvent.click(loginButton);
   });
+  await waitFor(() => userEvent.click(loginButton));
   expect(screen.getByText(/Incorrect username and\/or password/i)).toBeInTheDocument();
 });
