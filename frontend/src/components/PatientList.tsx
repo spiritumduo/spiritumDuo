@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
-import './patientlist.css';
 import { Table } from 'nhsuk-react-components';
+import { LockFill } from 'react-bootstrap-icons';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import './patientlist.css';
 /**
  * PatientListUpdateDataFn
  *
@@ -24,11 +26,23 @@ export interface PatientListProps {
   /**
    * Patient data
    */
-  data: JSX.Element[];
+  data: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    hospitalNumber: string;
+    dateOfBirth: Date;
+    updatedAt: Date;
+    mostRecentStage: string;
+    isOnPathwayLockedByOther: boolean;
+    lockFirstName?: string;
+    lockLastName?: string;
+  }[];
   /**
    * Is data loading?
   */
   isLoading: boolean;
+  onClickCallback: (hospitalNumber: string) => void;
 }
 
 /**
@@ -36,24 +50,82 @@ export interface PatientListProps {
  *
  */
 const PatientList = (
-  { pageCount, updateData, data, isLoading }: PatientListProps,
+  { pageCount, updateData, data, isLoading, onClickCallback }: PatientListProps,
 ): JSX.Element => (
   <div>
     <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
     <div className="nhsuk-u-visually-hidden" id="pt_todo_list_aria">Patient to-do list</div>
-    <Table responsive role="grid" aria-describedby="pt_todo_list_aria">
+    <div className="nhsuk-u-visually-hidden" id="pt_click_hint_aria">Click to open patient</div>
+    <Table responsive role="grid" aria-describedby="pt_todo_list_aria" aria-label="patient list">
       <Table.Head>
-        <Table.Row>
-          <Table.Cell>Name</Table.Cell>
-          <Table.Cell>Patient number</Table.Cell>
-          <Table.Cell>Date of birth</Table.Cell>
-          <Table.Cell>Most recent stage</Table.Cell>
-          <Table.Cell>Last updated</Table.Cell>
-          <Table.Cell> </Table.Cell>
-        </Table.Row>
+        <div role="rowgroup">
+          <Table.Row>
+            <Table.Cell>Name</Table.Cell>
+            <Table.Cell>Patient number</Table.Cell>
+            <Table.Cell>Date of birth</Table.Cell>
+            <Table.Cell>Most recent stage</Table.Cell>
+            <Table.Cell>Last updated</Table.Cell>
+            <Table.Cell> </Table.Cell>
+          </Table.Row>
+        </div>
       </Table.Head>
       <Table.Body>
-        { data }
+        { data.map((p) => {
+          const lockIconElement = p.isOnPathwayLockedByOther
+            ? <LockFill role="img" aria-label="lock icon" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+            : <></>;
+          const lockIconElementResponsive = p.isOnPathwayLockedByOther
+            ? <LockFill role="img" aria-label="lock icon responsive" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+            : <></>;
+          const lockIconTooltipElement = p.isOnPathwayLockedByOther
+            ? (
+              <OverlayTrigger
+                overlay={ (
+                  <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
+                    This patient is locked by
+                    &nbsp;{p.lockFirstName}
+                    &nbsp;{p.lockLastName}
+                  </Tooltip>
+                ) }
+              >
+                { lockIconElement }
+              </OverlayTrigger>
+            )
+            : <></>;
+          return (
+            <Table.Row
+              onClick={ () => onClickCallback(p.hospitalNumber) }
+              tabIndex={ 0 }
+              className={ p.isOnPathwayLockedByOther ? 'disabled' : 'active' }
+              key={ `patient-list-key${p.id}` }
+            >
+              <Table.Cell tabIndex={ 0 } aria-describedby="editText">
+                <div>
+                  <button
+                    className="patient-list-modal-button"
+                    disabled={ p.isOnPathwayLockedByOther }
+                    type="button"
+                    tabIndex={ 0 }
+                    onClick={ () => onClickCallback(p.hospitalNumber) }
+                    role="link"
+                  >
+                    {`${p.firstName} ${p.lastName}`}
+                  </button>
+                  <span className="d-md-none ps-2">{ lockIconElementResponsive }</span>
+                </div>
+              </Table.Cell>
+              <Table.Cell tabIndex={ -1 } aria-describedby="editText">{p.hospitalNumber}</Table.Cell>
+              <Table.Cell tabIndex={ -1 } aria-describedby="editText">{p.dateOfBirth?.toLocaleDateString()}</Table.Cell>
+              <Table.Cell tabIndex={ -1 } aria-describedby="editText">{p.mostRecentStage}</Table.Cell>
+              <Table.Cell tabIndex={ -1 } aria-describedby="editText">{`${p.updatedAt.toLocaleDateString()} ${p.updatedAt.toLocaleTimeString()}`}</Table.Cell>
+              <Table.Cell tabIndex={ -1 } aria-describedby="editText">
+                <div className="d-none d-md-block pt-0 pe-3 text-center">
+                  { lockIconTooltipElement }
+                </div>
+              </Table.Cell>
+            </Table.Row>
+          );
+        } ) }
       </Table.Body>
     </Table>
     <br />

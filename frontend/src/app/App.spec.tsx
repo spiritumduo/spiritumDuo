@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 // we want fetchMock to prevent any accidental logins, even though we
 // don't test login here
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -11,6 +11,8 @@ import { AuthContext, AuthContextInterface, PathwayContext, PathwayContextInterf
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { MemoryRouter } from 'react-router';
+import store from 'app/store';
+import { Provider } from 'react-redux';
 import App from './App';
 
 const fakeUser: User = {
@@ -20,6 +22,7 @@ const fakeUser: User = {
   department: 'Respiratory',
   roles: [],
   defaultPathwayId: 1,
+  token: 'token',
 };
 
 const fakePathways: PathwayOption[] = [
@@ -50,17 +53,21 @@ interface AppElementProps {
   pathwayProviderProps?: PathwayContextInterface,
 }
 
-const renderApp = (props?: AppElementProps) => {
+const renderApp = async (props?: AppElementProps) => {
   render(
-    <MockedProvider>
-      <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
-        <PathwayContext.Provider value={ props?.pathwayProviderProps || mockPathwayProviderProps }>
-          <MemoryRouter>
-            <App />
-          </MemoryRouter>
-        </PathwayContext.Provider>
-      </AuthContext.Provider>
-    </MockedProvider>,
+    <Provider store={ store }>
+      <MockedProvider>
+        <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
+          <PathwayContext.Provider
+            value={ props?.pathwayProviderProps || mockPathwayProviderProps }
+          >
+            <MemoryRouter>
+              <App />
+            </MemoryRouter>
+          </PathwayContext.Provider>
+        </AuthContext.Provider>
+      </MockedProvider>
+    </Provider>,
   );
 };
 

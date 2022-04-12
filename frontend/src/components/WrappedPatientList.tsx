@@ -2,18 +2,19 @@ import React, { useState, useEffect, useContext } from 'react';
 
 // LIBRARIES
 import { gql, useQuery, useSubscription } from '@apollo/client';
-import { Table } from 'nhsuk-react-components';
-import { LockFill } from 'react-bootstrap-icons';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+
 // APP
 import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
-import Patient from 'types/Patient';
 import User from 'types/Users';
 import { AuthContext } from 'app/context';
 
 // COMPONENTS
-import PatientList from 'components/PatientList';
-import { onPathwayUpdated } from './__generated__/onPathwayUpdated';
+import PatientList, { PatientListProps } from 'components/PatientList';
+import { useAppDispatch } from 'app/hooks';
+import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
+
+// GENERATED TYPES
+import { onPathwayUpdated } from 'components/__generated__/onPathwayUpdated';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -119,7 +120,6 @@ export interface WrappedPatientListProps {
   outstanding?: boolean;
   underCareOf?: boolean;
   includeDischarged?: boolean;
-  patientOnClick?: (hospitalNumber: Patient) => void;
 }
 
 const WrappedPatientList = ({
@@ -128,7 +128,6 @@ const WrappedPatientList = ({
   outstanding,
   underCareOf,
   includeDischarged,
-  patientOnClick,
 }: WrappedPatientListProps): JSX.Element => {
   const {
     loading,
@@ -152,13 +151,14 @@ const WrappedPatientList = ({
   const [currentPage, setCurrentPage] = useState(0);
   const { user: contextUser } = useContext(AuthContext);
   const user = contextUser as User;
+  const dispatch = useAppDispatch();
 
-  let listElements: JSX.Element[];
-
+  // THIS IS THE SOURCE OF THE ACT WARNINGS!
   useEffect(() => {
     refetch();
   }, [subscrData, refetch]);
 
+  let listElements: PatientListProps['data'];
   const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsToDisplay);
   if (nodes) {
     listElements = nodes.flatMap(
@@ -202,73 +202,42 @@ const WrappedPatientList = ({
         }
         const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
         const updatedAt = lastMilestone?.updatedAt
-          ? `${lastMilestone.updatedAt.toLocaleDateString()} ${lastMilestone.updatedAt.toLocaleTimeString()}`
-          : `${n.onPathways?.[0].updatedAt.toLocaleDateString()} ${n.onPathways?.[0].updatedAt.toLocaleTimeString()}`;
+          ? lastMilestone.updatedAt
+          : n.onPathways?.[0].updatedAt;
 
         const isOnPathwayLockedByOther = n.onPathways?.[0].lockEndTime > new Date() && (
           n.onPathways?.[0]?.lockUser?.id
-            ? parseInt(n.onPathways?.[0]?.lockUser?.id, 10) !== user?.id
+            ? n.onPathways?.[0]?.lockUser?.id !== user?.id.toString()
             : false
         );
-
-        const lockIconElementDesktop = isOnPathwayLockedByOther
-          ? <LockFill data-testid={ `lock-icon-desktop-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
-          : <></>;
-        const lockIconElementResponsive = isOnPathwayLockedByOther
-          ? <LockFill data-testid={ `lock-icon-responsive-${n.id}` } size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
-          : <></>;
-        let lockIconTooltipElement = <></>;
-        if (isOnPathwayLockedByOther) {
-          lockIconTooltipElement = (
-            <OverlayTrigger
-              overlay={ (
-                <Tooltip className="d-none d-md-inline-block" id="tooltip-disabled">
-                  This patient is locked by
-                  &nbsp;{n.onPathways?.[0].lockUser?.firstName}
-                  &nbsp;{n.onPathways?.[0].lockUser?.lastName}
-                </Tooltip>
-              ) }
-            >
-              { lockIconElementDesktop }
-            </OverlayTrigger>
-          );
-        }
-
-        return (
-          <Table.Row
-            tabIndex={ 0 }
-            aria-label={ `${n.firstName} ${n.lastName}` }
-            className={ isOnPathwayLockedByOther ? 'disabled' : 'active' }
-            key={ `patient-list-key${n.id}` }
-            onClick={ () => !isOnPathwayLockedByOther && patientOnClick && patientOnClick(n) }
-          >
-            <Table.Cell>
-              <div>
-                {`${n.firstName} ${n.lastName}`}
-                <span className="d-md-none ps-2">{ lockIconElementResponsive }</span>
-              </div>
-            </Table.Cell>
-            <Table.Cell>{n.hospitalNumber}</Table.Cell>
-            <Table.Cell>{n.dateOfBirth?.toLocaleDateString()}</Table.Cell>
-            <Table.Cell>{mostRecentStage}</Table.Cell>
-            <Table.Cell>{updatedAt}</Table.Cell>
-            <Table.Cell>
-              <div className="d-none d-md-block pt-0 pe-3 text-center">
-                { lockIconTooltipElement }
-              </div>
-            </Table.Cell>
-          </Table.Row>
-        );
+        return {
+          id: n.id,
+          firstName: n.firstName,
+          lastName: n.lastName,
+          hospitalNumber: n.hospitalNumber,
+          dateOfBirth: n.dateOfBirth,
+          updatedAt: updatedAt,
+          mostRecentStage: mostRecentStage,
+          isOnPathwayLockedByOther: isOnPathwayLockedByOther,
+          lockFirstName: n.onPathways?.[0].lockUser?.firstName,
+          lockLastName: n.onPathways?.[0].lockUser?.lastName,
+        };
       },
     );
   } else {
-    listElements = [<tr key="emptyListElement" />];
+    listElements = [];
   }
+
+  const onClickCallback = (hospitalNumber: string) => {
+    dispatch(setModalPatientHospitalNumber(hospitalNumber));
+  };
+
   return (
     <>
       <div>{ error?.message }</div>
       <PatientList
         data={ listElements }
+        onClickCallback={ onClickCallback }
         isLoading={ loading }
         updateData={ ({ selected }) => {
           setCurrentPage(selected);

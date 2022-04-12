@@ -37,6 +37,8 @@ const getPatientCurrentPathwayMock = {
     data: {
       getPatient: {
         id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
         onPathways: [{
           id: '1',
         }],
@@ -196,22 +198,24 @@ describe('When the page loads and the user does not get the lock', () => {
 describe('When page loads and a user submits a decision without milestones', () => {
   // let tabState: boolean;
   beforeEach( async () => {
+    const { click, keyboard } = userEvent.setup();
     render(
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
         <Default />
       </MockSdApolloProvider>,
     );
-    const clinicalHistoryText = '{selectall}New Clinic History';
-    const comorbiditiesText = '{selectall}New Comorbidities';
+    const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
+    const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
     // wait for page to render fully
     await waitFor(() => expect(
       screen.getByRole('button', { name: 'Submit' }),
     ).toBeInTheDocument());
-    await waitFor(() => {
-      userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
-      userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
-    });
-    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Submit' })));
+    await waitFor(() => click(screen.getByLabelText('Clinical history')));
+    await waitFor(() => keyboard(clinicalHistoryText));
+    await waitFor(() => click(screen.getByLabelText('Co-morbidities')));
+    await waitFor(() => keyboard(comorbiditiesText));
+    click(screen.getByRole('button', { name: 'Submit' }));
+    await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
   });
 
   it('Should warn the user when they submit', async () => {
@@ -254,24 +258,28 @@ describe('When page loads and a user submits a decision without milestones', () 
 
 describe('When page loads and a user submits a decision with milestones', () => {
   beforeEach( async () => {
+    const { click, keyboard } = userEvent.setup();
     render(
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
         <Default />
       </MockSdApolloProvider>,
     );
-    const clinicalHistoryText = '{selectall}New Clinic History';
-    const comorbiditiesText = '{selectall}New Comorbidities';
+    const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
+    const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
     // wait for page to render fully
     await waitFor(() => expect(
       screen.getByRole('button', { name: 'Submit' }),
     ).toBeInTheDocument());
+    await waitFor(() => click(screen.getByLabelText('Clinical history')));
+    await waitFor(() => keyboard(clinicalHistoryText));
+    await waitFor(() => click(screen.getByLabelText('Co-morbidities')));
+    await waitFor(() => keyboard(comorbiditiesText));
     await waitFor(() => {
-      userEvent.type(screen.getByLabelText('Clinical history'), clinicalHistoryText);
-      userEvent.type(screen.getByLabelText('Co-morbidities'), comorbiditiesText);
       const requestCheckboxes = screen.getAllByRole('checkbox');
-      requestCheckboxes.forEach((cb) => userEvent.click(cb));
-      userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+      requestCheckboxes.forEach((cb) => click(cb));
+      click(screen.getByRole('button', { name: 'Submit' }));
     });
+    await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
   });
 
   it('Should ask for confirmation', () => {

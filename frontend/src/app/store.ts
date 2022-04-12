@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import modalPatientReducer from 'components/ModalPatient.slice';
+import homePageReducer from 'pages/HomePage.slice';
 
 const store = configureStore({
   reducer: {
     modalPatient: modalPatientReducer,
+    homePage: homePageReducer,
   },
 });
 
