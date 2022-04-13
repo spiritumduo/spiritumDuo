@@ -80,7 +80,8 @@ class LoginController:
             firstName=user.first_name,
             lastName=user.last_name,
             department=user.department,
-            default_pathway_id=user.default_pathway_id
+            default_pathway_id=user.default_pathway_id,
+            isAdmin=user.is_admin
         )
 
         sessionKey = None
@@ -120,7 +121,7 @@ class LoginController:
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
                 "defaultPathwayId": sdUser.default_pathway_id,
-                "isAdmin": sdUser.is_admin,
+                "isAdmin": sdUser.isAdmin,
                 "token": str(sessionKey)
             },
             "pathways": preparedPathways,
