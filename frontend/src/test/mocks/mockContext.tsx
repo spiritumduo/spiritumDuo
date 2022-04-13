@@ -26,6 +26,7 @@ export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JS
     defaultPathwayId: 1,
     roles: [],
     token: 'token',
+    isAdmin: false,
   };
   // eslint-disable-next-line no-unneeded-ternary
   const providerValue = value !== undefined

@@ -80,6 +80,7 @@ let sanitisedUser: User | null = {
   roles: [],
   defaultPathwayId: 0,
   token: '',
+  isAdmin: false,
 };
 
 const localStorageUserJson = localStorage.getItem('loggedInUser');
@@ -93,6 +94,7 @@ if (localStorageUserJson) {
     sanitisedUser.roles = localStorageUser.roles;
     sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId;
     sanitisedUser.token = localStorageUser.token;
+    sanitisedUser.isAdmin = localStorageUser.isAdmin;
   } catch (err) {
     sanitisedUser = null;
   }
