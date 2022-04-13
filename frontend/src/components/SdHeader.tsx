@@ -87,6 +87,16 @@ const SdHeader = ({
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
             </li>
+            {
+              user?.isAdmin
+                ? (
+                  <li className="nhsuk-header__navigation-item">
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                    <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app/admin">Administration</a>
+                  </li>
+                )
+                : <></>
+            }
             <li className="nhsuk-header__navigation-item">
               {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
               <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="logout">Logout ({`${user?.firstName} ${user?.lastName}`})</a>
