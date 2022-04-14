@@ -6,7 +6,7 @@ import { DefaultLayout } from 'components/PageLayout.stories';
 import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
-import AdministrationPage, { AdministrationPageProps } from './Administration';
+import AdministrationPage from './Administration';
 
 const user: User = {
   id: 1,
@@ -38,11 +38,13 @@ export default {
   ],
 } as Meta<typeof AdministrationPage>;
 
-export const Default: Story<AdministrationPageProps> = (args: AdministrationPageProps) => (
-  <AdministrationPage { ...args } />
+export const Default: Story = () => (
+  <AdministrationPage />
 );
 
-Default.args = { user: undefined };
+Default.args = {
+
+};
 Default.parameters = {
 
 };
