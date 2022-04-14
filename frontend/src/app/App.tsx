@@ -121,18 +121,6 @@ const App = (): JSX.Element => (
     <Route path="/decision/*" element={ <DecisionRoutes /> } />
     <Route path="/pathwaydemo/:hospitalNumber" element={ <PathwayDemoRoute /> } />
     <Route
-      path="/admin"
-      element={ (
-        <RequireAuth>
-          <RequireAdmin>
-            <PageLayout>
-              <AdministrationPage />
-            </PageLayout>
-          </RequireAdmin>
-        </RequireAuth>
-      ) }
-    />
-    <Route
       path="/"
       element={ (
         <RequireAuth>
@@ -147,7 +135,9 @@ const App = (): JSX.Element => (
       element={ (
         <RequireAuth>
           <PageLayout>
-            <AdministrationPage />
+            <RequireAdmin>
+              <AdministrationPage />
+            </RequireAdmin>
           </PageLayout>
         </RequireAuth>
       ) }
