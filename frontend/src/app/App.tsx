@@ -16,6 +16,7 @@ import PathwayDemo from 'pages/PathwayDemo';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import './App.css';
 import AllPatients from 'pages/AllPatients';
+import AdministrationPage from 'pages/Administration';
 
 const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
@@ -126,6 +127,16 @@ const App = (): JSX.Element => (
         <RequireAuth>
           <PageLayout>
             <HomePage patientsPerPage={ 20 } />
+          </PageLayout>
+        </RequireAuth>
+      ) }
+    />
+    <Route
+      path="/admin"
+      element={ (
+        <RequireAuth>
+          <PageLayout>
+            <AdministrationPage />
           </PageLayout>
         </RequireAuth>
       ) }
