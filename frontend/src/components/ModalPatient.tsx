@@ -1,13 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 // LIBRARIES
 import { Modal } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { gql, useQuery, useLazyQuery, useMutation } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client';
 
 // APP
 import { DecisionPointType } from 'types/DecisionPoint';
-import Patient from 'types/Patient';
 import { AuthContext, PathwayContext } from 'app/context';
 import { useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
@@ -21,7 +20,7 @@ import { lockOnPathway } from './__generated__/lockOnPathway';
 import { getPatientOnCurrentPathway } from './__generated__/getPatientOnCurrentPathway';
 
 interface ModalPatientProps {
-  patient: Patient;
+  hospitalNumber: string;
   lock?: boolean;
   closeCallback: () => void;
 }
@@ -50,6 +49,8 @@ export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
   query getPatientOnCurrentPathway($hospitalNumber: String!, $pathwayId: ID!) {
     getPatient(hospitalNumber: $hospitalNumber) {
       id
+      firstName
+      lastName
       onPathways(pathwayId: $pathwayId, includeDischarged: true) {
         id
       }
@@ -57,38 +58,31 @@ export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
   }
 `;
 
-const ModalPatient = ({ patient, closeCallback, lock }: ModalPatientProps) => {
+const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps) => {
   // START HOOKS
   const tabState = useAppSelector((state: RootState) => state.modalPatient.isTabDisabled);
   const { currentPathwayId } = useContext(PathwayContext);
   const { user } = useContext(AuthContext);
 
   const [
-    lockOnPathwayMutation, { data, loading, error },
+    lockOnPathwayMutation, { data },
   ] = useMutation<lockOnPathway>(LOCK_ON_PATHWAY_MUTATION);
   const {
-    data: getPatientOnCurrentPathwayData,
-    loading: patientLoading,
+    data: patientData,
   } = useQuery<getPatientOnCurrentPathway>(
     GET_PATIENT_CURRENT_PATHWAY_QUERY, {
       variables: {
-        hospitalNumber: patient.hospitalNumber,
+        hospitalNumber: hospitalNumber,
         pathwayId: currentPathwayId,
       },
     },
   );
   const lockOnPathwayId = lock
-    ? getPatientOnCurrentPathwayData?.getPatient?.onPathways?.[0].id
+    ? patientData?.getPatient?.onPathways?.[0].id
     : undefined;
 
   const userId = user?.id.toString();
-  // const dataOnPathwayUserId = data?.lockOnPathway.onPathway?.lockUser?.id;
   const storedOnPathwayUserId = data?.lockOnPathway.onPathway?.lockUser?.id;
-  /*
-  if (dataOnPathwayUserId != null && storedOnPathwayUserId !== dataOnPathwayUserId) {
-    updateLockState(data);
-  }
-  */
 
   const hasLock = (
     (userId?.toString() === storedOnPathwayUserId)
@@ -139,7 +133,7 @@ const ModalPatient = ({ patient, closeCallback, lock }: ModalPatientProps) => {
     <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header closeButton>
         <Modal.Title>
-          {patient.firstName} {patient.lastName} - {patient.hospitalNumber}
+          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName} - ${hospitalNumber}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -152,13 +146,13 @@ const ModalPatient = ({ patient, closeCallback, lock }: ModalPatientProps) => {
           </TabList>
           <TabPanel>
             <DecisionPointPage
-              hospitalNumber={ patient.hospitalNumber }
+              hospitalNumber={ hospitalNumber }
               decisionType={ DecisionPointType.TRIAGE }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
             />
           </TabPanel>
           <TabPanel>
-            <PreviousDecisionPoints hospitalNumber={ patient.hospitalNumber } />
+            <PreviousDecisionPoints hospitalNumber={ hospitalNumber } />
           </TabPanel>
           <TabPanel>
             test message

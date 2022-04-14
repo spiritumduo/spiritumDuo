@@ -1,13 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 // APP IMPORTS
 import React, { useContext, useEffect } from 'react';
-import { Route, Routes, Navigate, useParams } from 'react-router-dom';
+import { Route, Routes, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
 import { AuthContext, PathwayContext } from 'app/context';
 import { DecisionPointType } from 'types/DecisionPoint';
 
 // PAGES
-import DecisionPointPage from 'pages/DecisionPoint';
 import HomePage from 'pages/HomePage';
 import LoginPage from 'pages/Login';
 import NewPatientPage from 'pages/NewPatient';
@@ -16,6 +15,7 @@ import PathwayDemo from 'pages/PathwayDemo';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import './App.css';
 import AllPatients from 'pages/AllPatients';
+import AdministrationPage from 'pages/Administration';
 
 const PreviousDecisionPointsPageRoute = () => {
   const { hospitalNumber } = useParams();
@@ -130,6 +130,18 @@ const App = (): JSX.Element => (
         </RequireAuth>
       ) }
     />
+    <Route
+      path="/admin"
+      element={ (
+        <RequireAuth>
+          <PageLayout>
+            <RequireAdmin>
+              <AdministrationPage />
+            </RequireAdmin>
+          </PageLayout>
+        </RequireAuth>
+      ) }
+    />
   </Routes>
 );
 
@@ -152,6 +164,13 @@ const RequireAuth = ({ children, location }: React.ComponentPropsWithRef<any>): 
   if ((!pathwayOptions) || (!currentPathwayId)) {
     return <h1>No pathways. Application not configured!</h1>;
   }
+  return children;
+};
+
+const RequireAdmin = ({ children, location }: React.ComponentPropsWithRef<any>): JSX.Element => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  if (!user?.roles.find((r) => r.name === 'admin')) navigate('/', { state: { from: location } });
   return children;
 };
 

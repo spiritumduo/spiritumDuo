@@ -47,5 +47,26 @@ Standard.args = {
     department: 'Test department',
     roles: [{ id: 1, name: 'test' }],
     token: 'token',
+    isAdmin: false,
+  },
+};
+
+export const Admin = Template.bind({});
+Admin.args = {
+  pathwayOptions: pathways,
+  currentPathwayId: pathways[0].id,
+  pathwayOnItemSelect: (name) => console.log(name),
+  searchOnSubmit: (e) => {
+    e.preventDefault();
+  },
+  user: {
+    id: 1,
+    firstName: 'Eileen',
+    lastName: 'Streiter',
+    defaultPathwayId: 1,
+    department: 'Test department',
+    roles: [{ id: 1, name: 'test' }],
+    token: 'token',
+    isAdmin: true,
   },
 };

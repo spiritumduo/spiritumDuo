@@ -169,6 +169,7 @@ type User {
     lastLogin: DateTime
     department: String!
     defaultPathway: Pathway!
+    isAdmin: Boolean!
 }
 
 type DecisionPoint {
