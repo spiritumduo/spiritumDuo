@@ -22,8 +22,8 @@ export type CreateUserReturnUser = {
 };
 
 export type CreateUserReturnData = {
-  error: string;
-  user: CreateUserReturnUser;
+  error: string | null;
+  user: CreateUserReturnUser | null;
 };
 
 export interface NewUserInputs {
@@ -39,17 +39,20 @@ export interface NewUserInputs {
 type CreateUserSubmitHook = [
   boolean,
   any,
-  CreateUserReturnUser | undefined,
+  CreateUserReturnData | undefined,
   (variables: NewUserInputs) => void
 ];
 
 export function useCreateUserSubmit(setShowModal: (arg0: boolean) => void): CreateUserSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
-  const [data, setData] = useState<CreateUserReturnUser | undefined>(undefined);
+  const [data, setData] = useState<CreateUserReturnData | undefined>(undefined);
 
   async function createUser(variables: NewUserInputs) {
     setLoading(true);
+    setData(undefined);
+    setError(undefined);
+
     try {
       const { location } = window;
       const uriPrefix = `${location.protocol}//${location.host}`;
@@ -61,16 +64,14 @@ export function useCreateUserSubmit(setShowModal: (arg0: boolean) => void): Crea
         body: JSON.stringify(variables),
       });
       if (!response.ok) {
-        setError(`${response.status} ${response.statusText}`);
+        setError(`Error: Response ${response.status} ${response.statusText}`);
         throw new Error(`Error: Response ${response.status} ${response.statusText}`);
       }
       const decoded: CreateUserReturnData = await response.json();
       if (decoded.error) {
-        setError(decoded.error);
-        setData(undefined);
+        setError({ message: decoded.error });
       } else {
-        setData(decoded.user);
-        setError(decoded.error);
+        setData(decoded);
         setShowModal(true);
       }
     } catch (err) {
@@ -88,11 +89,11 @@ const AdministrationPage = (): JSX.Element => {
   const [loading, error, data, createUser] = useCreateUserSubmit(setShowModal);
 
   const newUserInputSchema = yup.object({
-    username: yup.string().required('This is a required field'),
-    password: yup.string().required('This is a required field'),
-    firstName: yup.string().required('This is a required field'),
-    lastName: yup.string().required('This is a required field'),
-    department: yup.string().required('This is a required field'),
+    username: yup.string().required('Username is a required field'),
+    password: yup.string().required('Password is a required field'),
+    firstName: yup.string().required('First name is a required field'),
+    lastName: yup.string().required('Last is a required field'),
+    department: yup.string().required('Department is a required field'),
   }).required();
 
   const {
@@ -119,21 +120,15 @@ const AdministrationPage = (): JSX.Element => {
             } ) }
           >
             {
-              error
-                ? (
-                  <ErrorMessage>
-                    An error occured: {error.message ? error.message : error}
-                  </ErrorMessage>
-                )
-                : <></>
+              error?.message ? <ErrorMessage>{error?.message}</ErrorMessage> : ''
             }
             <Fieldset disabled={ loading }>
               <Row>
                 <Col xs="12" md="6">
-                  <Input label="First name" error={ errors.firstName?.message } { ...register('firstName', { required: true }) } />
+                  <Input role="textbox" id="username" label="First name" error={ errors.firstName?.message } { ...register('firstName', { required: true }) } />
                 </Col>
                 <Col xs="12" md="6">
-                  <Input label="Last name" error={ errors.lastName?.message } { ...register('lastName', { required: true }) } />
+                  <Input role="textbox" id="password" label="Last name" error={ errors.lastName?.message } { ...register('lastName', { required: true }) } />
                 </Col>
               </Row>
             </Fieldset>
@@ -179,23 +174,23 @@ const AdministrationPage = (): JSX.Element => {
               </Row>
             </Fieldset>
           </Form>
-          <Modal show={ showModal } closeButton onHide={ (() => setShowModal(false)) }>
-            <Modal.Header closeButton>
+          <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
+            <Modal.Header>
               <Modal.Title>User created</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <SummaryList>
                 <SummaryList.Row>
                   <SummaryList.Key>First name</SummaryList.Key>
-                  <SummaryList.Value>{data?.firstName}</SummaryList.Value>
+                  <SummaryList.Value>{data?.user?.firstName}</SummaryList.Value>
                 </SummaryList.Row>
                 <SummaryList.Row>
                   <SummaryList.Key>Last name</SummaryList.Key>
-                  <SummaryList.Value>{data?.lastName}</SummaryList.Value>
+                  <SummaryList.Value>{data?.user?.lastName}</SummaryList.Value>
                 </SummaryList.Row>
                 <SummaryList.Row>
                   <SummaryList.Key>Username</SummaryList.Key>
-                  <SummaryList.Value>{data?.username}</SummaryList.Value>
+                  <SummaryList.Value>{data?.user?.username}</SummaryList.Value>
                 </SummaryList.Row>
                 <SummaryList.Row>
                   <SummaryList.Key>Password</SummaryList.Key>
@@ -203,10 +198,13 @@ const AdministrationPage = (): JSX.Element => {
                 </SummaryList.Row>
                 <SummaryList.Row>
                   <SummaryList.Key>Department</SummaryList.Key>
-                  <SummaryList.Value>{data?.department}</SummaryList.Value>
+                  <SummaryList.Value>{data?.user?.department}</SummaryList.Value>
                 </SummaryList.Row>
               </SummaryList>
             </Modal.Body>
+            <Modal.Footer>
+              <Button onClick={ (() => setShowModal(false)) }>Close</Button>
+            </Modal.Footer>
           </Modal>
         </TabPanel>
       </Tabs>
