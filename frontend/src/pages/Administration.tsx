@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 
 // LIBRARIES
-import { Button, Checkboxes, Container, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
+import { Button, Checkboxes, Container, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Modal } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -39,14 +39,14 @@ export interface NewUserInputs {
 type CreateUserSubmitHook = [
   boolean,
   any,
-  CreateUserReturnData | undefined,
+  CreateUserReturnUser | undefined,
   (variables: NewUserInputs) => void
 ];
 
-export function useCreateUserSubmit(): CreateUserSubmitHook {
+export function useCreateUserSubmit(setShowModal: (arg0: boolean) => void): CreateUserSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
-  const [data, setData] = useState<CreateUserReturnData | undefined>(undefined);
+  const [data, setData] = useState<CreateUserReturnUser | undefined>(undefined);
 
   async function createUser(variables: NewUserInputs) {
     setLoading(true);
@@ -67,11 +67,15 @@ export function useCreateUserSubmit(): CreateUserSubmitHook {
       const decoded: CreateUserReturnData = await response.json();
       if (decoded.error) {
         setError(decoded.error);
+        setData(undefined);
       } else {
         setData(decoded.user);
+        setError(decoded.error);
+        setShowModal(true);
       }
     } catch (err) {
       setError(err);
+      setData(undefined);
     }
     setLoading(false);
   }
@@ -80,15 +84,15 @@ export function useCreateUserSubmit(): CreateUserSubmitHook {
 
 const AdministrationPage = (): JSX.Element => {
   const { pathwayOptions } = useContext(PathwayContext);
-
-  const [loading, error, data, createUser] = useCreateUserSubmit();
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [loading, error, data, createUser] = useCreateUserSubmit(setShowModal);
 
   const newUserInputSchema = yup.object({
-    username: yup.string().required(),
-    password: yup.string().required(),
-    firstName: yup.string().required(),
-    lastName: yup.string().required(),
-    department: yup.string().required(),
+    username: yup.string().required('This is a required field'),
+    password: yup.string().required('This is a required field'),
+    firstName: yup.string().required('This is a required field'),
+    lastName: yup.string().required('This is a required field'),
+    department: yup.string().required('This is a required field'),
   }).required();
 
   const {
@@ -114,8 +118,16 @@ const AdministrationPage = (): JSX.Element => {
               createUser(getValues());
             } ) }
           >
+            {
+              error
+                ? (
+                  <ErrorMessage>
+                    An error occured: {error.message ? error.message : error}
+                  </ErrorMessage>
+                )
+                : <></>
+            }
             <Fieldset disabled={ loading }>
-              {error ? <ErrorMessage>{error.message}</ErrorMessage> : <></>}
               <Row>
                 <Col xs="12" md="6">
                   <Input label="First name" error={ errors.firstName?.message } { ...register('firstName', { required: true }) } />
@@ -124,6 +136,8 @@ const AdministrationPage = (): JSX.Element => {
                   <Input label="Last name" error={ errors.lastName?.message } { ...register('lastName', { required: true }) } />
                 </Col>
               </Row>
+            </Fieldset>
+            <Fieldset disabled={ loading }>
               <Row>
                 <Col xs="12" md="6">
                   <Input label="Username" autoCapitalize="off" autoCorrect="username" error={ errors.username?.message } { ...register('username', { required: true }) } />
@@ -132,6 +146,8 @@ const AdministrationPage = (): JSX.Element => {
                   <Input label="Password" autoCapitalize="off" autoCorrect="password" type="password" error={ errors.password?.message } { ...register('password', { required: true }) } />
                 </Col>
               </Row>
+            </Fieldset>
+            <Fieldset disabled={ loading }>
               <Row>
                 <Col xs="12" md="6">
                   <Input label="Department" error={ errors.department?.message } { ...register('department', { required: true }) } />
@@ -142,6 +158,8 @@ const AdministrationPage = (): JSX.Element => {
                   </Select>
                 </Col>
               </Row>
+            </Fieldset>
+            <Fieldset disabled={ loading }>
               <Row>
                 <Col xs="12" md="6">
                   <Checkboxes>
@@ -152,6 +170,8 @@ const AdministrationPage = (): JSX.Element => {
                   </Checkboxes>
                 </Col>
               </Row>
+            </Fieldset>
+            <Fieldset disabled={ loading }>
               <Row>
                 <Col sm="12">
                   <Button className="float-end">Create user</Button>
@@ -159,6 +179,35 @@ const AdministrationPage = (): JSX.Element => {
               </Row>
             </Fieldset>
           </Form>
+          <Modal show={ showModal } closeButton onHide={ (() => setShowModal(false)) }>
+            <Modal.Header closeButton>
+              <Modal.Title>User created</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <SummaryList>
+                <SummaryList.Row>
+                  <SummaryList.Key>First name</SummaryList.Key>
+                  <SummaryList.Value>{data?.firstName}</SummaryList.Value>
+                </SummaryList.Row>
+                <SummaryList.Row>
+                  <SummaryList.Key>Last name</SummaryList.Key>
+                  <SummaryList.Value>{data?.lastName}</SummaryList.Value>
+                </SummaryList.Row>
+                <SummaryList.Row>
+                  <SummaryList.Key>Username</SummaryList.Key>
+                  <SummaryList.Value>{data?.username}</SummaryList.Value>
+                </SummaryList.Row>
+                <SummaryList.Row>
+                  <SummaryList.Key>Password</SummaryList.Key>
+                  <SummaryList.Value>Hidden</SummaryList.Value>
+                </SummaryList.Row>
+                <SummaryList.Row>
+                  <SummaryList.Key>Department</SummaryList.Key>
+                  <SummaryList.Value>{data?.department}</SummaryList.Value>
+                </SummaryList.Row>
+              </SummaryList>
+            </Modal.Body>
+          </Modal>
         </TabPanel>
       </Tabs>
     </Container>
