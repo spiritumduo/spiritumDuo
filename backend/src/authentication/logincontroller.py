@@ -1,3 +1,4 @@
+import json
 import logging
 from base64 import b64encode
 
@@ -86,13 +87,19 @@ class LoginController:
             default_pathway_id=user.default_pathway_id,
         )
 
-        role_query = Role.outerjoin(UserRole).outerjoin(User).select().where(User.id == user.id)
-        logging.warning(role_query)
-
         async with self._context['db'].acquire(reuse=False) as conn:
-            role_query.execution_options(loader=ModelLoader(Role))
-            res = await conn.all(role_query)
-            logging.warning(res)
+            role_query = Role.outerjoin(UserRole)\
+                .outerjoin(User)\
+                .select()\
+                .where(User.id == user.id)\
+                .execution_options(loader=ModelLoader(Role))
+            roles = await conn.all(role_query)
+            role_dicts = []
+            for r in roles:
+                role_dicts.append({
+                    "id": r.id,
+                    "name": r.name
+                })
 
         sessionKey = None
         async with self._context['db'].acquire(reuse=False) as conn:
@@ -132,10 +139,12 @@ class LoginController:
                 "department": sdUser.department,
                 "defaultPathwayId": sdUser.default_pathway_id,
                 "isAdmin": sdUser.isAdmin,
-                "token": str(sessionKey)
+                "token": str(sessionKey),
+                "roles": role_dicts
             },
             "pathways": preparedPathways,
         })
+        logging.warning(res)
 
         signer = itsdangerous.TimestampSigner(
             str(config['SESSION_SECRET_KEY'])
