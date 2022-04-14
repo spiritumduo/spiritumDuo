@@ -12,52 +12,6 @@ from httpx import Response
 
 
 # Feature: Test user REST/GQL operations
-# Scenario: a user should be added
-@pytest.mark.asyncio
-async def test_add_new_user(context):
-    """
-    When: we add a user via the REST endpoint
-    """
-
-    USER_INFO = {
-        "firstName": "Test",
-        "lastName": "User",
-        "department": "Test dummy department",
-        "username": "tdummy",
-        "password": "tdummy",
-        "defaultPathwayId": context.PATHWAY.id
-    }
-
-    create_user_query = await context.client.post(
-        url='/rest/createuser/',
-        json=USER_INFO
-    )
-    assert_that(create_user_query.status_code, equal_to(200))
-    create_user_result = json.loads(create_user_query.text)
-
-    """
-    Then: we add the user's information EXCLUDING their password
-    """
-
-    assert_that(create_user_result['id'], not_none())
-    assert_that(
-        create_user_result['first_name'], equal_to(USER_INFO['firstName'])
-    )
-    assert_that(
-        create_user_result['last_name'], equal_to(USER_INFO['lastName'])
-    )
-    assert_that(
-        create_user_result['department'], equal_to(USER_INFO['department'])
-    )
-    assert_that(
-        create_user_result['username'], equal_to(USER_INFO['username'])
-    )
-    assert_that(
-        create_user_result['default_pathway_id'],
-        equal_to(USER_INFO['defaultPathwayId'])
-    )
-
-
 # Scenario: a user needs to login
 @pytest.mark.asyncio
 async def test_login_user(context):
