@@ -1,8 +1,14 @@
 import json
+import logging
+
 import pytest
-from models import User
+from gino.loader import ModelLoader
+
+from .conftest import UserFixture
+from models import User, Role, UserRole
 from hamcrest import assert_that, equal_to, not_none
 from bcrypt import hashpw, gensalt
+from httpx import Response
 
 
 # Feature: Test user REST/GQL operations
@@ -115,6 +121,17 @@ async def test_login_user(context):
     assert_that(
         login_result['pathways'][0]['name'], equal_to(context.PATHWAY.name)
     )
+
+
+async def test_user_roles_on_login(
+        test_user: UserFixture,
+        login_user: Response,
+):
+    """
+    When a user logs in, they should have their roles
+    """
+    login_payload = json.loads(login_user.text)
+    assert_that(login_payload['user']['roles'][0]['name'], equal_to(test_user.role.name))
 
 
 # Scenario: we need to get a user's information
