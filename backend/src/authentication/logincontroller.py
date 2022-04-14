@@ -1,5 +1,7 @@
 import logging
 from base64 import b64encode
+
+from gino.loader import ModelLoader
 from starlette.responses import JSONResponse
 from models.db import db
 from models import User, Session, Pathway, Role, UserRole
@@ -84,14 +86,13 @@ class LoginController:
             default_pathway_id=user.default_pathway_id,
         )
 
-        role_query = Role.outerjoin(UserRole).outerjoin(User).select()
+        role_query = Role.outerjoin(UserRole).outerjoin(User).select().where(User.id == user.id)
         logging.warning(role_query)
 
         async with self._context['db'].acquire(reuse=False) as conn:
-            roles = await role_query.gino.load(
-                    User.distinct(User.id).load(add_child=Role.distinct(Role.id))
-            ).all()
-            logging.warning(roles)
+            role_query.execution_options(loader=ModelLoader(Role))
+            res = await conn.all(role_query)
+            logging.warning(res)
 
         sessionKey = None
         async with self._context['db'].acquire(reuse=False) as conn:
