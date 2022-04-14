@@ -144,7 +144,6 @@ class LoginController:
             },
             "pathways": preparedPathways,
         })
-        logging.warning(res)
 
         signer = itsdangerous.TimestampSigner(
             str(config['SESSION_SECRET_KEY'])
