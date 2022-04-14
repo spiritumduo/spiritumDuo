@@ -7,3 +7,5 @@ from .DecisionPoint import DecisionPoint
 from .Session import Session
 from .Milestone import Milestone
 from .MilestoneType import MilestoneType
+from .Role import Role
+from .UserRole import UserRole

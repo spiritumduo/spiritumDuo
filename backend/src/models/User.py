@@ -19,3 +19,4 @@ class User(db.Model):
     default_pathway_id = db.Column(
         db.Integer(), db.ForeignKey('tbl_pathway.id'), nullable=False
     )
+

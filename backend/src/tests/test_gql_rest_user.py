@@ -1,57 +1,17 @@
 import json
+import logging
+
 import pytest
-from models import User
+from gino.loader import ModelLoader
+
+from .conftest import UserFixture
+from models import User, Role, UserRole
 from hamcrest import assert_that, equal_to, not_none
 from bcrypt import hashpw, gensalt
+from httpx import Response
 
 
 # Feature: Test user REST/GQL operations
-# Scenario: a user should be added
-@pytest.mark.asyncio
-async def test_add_new_user(context):
-    """
-    When: we add a user via the REST endpoint
-    """
-
-    USER_INFO = {
-        "firstName": "Test",
-        "lastName": "User",
-        "department": "Test dummy department",
-        "username": "tdummy",
-        "password": "tdummy",
-        "defaultPathwayId": context.PATHWAY.id
-    }
-
-    create_user_query = await context.client.post(
-        url='/rest/createuser/',
-        json=USER_INFO
-    )
-    assert_that(create_user_query.status_code, equal_to(200))
-    create_user_result = json.loads(create_user_query.text)
-
-    """
-    Then: we add the user's information EXCLUDING their password
-    """
-
-    assert_that(create_user_result['id'], not_none())
-    assert_that(
-        create_user_result['first_name'], equal_to(USER_INFO['firstName'])
-    )
-    assert_that(
-        create_user_result['last_name'], equal_to(USER_INFO['lastName'])
-    )
-    assert_that(
-        create_user_result['department'], equal_to(USER_INFO['department'])
-    )
-    assert_that(
-        create_user_result['username'], equal_to(USER_INFO['username'])
-    )
-    assert_that(
-        create_user_result['default_pathway_id'],
-        equal_to(USER_INFO['defaultPathwayId'])
-    )
-
-
 # Scenario: a user needs to login
 @pytest.mark.asyncio
 async def test_login_user(context):
@@ -115,6 +75,17 @@ async def test_login_user(context):
     assert_that(
         login_result['pathways'][0]['name'], equal_to(context.PATHWAY.name)
     )
+
+
+async def test_user_roles_on_login(
+        test_user: UserFixture,
+        login_user: Response,
+):
+    """
+    When a user logs in, they should have their roles
+    """
+    login_payload = json.loads(login_user.text)
+    assert_that(login_payload['user']['roles'][0]['name'], equal_to(test_user.role.name))
 
 
 # Scenario: we need to get a user's information

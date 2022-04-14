@@ -1,7 +1,11 @@
+import json
+import logging
 from base64 import b64encode
+
+from gino.loader import ModelLoader
 from starlette.responses import JSONResponse
 from models.db import db
-from models import User, Session, Pathway
+from models import User, Session, Pathway, Role, UserRole
 from starlette.requests import Request
 from bcrypt import checkpw
 from random import getrandbits
@@ -80,8 +84,22 @@ class LoginController:
             firstName=user.first_name,
             lastName=user.last_name,
             department=user.department,
-            default_pathway_id=user.default_pathway_id
+            default_pathway_id=user.default_pathway_id,
         )
+
+        async with self._context['db'].acquire(reuse=False) as conn:
+            role_query = Role.outerjoin(UserRole)\
+                .outerjoin(User)\
+                .select()\
+                .where(User.id == user.id)\
+                .execution_options(loader=ModelLoader(Role))
+            roles = await conn.all(role_query)
+            role_dicts = []
+            for r in roles:
+                role_dicts.append({
+                    "id": r.id,
+                    "name": r.name
+                })
 
         sessionKey = None
         async with self._context['db'].acquire(reuse=False) as conn:
@@ -120,7 +138,9 @@ class LoginController:
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
                 "defaultPathwayId": sdUser.default_pathway_id,
-                "token": str(sessionKey)
+                "isAdmin": sdUser.isAdmin,
+                "token": str(sessionKey),
+                "roles": role_dicts
             },
             "pathways": preparedPathways,
         })

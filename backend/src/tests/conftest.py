@@ -1,4 +1,6 @@
 # It's very important this happens first
+import logging
+
 from starlette.config import environ
 environ['TESTING'] = "True"
 
@@ -7,13 +9,13 @@ from gino import GinoConnection
 import dataclasses
 from async_asgi_testclient import TestClient
 from gino_starlette import Gino
-from httpx import AsyncClient
+from httpx import AsyncClient, Response
 import pytest
 import pytest_asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
-from models import User, Pathway, MilestoneType
+from models import User, Pathway, MilestoneType, Role, UserRole
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
@@ -77,14 +79,20 @@ async def test_milestone_type() -> MilestoneType:
     )
 
 
+@pytest.fixture
+async def test_role(db_start_transaction) -> Role:
+    return await Role.create(name="test-role")
+
+
 @dataclasses.dataclass
 class UserFixture:
     user: User
     password: str
+    role: Role
 
 
 @pytest.fixture
-async def test_user(test_pathway, db_start_transaction) -> UserFixture:
+async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role) -> UserFixture:
     user_info = {
         "username": "testUser",
         "password": "testPassword"
@@ -101,13 +109,19 @@ async def test_user(test_pathway, db_start_transaction) -> UserFixture:
         department="Test Department",
         default_pathway_id=pathway.id,
     )
+    await UserRole.create(
+        user_id=user.id,
+        role_id=test_role.id
+    )
     return UserFixture(
         user=user,
-        password=user_info['password']
+        password=user_info['password'],
+        role=test_role
     )
 
+
 @pytest.fixture
-async def login_user(test_user: UserFixture, httpx_test_client):
+async def login_user(test_user: UserFixture, httpx_test_client) -> Response:
     client = httpx_test_client
     user_fixture = test_user
     res = await client.post(

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 // LIBRARIES
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -6,7 +6,8 @@ import { Container } from 'nhsuk-react-components';
 
 // APP
 import { PathwayContext } from 'app/context';
-import Patient from 'types/Patient';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { RootState } from 'app/store';
 
 // COMPONENTS
 import WrappedPatientList from 'components/WrappedPatientList';
@@ -14,9 +15,7 @@ import ModalPatient from 'components/ModalPatient';
 
 // LOCAL IMPORT
 import './homepage.css';
-import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { RootState } from 'app/store';
-import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
+import { setModalPatientHospitalNumber } from './HomePage.slice';
 
 export interface HomePageProps {
   patientsPerPage: number;
