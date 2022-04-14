@@ -1,6 +1,6 @@
 import datetime
 import logging
-from async_asgi_testclient.response import Response
+from httpx import Response
 from hamcrest import assert_that, equal_to
 from ariadne.asgi import (
     GQL_CONNECTION_ACK,
