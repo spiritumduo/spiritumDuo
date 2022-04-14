@@ -92,11 +92,12 @@ class SDAuthentication(AuthenticationBackend):
                         lastName=user.last_name,
                         department=user.department,
                         default_pathway_id=user.default_pathway_id,
-                        isAdmin=user.is_admin
                     )
                     scopes = ["authenticated"]
+                    """
                     if user.is_admin:
                         scopes.append("admin")
+                    """
                     return AuthCredentials(
                         scopes=scopes
                     ), sdUser

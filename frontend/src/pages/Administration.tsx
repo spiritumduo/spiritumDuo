@@ -12,7 +12,6 @@ import User from 'types/Users';
 import { Input } from 'components/nhs-style';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface AdministrationPageProps {
   user?: User
 }
@@ -59,12 +58,11 @@ export function useCreateUserSubmit() {
     }
     setLoading(false);
   }
-  return [loading, error, data, createUser];
+  return { loading, error, data, createUser };
 }
 
-// eslint-disable-next-line arrow-body-style
 const AdministrationPage = ({ user }: AdministrationPageProps): JSX.Element => {
-  const [loading, error, data, createUser] = useCreateUserSubmit();
+  const { loading, error, data, createUser } = useCreateUserSubmit();
 
   const newUserInputSchema = yup.object({
     username: yup.string().required(),

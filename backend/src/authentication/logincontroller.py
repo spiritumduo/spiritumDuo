@@ -1,7 +1,8 @@
+import logging
 from base64 import b64encode
 from starlette.responses import JSONResponse
 from models.db import db
-from models import User, Session, Pathway
+from models import User, Session, Pathway, Role, UserRole
 from starlette.requests import Request
 from bcrypt import checkpw
 from random import getrandbits
@@ -81,8 +82,16 @@ class LoginController:
             lastName=user.last_name,
             department=user.department,
             default_pathway_id=user.default_pathway_id,
-            isAdmin=user.is_admin
         )
+
+        role_query = Role.outerjoin(UserRole).outerjoin(User).select()
+        logging.warning(role_query)
+
+        async with self._context['db'].acquire(reuse=False) as conn:
+            roles = await role_query.gino.load(
+                    User.distinct(User.id).load(add_child=Role.distinct(Role.id))
+            ).all()
+            logging.warning(roles)
 
         sessionKey = None
         async with self._context['db'].acquire(reuse=False) as conn:
