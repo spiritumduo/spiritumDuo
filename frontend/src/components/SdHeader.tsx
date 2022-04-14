@@ -85,7 +85,7 @@ const SdHeader = ({
               <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
             </li>
             {
-              user?.roles.find((r) => r.name === 'admin')
+              user?.roles?.find((r) => r.name === 'admin')
                 ? (
                   <li className="nhsuk-header__navigation-item">
                     <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app/admin">Administration</a>

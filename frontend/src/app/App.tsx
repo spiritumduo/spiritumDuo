@@ -142,6 +142,16 @@ const App = (): JSX.Element => (
         </RequireAuth>
       ) }
     />
+    <Route
+      path="/admin"
+      element={ (
+        <RequireAuth>
+          <PageLayout>
+            <AdministrationPage />
+          </PageLayout>
+        </RequireAuth>
+      ) }
+    />
   </Routes>
 );
 
