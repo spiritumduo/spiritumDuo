@@ -1,4 +1,4 @@
-# Placement Diary
+# Work Log
 
 # Initial Meetup - 14/10
 
