@@ -1,10 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
 import * as stories from './WrappedPatientList.stories';
-import { act } from 'react-dom/test-utils';
 
 const { Default } = composeStories(stories);
 const renderDefault = () => {
@@ -40,15 +40,24 @@ test('It should display the last completed milestone alongside the patient', asy
   await waitFor(() => expect(screen.getAllByText(/third milestone/i).length).toEqual(patientsPerPage));
 });
 
+test('It should display lock icons for locked patients', async () => {
+  renderDefault();
+  await waitFor(() => expect(screen.getByText(/john 1 doe 1/i)).toBeInTheDocument());
+  const lockIcons = screen.getAllByRole('img', { name: /lock icon$/i });
+  expect(lockIcons.length).toBe(2);
+});
+
 test('Tooltip on hover of lock indicator should display Johnny Locker is locking', async () => {
   renderDefault();
   expect(screen.queryByText(/locked by Johnny Locker/i)).toBeNull();
-  await waitFor(() => expect(screen.getByTestId('lock-icon-desktop-0')).toBeInTheDocument());
-  fireEvent.mouseOver(screen.getByTestId('lock-icon-desktop-0'));
-  expect(await screen.findByText(/locked by Johnny Locker/i)).toBeInTheDocument();
+  await waitFor(() => expect(screen.getAllByRole('img', { name: /lock icon/i }).length).toBeGreaterThan(0));
+  const lockIcons = screen.getAllByRole('img', { name: /lock icon$/i });
+  fireEvent.mouseOver(lockIcons[0]);
+  await waitFor(() => expect(screen.getByText(/locked by Johnny Locker/i)).toBeInTheDocument());
 });
 
 test('Patient lists should paginate', async () => {
+  const { click } = userEvent.setup();
   const patients = Default.parameters?.patients;
   const patientsPerPage = Default.args?.patientsToDisplay;
   if (patients && patientsPerPage) {
@@ -58,7 +67,7 @@ test('Patient lists should paginate', async () => {
       name: (t) => /next/i.test(t),
     });
     expect(nextLinks.length).toEqual(1);
-    userEvent.click(nextLinks[0]);
+    click(nextLinks[0]);
     await waitFor(() => {
       const links = screen.getAllByRole('row');
       expect(links.length).toBe(6); // 5 patients on second page in mock, plus header

@@ -36,7 +36,8 @@ class SDUser(BaseUser):
         firstName: str = None,
         lastName: str = None,
         department: str = None,
-        default_pathway_id: int = None
+        default_pathway_id: int = None,
+        isAdmin: bool = None
         # TODO: make all either camelcase or snakecase
     ) -> None:
         self.id = id
@@ -45,6 +46,7 @@ class SDUser(BaseUser):
         self.lastName = lastName
         self.department = department
         self.default_pathway_id = default_pathway_id
+        self.isAdmin = isAdmin
 
     @property
     def is_authenticated(self) -> bool:
@@ -89,10 +91,15 @@ class SDAuthentication(AuthenticationBackend):
                         firstName=user.first_name,
                         lastName=user.last_name,
                         department=user.department,
-                        default_pathway_id=user.default_pathway_id
+                        default_pathway_id=user.default_pathway_id,
                     )
+                    scopes = ["authenticated"]
+                    """
+                    if user.is_admin:
+                        scopes.append("admin")
+                    """
                     return AuthCredentials(
-                        scopes=["authenticated"]
+                        scopes=scopes
                     ), sdUser
             else:
                 return AuthCredentials(scopes=[]), None
@@ -108,15 +115,21 @@ def needsAuthorization(
     def decorator(func: Callable) -> Callable:
         signature = inspect.signature(func)
         info = False
+        request = True
 
         for _, param in enumerate(signature.parameters.values()):
             if param.name == "info":
                 info = True
-        if not info:
+            elif param.name == "request":
+                request = True
+        if not info and not request:
             raise Exception("Info parameter not found")
 
         def wrapper(*args, **kwargs):
-            request = args[1].context['request']
+            if args[1].context:
+                request = args[1].context['request']
+            else:
+                request = args[1]
             if has_required_scope(request, scopes):
                 return func(*args, **kwargs)
             else:

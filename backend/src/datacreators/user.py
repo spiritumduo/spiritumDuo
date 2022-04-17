@@ -8,7 +8,8 @@ async def CreateUser(
     first_name: str = None,
     last_name: str = None,
     department: str = None,
-    default_pathway_id: int = None
+    default_pathway_id: int = None,
+    is_active: bool = None
 ):
     """
     Creates a patient object in local and external databases
@@ -21,6 +22,7 @@ async def CreateUser(
         last_name (str): User's last name
         department (str): User's department
         default_pathway_id (int): ID of pathway user will log onto and see
+        is_active (bool): active status of user
     Returns:
         User: newly created user object (without password)
     """
@@ -32,7 +34,8 @@ async def CreateUser(
             first_name: str = None,
             last_name: str = None,
             department: str = None,
-            default_pathway_id: int = None
+            default_pathway_id: int = None,
+            is_active: bool = None
         ):
             self.id = id
             self.username = username
@@ -40,6 +43,7 @@ async def CreateUser(
             self.last_name = last_name
             self.department = department
             self.default_pathway_id = default_pathway_id
+            self.is_active = is_active
 
     hashedPassword = hashpw(password.encode('utf-8'), gensalt())
     hashedPassword = hashedPassword.decode('utf-8')
@@ -50,7 +54,8 @@ async def CreateUser(
         first_name=first_name,
         last_name=last_name,
         department=department,
-        default_pathway_id=default_pathway_id
+        default_pathway_id=default_pathway_id,
+        is_active=is_active
     )
     return userOutput(
         id=newUser.id,
@@ -58,5 +63,6 @@ async def CreateUser(
         first_name=newUser.first_name,
         last_name=newUser.last_name,
         department=newUser.department,
-        default_pathway_id=newUser.default_pathway_id
+        default_pathway_id=newUser.default_pathway_id,
+        is_active=newUser.is_active
     )

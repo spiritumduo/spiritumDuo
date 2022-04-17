@@ -33,31 +33,16 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS = 100
-NUMBER_OF_PATIENTS_PER_USER = 5
+
+NUMBER_OF_USERS_PER_PATHWAY = 10
+NUMBER_OF_PATHWAYS = 10
+NUMBER_OF_PATIENTS_PER_PATHWAY = 30
 
 
 class RequestPlaceholder(dict):
     """
     This is a test
     """
-
-
-CLINIC_HISTORY = [
-    "Likely right upper lobe lung cancer.",
-    "Proximal large lung cancer. Likely palliative.",
-    "Left lower lobe mass, likely primary lung cancer. Stopped smoking 5 years ago",
-    "Metastatic disease of likely lung origin.",
-    "Left upper lobe collapse secondary to likely lung cancer",
-]
-
-COMORBIDITIES = [
-    "Chronic obstructive pulmonary disease, osteoporosis and a previous cardioversion 2 years ago for atrial fibrillation.",
-    "Hartmann's procedure for lower bowel cancer. Hypertension and type 2 diabetes",
-    "Glaucoma, hysterectomy and fibromyalgia.",
-    "Current smoker (50 pack years) and COPD.",
-    "Previous T4-N0-M0 squamous carcinoma of the lung treated with CHART and chemotherapy 2008. Atrial flutter and on apixaban."
-]
 
 _CONTEXT = {
     "db": db,
@@ -93,7 +78,7 @@ async def clear_existing_data():
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
     await Session.delete.gino.status()
-    await User.delete.where(User.username.like("%user%")).gino.status()
+    await User.delete.where(User.id >= 0).gino.status()
     await Pathway.delete.where(Pathway.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
@@ -168,101 +153,44 @@ async def insert_demo_data():
         )
     }
 
-    selectable_milestone_types: Dict[str, MilestoneType] = {
-        "pet_ct": await MilestoneType.create(
-            name="PET-CT",
-            ref_name="Positron emission tomography with computed tomography (procedure)",
-            is_test_request=True
-        ),
-        "ct_head": await MilestoneType.create(
-            name="CT head - contrast",
-            ref_name="Computed tomography of head with contrast (procedure)",
-            is_test_request=True
-        ),
-        "mri_head": await MilestoneType.create(
-            name="MRI head",
-            ref_name="Magnetic resonance imaging of head (procedure)",
-            is_test_request=True
-        ),
-        "lung_func": await MilestoneType.create(
-            name="Lung function tests",
-            ref_name="Measurement of respiratory function (procedure)",
-            is_test_request=True
-        ),
-        "echo": await MilestoneType.create(
-            name="ECHO",
-            ref_name="Echocardiography (procedure)",
-            is_test_request=True
-        ),
-        "ct_biopsy_thorax": await MilestoneType.create(
-            name="CT guided biopsy thorax",
-            ref_name="Biopsy of thorax using computed tomography guidance (procedure)",
-            is_test_request=True
-        ),
-        "ebus": await MilestoneType.create(
-            name="EBUS",
-            ref_name="Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)",
-            is_test_request=True
-        ),
-        "ecg": await MilestoneType.create(
-            name="ECG",
-            ref_name="Electrocardiogram analysis (qualifier value)",
-            is_test_request=True
-        ),
-        "thoracoscopy": await MilestoneType.create(
-            name="Thoracoscopy",
-            ref_name="Thoracoscopy (procedure)",
-            is_test_request=True
-        ),
-        "bronchoscopy": await MilestoneType.create(
-            name="Bronchoscopy",
-            ref_name="Bronchoscopy (procedure)",
-            is_test_request=True
-        ),
-        "pleural_tap": await MilestoneType.create(
-            name="Pleural tap",
-            ref_name="Thoracentesis (procedure)",
-            is_test_request=True
-        ),
-        "cpet": await MilestoneType.create(
-            name="CPET",
-            ref_name="Cardiopulmonary exercise test (procedure)",
-            is_test_request=True
-        ),
-        "bloods": await MilestoneType.create(
-            name="Bloods",
-            ref_name="Blood test (procedure)",
-            is_test_request=True
-        ),
-    }
-
-    for i in range(1, NUMBER_OF_USERS+1):
+    for pathwayIndex in range(1, NUMBER_OF_PATHWAYS):
         sd_pathway: Pathway = await Pathway.create(
-            name=f"Lung cancer demo {i}"
+            name=f"Lung cancer demo {pathwayIndex}"
         )
         print(f"pathway id {sd_pathway.id} name {sd_pathway.name}")
 
-        sd_password = hashpw(
-            f"22password{i}".encode('utf-8'),
-            gensalt()
-        ).decode('utf-8')
-        sd_user: User = await User.create(
-            id=int(i),
-            username=f"user{i}",
-            password=sd_password,
-            first_name="Demo",
-            last_name=f"User {i}",
-            department="Demo user",
-            default_pathway_id=sd_pathway.id
-        )
-        _CONTEXT['request']['user'] = sd_user
+        for userIndex in range(1, NUMBER_OF_USERS_PER_PATHWAY):
+            unencoded_password = f"22password{pathwayIndex}"
+            sd_password = hashpw(
+                unencoded_password.encode('utf-8'),
+                gensalt()
+            ).decode('utf-8')
+            sd_user: User = await User.create(
+                username=f"demo-{pathwayIndex}-{userIndex}",
+                password=sd_password,
+                first_name="Demo",
+                last_name=f"User {pathwayIndex} {userIndex}",
+                department="Demo user",
+                default_pathway_id=sd_pathway.id
+            )
+            print(f"Creating user (username: {sd_user.username}; password {unencoded_password}")
 
-        print(f"Creating user {sd_user.username}")
+        for i in range(1, NUMBER_OF_PATIENTS_PER_PATHWAY+1):
 
-        for i in range(1, NUMBER_OF_PATIENTS_PER_USER+1):
+            # hospital_number = "fMRN"+str(randint(10000, 99999)) + str(i)
+            # national_number = "fNHS"+str(randint(1000000, 9999999)) + str(i)
 
-            hospital_number = "fMRN"+str(randint(10000, 99999)) + str(i)
-            national_number = "fNHS"+str(randint(1000000, 9999999)) + str(i)
+            hospital_number_prefix = "fMRN"
+            hospital_number = f"{sd_pathway.id}{i}"
+            while len(hospital_number) != 6:
+                hospital_number = str(randint(1,9)) + hospital_number
+            hospital_number = hospital_number_prefix + hospital_number
+
+            national_number_prefix = "fNHS"
+            national_number = f"{sd_pathway.id}{i}"
+            while len(national_number) != 9:
+                national_number = str(randint(1,9)) + national_number
+            national_number = national_number_prefix + national_number
 
             date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
 
@@ -332,202 +260,9 @@ async def insert_demo_data():
                 current_state=MilestoneState.COMPLETED,
                 milestone_type_id=general_milestone_types["ct_chest"].id
             )
-            await asyncio.sleep(0.1)
 
             if isinstance(sd_patient, DataCreatorInputErrors):
                 raise Exception(sd_patient.errorList)
-
-            """
-            Everyone needs
-                Referral
-                CXR
-                CTx
-            """
-
-            if i == 1:
-                """
-                Acknowledged:
-                    Referral
-                    Chest X-ray
-                    CT chest
-                Waiting confirmation:
-                    PET-CT
-                """
-                sd_decisionpoint: DecisionPoint = await DecisionPoint.create(
-                    clinician_id=sd_user.id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_type=DecisionTypes.TRIAGE.value,
-                    clinic_history=CLINIC_HISTORY[i-1],
-                    comorbidities=COMORBIDITIES[i-1]
-                )
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_ref.id).gino.status()
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_cxr.id).gino.status()
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_ctx.id).gino.status()
-
-                tie_testresult_petct: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
-                        type_id=selectable_milestone_types["pet_ct"].id,
-                        current_state=MilestoneState.COMPLETED,
-                        hospital_number=hospital_number
-                    ),
-                    auth_token=SESSION_COOKIE
-                )
-                sd_testresult_petct: Milestone = await Milestone.create(
-                    milestone_type_id=selectable_milestone_types["pet_ct"].id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_point_id=sd_decisionpoint.id,
-                    test_result_reference_id=str(tie_testresult_petct.id),
-                    current_state=MilestoneState.COMPLETED
-                )
-
-            elif i == 2:
-                """
-                Acknowledged:
-                    Referral
-                    Chest X-ray
-                    CT chest
-                Waiting confirmation:
-                    None
-                """
-
-            elif i == 3:
-                """
-                Acknowledged:
-                    Referral
-                    Chest X-ray
-                    CT chest
-                    PET-CT
-                Waiting confirmation:
-                    CT-Bx
-                """
-
-                sd_decisionpoint: DecisionPoint = await DecisionPoint.create(
-                    clinician_id=sd_user.id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_type=DecisionTypes.TRIAGE.value,
-                    clinic_history=CLINIC_HISTORY[i-1],
-                    comorbidities=COMORBIDITIES[i-1]
-                )
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_ref.id).gino.status()
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_cxr.id).gino.status()
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_ctx.id).gino.status()
-
-                tie_testresult_petct: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
-                        type_id=selectable_milestone_types["pet_ct"].id,
-                        current_state=MilestoneState.COMPLETED,
-                        hospital_number=hospital_number
-                    ),
-                    auth_token=SESSION_COOKIE
-                )
-                sd_testresult_petct: Milestone = await Milestone.create(
-                    milestone_type_id=selectable_milestone_types["pet_ct"].id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_point_id=sd_decisionpoint.id,
-                    test_result_reference_id=str(tie_testresult_petct.id),
-                    current_state=MilestoneState.COMPLETED
-                )
-
-                sd_decisionpoint: DecisionPoint = await DecisionPoint.create(
-                    clinician_id=sd_user.id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_type=DecisionTypes.TRIAGE.value,
-                    clinic_history=CLINIC_HISTORY[i-1],
-                    comorbidities=COMORBIDITIES[i-1]
-                )
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_testresult_petct.id).gino.status()
-
-                tie_testresult_ctbx: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
-                        type_id=selectable_milestone_types["ct_biopsy_thorax"].id,
-                        current_state=MilestoneState.COMPLETED,
-                        hospital_number=hospital_number
-                    ),
-                    auth_token=SESSION_COOKIE
-                )
-                sd_testresult_ctbx: Milestone = await Milestone.create(
-                    milestone_type_id=selectable_milestone_types["ct_biopsy_thorax"].id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_point_id=sd_decisionpoint.id,
-                    test_result_reference_id=str(tie_testresult_ctbx.id),
-                    current_state=MilestoneState.COMPLETED
-                )
-
-            elif i == 4:
-                """
-                Acknowledged:
-                    Referral
-                    Chest X-ray
-                    CT chest
-                Waiting confirmation:
-                    PET-CT
-                """
-
-                sd_decisionpoint: DecisionPoint = await DecisionPoint.create(
-                    clinician_id=sd_user.id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_type=DecisionTypes.TRIAGE.value,
-                    clinic_history=CLINIC_HISTORY[i-1],
-                    comorbidities=COMORBIDITIES[i-1]
-                )
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_ref.id).gino.status()
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_cxr.id).gino.status()
-
-                await Milestone.update.values(
-                    fwd_decision_point_id=sd_decisionpoint.id
-                ).where(Milestone.id == sd_milestone_ctx.id).gino.status()
-
-                tie_testresult_petct: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
-                        type_id=selectable_milestone_types["pet_ct"].id,
-                        current_state=MilestoneState.COMPLETED,
-                        hospital_number=hospital_number
-                    ),
-                    auth_token=SESSION_COOKIE
-                )
-                sd_testresult_petct: Milestone = await Milestone.create(
-                    milestone_type_id=selectable_milestone_types["pet_ct"].id,
-                    on_pathway_id=sd_onpathway.id,
-                    decision_point_id=sd_decisionpoint.id,
-                    test_result_reference_id=str(tie_testresult_petct.id),
-                    current_state=MilestoneState.COMPLETED
-                )
-
-            elif i == 5:
-                """
-                Acknowledged:
-                    None
-                Waiting confirmation:
-                    Referral
-                    Chest X-ray
-                    CT chest
-                """
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))

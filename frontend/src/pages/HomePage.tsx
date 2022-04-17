@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 // LIBRARIES
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -6,7 +6,8 @@ import { Container } from 'nhsuk-react-components';
 
 // APP
 import { PathwayContext } from 'app/context';
-import Patient from 'types/Patient';
+import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { RootState } from 'app/store';
 
 // COMPONENTS
 import WrappedPatientList from 'components/WrappedPatientList';
@@ -14,6 +15,7 @@ import ModalPatient from 'components/ModalPatient';
 
 // LOCAL IMPORT
 import './homepage.css';
+import { setModalPatientHospitalNumber } from './HomePage.slice';
 
 export interface HomePageProps {
   patientsPerPage: number;
@@ -21,11 +23,14 @@ export interface HomePageProps {
 
 const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
-  const [patient, setPatient] = useState<Patient | null>(null);
   const pathwayId = currentPathwayId as number;
+  const dispatch = useAppDispatch();
+  const modalPatientNumber = useAppSelector(
+    (state: RootState) => state.homePage.modalPatientHospitalNumber,
+  );
 
   const modalCloseCallback = () => {
-    setPatient(null);
+    dispatch(setModalPatientHospitalNumber(undefined));
   };
 
   return (
@@ -42,7 +47,6 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               patientsToDisplay={ patientsPerPage }
               outstanding
               underCareOf
-              patientOnClick={ setPatient }
             />
           </TabPanel>
           <TabPanel>
@@ -52,14 +56,19 @@ const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
               outstanding={ false }
               underCareOf={ false }
               includeDischarged
-              patientOnClick={ setPatient }
             />
           </TabPanel>
         </Tabs>
       </Container>
       {
-        patient
-          ? <ModalPatient patient={ patient } closeCallback={ modalCloseCallback } lock />
+        modalPatientNumber
+          ? (
+            <ModalPatient
+              hospitalNumber={ modalPatientNumber }
+              closeCallback={ modalCloseCallback }
+              lock
+            />
+          )
           : false
       }
     </>
