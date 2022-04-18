@@ -112,7 +112,8 @@ async def insert_user():
             first_name,
             last_name,
             department,
-            default_pathway_id
+            default_pathway_id,
+            True
         )
         print("User inserted")
         print("Username: " + user.username)
