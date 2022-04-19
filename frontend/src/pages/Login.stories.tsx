@@ -54,7 +54,6 @@ const successfulLoginMock: LoginPayload = {
     roles: [],
     defaultPathwayId: 1,
     token: 'authToken',
-    isAdmin: false,
   },
   pathways: [
     {

@@ -94,7 +94,6 @@ if (localStorageUserJson) {
     sanitisedUser.roles = localStorageUser.roles;
     sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId;
     sanitisedUser.token = localStorageUser.token;
-    sanitisedUser.isAdmin = localStorageUser.isAdmin;
   } catch (err) {
     sanitisedUser = null;
   }

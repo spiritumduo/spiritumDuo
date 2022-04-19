@@ -9,7 +9,6 @@ interface User {
     lastAccess?: Date;
     roles: Role[];
     token: string;
-    isAdmin: boolean;
 }
 
 export default User;
