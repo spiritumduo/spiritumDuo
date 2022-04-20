@@ -6,10 +6,36 @@ from SdTypes import MilestoneState
 from hamcrest import assert_that, equal_to, not_none
 
 
+@pytest.fixture
+def milestone_create_mutation() -> str:
+    return """
+        mutation importMilestone(
+            $onPathwayId: ID!
+            $milestoneTypeId: ID!
+            $description: String!
+            $currentState: MilestoneState!
+        ){
+            importMilestone(input: {
+                onPathwayId: $onPathwayId,
+                milestoneTypeId: $milestoneTypeId,
+                description: $description,
+                currentState: $currentState
+            }){
+                milestone{
+                    id
+                }
+                userErrors{
+                    field
+                    message
+                }
+            }
+        }
+    """
+
 # Feature: testing importMilestone
 # Scenario: a milestone has to be imported onto a patient;s record
 @pytest.mark.asyncio
-async def test_import_milestone(context):
+async def test_import_milestone(context, milestone_create_mutation, milestone_create_permission):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have a patient on a pathway
@@ -44,29 +70,7 @@ async def test_import_milestone(context):
     import_milestone_mutation = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                mutation importMilestone(
-                    $onPathwayId: ID!
-                    $milestoneTypeId: ID!
-                    $description: String!
-                    $currentState: MilestoneState!
-                ){
-                    importMilestone(input: {
-                        onPathwayId: $onPathwayId,
-                        milestoneTypeId: $milestoneTypeId,
-                        description: $description,
-                        currentState: $currentState
-                    }){
-                        milestone{
-                            id
-                        }
-                        userErrors{
-                            field
-                            message
-                        }
-                    }
-                }
-            """,
+            "query": milestone_create_mutation,
             "variables": {
                 "onPathwayId": ONPATHWAY.id,
                 "milestoneTypeId": context.MILESTONE_TYPE.id,
@@ -85,3 +89,17 @@ async def test_import_milestone(context):
     Then: we get the milestone information back
     """
     assert_that(import_milestone_mutation['milestone']['id'], not_none())
+
+
+async def test_user_lacks_permission(test_user, test_client, milestone_create_permission, milestone_create_mutation):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=milestone_create_mutation
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

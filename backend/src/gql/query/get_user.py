@@ -1,10 +1,11 @@
 from .query_type import query
 from dataloaders import UserByIdLoader, UserByUsernameLoader
 from authentication.authentication import needsAuthorization
+from SdTypes import Permissions
 
 
-@needsAuthorization(["authenticated"])
 @query.field("getUser")
+@needsAuthorization([Permissions.USER_READ])
 async def resolve_get_user(
     obj=None,
     info=None,

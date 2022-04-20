@@ -3,10 +3,11 @@ from models.OnPathway import OnPathway
 from models.Patient import Patient
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
+from SdTypes import Permissions
 
 
 @query.field("getPatientsOnPathway")
-@needsAuthorization(["authenticated"])
+@needsAuthorization([Permissions.PATIENT_READ, Permissions.ON_PATHWAY_READ])
 async def resolve_get_patients_on_pathway(
     obj=None,
     info: GraphQLResolveInfo = None,

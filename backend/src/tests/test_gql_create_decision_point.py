@@ -2,15 +2,89 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient, OnPathway, DecisionPoint, Milestone
+from models import Patient, OnPathway, DecisionPoint, Milestone, RolePermission
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
-from SdTypes import DecisionTypes, MilestoneState
+from SdTypes import DecisionTypes, MilestoneState, Permissions
 from hamcrest import assert_that, equal_to, not_none, none
+
+
+@pytest.fixture
+def decision_query() -> str:
+    return """
+        mutation createDecisionPoint(
+            $onPathwayId: ID!
+            $decisionType: DecisionType!
+            $clinicHistory: String!
+            $comorbidities: String!
+            $milestoneOneId: ID!
+            $milestoneResolutionId: ID!
+        ){
+            createDecisionPoint(input: {
+                onPathwayId: $onPathwayId,
+                decisionType: $decisionType,
+                clinicHistory: $clinicHistory,
+                comorbidities: $comorbidities,
+                milestoneRequests:[
+                    {
+                        milestoneTypeId: $milestoneOneId
+                    }
+                ]
+                milestoneResolutions:[
+                    $milestoneResolutionId
+                ]
+            })
+            {
+                decisionPoint {
+                    id
+                    clinician{
+                        id
+                        username
+                    }
+                    onPathway{
+                        id
+                        pathway{
+                            id
+                            name
+                        }
+                    }
+                    milestones{
+                        id
+                        milestoneType{
+                            id
+                            name
+                        }
+                        testResult{
+                            id
+                            description
+                            currentState
+                            addedAt
+                            updatedAt
+                            typeReferenceName
+                        }
+                    }
+                    milestoneResolutions{
+                        id
+                    }
+                    decisionType
+                    clinicHistory
+                    comorbidities
+                    addedAt
+                    updatedAt
+                }
+                userErrors {
+                    message
+                    field
+                }
+            }
+        }
+    """
 
 
 # Scenario: a patient needs a decision point added and milestones requested
 @pytest.mark.asyncio
-async def test_add_decision_point_to_patient(context):
+async def test_add_decision_point_to_patient(
+        context, decision_create_permission, milestone_create_permission, decision_query
+):
     """
     When: we run the GraphQL mutation to add the decision point and milestones
     """
@@ -105,74 +179,7 @@ async def test_add_decision_point_to_patient(context):
     create_decision_point_result = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                mutation createDecisionPoint(
-                    $onPathwayId: ID!
-                    $decisionType: DecisionType!
-                    $clinicHistory: String!
-                    $comorbidities: String!
-                    $milestoneOneId: ID!
-                    $milestoneResolutionId: ID!
-                ){
-                    createDecisionPoint(input: {
-                        onPathwayId: $onPathwayId,
-                        decisionType: $decisionType,
-                        clinicHistory: $clinicHistory,
-                        comorbidities: $comorbidities,
-                        milestoneRequests:[
-                            {
-                                milestoneTypeId: $milestoneOneId
-                            }
-                        ]
-                        milestoneResolutions:[
-                            $milestoneResolutionId
-                        ]
-                    })
-                    {
-                        decisionPoint {
-                            id
-                            clinician{
-                                id
-                                username
-                            }
-                            onPathway{
-                                id
-                                pathway{
-                                    id
-                                    name
-                                }
-                            }
-                            milestones{
-                                id
-                                milestoneType{
-                                    id
-                                    name
-                                }
-                                testResult{
-                                    id
-                                    description
-                                    currentState
-                                    addedAt
-                                    updatedAt
-                                    typeReferenceName
-                                }
-                            }
-                            milestoneResolutions{
-                                id
-                            }
-                            decisionType
-                            clinicHistory
-                            comorbidities
-                            addedAt
-                            updatedAt
-                        }
-                        userErrors {
-                            message
-                            field
-                        }
-                    }
-                }
-            """,
+            "query": decision_query,
             "variables": {
                 "onPathwayId": ONPATHWAY.id,
                 "decisionType": DECISION_POINT.decision_type.value,
@@ -237,3 +244,19 @@ async def test_add_decision_point_to_patient(context):
     assert_that(decision_point['milestoneResolutions'], not_none())
     assert_that(decision_point['milestoneResolutions'][0], not_none())
     assert_that(decision_point['milestoneResolutions'][0]['id'], not_none())
+
+
+async def test_user_lacks_permission(test_user, test_client, decision_query):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json={
+            "query": decision_query
+        }
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

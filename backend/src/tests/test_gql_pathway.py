@@ -4,10 +4,31 @@ from models import Pathway
 from hamcrest import assert_that, equal_to, not_none
 
 
+@pytest.fixture
+def pathway_create_mutation() -> str:
+    return """
+        mutation createPathway(
+            $name: String!
+        ){
+            createPathway(input: {
+                name: $name
+            }){
+                pathway{
+                    id
+                    name
+                }
+                userErrors{
+                    field
+                    message
+                }
+            }
+        }
+    """
+
+
 # Feature: Test createPathway GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
-@pytest.mark.asyncio
-async def test_add_new_pathway(context):
+async def test_add_new_pathway(context, pathway_create_permission, pathway_create_mutation):
     """
     When: we create a pathway
     """
@@ -18,24 +39,7 @@ async def test_add_new_pathway(context):
     create_pathway_query = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                mutation createPathway(
-                    $name: String!
-                ){
-                    createPathway(input: {
-                        name: $name
-                    }){
-                        pathway{
-                            id
-                            name
-                        }
-                        userErrors{
-                            field
-                            message
-                        }
-                    }
-                }
-            """,
+            "query": pathway_create_mutation,
             "variables": {
                 "name": PATHWAY.name
             }
@@ -64,8 +68,7 @@ async def test_add_new_pathway(context):
     )
 
 
-@pytest.mark.asyncio
-async def test_get_pathway(context):
+async def test_get_pathway(context, pathway_read_permission):
     """
     Given: a pathway exists
     """
@@ -112,7 +115,7 @@ async def test_get_pathway(context):
 # Feature: Test getPathways GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
 @pytest.mark.asyncio
-async def test_get_pathways(context):
+async def test_get_pathways(context, pathway_read_permission):
     """
     Given: MilestoneTypes are in the system
     """
@@ -157,3 +160,17 @@ async def test_get_pathways(context):
     assert_that(get_pathway_query[1]['name'], equal_to(PATHWAY_ONE.name))
     assert_that(get_pathway_query[2]['id'], not_none())
     assert_that(get_pathway_query[2]['name'], equal_to(PATHWAY_TWO.name))
+
+
+async def test_user_lacks_permission(test_user, test_client, pathway_create_mutation):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=pathway_create_mutation
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

@@ -1,13 +1,15 @@
 from ariadne.asgi import GraphQL
+
+from SdTypes import Permissions
 from authentication.authentication import needsAuthenticated
 from .schema import schema
 import logging
-from models import db, Session, User
+from models import db, Session, User, RolePermission, Role, UserRole
 from datetime import datetime
 from starlette.requests import Request
 from starlette.websockets import HTTPConnection, WebSocket
 
-from typing import Any
+from typing import Any, List
 from ariadne.asgi import WebSocketConnectionError
 from pydantic import BaseModel
 
@@ -16,6 +18,7 @@ log = logging.getLogger("uvicorn")
 
 class SdWebsocketConnectionParams(BaseModel):
     token: str
+
 
 async def ws_on_connect(
         websocket: WebSocket = None, params: SdWebsocketConnectionParams = None
@@ -42,6 +45,15 @@ async def ws_on_connect(
         if user is None:
             raise WebSocketConnectionError("Invalid token")
 
+        query = RolePermission.outerjoin(Role) \
+            .outerjoin(UserRole) \
+            .outerjoin(User) \
+            .select() \
+            .where(User.id == user.id)
+        permissions: List[RolePermission] = await conn.all(query)
+        scopes = [Permissions.AUTHENTICATED]
+        for p in permissions:
+            scopes.append(p.permission)
         websocket.scope["user"] = user
 
 

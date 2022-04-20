@@ -6,10 +6,11 @@ from SdTypes import MilestoneState
 from .pagination import make_connection
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
+from SdTypes import Permissions
 
 
-@needsAuthorization(["authenticated"])
 @query.field("getPatientOnPathwayConnection")
+@needsAuthorization([Permissions.PATIENT_READ, Permissions.ON_PATHWAY_READ])
 async def get_patient_connection(
         obj=None, info: GraphQLResolveInfo = None, pathwayId=None,
         awaitingDecisionType=None, includeDischarged=False,

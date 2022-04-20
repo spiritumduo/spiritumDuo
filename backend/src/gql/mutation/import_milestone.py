@@ -5,10 +5,11 @@ from datacreators import ImportMilestone
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from dependency_injector.wiring import Provide, inject
+from SdTypes import Permissions
 
 
 @mutation.field("importMilestone")
-@needsAuthorization(["authenticated"])
+@needsAuthorization([Permissions.MILESTONE_CREATE])
 @inject
 async def resolver(
     obj=None,

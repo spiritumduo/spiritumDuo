@@ -8,9 +8,110 @@ from SdTypes import DecisionTypes, MilestoneState
 from hamcrest import assert_that, equal_to, not_none
 
 
+@pytest.fixture
+def get_patient_query() -> str:
+    return """
+        query getPatient($hospitalNumber:String!){
+            getPatient(hospitalNumber:$hospitalNumber){
+                id
+                firstName
+                lastName
+                hospitalNumber
+                nationalNumber
+                dateOfBirth
+                communicationMethod
+                onPathways{
+                    id
+                    patient{
+                        id
+                        firstName
+                        lastName
+                        hospitalNumber
+                        nationalNumber
+                        dateOfBirth
+                        communicationMethod
+                    }
+                    pathway{
+                        id
+                        name
+                    }
+                    isDischarged
+                    awaitingDecisionType
+                    addedAt
+                    updatedAt
+                    referredAt
+                    underCareOf {
+                        id
+                        username
+                        firstName
+                        lastName
+                    }
+                    milestones{
+                        id
+                        milestoneType{
+                            id
+                            name
+                        }
+                        onPathway{
+                            id
+                        }
+                        testResult{
+                            id
+                            description
+                            currentState
+                            addedAt
+                            updatedAt
+                            typeReferenceName
+                        }
+                        addedAt
+                        updatedAt
+                        currentState
+                    }
+                    decisionPoints {
+                        id
+                        clinician{
+                            id
+                            username
+                        }
+                        onPathway{
+                            id
+                            pathway{
+                                id
+                                name
+                            }
+                        }
+                        milestones{
+                            id
+                            milestoneType{
+                                id
+                                name
+                            }
+                            testResult{
+                                id
+                                description
+                                currentState
+                                addedAt
+                                updatedAt
+                                typeReferenceName
+                            }
+                        }
+                        milestoneResolutions{
+                            id
+                        }
+                        decisionType
+                        clinicHistory
+                        comorbidities
+                        addedAt
+                        updatedAt
+                    }
+                }
+            }
+        }
+    """
+
 # Scenario: a patient's record is searched for
 @pytest.mark.asyncio
-async def test_search_for_patient(context):
+async def test_search_for_patient(context, patient_read_permission, get_patient_query):
     """
     When: we run the GraphQL mutation to search for a patient
     """
@@ -110,104 +211,7 @@ async def test_search_for_patient(context):
     get_patient_result = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                query getPatient($hospitalNumber:String!){
-                    getPatient(hospitalNumber:$hospitalNumber){
-                        id
-                        firstName
-                        lastName
-                        hospitalNumber
-                        nationalNumber
-                        dateOfBirth
-                        communicationMethod
-                        onPathways{
-                            id
-                            patient{
-                                id
-                                firstName
-                                lastName
-                                hospitalNumber
-                                nationalNumber
-                                dateOfBirth
-                                communicationMethod
-                            }
-                            pathway{
-                                id
-                                name
-                            }
-                            isDischarged
-                            awaitingDecisionType
-                            addedAt
-                            updatedAt
-                            referredAt
-                            underCareOf {
-                                id
-                                username
-                                firstName
-                                lastName
-                            }
-                            milestones{
-                                id
-                                milestoneType{
-                                    id
-                                    name
-                                }
-                                onPathway{
-                                    id
-                                }
-                                testResult{
-                                    id
-                                    description
-                                    currentState
-                                    addedAt
-                                    updatedAt
-                                    typeReferenceName
-                                }
-                                addedAt
-                                updatedAt
-                                currentState
-                            }
-                            decisionPoints {
-                                id
-                                clinician{
-                                    id
-                                    username
-                                }
-                                onPathway{
-                                    id
-                                    pathway{
-                                        id
-                                        name
-                                    }
-                                }
-                                milestones{
-                                    id
-                                    milestoneType{
-                                        id
-                                        name
-                                    }
-                                    testResult{
-                                        id
-                                        description
-                                        currentState
-                                        addedAt
-                                        updatedAt
-                                        typeReferenceName
-                                    }
-                                }
-                                milestoneResolutions{
-                                    id
-                                }
-                                decisionType
-                                clinicHistory
-                                comorbidities
-                                addedAt
-                                updatedAt
-                            }
-                        }
-                    }
-                }
-            """,
+            "query": get_patient_query,
             "variables": {
                 "hospitalNumber": PATIENT.hospital_number,
             }
@@ -372,3 +376,17 @@ async def test_search_for_patient(context):
         on_pathway['decisionPoints'][0]['milestoneResolutions'][0]['id'],
         equal_to(str(MILESTONE_ONE.id))
     )
+
+
+async def test_user_lacks_permission(test_user, test_client, get_patient_query):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=get_patient_query
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

@@ -2,16 +2,97 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient
+from models import Patient, RolePermission
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, MilestoneState
 from hamcrest import assert_that, equal_to, not_none, none
+from SdTypes import Permissions
 
+
+
+
+@pytest.fixture
+def patient_create_query() -> str:
+    return """
+        mutation createPatient(
+            $firstName: String!
+            $lastName: String!
+            $hospitalNumber: String!
+            $nationalNumber: String!
+            $dateOfBirth: Date!
+            $pathwayId: ID!
+            $milestoneTypeId: ID!
+        ){
+            createPatient(input: {
+                firstName: $firstName,
+                lastName: $lastName,
+                hospitalNumber: $hospitalNumber,
+                nationalNumber: $nationalNumber,
+                dateOfBirth: $dateOfBirth,
+                pathwayId: $pathwayId,
+                milestones: [
+                    {
+                        milestoneTypeId: $milestoneTypeId,
+                        currentState: COMPLETED
+                    }
+                ]
+            }){
+                patient{
+                    id
+                    firstName
+                    lastName
+                    hospitalNumber
+                    nationalNumber
+                    dateOfBirth
+                    onPathways{
+                        id
+                        patient{
+                            id
+                        }
+                        pathway{
+                            id
+                            name
+                        }
+                        isDischarged
+                        awaitingDecisionType
+                        addedAt
+                        updatedAt
+                        referredAt
+                        decisionPoints{
+                            id
+                        }
+                        underCareOf{
+                            id
+                        }
+                        milestones{
+                            id
+                            milestoneType{
+                                id
+                                name
+                            }
+                            testResult{
+                                id
+                                description
+                                currentState
+                                addedAt
+                                updatedAt
+                                typeReferenceName
+                            }
+                        }
+                    }
+                }
+                userErrors{
+                    field
+                    message
+                }
+            }
+        }
+    """
 
 # Feature: GraphQL patient operations
 # Scenario: a new patient needs to be added into the system
 @pytest.mark.asyncio
-async def test_add_new_patient_to_system(context):
+async def test_add_new_patient_to_system(context, patient_create_permission, patient_create_query):
     """
     When: we run the GraphQL mutation to add the patient onto the pathway
     """
@@ -79,81 +160,7 @@ async def test_add_new_patient_to_system(context):
     create_patient_result = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                mutation createPatient(
-                    $firstName: String!
-                    $lastName: String!
-                    $hospitalNumber: String!
-                    $nationalNumber: String!
-                    $dateOfBirth: Date!
-                    $pathwayId: ID!
-                    $milestoneTypeId: ID!
-                ){
-                    createPatient(input: {
-                        firstName: $firstName,
-                        lastName: $lastName,
-                        hospitalNumber: $hospitalNumber,
-                        nationalNumber: $nationalNumber,
-                        dateOfBirth: $dateOfBirth,
-                        pathwayId: $pathwayId,
-                        milestones: [
-                            {
-                                milestoneTypeId: $milestoneTypeId,
-                                currentState: COMPLETED
-                            }
-                        ]
-                    }){
-                        patient{
-                            id
-                            firstName
-                            lastName
-                            hospitalNumber
-                            nationalNumber
-                            dateOfBirth
-                            onPathways{
-                                id
-                                patient{
-                                    id
-                                }
-                                pathway{
-                                    id
-                                    name
-                                }
-                                isDischarged
-                                awaitingDecisionType
-                                addedAt
-                                updatedAt
-                                referredAt
-                                decisionPoints{
-                                    id
-                                }
-                                underCareOf{
-                                    id
-                                }
-                                milestones{
-                                    id
-                                    milestoneType{
-                                        id
-                                        name
-                                    }
-                                    testResult{
-                                        id
-                                        description
-                                        currentState
-                                        addedAt
-                                        updatedAt
-                                        typeReferenceName
-                                    }
-                                }
-                            }
-                        }
-                        userErrors{
-                            field
-                            message
-                        }
-                    }
-                }
-            """,
+            "query": patient_create_query,
             "variables": {
                 "firstName": PATIENT_IE.first_name,
                 "lastName": PATIENT_IE.last_name,
@@ -264,3 +271,19 @@ async def test_add_new_patient_to_system(context):
     context.patient_record = patient_record  # save entire record for future
     PATIENT_IE.id = patient_record['id']
     PATIENT_IE.onPathwayId = patient_record['onPathways'][0]['id']
+
+
+async def test_user_lacks_permission(test_user, test_client, patient_create_query):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json={
+            "query": patient_create_query
+        }
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

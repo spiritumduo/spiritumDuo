@@ -2,10 +2,11 @@ from .query_type import query
 from dataloaders import PatientByIdLoader, PatientByHospitalNumberLoader
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
+from SdTypes import Permissions
 
 
 @query.field("getPatient")
-@needsAuthorization(["authenticated"])
+@needsAuthorization([Permissions.PATIENT_READ])
 async def resolve_get_patient(
     obj=None,
     info: GraphQLResolveInfo = None,

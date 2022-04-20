@@ -1,13 +1,30 @@
 import json
 import pytest
-from models import MilestoneType
+from models import MilestoneType, RolePermission
+from SdTypes import Permissions
 from hamcrest import assert_that, equal_to, has_entries, has_items
+
+
+@pytest.fixture
+async def milestone_query() -> dict:
+    return {
+            "query": (
+                """query getMilestoneTypes {
+                    getMilestoneTypes {
+                        id
+                        name
+                        refName
+                    }
+                }"""
+            )
+        }
+
 
 
 # Feature: Test get milestone types
 # Scenario: the GraphQL query for getMilestoneTypes is executed
 @pytest.mark.asyncio
-async def test_get_milestone_types(context):
+async def test_get_milestone_types(context, milestone_query, milestone_type_read_permission):
     """
     Given: MilestoneTypes are in the system
     """
@@ -29,17 +46,7 @@ async def test_get_milestone_types(context):
 
     res = await context.client.post(
         url="graphql",
-        json={
-            "query": (
-                """query getMilestoneTypes {
-                    getMilestoneTypes {
-                        id
-                        name
-                        refName
-                    }
-                }"""
-            )
-        }
+        json=milestone_query
     )
 
     assert_that(res.status_code, equal_to(200))
@@ -54,3 +61,17 @@ async def test_get_milestone_types(context):
             context.received_milestone_types,
             has_items(has_entries(mst))
         )
+
+
+async def test_user_lacks_permission(test_user, test_client, milestone_query):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=milestone_query
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

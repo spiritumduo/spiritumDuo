@@ -7,10 +7,11 @@ from graphql.type import GraphQLResolveInfo
 from datetime import datetime, timedelta
 from config import config
 from common import DataCreatorInputErrors
+from SdTypes import Permissions
 
 
 @mutation.field("lockOnPathway")
-@needsAuthorization(["authenticated"])
+@needsAuthorization([Permissions.ON_PATHWAY_UPDATE, Permissions.ON_PATHWAY_READ])
 @inject
 async def resolve_lock_on_pathway(
     obj: OnPathway = None,

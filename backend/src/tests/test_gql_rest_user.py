@@ -11,6 +11,25 @@ from bcrypt import hashpw, gensalt
 from httpx import Response
 
 
+@pytest.fixture
+def get_user_query() -> str:
+    return """
+        query getUser($id:ID!){
+            getUser(id:$id){
+                id
+                firstName
+                lastName
+                username
+                lastLogin
+                department
+                defaultPathway{
+                    id
+                    name
+                }
+            }
+        }
+    """
+
 # Feature: Test user REST/GQL operations
 # Scenario: a user needs to login
 @pytest.mark.asyncio
@@ -89,8 +108,7 @@ async def test_user_roles_on_login(
 
 
 # Scenario: we need to get a user's information
-@pytest.mark.asyncio
-async def test_gql_get_user(context):
+async def test_gql_get_user(context, user_read_permission, get_user_query):
     """
     When: we run the gql query for getUser
     """
@@ -117,22 +135,7 @@ async def test_gql_get_user(context):
     get_user_query = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                query getUser($id:ID!){
-                    getUser(id:$id){
-                        id
-                        firstName
-                        lastName
-                        username
-                        lastLogin
-                        department
-                        defaultPathway{
-                            id
-                            name
-                        }
-                    }
-                }
-            """,
+            "query": get_user_query,
             "variables": {
                 "id": USER.id
             }
@@ -163,3 +166,17 @@ async def test_gql_get_user(context):
         get_user_query['defaultPathway']['name'],
         equal_to(str(context.PATHWAY.name))
     )
+
+
+async def test_user_lacks_permission(test_user, test_client, get_user_query):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=get_user_query
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

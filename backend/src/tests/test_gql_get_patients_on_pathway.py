@@ -6,10 +6,26 @@ from trustadapter.trustadapter import Patient_IE
 from hamcrest import assert_that, equal_to, not_, not_none, has_key
 
 
+@pytest.fixture
+def get_patient_on_pathway_query() -> str:
+    return """
+        query getPatientsOnPathway(
+            $pathwayId: ID!,
+        ){
+            getPatientsOnPathway(
+                pathwayId: $pathwayId
+            ){
+                id
+            }
+        }
+    """
+
+
 # Feature: testing getPatientsOnPathway
 # Scenario: the getPatientsOnPathway function is called
-@pytest.mark.asyncio
-async def test_get_patients_on_pathway(context):
+async def test_get_patients_on_pathway(
+        context, patient_read_permission, on_pathway_read_permission, get_patient_on_pathway_query
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have patients on a pathway
@@ -96,17 +112,7 @@ async def test_get_patients_on_pathway(context):
     get_patients_on_pathway_result = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                query getPatientsOnPathway(
-                    $pathwayId: ID!,
-                ){
-                    getPatientsOnPathway(
-                        pathwayId: $pathwayId
-                    ){
-                        id
-                    }
-                }
-            """,
+            "query": get_patient_on_pathway_query,
             "variables": {
                 "pathwayId": context.PATHWAY.id
             }
@@ -137,7 +143,7 @@ async def test_get_patients_on_pathway(context):
 # Feature: testing getPatientsOnPathwayConnection
 # Scenario: the getPatientsOnPathwayConnection function is called
 @pytest.mark.asyncio
-async def test_get_patient_on_pathway_connection(context):
+async def test_get_patient_on_pathway_connection(context, patient_read_permission, on_pathway_read_permission):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have patients on a pathway
@@ -341,3 +347,17 @@ async def test_get_patient_on_pathway_connection(context):
         patient_list_cursor['edges'],
         not_(has_key(1))
     )
+
+
+async def test_user_lacks_permission(test_user, test_client, get_patient_on_pathway_query):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=get_patient_on_pathway_query
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))

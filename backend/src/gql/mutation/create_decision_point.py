@@ -5,10 +5,11 @@ from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
+from SdTypes import Permissions
 
 
 @mutation.field("createDecisionPoint")
-@needsAuthorization(["authenticated"])
+@needsAuthorization([Permissions.DECISION_CREATE, Permissions.MILESTONE_CREATE])
 @inject
 async def resolve_create_decision(
     obj=None, info: GraphQLResolveInfo = None, input: dict = None,

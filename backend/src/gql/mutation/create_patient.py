@@ -3,10 +3,11 @@ from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from datacreators.patient import CreatePatient
+from SdTypes import Permissions
 
 
 @mutation.field("createPatient")
-@needsAuthorization(["authenticated"])
+@needsAuthorization([Permissions.PATIENT_CREATE])
 async def resolve_create_patient(
     obj=None,
     info: GraphQLResolveInfo = None,

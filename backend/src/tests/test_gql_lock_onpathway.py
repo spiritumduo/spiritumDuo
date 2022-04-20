@@ -7,10 +7,39 @@ from datetime import datetime, timedelta
 # TODO: add test to ensure errors if locking twice
 
 
+@pytest.fixture
+def on_pathway_lock_mutation() -> str:
+    return """
+        mutation lockOnPathway(
+            $onPathwayId: ID!
+        ){
+            lockOnPathway(
+                input:{
+                    onPathwayId: $onPathwayId
+                }
+            ){
+                onPathway{
+                    id
+                    lockUser{
+                        id
+                        username
+                    }
+                    lockEndTime
+                }
+                userErrors{
+                    field
+                    message
+                }
+            }
+        }
+    """
+
 # Feature: testing lockOnPathway
 # Scenario: an OnPathway record needs to be locked to a user
 @pytest.mark.asyncio
-async def test_lock_on_pathway(context):
+async def test_lock_on_pathway(
+        context, on_pathway_update_permission, on_pathway_read_permission, on_pathway_lock_mutation
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given we have a patient on a pathway
@@ -43,30 +72,7 @@ async def test_lock_on_pathway(context):
     lock_on_pathway_mutation = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                mutation lockOnPathway(
-                    $onPathwayId: ID!
-                ){
-                    lockOnPathway(
-                        input:{
-                            onPathwayId: $onPathwayId
-                        }
-                    ){
-                        onPathway{
-                            id
-                            lockUser{
-                                id
-                                username
-                            }
-                            lockEndTime
-                        }
-                        userErrors{
-                            field
-                            message
-                        }
-                    }
-                }
-            """,
+            "query": on_pathway_lock_mutation,
             "variables": {
                 "onPathwayId": ONPATHWAY.id
             }
@@ -97,7 +103,7 @@ async def test_lock_on_pathway(context):
 
 # Scenario: an OnPathway record needs to be unlocked
 @pytest.mark.asyncio
-async def test_unlock_lock_on_pathway(context):
+async def test_unlock_lock_on_pathway(context, on_pathway_update_permission, on_pathway_read_permission):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given we have a patient on a pathway
@@ -184,7 +190,9 @@ async def test_unlock_lock_on_pathway(context):
 
 # Scenario: attempted onPathway lock while already being locked
 @pytest.mark.asyncio
-async def test_locked_lock_on_pathway(context):
+async def test_locked_lock_on_pathway(
+        context, on_pathway_update_permission, on_pathway_read_permission, on_pathway_lock_mutation
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given we have a patient on a pathway
@@ -226,30 +234,7 @@ async def test_locked_lock_on_pathway(context):
     lock_on_pathway_mutation = await context.client.post(
         url="graphql",
         json={
-            "query": """
-                mutation lockOnPathway(
-                    $onPathwayId: ID!
-                ){
-                    lockOnPathway(
-                        input:{
-                            onPathwayId: $onPathwayId
-                        }
-                    ){
-                        onPathway{
-                            id
-                            lockUser{
-                                id
-                                username
-                            }
-                            lockEndTime
-                        }
-                        userErrors{
-                            field
-                            message
-                        }
-                    }
-                }
-            """,
+            "query": on_pathway_lock_mutation,
             "variables": {
                 "onPathwayId": ONPATHWAY.id
             }
@@ -274,7 +259,7 @@ async def test_locked_lock_on_pathway(context):
 
 # Scenario: attempted onPathway unlock while locked by someone else
 @pytest.mark.asyncio
-async def test_unlocked_locked_lock_on_pathway(context):
+async def test_unlocked_locked_lock_on_pathway(context, on_pathway_update_permission, on_pathway_read_permission):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given we have a patient on a pathway
@@ -363,3 +348,17 @@ async def test_unlocked_locked_lock_on_pathway(context):
     userErrors = result['userErrors']
     assert_that(userErrors, not_none())
     assert_that(userErrors[0]['field'], equal_to("lock_user_id"))
+
+
+async def test_user_lacks_permission(test_user, test_client, on_pathway_lock_mutation):
+    """
+    Given the user's test role lacks the required permission
+    """
+    res = await test_client.post(
+        path="/graphql",
+        json=on_pathway_lock_mutation
+    )
+    """
+    The request should fail
+    """
+    assert_that(res.status_code, equal_to(401))
