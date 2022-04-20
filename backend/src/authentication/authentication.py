@@ -5,10 +5,12 @@ from starlette.authentication import (
 import inspect
 
 from starlette.responses import JSONResponse
+
+from SdTypes import Permissions
 from models.db import db
-from models import User, Session
+from models import User, Session, RolePermission, Role, UserRole
 from starlette.requests import HTTPConnection
-from typing import Callable, List
+from typing import Callable, List, Optional
 from datetime import datetime
 from functools import wraps
 
@@ -93,11 +95,16 @@ class SDAuthentication(AuthenticationBackend):
                         department=user.department,
                         default_pathway_id=user.default_pathway_id,
                     )
-                    scopes = ["authenticated"]
-                    """
-                    if user.is_admin:
-                        scopes.append("admin")
-                    """
+                    async with db.acquire(reuse=False) as conn:
+                        query = RolePermission.outerjoin(Role)\
+                            .outerjoin(UserRole)\
+                            .outerjoin(User)\
+                            .select()\
+                            .where(User.id == user.id)
+                        permissions: List[RolePermission] = await conn.all(query)
+                    scopes = [Permissions.AUTHENTICATED]
+                    for p in permissions:
+                        scopes.append(p.permission)
                     return AuthCredentials(
                         scopes=scopes
                     ), sdUser
@@ -106,7 +113,7 @@ class SDAuthentication(AuthenticationBackend):
 
 
 def needsAuthorization(
-    scopes: List[str] = None
+    required_scopes: Optional[List[Permissions]] = None
 ) -> Callable:
     """
     A decorator to ensure a user has one of a specified
@@ -126,16 +133,17 @@ def needsAuthorization(
             raise Exception("Info parameter not found")
 
         def wrapper(*args, **kwargs):
+            required_scopes.append(Permissions.AUTHENTICATED)
             if args[1].context:
                 request = args[1].context['request']
             else:
                 request = args[1]
-            if has_required_scope(request, scopes):
+            if has_required_scope(request, required_scopes):
                 return func(*args, **kwargs)
             else:
                 return PermissionsError(
                     "Missing one or many permissions:",
-                    scopes
+                    required_scopes
                 )
         return wrapper
     return decorator
@@ -163,7 +171,7 @@ def needsAuthenticated(func: Callable) -> Callable:
 
         if request is None:
             raise Exception("Request parameter not found")
-        if not has_required_scope(request, ["authenticated"]):
+        if not has_required_scope(request, [Permissions.AUTHENTICATED]):
             return JSONResponse(status_code=401)
 
         if inspect.iscoroutinefunction(func):

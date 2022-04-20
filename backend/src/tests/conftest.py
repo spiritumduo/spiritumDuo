@@ -2,6 +2,9 @@
 import logging
 
 from starlette.config import environ
+
+from SdTypes import Permissions
+
 environ['TESTING'] = "True"
 
 import asyncio
@@ -15,7 +18,7 @@ import pytest_asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
-from models import User, Pathway, MilestoneType, Role, UserRole
+from models import User, Pathway, MilestoneType, Role, UserRole, RolePermission
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
@@ -171,3 +174,139 @@ async def context(
     cs.MILESTONE_TYPE = test_milestone_type
     cs.LOGGED_IN_USER = login_user
     yield cs
+
+
+# PERMISSION FIXTURES
+# DECISION
+@pytest.fixture
+async def decision_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.DECISION_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def decision_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.DECISION_READ
+    ).create()
+
+
+# MILESTONE
+@pytest.fixture
+async def milestone_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.MILESTONE_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def milestone_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.MILESTONE_READ
+    ).create()
+
+
+@pytest.fixture
+async def milestone_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.MILESTONE_UPDATE
+    ).create()
+
+
+# MILESTONE TYPE
+@pytest.fixture
+async def milestone_type_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.MILESTONE_TYPE_READ
+    ).create()
+
+
+# ON PATHWAY
+@pytest.fixture
+async def on_pathway_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.ON_PATHWAY_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def on_pathway_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.ON_PATHWAY_READ
+    ).create()
+
+
+@pytest.fixture
+async def on_pathway_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.ON_PATHWAY_UPDATE
+    ).create()
+
+
+# PATHWAY
+@pytest.fixture
+async def pathway_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.PATHWAY_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def pathway_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.PATHWAY_READ
+    ).create()
+
+
+# PATIENT
+@pytest.fixture
+async def patient_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.PATIENT_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def patient_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.PATIENT_READ
+    ).create()
+
+
+# USER
+@pytest.fixture
+async def user_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.USER_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def user_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.USER_READ
+    ).create()
+
+
+@pytest.fixture
+async def user_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        id=test_role.id,
+        permission=Permissions.USER_UPDATE
+    ).create()
