@@ -122,7 +122,7 @@ def needsAuthorization(
     def decorator(func: Callable) -> Callable:
         signature = inspect.signature(func)
         info = False
-        request = True
+        request = False
 
         for _, param in enumerate(signature.parameters.values()):
             if param.name == "info":
@@ -130,7 +130,7 @@ def needsAuthorization(
             elif param.name == "request":
                 request = True
         if not info and not request:
-            raise Exception("Info parameter not found")
+            raise Exception("Info or request parameter not found")
 
         def wrapper(*args, **kwargs):
             required_scopes.append(Permissions.AUTHENTICATED)
