@@ -151,7 +151,6 @@ def needsAuthorization(
             required_scopes.append(Permissions.AUTHENTICATED)
             request = args[1].context['request']
 
-            logging.warning(request.auth.scopes)
             if has_required_scope(request, required_scopes):
                 return func(*args, **kwargs)
             else:
@@ -162,7 +161,6 @@ def needsAuthorization(
             required_scopes.append(Permissions.AUTHENTICATED)
             request = kwargs["request"]
 
-            logging.warning(request.auth.scopes)
             if has_required_scope(request, required_scopes):
                 return await func(*args, **kwargs)
             else:

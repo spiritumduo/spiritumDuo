@@ -53,8 +53,6 @@ async def get_context_values(request: HTTPConnection):
 
     if request.scope["type"] == "websocket":
         context["user"] = request.scope["user"]
-        # to mimic HTTP connection auth scope
-        logging.warning(request.auth.scopes)
 
         async with db.acquire(reuse=False) as conn:
             query = RolePermission.outerjoin(Role) \
