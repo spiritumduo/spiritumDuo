@@ -80,7 +80,6 @@ let sanitisedUser: User | null = {
   roles: [],
   defaultPathwayId: 0,
   token: '',
-  isAdmin: false,
 };
 
 const localStorageUserJson = localStorage.getItem('loggedInUser');

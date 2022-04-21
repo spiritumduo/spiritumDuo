@@ -47,7 +47,6 @@ Standard.args = {
     department: 'Test department',
     roles: [{ id: 1, name: 'test' }],
     token: 'token',
-    isAdmin: false,
   },
 };
 
@@ -67,6 +66,5 @@ Admin.args = {
     department: 'Test department',
     roles: [{ id: 1, name: 'test' }],
     token: 'token',
-    isAdmin: true,
   },
 };

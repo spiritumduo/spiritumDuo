@@ -17,7 +17,6 @@ const user: User = {
   defaultPathwayId: 1,
   roles: [],
   token: 'token',
-  isAdmin: true,
 };
 
 export default {
