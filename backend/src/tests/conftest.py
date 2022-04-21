@@ -4,6 +4,7 @@ import logging
 from starlette.config import environ
 
 from SdTypes import Permissions
+from sdpubsub import SdPubSub
 
 environ['TESTING'] = "True"
 
@@ -124,7 +125,7 @@ async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role
 
 
 @pytest.fixture
-async def login_user(test_user: UserFixture, httpx_test_client) -> Response:
+async def httpx_login_user(test_user: UserFixture, httpx_test_client) -> Response:
     client = httpx_test_client
     user_fixture = test_user
     res = await client.post(
@@ -138,7 +139,19 @@ async def login_user(test_user: UserFixture, httpx_test_client) -> Response:
 
 
 @pytest.fixture
-async def mock_trust_adapter():
+async def login_user(test_user: UserFixture, test_client) -> Response:
+    res = await test_client.post(
+        path="/rest/login/",
+        json={
+            "username": test_user.user.username,
+            "password": test_user.password,
+        }
+    )
+    yield res
+
+
+@pytest.fixture
+def mock_trust_adapter():
     trust_adapter_mock = AsyncMock(spec=TrustAdapter)
     trust_adapter_mock = trust_adapter_mock
     with app.container.trust_adapter_client.override(trust_adapter_mock):
@@ -154,7 +167,7 @@ async def context(
     test_pathway,
     test_user,
     test_milestone_type,
-    login_user
+    httpx_login_user
 ):
     # At least now this construction is now done here, rather than being scattered across this module
     cs = ContextStorage()
@@ -172,8 +185,15 @@ async def context(
         "password": user_fixture.password
     }
     cs.MILESTONE_TYPE = test_milestone_type
-    cs.LOGGED_IN_USER = login_user
+    cs.LOGGED_IN_USER = httpx_login_user
     yield cs
+
+
+@pytest.fixture
+def test_sdpubsub():
+    test_sdpubsub = SdPubSub()
+    with app.container.pubsub_client.override(test_sdpubsub):
+        yield test_sdpubsub
 
 
 # PERMISSION FIXTURES

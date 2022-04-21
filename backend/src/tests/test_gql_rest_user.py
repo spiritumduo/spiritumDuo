@@ -6,7 +6,7 @@ from gino.loader import ModelLoader
 
 from .conftest import UserFixture
 from models import User, Role, UserRole
-from hamcrest import assert_that, equal_to, not_none
+from hamcrest import assert_that, equal_to, not_none, contains_string
 from bcrypt import hashpw, gensalt
 from httpx import Response
 
@@ -168,15 +168,22 @@ async def test_gql_get_user(context, user_read_permission, get_user_query):
     )
 
 
-async def test_user_lacks_permission(test_user, test_client, get_user_query):
+async def test_user_lacks_permission(login_user, test_client, get_user_query):
     """
     Given the user's test role lacks the required permission
     """
     res = await test_client.post(
         path="/graphql",
-        json=get_user_query
+        json={
+            "query": get_user_query,
+            "variables": {
+                "id": "test"
+            }
+        }
     )
     """
     The request should fail
     """
-    assert_that(res.status_code, equal_to(401))
+    payload = res.json()
+    assert_that(res.status_code, equal_to(200))
+    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))

@@ -1,3 +1,4 @@
+from SdTypes import Permissions
 from models import User
 from .api import _FastAPI
 from fastapi import Request
@@ -16,9 +17,8 @@ class CreateUserInput(BaseModel):
     defaultPathwayId: int
     isActive: bool
 
-
-@needsAuthorization
 @_FastAPI.post("/createuser/")
+@needsAuthorization([Permissions.USER_CREATE])
 async def create_user(request: Request, input: CreateUserInput):
     try:
         user: User = await CreateUser(

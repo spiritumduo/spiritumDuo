@@ -1,6 +1,6 @@
 import pytest
 from models import OnPathway, Patient, User
-from hamcrest import assert_that, equal_to, not_none, none
+from hamcrest import assert_that, equal_to, not_none, none, contains_string
 from trustadapter.trustadapter import Patient_IE
 from json import loads
 from datetime import datetime, timedelta
@@ -350,15 +350,22 @@ async def test_unlocked_locked_lock_on_pathway(context, on_pathway_update_permis
     assert_that(userErrors[0]['field'], equal_to("lock_user_id"))
 
 
-async def test_user_lacks_permission(test_user, test_client, on_pathway_lock_mutation):
+async def test_user_lacks_permission(login_user, test_client, on_pathway_lock_mutation):
     """
     Given the user's test role lacks the required permission
     """
     res = await test_client.post(
         path="/graphql",
-        json=on_pathway_lock_mutation
+        json={
+            "query": on_pathway_lock_mutation,
+            "variables": {
+                "onPathwayId": "test"
+            }
+        }
     )
     """
     The request should fail
     """
-    assert_that(res.status_code, equal_to(401))
+    payload = res.json()
+    assert_that(res.status_code, equal_to(200))
+    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))

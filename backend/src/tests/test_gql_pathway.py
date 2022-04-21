@@ -1,7 +1,7 @@
 import json
 import pytest
 from models import Pathway
-from hamcrest import assert_that, equal_to, not_none
+from hamcrest import assert_that, equal_to, not_none, contains_string
 
 
 @pytest.fixture
@@ -162,15 +162,22 @@ async def test_get_pathways(context, pathway_read_permission):
     assert_that(get_pathway_query[2]['name'], equal_to(PATHWAY_TWO.name))
 
 
-async def test_user_lacks_permission(test_user, test_client, pathway_create_mutation):
+async def test_user_lacks_permission(login_user, test_client, pathway_create_mutation):
     """
     Given the user's test role lacks the required permission
     """
     res = await test_client.post(
         path="/graphql",
-        json=pathway_create_mutation
+        json={
+            "query": pathway_create_mutation,
+            "variables": {
+                "name": "test"
+            }
+        }
     )
     """
     The request should fail
     """
-    assert_that(res.status_code, equal_to(401))
+    payload = res.json()
+    assert_that(res.status_code, equal_to(200))
+    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))

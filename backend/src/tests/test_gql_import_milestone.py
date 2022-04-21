@@ -3,7 +3,7 @@ import pytest
 from models import Patient, OnPathway
 from trustadapter.trustadapter import Patient_IE
 from SdTypes import MilestoneState
-from hamcrest import assert_that, equal_to, not_none
+from hamcrest import assert_that, equal_to, not_none, contains_string
 
 
 @pytest.fixture
@@ -91,15 +91,25 @@ async def test_import_milestone(context, milestone_create_mutation, milestone_cr
     assert_that(import_milestone_mutation['milestone']['id'], not_none())
 
 
-async def test_user_lacks_permission(test_user, test_client, milestone_create_permission, milestone_create_mutation):
+async def test_user_lacks_permission(login_user, test_client, milestone_create_mutation):
     """
     Given the user's test role lacks the required permission
     """
     res = await test_client.post(
         path="/graphql",
-        json=milestone_create_mutation
+        json={
+            "query": milestone_create_mutation,
+            "variables": {
+                "onPathwayId": "test",
+                "milestoneTypeId": "test",
+                "description": "Test description go brrrrt",
+                "currentState": "INIT"
+            }
+        }
     )
     """
     The request should fail
     """
-    assert_that(res.status_code, equal_to(401))
+    payload = res.json()
+    assert_that(res.status_code, equal_to(200))
+    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))

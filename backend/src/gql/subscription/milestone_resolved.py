@@ -4,12 +4,15 @@ from typing import Any, AsyncGenerator
 from dependency_injector.wiring import Provide, inject
 from graphql import GraphQLResolveInfo
 
+from SdTypes import Permissions
+from authentication.authentication import needsAuthorization
 from containers import SDContainer
 from models import Milestone
 from .subscription_type import subscription
 
 
 @subscription.source("milestoneResolved")
+@needsAuthorization([Permissions.MILESTONE_READ])
 @inject
 async def milestone_resolved_generator(
     _: Any = None,

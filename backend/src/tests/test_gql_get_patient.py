@@ -5,7 +5,7 @@ from random import randint
 from models import Patient, OnPathway, DecisionPoint, Milestone
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, MilestoneState
-from hamcrest import assert_that, equal_to, not_none
+from hamcrest import assert_that, equal_to, not_none, contains_string
 
 
 @pytest.fixture
@@ -378,15 +378,22 @@ async def test_search_for_patient(context, patient_read_permission, get_patient_
     )
 
 
-async def test_user_lacks_permission(test_user, test_client, get_patient_query):
+async def test_user_lacks_permission(login_user, test_client, get_patient_query):
     """
     Given the user's test role lacks the required permission
     """
     res = await test_client.post(
         path="/graphql",
-        json=get_patient_query
+        json={
+            "query": get_patient_query,
+            "variables": {
+                "hospitalNumber": "test",
+            }
+        }
     )
     """
     The request should fail
     """
-    assert_that(res.status_code, equal_to(401))
+    payload = res.json()
+    assert_that(res.status_code, equal_to(200))
+    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))

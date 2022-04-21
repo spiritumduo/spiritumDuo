@@ -2,7 +2,7 @@ import json
 import pytest
 from models import MilestoneType, RolePermission
 from SdTypes import Permissions
-from hamcrest import assert_that, equal_to, has_entries, has_items
+from hamcrest import assert_that, equal_to, has_entries, has_items, contains_string
 
 
 @pytest.fixture
@@ -63,7 +63,7 @@ async def test_get_milestone_types(context, milestone_query, milestone_type_read
         )
 
 
-async def test_user_lacks_permission(test_user, test_client, milestone_query):
+async def test_user_lacks_permission(login_user, test_client, milestone_query):
     """
     Given the user's test role lacks the required permission
     """
@@ -74,4 +74,6 @@ async def test_user_lacks_permission(test_user, test_client, milestone_query):
     """
     The request should fail
     """
-    assert_that(res.status_code, equal_to(401))
+    payload = res.json()
+    assert_that(res.status_code, equal_to(200))
+    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
