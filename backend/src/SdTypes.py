@@ -2,7 +2,7 @@ from enum import Enum, unique
 
 
 @unique
-class DecisionTypes(Enum):
+class DecisionTypes(str, Enum):
     TRIAGE = "TRIAGE"
     CLINIC = "CLINIC"
     MDT = "MDT"
@@ -12,7 +12,7 @@ class DecisionTypes(Enum):
 
 
 @unique
-class MilestoneState(Enum):
+class MilestoneState(str, Enum):
     INIT = "INIT"
     ACTIVE = "ACTIVE"
     WAITING = "WAITING"
@@ -21,7 +21,7 @@ class MilestoneState(Enum):
 
 
 @unique
-class Permissions(Enum):
+class Permissions(str, Enum):
     # LOGGED IN USER
     AUTHENTICATED = "AUTHENTICATED"
 
@@ -49,6 +49,11 @@ class Permissions(Enum):
     # PATIENT OPERATIONS
     PATIENT_CREATE = "PATIENT_CREATE"
     PATIENT_READ = "PATIENT_READ"
+
+    # ROLE OPERATIONS
+    ROLE_CREATE = "ROLE_CREATE"
+    ROLE_READ = "ROLE_READ"
+    ROLE_UPDATE = "ROLE_UPDATE"
 
     # USER OPERATIONS
     USER_CREATE = "USER_CREATE"

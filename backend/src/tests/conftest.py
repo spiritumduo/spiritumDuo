@@ -201,7 +201,7 @@ def test_sdpubsub():
 @pytest.fixture
 async def decision_create_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.DECISION_CREATE
     ).create()
 
@@ -209,7 +209,7 @@ async def decision_create_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def decision_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.DECISION_READ
     ).create()
 
@@ -218,7 +218,7 @@ async def decision_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def milestone_create_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.MILESTONE_CREATE
     ).create()
 
@@ -226,7 +226,7 @@ async def milestone_create_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def milestone_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.MILESTONE_READ
     ).create()
 
@@ -234,7 +234,7 @@ async def milestone_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def milestone_update_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.MILESTONE_UPDATE
     ).create()
 
@@ -243,7 +243,7 @@ async def milestone_update_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def milestone_type_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.MILESTONE_TYPE_READ
     ).create()
 
@@ -252,7 +252,7 @@ async def milestone_type_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def on_pathway_create_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.ON_PATHWAY_CREATE
     ).create()
 
@@ -260,7 +260,7 @@ async def on_pathway_create_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def on_pathway_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.ON_PATHWAY_READ
     ).create()
 
@@ -268,7 +268,7 @@ async def on_pathway_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def on_pathway_update_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.ON_PATHWAY_UPDATE
     ).create()
 
@@ -277,7 +277,7 @@ async def on_pathway_update_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def pathway_create_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.PATHWAY_CREATE
     ).create()
 
@@ -285,7 +285,7 @@ async def pathway_create_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def pathway_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.PATHWAY_READ
     ).create()
 
@@ -294,7 +294,7 @@ async def pathway_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def patient_create_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.PATIENT_CREATE
     ).create()
 
@@ -302,8 +302,33 @@ async def patient_create_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def patient_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.PATIENT_READ
+    ).create()
+
+
+# ROLE
+@pytest.fixture
+async def role_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ROLE_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def role_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ROLE_READ
+    ).create()
+
+
+@pytest.fixture
+async def role_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ROLE_UPDATE
     ).create()
 
 
@@ -311,7 +336,7 @@ async def patient_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def user_create_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.USER_CREATE
     ).create()
 
@@ -319,7 +344,7 @@ async def user_create_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def user_read_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.USER_READ
     ).create()
 
@@ -327,6 +352,6 @@ async def user_read_permission(test_role) -> RolePermission:
 @pytest.fixture
 async def user_update_permission(test_role) -> RolePermission:
     return await RolePermission(
-        id=test_role.id,
+        role_id=test_role.id,
         permission=Permissions.USER_UPDATE
     ).create()
