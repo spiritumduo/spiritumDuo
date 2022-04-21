@@ -8,7 +8,9 @@ from models import (
     MilestoneType,
     User,
     Session,
-    OnPathway
+    OnPathway,
+    Role,
+    RolePermission, UserRole
 )
 from containers import SDContainer
 from models.db import db, DATABASE_URL
@@ -16,7 +18,7 @@ from api import app
 from faker import Faker
 from random import randint, getrandbits
 from datetime import date
-from SdTypes import DecisionTypes, MilestoneState
+from SdTypes import DecisionTypes, MilestoneState, Permissions
 from itsdangerous import TimestampSigner
 from trustadapter.trustadapter import (
     Patient_IE,
@@ -74,6 +76,9 @@ async def check_connection():
 
 async def clear_existing_data():
     print("Clearing existing data from local database")
+    await UserRole.delete.gino.status()
+    await RolePermission.delete.gino.status()
+    await Role.delete.gino.status()
     await Milestone.delete.where(Milestone.id >= 0).gino.status()
     await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
@@ -89,7 +94,37 @@ async def clear_existing_data():
     await asyncio.sleep(2)
 
 
+async def create_roles():
+    doctor_role = await Role.create(
+        name="GP"
+    )
+    admin_role = await Role.create(
+        name="admin"
+    )
+    for perm in Permissions:
+        if (perm is not Permissions.USER_CREATE)\
+                and (perm is not Permissions.USER_UPDATE)\
+                and (perm is not Permissions.ROLE_CREATE)\
+                and (perm is not Permissions.ROLE_UPDATE)\
+                and (perm is not Permissions.PATHWAY_CREATE):
+            await RolePermission.create(
+                role_id=doctor_role.id,
+                permission=perm,
+            )
+        else:
+            await RolePermission.create(
+                role_id=admin_role.id,
+                permission=perm
+            )
+    return {
+        "doctor": doctor_role,
+        "admin": admin_role
+    }
+
+
 async def insert_demo_data():
+    roles = await create_roles()
+
     general_milestone_types: Dict[str, MilestoneType] = {
         "referral_letter": await MilestoneType.create(
             name="Referral letter",
@@ -173,6 +208,15 @@ async def insert_demo_data():
                 department="Demo user",
                 default_pathway_id=sd_pathway.id
             )
+            await UserRole.create(
+                user_id=sd_user.id,
+                role_id=roles['doctor'].id
+            )
+            if userIndex % 2 == 0:
+                await UserRole.create(
+                    user_id=sd_user.id,
+                    role_id=roles['admin'].id
+                )
             print(f"Creating user (username: {sd_user.username}; password {unencoded_password}")
 
         for i in range(1, NUMBER_OF_PATIENTS_PER_PATHWAY+1):
