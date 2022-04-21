@@ -45,23 +45,29 @@ async def ws_on_connect(
         if user is None:
             raise WebSocketConnectionError("Invalid token")
 
-        query = RolePermission.outerjoin(Role) \
-            .outerjoin(UserRole) \
-            .outerjoin(User) \
-            .select() \
-            .where(User.id == user.id)
-        permissions: List[RolePermission] = await conn.all(query)
-        scopes = [Permissions.AUTHENTICATED]
-        for p in permissions:
-            scopes.append(p.permission)
         websocket.scope["user"] = user
 
 
-def get_context_values(request: HTTPConnection):
+async def get_context_values(request: HTTPConnection):
     context = {}
 
     if request.scope["type"] == "websocket":
         context["user"] = request.scope["user"]
+        # to mimic HTTP connection auth scope
+        logging.warning(request.auth.scopes)
+
+        async with db.acquire(reuse=False) as conn:
+            query = RolePermission.outerjoin(Role) \
+                .outerjoin(UserRole) \
+                .outerjoin(User) \
+                .select() \
+                .where(User.id == context["user"].id)
+            permissions: List[RolePermission] = await conn.all(query)
+            auth_scopes = [Permissions.AUTHENTICATED]
+            for p in permissions:
+                auth_scopes.append(p.permission)
+
+            request.auth.scopes = auth_scopes
 
     context['request'] = request
     context['db'] = db
