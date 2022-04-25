@@ -100,7 +100,7 @@ const PatientList = (
               <Table.Cell tabIndex={ 0 } aria-describedby="editText">
                 <div>
                   <button
-                    className="patient-list-modal-button"
+                    className="sd-hidden-button"
                     disabled={ p.isOnPathwayLockedByOther }
                     type="button"
                     tabIndex={ 0 }
