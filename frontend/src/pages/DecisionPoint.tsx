@@ -574,7 +574,7 @@ const DecisionPointPage = (
   }
 
   // IF PATIENT HAS PRIOR DECISION
-  const previousDecisionPoint = data.getPatient?.onPathways?.[0].decisionPoints
+  const previousDecisionPoint = data.getPatient?.onPathways?.[0]?.decisionPoints
     ? data.getPatient.onPathways[0].decisionPoints[0]
     : null;
 
