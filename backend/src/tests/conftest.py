@@ -1,13 +1,12 @@
 # It's very important this happens first
-import logging
+from typing import List
 
 from starlette.config import environ
-
-from SdTypes import Permissions
-from sdpubsub import SdPubSub
-
 environ['TESTING'] = "True"
 
+import logging
+from SdTypes import Permissions
+from sdpubsub import SdPubSub
 import asyncio
 from gino import GinoConnection
 import dataclasses
@@ -19,7 +18,7 @@ import pytest_asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
-from models import User, Pathway, MilestoneType, Role, UserRole, RolePermission
+from models import User, Pathway, MilestoneType, Role, UserRole, RolePermission, Patient, OnPathway
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
@@ -86,6 +85,31 @@ async def test_milestone_type() -> MilestoneType:
 @pytest.fixture
 async def test_role(db_start_transaction) -> Role:
     return await Role.create(name="test-role")
+
+
+@pytest.fixture
+async def test_patients(db_start_transaction) -> List[Role]:
+    patients = []
+    for i in range(1, 11):
+        p = await Patient.create(
+            hospital_number=f"fake-hospital-number-{i}",
+            national_number=f"fake-national-number-{i}",
+        )
+        patients.append(p)
+    return patients
+
+
+@pytest.fixture
+async def test_patients_on_pathway(
+        test_patients: List[Patient], test_pathway: Pathway
+) -> List[OnPathway]:
+    on_pathway_list = []
+    for p in test_patients:
+        await OnPathway.create(
+            patient_id=p.id,
+            pathway_id=test_pathway.id,
+        )
+    return on_pathway_list
 
 
 @dataclasses.dataclass
