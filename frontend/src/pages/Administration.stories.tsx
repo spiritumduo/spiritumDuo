@@ -3,10 +3,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import fetchMock from 'fetch-mock';
 import User from 'types/Users';
-import { DefaultLayout } from 'components/PageLayout.stories';
-import PageLayout, { PageLayoutProps } from 'components/PageLayout';
 import { MemoryRouter } from 'react-router';
-import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import AdministrationPage from './Administration';
 
 const user: User = {
@@ -25,14 +22,7 @@ export default {
   decorators: [
     (AdministrationPageStory) => (
       <MemoryRouter>
-        {/* eslint-disable-next-line object-shorthand */}
-        <MockAuthProvider value={ { user, updateUser: (() => ({})) } }>
-          <MockPathwayProvider>
-            <PageLayout { ...DefaultLayout.args as PageLayoutProps }>
-              <AdministrationPageStory />
-            </PageLayout>
-          </MockPathwayProvider>
-        </MockAuthProvider>
+        <AdministrationPageStory />
       </MemoryRouter>
     ),
   ],
