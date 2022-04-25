@@ -7,5 +7,6 @@ from .get_pathways import query
 from .get_user import query
 from .get_patients_on_pathway import query
 from .get_patient_connection import query
+from .patient_search import query
 
 type_list = [query]

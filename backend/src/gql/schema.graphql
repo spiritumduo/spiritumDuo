@@ -35,6 +35,8 @@ type Query {
         outstanding: Boolean
         underCareOf: Boolean
     ): PatientConnection!
+
+    patientSearch(query: String!, pathwayId: ID!): [Patient!]!
 }
 
 type Mutation {
