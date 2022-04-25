@@ -462,7 +462,7 @@ const DecisionPointPage = (
   ] = useState<boolean>(false);
   useEffect(() => {
     if (!hasBuiltHiddenConfirmationFields && data) {
-      const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
+      const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0]?.milestones?.flatMap(
         (ms) => (
           !ms.forwardDecisionPoint && ms.testResult
             ? {
@@ -481,6 +481,8 @@ const DecisionPointPage = (
 
   if (loading) return <h1>Loading!</h1>;
   if (!data?.getPatient) return <h1>Error, patient not found!</h1>;
+  if (data.getPatient?.onPathways?.[0] === undefined ) return <h1>Patient not on this pathway!</h1>;
+
   if (isSubmitted) {
     const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
       id: ms.id,

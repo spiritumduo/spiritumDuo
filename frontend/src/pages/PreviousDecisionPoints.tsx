@@ -57,7 +57,8 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
   );
   if (loading) return <h1>Loading!</h1>;
 
-  const decisions = data?.getPatient?.onPathways?.[0].decisionPoints;
+  const decisions = data?.getPatient?.onPathways?.[0]?.decisionPoints;
+  if (!decisions) return <h1>Patient not on this pathway!</h1>;
   return (
     <div>
       <div className="container previous-decision-points-container">
