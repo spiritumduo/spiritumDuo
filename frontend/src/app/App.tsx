@@ -17,11 +17,11 @@ const App = (): JSX.Element => (
     <Route path="/login" element={ <LoginPage /> } />
     <Route path="/logout" element={ <Logout /> } />
     <Route
-      path="/patients"
+      path="/patient/:hospitalNumber"
       element={ (
         <RequireAuth>
           <PageLayout>
-            <AllPatients patientsPerPage={ 20 } />
+            <HomePage patientsPerPage={ 20 } modalPatient />
           </PageLayout>
         </RequireAuth>
       ) }

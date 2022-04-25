@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Header, SearchIcon, CloseIcon, Container } from 'nhsuk-react-components';
-import { List, ThreeDots } from 'react-bootstrap-icons';
+import { ThreeDots } from 'react-bootstrap-icons';
 
-import User from '../types/Users';
-import PathwayOption from '../types/PathwayOption';
-import PathwaySelector from './PathwaySelector';
-import sdInvertedImage from '../static/i/sd_inverted.png';
+import User from 'types/Users';
+import PathwayOption from 'types/PathwayOption';
+import PathwaySelector from 'components/PathwaySelector';
+import sdInvertedImage from 'static/i/sd_inverted.png';
+import SearchBar from 'features/SearchBar';
 
 import './SdHeader.css';
 
@@ -55,17 +56,7 @@ const SdHeader = ({
         />
         <div className="nhsuk-header__search" aria-disabled>
           <div className={ `nhsuk-header__search-wrap ${searchState ? 'js-show' : ''}` }>
-            <form className="nhsuk-header__search-form" role="search" onSubmit={ (e) => searchOnSubmit(e) }>
-              <input className="nhsuk-search__input" id="searchInput" disabled />
-              <button className="nhsuk-search__submit" type="submit" disabled>
-                <SearchIcon />
-                <span className="nhsuk-u-visually-hidden">Search</span>
-              </button>
-              <button className="nhsuk-search__close" type="button">
-                <CloseIcon />
-                <span className="nhsuk-u-visually-hidden">Close search</span>
-              </button>
-            </form>
+            <SearchBar />
           </div>
         </div>
       </Header.Container>

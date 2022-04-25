@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 
 // LIBRARIES
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { Container } from 'nhsuk-react-components';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { useParams, useNavigate } from 'react-router';
 
 // APP
 import { PathwayContext } from 'app/context';
@@ -19,18 +20,24 @@ import { setModalPatientHospitalNumber } from './HomePage.slice';
 
 export interface HomePageProps {
   patientsPerPage: number;
+  modalPatient?: boolean;
 }
 
-const HomePage = ({ patientsPerPage }: HomePageProps): JSX.Element => {
+const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
   const pathwayId = currentPathwayId as number;
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { hospitalNumber } = useParams();
   const modalPatientNumber = useAppSelector(
     (state: RootState) => state.homePage.modalPatientHospitalNumber,
   );
 
+  if (modalPatient) dispatch(setModalPatientHospitalNumber(hospitalNumber));
+
   const modalCloseCallback = () => {
     dispatch(setModalPatientHospitalNumber(undefined));
+    navigate('/');
   };
 
   return (
