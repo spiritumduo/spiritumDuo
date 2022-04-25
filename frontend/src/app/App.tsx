@@ -1,107 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
 // APP IMPORTS
 import React, { useContext, useEffect } from 'react';
-import { Route, Routes, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { pathwayOptionsVar, loggedInUserVar } from 'app/cache';
 import { AuthContext, PathwayContext } from 'app/context';
-import { DecisionPointType } from 'types/DecisionPoint';
 
 // PAGES
 import HomePage from 'pages/HomePage';
 import LoginPage from 'pages/Login';
-import NewPatientPage from 'pages/NewPatient';
 import PageLayout from 'components/PageLayout';
-import PathwayDemo from 'pages/PathwayDemo';
-import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import './App.css';
-import AllPatients from 'pages/AllPatients';
 import AdministrationPage from 'pages/Administration';
-
-const PreviousDecisionPointsPageRoute = () => {
-  const { hospitalNumber } = useParams();
-  return (
-    <RequireAuth>
-      <PageLayout>
-        <PreviousDecisionPoints hospitalNumber={ hospitalNumber as string } />
-      </PageLayout>
-    </RequireAuth>
-  );
-};
-
-const PatientPathwayPageRoute = () => {
-  const { hospitalNumber } = useParams();
-  return (
-    <RequireAuth>
-      <PageLayout>
-        <PathwayDemo hospitalNumber={ hospitalNumber as string } />
-      </PageLayout>
-    </RequireAuth>
-  );
-};
-
-const PatientRoutes = () => (
-  <Routes>
-    <Route
-      path="add"
-      element={ (
-        <RequireAuth>
-          <PageLayout>
-            <NewPatientPage />
-          </PageLayout>
-        </RequireAuth>
-      ) }
-    />
-    <Route
-      path=":hospitalNumber"
-      element={ (<PreviousDecisionPointsPageRoute />) }
-    />
-    <Route
-      path=":hospitalNumber/pathway"
-      element={ (<PatientPathwayPageRoute />) }
-    />
-  </Routes>
-);
-
-const DecisionPointPageRoute = () => {
-  const { decisionType, hospitalNumber } = useParams();
-  try {
-    const decisionTypeEnum = Object.values(DecisionPointType).find(
-      (x) => x === decisionType?.toUpperCase(),
-    );
-    if (decisionTypeEnum === undefined) throw new Error('Invalid Decision Type!');
-    return (
-      <>
-        <RequireAuth>
-          <PageLayout />
-        </RequireAuth>
-      </>
-    );
-  } catch (err) {
-    return (
-      <PageLayout>
-        <h1>Error: Invalid decision type!</h1>
-      </PageLayout>
-    );
-  }
-};
-
-const DecisionRoutes = () => (
-  <Routes>
-    <Route path=":decisionType/:hospitalNumber" element={ <DecisionPointPageRoute /> } />
-  </Routes>
-);
-
-const PathwayDemoRoute = () => {
-  const { hospitalNumber } = useParams();
-
-  return (
-    <RequireAuth>
-      <PageLayout>
-        <PathwayDemo hospitalNumber={ hospitalNumber || '' } />
-      </PageLayout>
-    </RequireAuth>
-  );
-};
 
 const App = (): JSX.Element => (
   <Routes>
@@ -117,9 +26,6 @@ const App = (): JSX.Element => (
         </RequireAuth>
       ) }
     />
-    <Route path="/patient/*" element={ <PatientRoutes /> } />
-    <Route path="/decision/*" element={ <DecisionRoutes /> } />
-    <Route path="/pathwaydemo/:hospitalNumber" element={ <PathwayDemoRoute /> } />
     <Route
       path="/"
       element={ (
