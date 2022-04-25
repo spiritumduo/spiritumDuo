@@ -8,12 +8,12 @@ from starlette.background import BackgroundTasks
 from authentication import needs_authentication, PseudoAuth
 from fastapi import FastAPI, Request, Response
 from datetime import date, datetime, timedelta
-from models import Patient, db
+from models import Patient, db, TestResult
 from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from models import TestResult
+from sqlalchemy import or_, inspect
 from typing import List, Optional, Union
 from RecordTypes import TestResultState
 from placeholder_data import TEST_RESULT_DATA, TEST_RESULT_DATA_SERIES
@@ -44,6 +44,28 @@ async def root():
 @app.get("/hello/{name}")
 async def say_hello(name: str = None):
     return {"message": f"Hello {name}"}
+
+
+@app.get("/patientsearch/{query}")
+async def patient_search(query: str = None):
+    tokens = query.split()
+    patients = await Patient.query.where(
+        or_(
+            or_(
+                Patient.hospital_number.in_(tokens),
+                Patient.national_number.in_(tokens),
+            ),
+            or_(
+                Patient.first_name.in_(tokens),
+                Patient.last_name.in_(tokens)
+            )
+        )
+    ).gino.all()
+    logging.warning(patients)
+    results = []
+    for p in patients:
+        results.append(p.to_dict())
+    return results
 
 
 @app.post("/test/")
