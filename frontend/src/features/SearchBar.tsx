@@ -21,7 +21,7 @@ export const PATIENT_SEARCH_QUERY = gql`
 `;
 
 interface SearchBarInput {
-  query: string;
+  searchBarInput: string;
 }
 
 const SearchBar = () => {
@@ -30,11 +30,11 @@ const SearchBar = () => {
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<SearchBarInput>();
   const target = useRef(null);
   const navigate = useNavigate();
-  const { ref, ...queryProps } = register('query');
+  const { ref, ...queryProps } = register('searchBarInput');
   ref(target.current);
-  const doSearchSubmit = ({ query }: SearchBarInput) => {
+  const doSearchSubmit = ({ searchBarInput }: SearchBarInput) => {
     searchQuery({ variables: {
-      query: query,
+      query: searchBarInput,
       pathwayId: currentPathwayId,
     } });
   };
@@ -42,6 +42,8 @@ const SearchBar = () => {
     navigate(`/patient/${hospitalNumber}`);
     searchQuery();
   };
+
+  const displayResults = data?.patientSearch.length !== 0;
 
   return (
     <form
@@ -51,37 +53,40 @@ const SearchBar = () => {
         doSearchSubmit(getValues());
       }) }
     >
-      <input className="nhsuk-search__input" id="searchInput" ref={ target } { ...queryProps } />
+      <label htmlFor="searchBarInput">
+        <input className="nhsuk-search__input" id="searchBarInput" ref={ target } { ...queryProps } />
+        <span className="nhsuk-u-visually-hidden">Search</span>
+        <Overlay target={ target.current } show={ displayResults } placement="bottom">
+          {({ placement, arrowProps, show: _show, popper, ...props }) => (
+            <div
+              { ...props }
+              style={ {
+                position: 'absolute',
+                ...props.style,
+              } }
+            >
+              {
+                data
+                  ? (
+                    <SearchResults
+                      results={ data.patientSearch }
+                      onClickCallback={ onClickCallback }
+                    />
+                  )
+                  : <></>
+              }
+            </div>
+          )}
+        </Overlay>
+      </label>
       <button className="nhsuk-search__submit" type="submit">
         <SearchIcon />
-        <span className="nhsuk-u-visually-hidden">Search</span>
+        <span className="nhsuk-u-visually-hidden">Submit Search</span>
       </button>
       <button className="nhsuk-search__close" type="button">
         <CloseIcon />
         <span className="nhsuk-u-visually-hidden">Close search</span>
       </button>
-      <Overlay target={ target.current } show={ data !== undefined } placement="bottom">
-        {({ placement, arrowProps, show: _show, popper, ...props }) => (
-          <div
-            { ...props }
-            style={ {
-              position: 'absolute',
-              ...props.style,
-            } }
-          >
-            {
-              data
-                ? (
-                  <SearchResults
-                    results={ data.patientSearch }
-                    onClickCallback={ onClickCallback }
-                  />
-                )
-                : <></>
-            }
-          </div>
-        )}
-      </Overlay>
     </form>
   );
 };
