@@ -17,7 +17,6 @@ const renderDefault = () => {
   );
 };
 
-
 it('Should render properly', () => {
   renderDefault();
   expect(screen.getByRole('textbox', { name: /^search$/i })).toBeInTheDocument();
