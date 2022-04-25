@@ -114,3 +114,11 @@ class TrustAdapterService(BaseService):
         """
         return await self._trust_adapter_client.load_many_test_results(
             recordIds=recordIds, auth_token=auth_token)
+
+    async def patient_search(self, query: str) -> List[Patient_IE]:
+        """
+        Search for patients with given query string
+        :param query: free-form text string
+        :return: List of patients
+        """
+        return await self._trust_adapter_client.patient_search(query)

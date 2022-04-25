@@ -1,7 +1,9 @@
+import dataclasses
+
 import httpx
 from models import MilestoneType
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Set
 from datetime import date, datetime
 from dataclasses import dataclass
 
@@ -116,6 +118,14 @@ class TrustAdapter(ABC):
         :param auth_token: Auth token string to pass to backend
         :param recordIds: IDs of test results to load
         :return: List of test results, or empty list if none found
+        """
+
+    @abstractmethod
+    async def patient_search(self, query: str) -> List[Patient_IE]:
+        """
+        Search for patients with given query string
+        :param query: free-form text string
+        :return: List of patients
         """
 
 
@@ -269,7 +279,7 @@ class PseudoTrustAdapter(TrustAdapter):
         return patientObjectList
 
     async def create_test_result(
-        self, testResult: TestResultRequest_IE, auth_token: str = None
+        self, testResult: TestResultRequest_IE = None, auth_token: str = None
     ) -> TestResult_IE:
         params = {}
         milestoneType: MilestoneType = await MilestoneType.get(
@@ -355,3 +365,18 @@ class PseudoTrustAdapter(TrustAdapter):
                 )
             )
         return testResultObjectList
+
+    async def patient_search(self, query: str) -> List[Patient_IE]:
+        response = await httpRequest(
+            "get",
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patientsearch/{query}'
+        )
+
+        results = response.json()
+        patient_list = []
+        for r in results:
+            r['date_of_birth'] = datetime.fromisoformat(r['date_of_birth'])
+            patient_list.append(
+                Patient_IE(**r)
+            )
+        return patient_list

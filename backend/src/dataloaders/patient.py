@@ -61,13 +61,7 @@ class PatientByIdLoader(DataLoader):
         patient = await context[cls.loader_name].load(id)
 
         if patient:
-            if PatientByHospitalNumberLoader.loader_name not in context:
-                context[PatientByHospitalNumberLoader.loader_name] = \
-                    PatientByHospitalNumberLoader(db=context['db'])
-            context[PatientByHospitalNumberLoader.loader_name].prime(
-                patient.hospital_number,
-                patient
-            )
+            PatientByHospitalNumberLoader.prime(patient.hospital_number, patient, context=context)
 
         return patient
 
@@ -89,6 +83,12 @@ class PatientByIdLoader(DataLoader):
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
+
+    @classmethod
+    def prime(cls, key=None, value=None, context=None):
+        if cls.loader_name not in context:
+            context[cls.loader_name] = cls(db=context['db'])
+        return super(PatientByIdLoader, context[cls.loader_name]).prime(key=key, value=value)
 
 
 class PatientByHospitalNumberLoader(DataLoader):
@@ -145,11 +145,7 @@ class PatientByHospitalNumberLoader(DataLoader):
         patient = await context[cls.loader_name].load(id)
 
         if patient:
-            if PatientByIdLoader.loader_name not in context:
-                context[PatientByIdLoader.loader_name] = PatientByIdLoader(
-                    db=context['db']
-                )
-            context[PatientByIdLoader.loader_name].prime(patient.id, patient)
+            PatientByIdLoader.prime(patient.id, patient, context=context)
 
         return patient
 
@@ -171,6 +167,12 @@ class PatientByHospitalNumberLoader(DataLoader):
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
+
+    @classmethod
+    def prime(cls, key=None, value=None, context=None):
+        if cls.loader_name not in context:
+            context[cls.loader_name] = cls(db=context['db'])
+        return super(PatientByHospitalNumberLoader, context[cls.loader_name]).prime(key=key, value=value)
 
 
 class ReferencePatient:
@@ -269,3 +271,8 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
         if not ids:
             return None
         return await cls._get_loader_from_context(context).load_many(ids)
+
+    @classmethod
+    def prime(cls, key=None, value=None, context=None):
+        loader = cls._get_loader_from_context(context)
+        return super(PatientByHospitalNumberFromIELoader, loader).prime(key=key, value=value)

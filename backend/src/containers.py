@@ -15,6 +15,7 @@ class SDContainer(containers.DeclarativeContainer):
             "gql.mutation.create_decision_point",
             "gql.mutation.import_milestone",
             "gql.query",
+            "gql.query.patient_search",
             "gql.subscription.milestone_resolved",
             "gql.subscription.onpathway_updated",
             "rest.update_test_result",
