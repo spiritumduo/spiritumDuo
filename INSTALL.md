@@ -18,8 +18,8 @@ For an automated install of a development environment please run the Python scri
 
 ### Steps
 
-1. Check Docker is installed //TODO #31 Should we have a link to how to install Docker if? @jcf54
-2. Check Docker Compose is installed
+1. Check Docker is installed //TODO #31 Should have link to how to install docker @jcf54
+2. Check Docker Compose is installed //TODO #32 Link to how to install docker compose @jcf54
 3. Configuring Docker Compose file from template
 4. Check if containers are running
 5. Check if database volume already exists
