@@ -14,6 +14,8 @@ type Query {
     getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
     getMilestoneTypes: [MilestoneType!]
+    getRolePermissions: [RolePermission!]
+    getRoles: [Role!]
 
     """
     getPatentOnPathwayConnection:
@@ -95,6 +97,14 @@ type LockOnPathwayPayload{
 }
 
 #### DATA TYPES
+type Role{
+    name: String!
+    permissions: [RolePermission]!
+}
+type RolePermission{
+    name: String!
+}
+
 type UserError{
     message:String!
     field:String!
@@ -171,6 +181,7 @@ type User {
     lastLogin: DateTime
     department: String!
     defaultPathway: Pathway!
+    roles: [Role!]
 }
 
 type DecisionPoint {
