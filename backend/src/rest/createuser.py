@@ -1,3 +1,4 @@
+import re
 from SdTypes import Permissions
 from models import User
 from .api import _FastAPI
@@ -5,6 +6,7 @@ from fastapi import Request
 from pydantic import BaseModel
 from datacreators import CreateUser
 from authentication.authentication import needsAuthorization
+from .restexceptions import ConflictHTTPException, UnprocessableHTTPException
 from asyncpg.exceptions import UniqueViolationError
 from pyisemail import is_email
 from pyisemail.diagnosis import InvalidDiagnosis
@@ -50,3 +52,9 @@ async def create_user(request: Request, input: CreateUserInput):
                 "isActive": user.is_active
             }
         }
+
+    except UniqueViolationError as e:
+        if re.search("username", e.message):
+            raise ConflictHTTPException("An account with this username already exists")
+        elif re.search("email", e.message):
+            raise ConflictHTTPException("An account with this email already exists")

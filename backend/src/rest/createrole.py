@@ -5,7 +5,7 @@ from fastapi import Request
 from pydantic import BaseModel
 from authentication.authentication import needsAuthorization
 from asyncpg.exceptions import UniqueViolationError
-from .restexceptions import UniqueViolationHTTPException
+from .restexceptions import ConflictHTTPException
 
 
 class CreateRoleInput(BaseModel):
@@ -18,5 +18,5 @@ async def create_role(request: Request, input: CreateRoleInput):
     try:
         role = await role_datacreator(name=input.name)
     except UniqueViolationError:
-        raise UniqueViolationHTTPException("Role already exists")
+        raise ConflictHTTPException("Role already exists")
     return role
