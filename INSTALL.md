@@ -18,7 +18,7 @@ For an automated install of a development environment please run the Python scri
 
 ### Steps
 
-1. Check Docker is installed
+1. Check Docker is installed //TODO #31
 2. Check Docker Compose is installed
 3. Configuring Docker Compose file from template
 4. Check if containers are running
