@@ -20,6 +20,7 @@ This installation readme outlines how to install Spritium Duo onto a development
 
 For an automated install of a development environment please run the Python script in the project's root directory, Mac: `python3 ./INSTALL.dev.py`, Windows: ..., Linux: ... 
 //TODO #34 @jcf54 What would this be for Windows and Linux
+
 Once variables have been defaulted or manaully entered, it can take 10-20 mins to install, depending on your system specifications.
 
 ### Automated steps (with maunal variable collection on the way)
