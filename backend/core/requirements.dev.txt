@@ -21,3 +21,4 @@ dependency-injector==4.37.0
 pytest==7.0.1
 pytest-asyncio==0.18.2
 async_asgi_testclient==1.4.10
+pyisemail==1.4.0
