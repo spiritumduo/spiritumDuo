@@ -1,10 +1,14 @@
 # Installation (development environment)
 
+## Overview //TODO #33 @jcf54 can you check that this section is correct?
+
+This installation readme outlines how to install Spritium Duo onto a development environment (that is not a final production system). You need to make sure you have all of the prerequisties done first and the .env (environment variables) complete. There is an automated installer that can be used to install Spiritum Duo. If you wish, a manual step-by-step option is also provided below.
+
 ## Installation prerequisites
 
 1. Git
 2. Docker (with Docker Compose)
-3. A clone of this repository (`git clone http://github.com/spiritumduo/spiritumDuo`)
+3. A clone of this repository (run `git clone http://github.com/spiritumduo/spiritumDuo` in the directory where you want run Spiritum Duo from)
 
 ## Terms
 
@@ -14,11 +18,14 @@
 
 ## Automated installer
 
-For an automated install of a development environment please run the Python script in the project's root directory, `INSTALL.dev.py`.
+For an automated install of a development environment please run the Python script in the project's root directory, Mac: `python3 ./INSTALL.dev.py`, Windows: ..., Linux: ... 
+//TODO #34 @jcf54 What would this be for Windows and Linux
 
-### Steps
+Once variables have been defaulted or manaully entered, it can take 10-20 mins to install, depending on your system specifications.
 
-1. Check Docker is installed //TODO #31 Should have link to how to install docker @jcf54
+### Automated steps (with maunal variable collection on the way)
+
+1. Check Docker is installed //TODO #31 Should have link to how to install docker - https://docs.docker.com/desktop/ (Docker Desktop for Windows and Mac, Docker Engine for Linux) @jcf54
 2. Check Docker Compose is installed //TODO #32 Link to how to install docker compose @jcf54
 3. Configuring Docker Compose file from template
 4. Check if containers are running
@@ -30,13 +37,13 @@ For an automated install of a development environment please run the Python scri
 10. Restart containers
 11. Insert test data
 
-### Where to find generated strings
+### Where to find automatically generated strings
 
 If you have chosen to generate random strings for some variables, the value can be seen in the `.env` file in the service folder (backend/.env, etc).
 
 ### Notes
 
-#### Gather environment variables
+#### Gathering environment variables
 
 Example
 
@@ -48,6 +55,8 @@ Enter value (sd_pseudotie):
 ```
 
 The value in brackets is the default value. To continue using the default value, do not enter any data and press enter.
+
+
 
 ## Manual install
 
