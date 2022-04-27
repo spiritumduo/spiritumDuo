@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import * as yup from 'yup';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
-import { getRolePermissions, getRolePermissions_getRolePermissions } from './__generated__/getRolePermissions';
+import { getRolePermissions } from './__generated__/getRolePermissions';
 import { Input } from './nhs-style';
 
 export const GET_ROLE_PERMISSIONS = gql`
@@ -49,7 +48,7 @@ export function useCreateRoleSubmit(setShowModal: (arg0: boolean) => void): Crea
   const [error, setError] = useState<unknown>(undefined);
   const [data, setData] = useState<CreateRoleReturnData | undefined>(undefined);
 
-  async function createUser(variables: CreateRoleInputs) {
+  async function createRole(variables: CreateRoleInputs) {
     setLoading(true);
     setData(undefined);
     setError(undefined);
@@ -75,7 +74,6 @@ export function useCreateRoleSubmit(setShowModal: (arg0: boolean) => void): Crea
       }
       const decodedCreateResponse: CreateRoleReturnData = await createResponse.json();
 
-      // eslint-disable-next-line array-callback-return
       const listOfPermissions = variables.permissions.filter(
         (perm) => (perm.checked !== false || null),
       ).map((value) => (value.checked as unknown as string));
@@ -104,10 +102,10 @@ export function useCreateRoleSubmit(setShowModal: (arg0: boolean) => void): Crea
     }
     setLoading(false);
   }
-  return [loading, error, data, createUser];
+  return [loading, error, data, createRole];
 }
 
-const RoleManagementTabs = (): JSX.Element => {
+const CreateRoleTab = (): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [
     loading,
@@ -116,7 +114,7 @@ const RoleManagementTabs = (): JSX.Element => {
     createRole,
   ] = useCreateRoleSubmit(setShowModal);
 
-  const {loading: getRolePermissionsLoading,
+  const { loading: getRolePermissionsLoading,
     data: getRolePermissionsData,
     error: getRolePermissionsError } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
 
@@ -165,77 +163,72 @@ const RoleManagementTabs = (): JSX.Element => {
   ]);
 
   return (
-    <Tabs>
-      <TabList>
-        <Tab>Create role</Tab>
-      </TabList>
-      <TabPanel>
-        { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
-        <Form
-          onSubmit={ handleSubmit( () => {
-            createRole(getValues());
-          }) }
-        >
+    <>
+      { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
+      <Form
+        onSubmit={ handleSubmit( () => {
+          createRole(getValues());
+        }) }
+      >
+        {
+          getRolePermissionsError?.message ? <ErrorMessage>{getRolePermissionsError?.message}</ErrorMessage> : ''
+        }
+        <Fieldset disabled={ getRolePermissionsLoading }>
+          <Input role="textbox" id="name" label="Role name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
+        </Fieldset>
+        <Fieldset disabled={ getRolePermissionsLoading }>
+          <Fieldset.Legend>Role permissions</Fieldset.Legend>
           {
-            getRolePermissionsError?.message ? <ErrorMessage>{getRolePermissionsError?.message}</ErrorMessage> : ''
+            permissionFields?.map((permission, index) => (
+              <div className="form-check" key={ `permissions.${permission.name}.checked` }>
+                <label className="form-check-label pull-right" htmlFor={ `permissions.${index}.checked` }>
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    value={ permission.name }
+                    id={ `permissions.${index}.checked` }
+                    { ...register(`permissions.${index}.checked` as const) }
+                    defaultChecked={ false }
+                  />
+                  { permission.name }
+                </label>
+              </div>
+            ))
           }
-          <Fieldset disabled={ getRolePermissionsLoading }>
-            <Input role="textbox" id="name" label="Role name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
-          </Fieldset>
-          <Fieldset disabled={ getRolePermissionsLoading }>
-            <Fieldset.Legend>Role permissions</Fieldset.Legend>
-            {
-              permissionFields?.map((permission, index) => (
-                <div className="form-check" key={ `permissions.${permission.name}.checked` }>
-                  <label className="form-check-label pull-right" htmlFor={ `permissions.${index}.checked` }>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value={ permission.name }
-                      id={ `permissions.${index}.checked` }
-                      { ...register(`permissions.${index}.checked` as const) }
-                      defaultChecked={ false }
-                    />
-                    { permission.name }
-                  </label>
-                </div>
-              ))
-            }
-          </Fieldset>
-          <Fieldset disabled={ getRolePermissionsLoading }>
-            <Button className="float-end">Create role</Button>
-          </Fieldset>
-        </Form>
-        <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
-          <Modal.Header>
-            <Modal.Title>Role created</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <SummaryList>
-              <SummaryList.Row>
-                <SummaryList.Key>Role name</SummaryList.Key>
-                <SummaryList.Value>{data?.name}</SummaryList.Value>
-              </SummaryList.Row>
-              <SummaryList.Row>
-                <SummaryList.Key>Permissions</SummaryList.Key>
-                <SummaryList.Value>
-                  <ul>
-                    {
-                      data?.permissions.map((name) => (
-                        <li key={ `create_role_modal_perm_${name}` }>{name}</li>
-                      ))
-                    }
-                  </ul>
-                </SummaryList.Value>
-              </SummaryList.Row>
-            </SummaryList>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={ (() => setShowModal(false)) }>Close</Button>
-          </Modal.Footer>
-        </Modal>
-      </TabPanel>
-    </Tabs>
+        </Fieldset>
+        <Fieldset disabled={ getRolePermissionsLoading }>
+          <Button className="float-end">Create role</Button>
+        </Fieldset>
+      </Form>
+      <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
+        <Modal.Header>
+          <Modal.Title>Role created</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <SummaryList>
+            <SummaryList.Row>
+              <SummaryList.Key>Role name</SummaryList.Key>
+              <SummaryList.Value>{data?.name}</SummaryList.Value>
+            </SummaryList.Row>
+            <SummaryList.Row>
+              <SummaryList.Key>Permissions</SummaryList.Key>
+              <SummaryList.Value>
+                <ul>
+                  {
+                    data?.permissions.map((name) => (
+                      <li key={ `create_role_modal_perm_${name}` }>{name}</li>
+                    ))
+                  }
+                </ul>
+              </SummaryList.Value>
+            </SummaryList.Row>
+          </SummaryList>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={ (() => setShowModal(false)) }>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
-export default RoleManagementTabs;
+export default CreateRoleTab;

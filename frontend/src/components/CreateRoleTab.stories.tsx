@@ -7,7 +7,7 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
 import { Standard } from 'components/Notification.stories';
 import { cache } from 'app/cache';
-import RoleManagementTabs, { GET_ROLE_PERMISSIONS, CreateRoleReturnData } from './RoleManagementTabs';
+import CreateRoleTab, { GET_ROLE_PERMISSIONS, CreateRoleReturnData } from './CreateRoleTab';
 
 const rolePermissions = [
   {
@@ -38,23 +38,23 @@ const apolloMocks = [
 ];
 
 export default {
-  title: 'Components/Role Management Tabs',
-  component: RoleManagementTabs,
+  title: 'Components/Create Role Tab',
+  component: CreateRoleTab,
   decorators: [
-    (RoleManagementTabsStory) => {
+    (CreateRoleTabStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
             <MockPathwayProvider>
-              <RoleManagementTabsStory />
+              <CreateRoleTabStory />
             </MockPathwayProvider>
           </MockAuthProvider>
         </MemoryRouter>
       );
     },
   ],
-} as ComponentMeta<typeof RoleManagementTabs>;
+} as ComponentMeta<typeof CreateRoleTab>;
 
 const successfulRoleCreationMock: CreateRoleReturnData = {
   id: 1,
@@ -68,10 +68,10 @@ const successfulRoleUpdateMock: CreateRoleReturnData = {
   permissions: ['permission 1 from server', 'permission 2 from server'],
 };
 
-export const Default: ComponentStory<typeof RoleManagementTabs> = () => {
+export const Default: ComponentStory<typeof CreateRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', successfulRoleCreationMock);
   fetchMock.mock('end:/rest/updaterole/', successfulRoleUpdateMock);
-  return <RoleManagementTabs />;
+  return <CreateRoleTab />;
 };
 
 Default.parameters = {
@@ -83,9 +83,9 @@ Default.parameters = {
   },
 };
 
-export const RoleExistsError: ComponentStory<typeof RoleManagementTabs> = () => {
+export const RoleExistsError: ComponentStory<typeof CreateRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', { status: 409 });
-  return <RoleManagementTabs />;
+  return <CreateRoleTab />;
 };
 
 RoleExistsError.parameters = {
