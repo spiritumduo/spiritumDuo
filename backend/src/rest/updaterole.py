@@ -23,7 +23,7 @@ class UpdateRoleInput(BaseModel):
 async def update_role(request: Request, input: UpdateRoleInput):
     async with db.transaction() as tx:
         try:
-            role = await Role.query.where(Role.id == input.id).gino.one_or_none()
+            role: Role = await Role.query.where(Role.id == input.id).gino.one_or_none()
             if role is None:
                 raise NotFoundHTTPException("Role with that ID not found")
             await role.update(name=input.name).apply()
@@ -48,7 +48,13 @@ async def update_role(request: Request, input: UpdateRoleInput):
                     permission=perm
                 ).create()
 
-            return JSONResponse(status_code=200)
+            updated_permissions: List[RolePermission] = await RolePermission.query\
+                .where(RolePermission.role_id == role.id).gino.all()
+            return JSONResponse({
+                "id": role.id,
+                "name": role.name,
+                "permissions": [p.permission for p in updated_permissions]
+            }, status_code=200)
 
         except UniqueViolationError:
             raise UniqueViolationHTTPException("Role with that name already exists")
