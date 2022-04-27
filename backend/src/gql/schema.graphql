@@ -98,9 +98,11 @@ type LockOnPathwayPayload{
 
 #### DATA TYPES
 type Role{
+    id: ID!
     name: String!
     permissions: [RolePermission]!
 }
+
 type RolePermission{
     name: String!
 }
