@@ -11,7 +11,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // APP
 import { Input, Select, CheckboxBox } from 'components/nhs-style';
 import { PathwayContext } from 'app/context';
-import RoleManagementTabs from 'components/RoleManagementTabs';
+import CreateRoleTab from 'components/CreateRoleTab';
+import UpdateRoleTab from 'components/UpdateRoleTab';
 
 export type CreateUserReturnUser = {
   username: string;
@@ -210,7 +211,18 @@ const AdministrationPage = (): JSX.Element => {
           </Modal>
         </TabPanel>
         <TabPanel>
-          <RoleManagementTabs />
+          <Tabs>
+            <TabList>
+              <Tab>Create role</Tab>
+              <Tab>Update role</Tab>
+            </TabList>
+            <TabPanel>
+              <CreateRoleTab />
+            </TabPanel>
+            <TabPanel>
+              <UpdateRoleTab />
+            </TabPanel>
+          </Tabs>
         </TabPanel>
       </Tabs>
     </Container>
