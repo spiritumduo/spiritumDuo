@@ -1,6 +1,8 @@
 from SdTypes import Permissions
+from models.Role import Role
 from datacreators import create_role as role_datacreator
 from .api import _FastAPI
+from starlette.responses import JSONResponse
 from fastapi import Request
 from pydantic import BaseModel
 from authentication.authentication import needsAuthorization
@@ -16,7 +18,11 @@ class CreateRoleInput(BaseModel):
 @needsAuthorization([Permissions.ROLE_CREATE])
 async def create_role(request: Request, input: CreateRoleInput):
     try:
-        role = await role_datacreator(name=input.name)
+        role: Role = await role_datacreator(name=input.name)
     except UniqueViolationError:
         raise UniqueViolationHTTPException("Role already exists")
-    return role
+    return JSONResponse({
+        "id": role.id,
+        "name": role.name,
+        "permissions": []
+    }, status_code=200)

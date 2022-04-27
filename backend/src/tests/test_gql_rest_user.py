@@ -1,11 +1,7 @@
 import json
-import logging
-
 import pytest
-from gino.loader import ModelLoader
-
 from .conftest import UserFixture
-from models import User, Role, UserRole
+from models import User
 from hamcrest import assert_that, equal_to, not_none, contains_string
 from bcrypt import hashpw, gensalt
 from httpx import Response
@@ -29,6 +25,7 @@ def get_user_query() -> str:
             }
         }
     """
+
 
 # Feature: Test user REST/GQL operations
 # Scenario: a user needs to login

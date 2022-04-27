@@ -11,6 +11,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // APP
 import { Input, Select, CheckboxBox } from 'components/nhs-style';
 import { PathwayContext } from 'app/context';
+import CreateRoleTab from 'components/CreateRoleTab';
+import UpdateRoleTab from 'components/UpdateRoleTab';
 
 export type CreateUserReturnUser = {
   username: string;
@@ -112,6 +114,7 @@ const AdministrationPage = (): JSX.Element => {
       <Tabs>
         <TabList>
           <Tab>Create user</Tab>
+          <Tab>Roles management</Tab>
         </TabList>
         <TabPanel>
           <Form
@@ -206,6 +209,20 @@ const AdministrationPage = (): JSX.Element => {
               <Button onClick={ (() => setShowModal(false)) }>Close</Button>
             </Modal.Footer>
           </Modal>
+        </TabPanel>
+        <TabPanel>
+          <Tabs>
+            <TabList>
+              <Tab>Create role</Tab>
+              <Tab>Update role</Tab>
+            </TabList>
+            <TabPanel>
+              <CreateRoleTab />
+            </TabPanel>
+            <TabPanel>
+              <UpdateRoleTab />
+            </TabPanel>
+          </Tabs>
         </TabPanel>
       </Tabs>
     </Container>

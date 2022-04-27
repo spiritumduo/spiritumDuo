@@ -356,6 +356,15 @@ async def role_update_permission(test_role) -> RolePermission:
     ).create()
 
 
+# ROLE PERMISSIONS
+@pytest.fixture
+async def role_permission_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ROLE_PERMISSIONS_READ
+    ).create()
+
+
 # USER
 @pytest.fixture
 async def user_create_permission(test_role) -> RolePermission:

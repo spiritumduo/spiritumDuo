@@ -12,6 +12,8 @@ from .milestone_state import MilestoneStateEnum
 from .test_result import TestResultObjectType
 from .import_milestone_payload import ImportMilestonePayloadObjectType
 from .lock_on_pathway_payload import LockOnPathwayPayloadObjectType
+from .role_permission import RolePermissionObjectType
+from .role import RoleObjectType
 
 object_types_list = [
     PatientObjectType,
@@ -27,5 +29,7 @@ object_types_list = [
     MilestoneStateEnum,
     TestResultObjectType,
     ImportMilestonePayloadObjectType,
-    LockOnPathwayPayloadObjectType
+    LockOnPathwayPayloadObjectType,
+    RolePermissionObjectType,
+    RoleObjectType,
 ]
