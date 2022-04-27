@@ -60,6 +60,14 @@ async def test_update_role(login_user, test_client, role_update_permission):
         assert_that(p.permission, not_(is_in(removed_permissions)))
     assert_that(len(permissions_from_db), equal_to(len(new_permissions)))
 
+    result = res.json()
+    assert_that(result['id'], equal_to(role.id))
+    assert_that(result['name'], equal_to(new_role_name))
+    assert_that(result['permissions'], not_(equal_to([])))
+    for p in permissions_from_db:
+        assert_that(p.permission, is_in(result['permissions']))
+    assert_that(len(permissions_from_db), equal_to(len(result['permissions'])))
+
 
 async def test_user_lacks_permission(login_user, test_client):
     res = await test_client.post(
