@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }: React.ComponentPropsWithRef<any>): JS
 export interface PathwayContextInterface {
     pathwayOptions: PathwayOption[];
     updatePathwayOptions: (pathways: PathwayOption[]) => void;
-    currentPathwayId?: number;
-    updateCurrentPathwayId: (id: number) => void;
+    currentPathwayId?: string;
+    updateCurrentPathwayId: (id: string) => void;
 }
 export const PathwayContext = React.createContext<PathwayContextInterface>({
   pathwayOptions: [],
@@ -43,7 +43,7 @@ export const PathwayContext = React.createContext<PathwayContextInterface>({
 
 export const PathwayProvider = ({ children }: React.ComponentPropsWithRef<any>): JSX.Element => {
   const [pathwayOptions, updatePathwayOptionsState] = useState<PathwayOption[]>([]);
-  const [currentPathwayId, updateCurrentPathwayIdState] = useState<number | undefined>();
+  const [currentPathwayId, updateCurrentPathwayIdState] = useState<string | undefined>();
 
   if (pathwayOptions.length === 0) {
     const localStoragePathwayOptions = pathwayOptionsVar();
@@ -62,7 +62,7 @@ export const PathwayProvider = ({ children }: React.ComponentPropsWithRef<any>):
     pathwayOptionsVar(pathways);
   };
 
-  const updateCurrentPathwayId = (id: number) => {
+  const updateCurrentPathwayId = (id: string) => {
     updateCurrentPathwayIdState(id);
     currentPathwayIdVar(id);
   };

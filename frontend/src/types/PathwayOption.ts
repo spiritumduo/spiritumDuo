@@ -1,4 +1,4 @@
 export default interface PathwayOption {
-    id: number;
+    id: string;
     name: string;
 }

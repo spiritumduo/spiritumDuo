@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import App from './App';
 
 const fakeUser: User = {
-  id: 1,
+  id: '1',
   firstName: 'Test-John',
   lastName: 'Test-Doe',
   department: 'Respiratory',

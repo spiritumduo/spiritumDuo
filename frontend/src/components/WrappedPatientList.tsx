@@ -207,7 +207,7 @@ const WrappedPatientList = ({
 
         const isOnPathwayLockedByOther = n.onPathways?.[0].lockEndTime > new Date() && (
           n.onPathways?.[0]?.lockUser?.id
-            ? n.onPathways?.[0]?.lockUser?.id !== user?.id.toString()
+            ? n.onPathways?.[0]?.lockUser?.id !== user?.id
             : false
         );
         return {

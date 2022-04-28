@@ -12,7 +12,7 @@ import './SdHeader.css';
 
 export interface SdHeaderProps {
   pathwayOptions: PathwayOption[];
-  currentPathwayId: number;
+  currentPathwayId: string;
   pathwayOnItemSelect: (name: string) => void;
   searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
   user?: User;

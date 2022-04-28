@@ -1,14 +1,17 @@
 import Role from './Role';
 
 interface User {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     department: string;
-    defaultPathwayId: number;
+    defaultPathwayId: string;
+    username?: string;
+    email?: string;
     lastAccess?: Date;
     roles: Role[];
-    token: string;
+    token?: string;
+    isActive?: boolean;
 }
 
 export default User;

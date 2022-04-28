@@ -73,12 +73,12 @@ export const pathwayOptionsVar: ReactiveVar<PathwayOption[]> = makePersistantVar
 // Here we reconstruct the user from local storage. If any fields are missing, we
 // don't use it
 let sanitisedUser: User | null = {
-  id: 0,
+  id: '0',
   firstName: '',
   lastName: '',
   department: '',
   roles: [],
-  defaultPathwayId: 0,
+  defaultPathwayId: '0',
   token: '',
 };
 
@@ -86,7 +86,7 @@ const localStorageUserJson = localStorage.getItem('loggedInUser');
 if (localStorageUserJson) {
   try {
     const localStorageUser: User = JSON.parse(localStorageUserJson) as User;
-    sanitisedUser.id = parseInt(localStorageUser.id.toString(), 10);
+    sanitisedUser.id = localStorageUser.id;
     sanitisedUser.firstName = localStorageUser.firstName;
     sanitisedUser.lastName = localStorageUser.lastName;
     sanitisedUser.department = localStorageUser.department;
@@ -97,7 +97,7 @@ if (localStorageUserJson) {
     sanitisedUser = null;
   }
 }
-sanitisedUser = sanitisedUser?.id === 0
+sanitisedUser = sanitisedUser?.id === '0'
   ? null
   : sanitisedUser;
 export const loggedInUserVar: ReactiveVar<User | null> = makePersistantVar<User | null>(
@@ -110,16 +110,16 @@ const userDefaultPathway = loggedInUserVar()?.defaultPathwayId;
 
 let _currentPathway;
 if (currentPathwayIdLocalStorage) {
-  _currentPathway = parseInt(currentPathwayIdLocalStorage, 10);
+  _currentPathway = currentPathwayIdLocalStorage;
 } else if (userDefaultPathway) {
   _currentPathway = userDefaultPathway;
 } else if (pathwayOptionsArray[0]) {
   _currentPathway = pathwayOptionsArray[0].id;
 } else {
-  _currentPathway = 0;
+  _currentPathway = '0';
 }
 
 // Save the current pathway ID
-export const currentPathwayIdVar: ReactiveVar<number> = makePersistantVar<number>(
+export const currentPathwayIdVar: ReactiveVar<string> = makePersistantVar<string>(
   _currentPathway, 'currentPathwayId',
 );

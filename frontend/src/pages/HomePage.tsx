@@ -25,7 +25,7 @@ export interface HomePageProps {
 
 const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
-  const pathwayId = currentPathwayId as number;
+  const pathwayId = currentPathwayId as string;
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { hospitalNumber } = useParams();
@@ -50,7 +50,7 @@ const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element
           </TabList>
           <TabPanel>
             <WrappedPatientList
-              pathwayId={ pathwayId.toString() }
+              pathwayId={ pathwayId }
               patientsToDisplay={ patientsPerPage }
               outstanding
               underCareOf
@@ -58,7 +58,7 @@ const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element
           </TabPanel>
           <TabPanel>
             <WrappedPatientList
-              pathwayId={ pathwayId.toString() }
+              pathwayId={ pathwayId }
               patientsToDisplay={ patientsPerPage }
               outstanding={ false }
               underCareOf={ false }

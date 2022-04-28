@@ -7,11 +7,11 @@ import { MemoryRouter } from 'react-router';
 import AdministrationPage from './Administration';
 
 const user: User = {
-  id: 1,
+  id: '1',
   firstName: 'John',
   lastName: 'Doe',
   department: 'Respiratory',
-  defaultPathwayId: 1,
+  defaultPathwayId: '1',
   roles: [],
   token: 'token',
 };

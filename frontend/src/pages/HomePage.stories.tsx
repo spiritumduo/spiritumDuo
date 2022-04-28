@@ -32,7 +32,7 @@ export default {
 } as Meta<typeof HomePage>;
 
 export const Default: Story<HomePageProps> = (args: HomePageProps) => {
-  currentPathwayIdVar(1);
+  currentPathwayIdVar('1');
   return <HomePage { ...args } />;
 };
 
