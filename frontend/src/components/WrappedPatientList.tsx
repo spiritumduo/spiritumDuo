@@ -140,7 +140,6 @@ const WrappedPatientList = ({
 
   const {
     data: subscrData,
-    error: subscrError,
   } = useSubscription<onPathwayUpdated>(ON_PATHWAY_UPDATED_SUBSCRIPTION, {
     variables: {
       pathwayId: pathwayId,
