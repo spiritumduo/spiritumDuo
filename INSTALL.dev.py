@@ -47,9 +47,11 @@ class EnvironmentVariable(object):
         self.userInput = ""
         self.display = display
 
-    def getEnvironmentVariableInput(self):
+    def getEnvironmentVariableInput(self, skipUserInput):
         print(f"\n{self.name}\n{self.description}\n")
         userInput = None
+        if skipUserInput:
+            userInput = self.default or self.inputGenerator()
         while (
             (userInput is None) or
             (userInput == "" and (
@@ -372,10 +374,16 @@ for volumeName in [
 
 PrintHeading("Gather environment variables")
 print("NOTE: TO USE DEFAULT OR GENERATED VALUE, LEAVE INPUT EMPTY")
+
+useGeneratedEnvVarsOnly = validateInput(
+    "Do you wish to use only default environment variables (skip manual variable assignment)? (Y/n): ",
+    ["y", "n"]
+) == "y"
+
 for serviceName, variableList in ENV_DEFS.items():
     print(f"\n##########\nVARIABLES FOR SERVICE: {serviceName}\n##########")
     for varName, varObject in variableList.items():
-        varObject.getEnvironmentVariableInput()
+        varObject.getEnvironmentVariableInput(useGeneratedEnvVarsOnly)
 
 
 createOrOverrideEnvFile = True
