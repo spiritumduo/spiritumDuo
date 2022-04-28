@@ -69,6 +69,7 @@ const renderApp = async (props?: AppElementProps) => {
       </MockedProvider>
     </Provider>,
   );
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
 };
 
 test('Should render login page with no user in context', () => {

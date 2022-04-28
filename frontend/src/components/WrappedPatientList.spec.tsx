@@ -1,29 +1,37 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
 import * as stories from './WrappedPatientList.stories';
 
 const { Default } = composeStories(stories);
-const renderDefault = () => {
+const renderDefault = async () => {
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
+  // this lets the subscription resolve and removes act warnings
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
 };
 
-test('Patient lists should display loading', () => {
-  renderDefault();
-  expect(screen.getByText('Loading!')).toBeInTheDocument();
+test('Patient lists should display loading', async () => {
+  await waitFor(() => {
+    render(
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>,
+    );
+    expect(screen.getByText('Loading!')).toBeInTheDocument();
+  });
 });
 
 test('Patient lists should contain patients', async () => {
   const patientsPerPage = Default.args?.patientsToDisplay;
   if (patientsPerPage) {
-    renderDefault();
+    await renderDefault();
     await waitFor(
       () => expect(
         screen.getAllByRole('row').length,
@@ -36,19 +44,19 @@ test('Patient lists should contain patients', async () => {
 
 test('It should display the last completed milestone alongside the patient', async () => {
   const patientsPerPage = Default.args?.patientsToDisplay;
-  renderDefault();
+  await renderDefault();
   await waitFor(() => expect(screen.getAllByText(/third milestone/i).length).toEqual(patientsPerPage));
 });
 
 test('It should display lock icons for locked patients', async () => {
-  renderDefault();
+  await renderDefault();
   await waitFor(() => expect(screen.getByText(/john 1 doe 1/i)).toBeInTheDocument());
   const lockIcons = screen.getAllByRole('img', { name: /lock icon$/i });
   expect(lockIcons.length).toBe(2);
 });
 
 test('Tooltip on hover of lock indicator should display Johnny Locker is locking', async () => {
-  renderDefault();
+  await renderDefault();
   expect(screen.queryByText(/locked by Johnny Locker/i)).toBeNull();
   await waitFor(() => expect(screen.getAllByRole('img', { name: /lock icon/i }).length).toBeGreaterThan(0));
   const lockIcons = screen.getAllByRole('img', { name: /lock icon$/i });
@@ -61,8 +69,7 @@ test('Patient lists should paginate', async () => {
   const patients = Default.parameters?.patients;
   const patientsPerPage = Default.args?.patientsToDisplay;
   if (patients && patientsPerPage) {
-    renderDefault();
-    await waitFor(() => expect(screen.getByText('Loading!')).toBeInTheDocument());
+    await renderDefault();
     const nextLinks = screen.getAllByRole('button', {
       name: (t) => /next/i.test(t),
     });
