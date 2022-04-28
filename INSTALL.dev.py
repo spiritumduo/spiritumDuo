@@ -5,6 +5,8 @@ import secrets
 from typing import Callable, Union, List
 from shutil import copyfile
 from time import sleep
+from timeit import default_timer
+from datetime import timedelta
 
 
 class ComponentNotFound(Exception):
@@ -103,7 +105,7 @@ def validateInput(message: str, selection: List[str]):
     userInput = input(message).lower()
     selection = [x.lower() for x in selection]
     while userInput not in selection:
-        print(f"ERROR: please enter one of the following: ", end="")
+        print("ERROR: please enter one of the following: ", end="")
         for i in range(0, len(selection)):
             if i == 0:
                 print(selection[i], end="")
@@ -267,6 +269,7 @@ ENV_DEFS = {
     }
 }
 
+START_TIME = default_timer()
 PrintHeading("Check project files exist")
 for path in [
     "backend",
@@ -471,7 +474,7 @@ if os.path.exists("wordpress/.env"):
     createOrOverrideEnvFile = validateInput(
         "Do you wish to override this file (wordpress/.env)? (Y/n): ",
         ["y", "n"]
-    )== "y"
+    ) == "y"
 
 if createOrOverrideEnvFile:
     buffer = []
@@ -542,7 +545,7 @@ RunCommand(
     shell=True)
 
 sleep(10)
-    
+
 PrintHeading("Insert test data")
 print(
     "NOTE: IF THE REGEX PATTERN FOR HOSPITAL OR NATIONAL NUMBER HAS CHANGED,"
@@ -570,3 +573,5 @@ print("""
     minutes for the frontend to
     launch for the first time
 """)
+END_TIME = default_timer()
+print("Time elapsed (hh:mm:ss.ms):", timedelta(seconds=END_TIME - START_TIME))
