@@ -102,7 +102,7 @@ export interface GetPatient_getMilestoneTypes {
 
 export interface GetPatient {
   getPatient: GetPatient_getPatient | null;
-  getMilestoneTypes: GetPatient_getMilestoneTypes[] | null;
+  getMilestoneTypes: GetPatient_getMilestoneTypes[];
 }
 
 export interface GetPatientVariables {

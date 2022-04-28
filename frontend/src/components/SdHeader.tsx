@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Header, SearchIcon, CloseIcon, Container } from 'nhsuk-react-components';
+import { Header, SearchIcon, Container } from 'nhsuk-react-components';
 import { ThreeDots } from 'react-bootstrap-icons';
 
 import User from 'types/Users';
