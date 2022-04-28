@@ -13,6 +13,7 @@ import { Input, Select, CheckboxBox } from 'components/nhs-style';
 import { PathwayContext } from 'app/context';
 import CreateRoleTab from 'components/CreateRoleTab';
 import UpdateRoleTab from 'components/UpdateRoleTab';
+import DeleteRoleTab from 'components/DeleteRoleTab';
 
 export type CreateUserReturnUser = {
   username: string;
@@ -215,12 +216,16 @@ const AdministrationPage = (): JSX.Element => {
             <TabList>
               <Tab>Create role</Tab>
               <Tab>Update role</Tab>
+              <Tab>Delete role</Tab>
             </TabList>
             <TabPanel>
               <CreateRoleTab />
             </TabPanel>
             <TabPanel>
               <UpdateRoleTab />
+            </TabPanel>
+            <TabPanel>
+              <DeleteRoleTab />
             </TabPanel>
           </Tabs>
         </TabPanel>
