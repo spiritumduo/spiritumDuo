@@ -69,14 +69,24 @@ async def update_user(request: Request, input: UpdateUserInput):
                         user_id=user.id,
                     )
 
+                roles = await Role.join(UserRole).select().where(UserRole.user_id == user.id).gino.all()
+                role_dicts = []
+                for r in roles:
+                    role_dicts.append({
+                        "id": r.id,
+                        "name": r.name
+                    })
+
                 return {
                     "user": {
                         "username": user.username,
                         "firstName": user.first_name,
                         "lastName": user.last_name,
+                        "email": user.email,
                         "department": user.department,
                         "defaultPathwayId": user.default_pathway_id,
-                        "isActive": user.is_active
+                        "isActive": user.is_active,
+                        "roles": role_dicts
                     }
                 }
     except UniqueViolationError as e:
