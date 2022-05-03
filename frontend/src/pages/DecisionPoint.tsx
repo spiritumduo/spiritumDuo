@@ -98,7 +98,7 @@ export const GET_PATIENT_QUERY = gql`
           }
         }
       }
-      getMilestoneTypes {
+      getMilestoneTypes(pathwayId: $pathwayId) {
         id
         name
         isDischarge
