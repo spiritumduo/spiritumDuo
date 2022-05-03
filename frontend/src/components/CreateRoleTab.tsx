@@ -6,8 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
-import { getRolePermissions } from './__generated__/getRolePermissions';
 import { Input } from './nhs-style';
+import { getRoles } from './__generated__/getRoles';
 
 type CreateRoleForm = {
   name: string;
@@ -39,7 +39,7 @@ export function useCreateRoleSubmit(
   setShowModal: (arg0: boolean) => void,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<getRolePermissions>>,
+  ) => Promise<ApolloQueryResult<getRoles>>,
 ): CreateRoleSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
@@ -110,7 +110,7 @@ export interface CreateRoleTabProps {
   disableForm?: boolean | undefined,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<getRolePermissions>>,
+  ) => Promise<ApolloQueryResult<getRoles>>,
   rolePermissions: {name: string}[] | undefined,
 }
 
