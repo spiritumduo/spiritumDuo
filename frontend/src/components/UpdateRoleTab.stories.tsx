@@ -5,9 +5,8 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
-import { Standard } from 'components/Notification.stories';
 import { cache } from 'app/cache';
-import UpdateRoleTab, { GET_ROLES, GET_ROLE_PERMISSIONS, UpdateRoleReturnData } from './UpdateRoleTab';
+import UpdateRoleTab, { UpdateRoleReturnData } from './UpdateRoleTab';
 
 const roles = [
   {
@@ -28,31 +27,8 @@ const rolePermissions = [
   },
 ];
 
-const apolloMocks = [
-  {
-    request: {
-      query: GET_ROLE_PERMISSIONS,
-    },
-    result: {
-      data: {
-        getRolePermissions: rolePermissions,
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_ROLES,
-    },
-    result: {
-      data: {
-        getRoles: roles,
-      },
-    },
-  },
-];
-
 export default {
-  title: 'Components/Update Role Tab',
+  title: 'Tab Pages/Role Management/Update Role Tab',
   component: UpdateRoleTab,
   decorators: [
     (UpdateRoleTabStory) => {
@@ -74,16 +50,26 @@ const successfulRoleUpdateMock: UpdateRoleReturnData = {
   permissions: ['permission 1 from server', 'permission 2 from server'],
 };
 
-export const Default: ComponentStory<typeof UpdateRoleTab> = () => {
-  fetchMock.restore().mock('end:/rest/updaterole/', successfulRoleUpdateMock);
-  return <UpdateRoleTab />;
+const conflictingRoleUpdateMock = {
+  error: 'error message from server',
 };
 
-Default.parameters = {
-  apolloClient: {
-    mocks: [
-      ...apolloMocks,
-      Standard.parameters?.apolloClient.mocks[0], // notification mock
-    ],
-  },
+export const Default: ComponentStory<typeof UpdateRoleTab> = () => {
+  fetchMock.restore().mock('end:/rest/updaterole/', successfulRoleUpdateMock);
+  return (
+    <UpdateRoleTab
+      roles={ roles }
+      rolePermissions={ rolePermissions }
+    />
+  );
+};
+
+export const ConflictError: ComponentStory<typeof UpdateRoleTab> = () => {
+  fetchMock.restore().mock('end:/rest/updaterole/', { body: conflictingRoleUpdateMock, status: 409 });
+  return (
+    <UpdateRoleTab
+      roles={ roles }
+      rolePermissions={ rolePermissions }
+    />
+  );
 };

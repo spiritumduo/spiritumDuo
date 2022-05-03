@@ -1,33 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { gql, useQuery } from '@apollo/client';
+import { ApolloQueryResult, gql, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
-import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
-import { getRolePermissions } from './__generated__/getRolePermissions';
+import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
 import { Select } from './nhs-style';
 import { getRoles } from './__generated__/getRoles';
-
-export const GET_ROLES = gql`
-  query getRoles{
-    getRoles{
-      id
-      name
-      permissions{
-        name
-      }
-    }
-  }
-`;
-
-export const GET_ROLE_PERMISSIONS = gql`
-  query getRolePerms{
-    getRolePermissions{
-      name
-    }
-  }
-`;
 
 type DeleteRoleForm = {
   name: string;
@@ -59,7 +38,9 @@ type DeleteRoleSubmitHook = [
 
 export function useDeleteRoleSubmit(
   setShowModal: (arg0: boolean) => void,
-  refetchRoles: () => void,
+  refetchRoles?: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<getRoles>>,
 ): DeleteRoleSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
@@ -95,7 +76,9 @@ export function useDeleteRoleSubmit(
       const decodedResponse: DeleteRoleReturnData = await deleteResponse.json();
       setData(decodedResponse);
       setShowModal(true);
-      refetchRoles();
+      if (refetchRoles) {
+        refetchRoles();
+      }
     } catch (err) {
       setError(err);
       setData(undefined);
@@ -105,17 +88,23 @@ export function useDeleteRoleSubmit(
   return [loading, error, data, deleteRole];
 }
 
-const DeleteRoleTab = (): JSX.Element => {
+export interface DeleteRoleTabProps {
+  disableForm?: boolean | undefined,
+  refetchRoles?: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<getRoles>>,
+  roles?: {
+    id: string;
+    name: string;
+    permissions: { name: string | undefined; }[];
+  }[] | undefined
+  rolePermissions?: {name: string}[],
+}
+
+const DeleteRoleTab = (
+  { disableForm, refetchRoles, roles, rolePermissions }: DeleteRoleTabProps,
+): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
-
-  const { loading: getRolesLoading,
-    data: getRolesData,
-    error: getRolesError,
-    refetch: refetchRoles } = useQuery<getRoles>(GET_ROLES);
-
-  const { loading: getRolePermissionsLoading,
-    data: getRolePermissionsData,
-    error: getRolePermissionsError } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
 
   const [
     loading,
@@ -153,9 +142,9 @@ const DeleteRoleTab = (): JSX.Element => {
   });
 
   useEffect(() => {
-    if (!permissionCheckboxesOrganised && getRolePermissionsData) {
-      const fieldProps: DeleteRoleForm['permissions'] = getRolePermissionsData?.getRolePermissions
-        ? getRolePermissionsData.getRolePermissions.flatMap((rolePermission) => (
+    if (!permissionCheckboxesOrganised && rolePermissions) {
+      const fieldProps: DeleteRoleForm['permissions'] = rolePermissions
+        ? rolePermissions.flatMap((rolePermission) => (
           {
             name: rolePermission.name,
             checked: false,
@@ -166,7 +155,7 @@ const DeleteRoleTab = (): JSX.Element => {
       setPermissionCheckboxesOrganised(true);
     }
   }, [
-    getRolePermissionsData,
+    rolePermissions,
     appendPermissionFields,
     permissionCheckboxesOrganised,
     setPermissionCheckboxesOrganised,
@@ -182,7 +171,7 @@ const DeleteRoleTab = (): JSX.Element => {
         setValue(`permissions.${index}.checked`, false);
       });
 
-      const permissionSet = getRolesData?.getRoles?.filter(
+      const permissionSet = roles?.filter(
         (role) => (role.id === selectedRole),
       )?.[0];
 
@@ -198,7 +187,7 @@ const DeleteRoleTab = (): JSX.Element => {
         });
       }
     }
-  }, [getRolePermissionsData, getRolesData, permissionFields, selectedRole, setValue]);
+  }, [rolePermissions, roles, permissionFields, selectedRole, setValue]);
 
   return (
     <>
@@ -208,11 +197,9 @@ const DeleteRoleTab = (): JSX.Element => {
           deleteRole(getValues());
         }) }
       >
-        { getRolePermissionsError?.message ? <ErrorMessage>{getRolePermissionsError?.message}</ErrorMessage> : '' }
         <Fieldset
           disabled={
-            getRolePermissionsLoading || getRolesLoading
-            || !!getRolePermissionsError || !!getRolesError
+            disableForm || loading
           }
         >
           <Select
@@ -226,7 +213,7 @@ const DeleteRoleTab = (): JSX.Element => {
           >
             <option value="-1">Select a role</option>
             {
-              getRolesData?.getRoles?.map((role, index) => (
+              roles?.map((role) => (
                 <option key={ role.id } value={ role.id }>{ role.name }</option>
               ))
             }
@@ -256,8 +243,7 @@ const DeleteRoleTab = (): JSX.Element => {
         </Fieldset>
         <Fieldset
           disabled={
-            getRolePermissionsLoading || getRolesLoading
-            || !!getRolePermissionsError || !!getRolesError
+            disableForm || loading
             || selectedRole === '-1'
           }
         >

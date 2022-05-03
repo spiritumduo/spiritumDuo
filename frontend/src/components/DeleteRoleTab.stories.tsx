@@ -3,9 +3,8 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
-import { Standard } from 'components/Notification.stories';
 import { cache } from 'app/cache';
-import DeleteRoleTab, { GET_ROLES, GET_ROLE_PERMISSIONS } from './DeleteRoleTab';
+import DeleteRoleTab from './DeleteRoleTab';
 
 const roles = [
   {
@@ -33,31 +32,8 @@ const rolePermissions = [
   },
 ];
 
-const apolloMocks = [
-  {
-    request: {
-      query: GET_ROLE_PERMISSIONS,
-    },
-    result: {
-      data: {
-        getRolePermissions: rolePermissions,
-      },
-    },
-  },
-  {
-    request: {
-      query: GET_ROLES,
-    },
-    result: {
-      data: {
-        getRoles: roles,
-      },
-    },
-  },
-];
-
 export default {
-  title: 'Components/Delete Role Tab',
+  title: 'Tab Pages/Role Management/Delete Role Tab',
   component: DeleteRoleTab,
   decorators: [
     (DeleteRoleTabStory) => {
@@ -79,16 +55,12 @@ const successfulRoleDeleteMock = {
 
 export const Default: ComponentStory<typeof DeleteRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/deleterole/', successfulRoleDeleteMock);
-  return <DeleteRoleTab />;
-};
-
-Default.parameters = {
-  apolloClient: {
-    mocks: [
-      ...apolloMocks,
-      Standard.parameters?.apolloClient.mocks[0], // notification mock
-    ],
-  },
+  return (
+    <DeleteRoleTab
+      roles={ roles }
+      rolePermissions={ rolePermissions }
+    />
+  );
 };
 
 const conflictingRoleDeleteMock = {
@@ -97,14 +69,10 @@ const conflictingRoleDeleteMock = {
 
 export const Error: ComponentStory<typeof DeleteRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/deleterole/', { body: conflictingRoleDeleteMock, status: 409});
-  return <DeleteRoleTab />;
-};
-
-Error.parameters = {
-  apolloClient: {
-    mocks: [
-      ...apolloMocks,
-      Standard.parameters?.apolloClient.mocks[0], // notification mock
-    ],
-  },
+  return (
+    <DeleteRoleTab
+      roles={ roles }
+      rolePermissions={ rolePermissions }
+    />
+  );
 };
