@@ -3,7 +3,7 @@ from dataloaders import PatientByIdLoader
 from .query_type import query
 from models import OnPathway, DecisionPoint, Milestone, db
 from SdTypes import MilestoneState
-from .pagination import make_connection
+from .pagination import make_connection, validate_parameters
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from SdTypes import Permissions
@@ -17,19 +17,7 @@ async def get_patient_connection(
         first=None, after=None, last=None, before=None, outstanding=True,
         underCareOf=False
 ):
-    #  We only want to do forward OR backward pagination. Never both!
-    if after is not None and before is not None:
-        raise ValueError("Before and after both set")
-
-    if after is not None and first is None:
-        raise ValueError("After requires first argument")
-
-    if before is not None and last is None:
-        raise ValueError("Before requires last argument")
-
-    # We want a limit on initial query
-    if before is None and after is None and first is None:
-        raise ValueError("Require first argument if no cursors present")
+    validate_parameters(first, after, last, before)
 
     db_query = db.select([OnPathway.patient_id.label("patient_id")])\
         .where(OnPathway.pathway_id == int(pathwayId))\

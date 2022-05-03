@@ -38,6 +38,13 @@ type Query {
         underCareOf: Boolean
     ): PatientConnection!
 
+    getUserConnection(
+        first: Int
+        after: String
+        last: Int
+        before: String
+    ): UserConnection!,
+
     patientSearch(query: String!, pathwayId: ID!): [Patient!]!
 }
 
@@ -148,12 +155,23 @@ type PageInfo {
 type PatientConnection {
     totalCount: Int!
     pageInfo: PageInfo!
-    edges: [PatientEdge!]
+    edges: [PatientEdge!]!
 }
 
 type PatientEdge {
     node: Patient!
     cursor: String!
+}
+
+type UserEdge {
+    node: User!
+    cursor: String!
+}
+
+type UserConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [UserEdge!]!
 }
 
 type Group {
