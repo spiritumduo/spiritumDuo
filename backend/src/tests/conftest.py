@@ -1,9 +1,9 @@
 # It's very important this happens first
-from typing import List
-
 from starlette.config import environ
 environ['TESTING'] = "True"
 
+
+from typing import List
 import logging
 from SdTypes import Permissions
 from sdpubsub import SdPubSub
@@ -18,7 +18,18 @@ import pytest_asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
-from models import User, Pathway, MilestoneType, Role, UserRole, RolePermission, Patient, OnPathway
+from models import (
+    User,
+    Pathway,
+    MilestoneType,
+    Role,
+    UserRole,
+    RolePermission,
+    Patient,
+    OnPathway,
+    PathwayMilestoneType
+)
+
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
@@ -74,12 +85,19 @@ async def test_pathway() -> Pathway:
 
 
 @pytest.fixture
-async def test_milestone_type() -> MilestoneType:
-    return await MilestoneType.create(
+async def test_milestone_type(test_pathway) -> MilestoneType:
+    milestoneType: MilestoneType = await MilestoneType.create(
         name="Test Milestone",
         ref_name="ref_test_milestone",
         is_checkbox_hidden=True,
     )
+
+    await PathwayMilestoneType.create(
+        pathway_id=test_pathway.id,
+        milestone_type_id=milestoneType.id
+    )
+
+    return milestoneType
 
 
 @pytest.fixture
@@ -311,6 +329,22 @@ async def pathway_read_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.PATHWAY_READ
+    ).create()
+
+
+@pytest.fixture
+async def pathway_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.PATHWAY_UPDATE
+    ).create()
+
+
+@pytest.fixture
+async def pathway_delete_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.PATHWAY_DELETE
     ).create()
 
 

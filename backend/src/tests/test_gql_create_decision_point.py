@@ -2,9 +2,9 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient, OnPathway, DecisionPoint, Milestone, RolePermission
+from models import Patient, OnPathway, DecisionPoint, Milestone
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
-from SdTypes import DecisionTypes, MilestoneState, Permissions
+from SdTypes import DecisionTypes, MilestoneState
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 
 
