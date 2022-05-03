@@ -142,7 +142,6 @@ describe('When the page loads and the user does not get the lock', () => {
     mocks = [
       {
         query: LOCK_ON_PATHWAY_MUTATION,
-        // eslint-disable-next-line arrow-body-style
         mockFn: jest.fn().mockResolvedValue({
           data: {
             lockOnPathway: {

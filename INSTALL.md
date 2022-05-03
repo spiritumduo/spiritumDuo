@@ -1,14 +1,18 @@
 # Installation (development environment)
 
-## Overview //TODO #33 @jcf54 can you check that this section is correct?
+## Overview
 
-This installation readme outlines how to install Spritium Duo onto a development environment (that is not a final production system). You need to make sure you have all of the prerequisties done first and the .env (environment variables) complete. There is an automated installer that can be used to install Spiritum Duo. If you wish, a manual step-by-step option is also provided below.
+This installation readme outlines how to install Spritium Duo onto a development environment (that is not a final production system).
+You need to make sure you have all prerequisites installed first, and the .env (environment variables) appropriately completed.
+There is an automated installer that can be used to install Spiritum Duo, please see section `Automated installer`.
+This document outlines both a step-by-step manual install, and automated installation.
 
 ## Installation prerequisites
 
-1. Git
-2. Docker (with Docker Compose)
-3. A clone of this repository (run `git clone http://github.com/spiritumduo/spiritumDuo` in the directory where you want run Spiritum Duo from)
+1. Git [installation instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+2. Docker [installation instructions](https://docs.docker.com/engine/install/)
+3. Docker compose [installation instructions](https://docs.docker.com/compose/install/)
+4. A clone of this repository (run `git clone http://github.com/spiritumduo/spiritumDuo` in the directory you want to run Spiritum Duo from)
 
 ## Terms
 
@@ -18,15 +22,16 @@ This installation readme outlines how to install Spritium Duo onto a development
 
 ## Automated installer
 
-For an automated install of a development environment please run the Python script in the project's root directory, Mac: `python3 ./INSTALL.dev.py`, Windows: ..., Linux: ... 
-//TODO #34 @jcf54 What would this be for Windows and Linux
+For an automated install of a development environment please run the Python script in the project's root directory, as below (this should be synonymous between operating systems).
 
-Once variables have been defaulted or manaully entered, it can take 10-20 mins to install, depending on your system specifications.
+```bash
+python3 INSTALL.dev.py
+```
 
-### Automated steps (with maunal variable collection on the way)
+### Steps
 
-1. Check Docker is installed //TODO #31 Should have link to how to install docker - https://docs.docker.com/desktop/ (Docker Desktop for Windows and Mac, Docker Engine for Linux) @jcf54
-2. Check Docker Compose is installed //TODO #32 Link to how to install docker compose @jcf54
+1. Check Docker is installed
+2. Check Docker Compose is installed
 3. Configuring Docker Compose file from template
 4. Check if containers are running
 5. Check if database volume already exists
@@ -55,8 +60,6 @@ Enter value (sd_pseudotie):
 ```
 
 The value in brackets is the default value. To continue using the default value, do not enter any data and press enter.
-
-
 
 ## Manual install
 

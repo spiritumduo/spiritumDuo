@@ -11,7 +11,7 @@ import store from 'app/store';
 import * as stories from './HomePage.stories';
 
 const { Default } = composeStories(stories);
-const renderDefault = () => {
+const renderDefault = async () => {
   render(
     <Provider store={ store }>
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
@@ -19,17 +19,26 @@ const renderDefault = () => {
       </MockSdApolloProvider>
     </Provider>,
   );
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
 };
 
-test('Patient lists should display loading', () => {
-  renderDefault();
-  expect(screen.getByText('Loading!')).toBeInTheDocument();
+test('Patient lists should display loading', async () => {
+  await waitFor(() => {
+    render(
+      <Provider store={ store }>
+        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+          <Default />
+        </MockSdApolloProvider>
+      </Provider>,
+    );
+    expect(screen.getByText('Loading!')).toBeInTheDocument();
+  });
 });
 
 test('Patient lists should contain patients', async () => {
   const patientsPerPage = Default.args?.patientsPerPage;
   if (patientsPerPage) {
-    renderDefault();
+    await renderDefault();
     await waitFor(
       () => expect(
         screen.getAllByRole('row').length,
@@ -45,8 +54,7 @@ test('Patient lists should paginate', async () => {
   const patients = Default.parameters?.patients;
   const patientsPerPage = Default.args?.patientsPerPage;
   if (patients && patientsPerPage) {
-    renderDefault();
-    await waitFor(() => expect(screen.getByText('Loading!')).toBeInTheDocument());
+    await renderDefault();
     const nextLinks = screen.getAllByRole('button', {
       name: (t) => /next/i.test(t),
     });
@@ -63,7 +71,7 @@ test('Patient lists should paginate', async () => {
 
 test('Unlocked patients should be clickable', async () => {
   const { click } = userEvent.setup();
-  renderDefault();
+  await renderDefault();
   await waitFor(() => expect(screen.getByText(/john 1 doe 1/i)).toBeInTheDocument());
   const table = screen.getByRole('grid', { name: /patient list/i });
   const rows = within(table).getAllByRole('row');
@@ -84,7 +92,7 @@ test('Unlocked patients should be clickable', async () => {
 
 test('Locked patients should be disabled', async () => {
   const { click } = userEvent.setup();
-  renderDefault();
+  await renderDefault();
   await waitFor(() => expect(screen.getByText(/john 1 doe 1/i)).toBeInTheDocument());
   const table = screen.getByRole('grid', { name: /patient list/i });
   const rows = within(table).getAllByRole('row');

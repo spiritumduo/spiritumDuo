@@ -5,7 +5,7 @@ import { MockPathwayProvider } from 'test/mocks/mockContext';
 import PreviousDecisionPoints, { PreviousDecisionPointsProps, PREVIOUS_DECISION_POINTS_QUERY } from './PreviousDecisionPoints';
 
 const patient = {
-  id: 2,
+  id: '2',
   hospitalNumber: 'MRN0123456',
   firstName: 'John',
   lastName: 'Doe',
@@ -17,7 +17,7 @@ const apolloMocks = [
       query: PREVIOUS_DECISION_POINTS_QUERY,
       variables: {
         hospitalNumber: patient.hospitalNumber,
-        pathwayId: 1,
+        pathwayId: '1',
         limit: 5,
         includeDischarged: true,
       },

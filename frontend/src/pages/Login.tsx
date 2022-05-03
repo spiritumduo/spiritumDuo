@@ -12,9 +12,6 @@ import { Input } from 'components/nhs-style';
 import './login.css';
 import Role from 'types/Role';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface LoginPageProps { }
-
 export type LoginData = {
   user?: User;
   pathways?: PathwayOption[];

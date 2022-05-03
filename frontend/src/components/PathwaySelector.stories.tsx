@@ -22,11 +22,11 @@ export default {
 const Template: ComponentStory<typeof PathwaySelector> = (args) => <PathwaySelector { ...args } />;
 const pathways: PathwayOption[] = [
   {
-    id: 0,
+    id: '0',
     name: 'Lung Cancer',
   },
   {
-    id: 1,
+    id: '1',
     name: 'Bronchieactasis',
   },
 ];

@@ -5,7 +5,7 @@ import fetchMock from 'fetch-mock';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { Routes, Route, useNavigate, MemoryRouter } from 'react-router-dom';
-import LoginPage, { LoginPageProps } from './Login';
+import LoginPage from './Login';
 
 const MockHome = () => {
   const navigate = useNavigate();
@@ -47,21 +47,21 @@ type LoginPayload = {
  */
 const successfulLoginMock: LoginPayload = {
   user: {
-    id: 1,
+    id: '1',
     firstName: 'John',
     lastName: 'Doe',
     department: 'Respiratory',
     roles: [],
-    defaultPathwayId: 1,
+    defaultPathwayId: '1',
     token: 'authToken',
   },
   pathways: [
     {
-      id: 1,
+      id: '1',
       name: 'Lung Cancer',
     },
     {
-      id: 2,
+      id: '2',
       name: 'Broncheastasis',
     },
   ],
@@ -82,7 +82,7 @@ const invalidLoginMock: LoginPayload = {
 /**
  * Default login page - results in successful login
  */
-export const Default: Story<LoginPageProps> = () => {
+export const Default: Story = () => {
   fetchMock.restore().mock('end:/rest/login', successfulLoginMock);
   return <LoginPage />;
 };
@@ -90,7 +90,7 @@ export const Default: Story<LoginPageProps> = () => {
 /**
  * Loading state - will pause loading for short time
  */
-export const Loading: Story<LoginPageProps> = () => {
+export const Loading: Story = () => {
   fetchMock.restore().mock('end:/rest/login', successfulLoginMock, { delay: 1000 });
   return <LoginPage />;
 };
@@ -98,7 +98,7 @@ export const Loading: Story<LoginPageProps> = () => {
 /**
  * Error state - fetch responds with error code
  */
-export const Error: Story<LoginPageProps> = () => {
+export const Error: Story = () => {
   fetchMock.restore().mock('end:/rest/login', { body: { user: null, pathways: null }, status: 500 });
   return <LoginPage />;
 };
@@ -106,7 +106,7 @@ export const Error: Story<LoginPageProps> = () => {
 /**
  * Invalid login - incorrect username or passsword
  */
-export const InvalidLogin: Story<LoginPageProps> = () => {
+export const InvalidLogin: Story = () => {
   fetchMock.restore().mock('end:/rest/login', invalidLoginMock);
   return <LoginPage />;
 };

@@ -21,11 +21,11 @@ const Template: ComponentStory<typeof SdHeader> = (args) => <SdHeader { ...args 
 
 const pathways: PathwayOption[] = [
   {
-    id: 0,
+    id: '0',
     name: 'Lung Cancer',
   },
   {
-    id: 1,
+    id: '1',
     name: 'Bronchieactasis',
   },
 ];
@@ -40,12 +40,12 @@ Standard.args = {
     console.log(e); // is there some kind of storybook method to make this appear in actions?
   },
   user: {
-    id: 1,
+    id: '1',
     firstName: 'John',
     lastName: 'Doe',
-    defaultPathwayId: 1,
+    defaultPathwayId: '1',
     department: 'Test department',
-    roles: [{ id: 1, name: 'test' }],
+    roles: [{ id: '1', name: 'test' }],
     token: 'token',
   },
 };
@@ -59,12 +59,12 @@ Admin.args = {
     e.preventDefault();
   },
   user: {
-    id: 1,
+    id: '1',
     firstName: 'Eileen',
     lastName: 'Streiter',
-    defaultPathwayId: 1,
+    defaultPathwayId: '1',
     department: 'Test department',
-    roles: [{ id: 1, name: 'test' }],
+    roles: [{ id: '1', name: 'test' }],
     token: 'token',
   },
 };

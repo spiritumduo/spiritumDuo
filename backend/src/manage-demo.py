@@ -282,9 +282,11 @@ async def insert_demo_data():
                 unencoded_password.encode('utf-8'),
                 gensalt()
             ).decode('utf-8')
+            username=f"demo-{pathwayIndex}-{userIndex}"
             sd_user: User = await User.create(
-                username=f"demo-{pathwayIndex}-{userIndex}",
+                username=username,
                 password=sd_password,
+                email=f"{username}@sd-test.testdomain",
                 first_name="Demo",
                 last_name=f"User {pathwayIndex} {userIndex}",
                 department="Demo user",

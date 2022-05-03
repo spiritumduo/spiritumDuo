@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import App from './App';
 
 const fakeUser: User = {
-  id: 1,
+  id: '1',
   firstName: 'Test-John',
   lastName: 'Test-Doe',
   department: 'Respiratory',
@@ -69,6 +69,7 @@ const renderApp = async (props?: AppElementProps) => {
       </MockedProvider>
     </Provider>,
   );
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
 };
 
 test('Should render login page with no user in context', () => {

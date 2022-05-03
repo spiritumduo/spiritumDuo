@@ -1,10 +1,12 @@
 from models import User
 from bcrypt import hashpw, gensalt
+from dataclasses import dataclass
 
 
 async def CreateUser(
     username: str = None,
     password: str = None,
+    email: str = None,
     first_name: str = None,
     last_name: str = None,
     department: str = None,
@@ -15,9 +17,9 @@ async def CreateUser(
     Creates a patient object in local and external databases
 
     Keyword arguments:
-        context (dict): the current request context
         username (str): User's username
         password (str): User's plaintext password
+        email (str): User's email address
         first_name (str): User's first name
         last_name (str): User's last name
         department (str): User's department
@@ -27,23 +29,16 @@ async def CreateUser(
         User: newly created user object (without password)
     """
 
+    @dataclass
     class userOutput:
-        def __init__(
-            self, id: int = None,
-            username: str = None,
-            first_name: str = None,
-            last_name: str = None,
-            department: str = None,
-            default_pathway_id: int = None,
-            is_active: bool = None
-        ):
-            self.id = id
-            self.username = username
-            self.first_name = first_name
-            self.last_name = last_name
-            self.department = department
-            self.default_pathway_id = default_pathway_id
-            self.is_active = is_active
+        id: int = None,
+        username: str = None,
+        email: str = None,
+        first_name: str = None,
+        last_name: str = None,
+        department: str = None,
+        default_pathway_id: int = None,
+        is_active: bool = None
 
     hashedPassword = hashpw(password.encode('utf-8'), gensalt())
     hashedPassword = hashedPassword.decode('utf-8')
@@ -51,6 +46,7 @@ async def CreateUser(
     newUser = await User.create(
         username=username,
         password=hashedPassword,
+        email=email,
         first_name=first_name,
         last_name=last_name,
         department=department,
@@ -60,6 +56,7 @@ async def CreateUser(
     return userOutput(
         id=newUser.id,
         username=newUser.username,
+        email=newUser.email,
         first_name=newUser.first_name,
         last_name=newUser.last_name,
         department=newUser.department,

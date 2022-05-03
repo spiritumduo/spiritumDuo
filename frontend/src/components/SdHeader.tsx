@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { Header, SearchIcon, CloseIcon, Container } from 'nhsuk-react-components';
+import { Header, SearchIcon, Container } from 'nhsuk-react-components';
 import { ThreeDots } from 'react-bootstrap-icons';
 
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import PathwaySelector from 'components/PathwaySelector';
 import sdInvertedImage from 'static/i/sd_inverted.png';
-import SearchBar from 'features/SearchBar';
+import { SearchBar } from 'features/SearchBar';
 
 import './SdHeader.css';
 
 export interface SdHeaderProps {
   pathwayOptions: PathwayOption[];
-  currentPathwayId: number;
+  currentPathwayId: string;
   pathwayOnItemSelect: (name: string) => void;
   searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
   user?: User;

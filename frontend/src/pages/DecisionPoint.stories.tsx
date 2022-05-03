@@ -220,7 +220,7 @@ const apolloMocks = [
       query: GET_PATIENT_QUERY,
       variables: {
         hospitalNumber: patientHospitalNumber,
-        pathwayId: 1, // this is a brittle, improve this
+        pathwayId: '1', // this is a brittle, improve this
         includeDischarged: true,
       },
     },

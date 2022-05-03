@@ -83,6 +83,12 @@ class UserByIdLoader(DataLoader):
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
+    @classmethod
+    def prime(cls, key=None, value=None, context=None):
+        if cls.loader_name not in context:
+            context[cls.loader_name] = cls(db=context['db'])
+        return super(cls, context[cls.loader_name]).prime(key=key, value=value)
+
 
 class UserByUsernameLoader(DataLoader):
     """

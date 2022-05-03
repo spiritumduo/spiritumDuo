@@ -10,6 +10,7 @@ def new_clinician(test_pathway):
         "first_name": "JOHN",
         "last_name": "SMITH",
         "username": "JOHN.SMITH123",
+        "email": "test@test.email.invalidtld",
         "password": "VERYSECUREPASSWORD",
         "department": "ONCOLOGY",
         "default_pathway_id": test_pathway.id,
