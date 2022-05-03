@@ -18,6 +18,7 @@ class UpdateUserInput(BaseModel):
     firstName: str
     lastName: str
     department: str
+    username: str
     email: str
     defaultPathwayId: int
     isActive: bool
@@ -41,6 +42,7 @@ async def update_user(request: Request, input: UpdateUserInput):
                 await user.update(
                     first_name=input.firstName,
                     last_name=input.lastName,
+                    username=input.username,
                     department=input.department,
                     email=input.email,
                     default_pathway_id=input.defaultPathwayId,
