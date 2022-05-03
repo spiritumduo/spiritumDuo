@@ -10,7 +10,7 @@ import * as stories from './UserList.stories';
 const { Default } = composeStories(stories);
 
 describe('When the page loads', () => {
-  let mockCallback: jest.Mock<void, [React.MouseEvent<HTMLButtonElement & HTMLTableRowElement>]>;
+  let mockCallback: jest.Mock<void, [string]>;
   beforeEach(async () => {
     mockCallback = jest.fn();
     render(
