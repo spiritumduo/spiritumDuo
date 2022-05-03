@@ -3,21 +3,16 @@ import React from 'react';
 import { Container } from 'nhsuk-react-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-import AdminUserCreate from 'features/AdminUserCreate';
-import AdminUserUpdate from 'features/AdminUserUpdate';
+import { AdminUser } from 'features/AdminUser';
 
 const AdministrationPage = (): JSX.Element => (
   <Container>
     <Tabs>
       <TabList>
-        <Tab>Create user</Tab>
-        <Tab>Update User</Tab>
+        <Tab>Users</Tab>
       </TabList>
       <TabPanel>
-        <AdminUserCreate />
-      </TabPanel>
-      <TabPanel>
-        <AdminUserUpdate updateUserId="50" />
+        <AdminUser />
       </TabPanel>
     </Tabs>
   </Container>
