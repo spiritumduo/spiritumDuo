@@ -86,7 +86,7 @@ async def test_pathway(db_start_transaction) -> Pathway:
 
 
 @pytest.fixture
-async def test_milestone_type(db_start_transaction) -> MilestoneType:
+async def test_milestone_type(db_start_transaction, test_pathway) -> MilestoneType:
     mT: MilestoneType = await MilestoneType.create(
         name="Test Milestone",
         ref_name="ref_test_milestone",
