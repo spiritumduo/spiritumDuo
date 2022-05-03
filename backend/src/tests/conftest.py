@@ -1,7 +1,6 @@
 # It's very important this happens first
 from starlette.config import environ
 
-from backend.src.models.Milestone import Milestone
 environ['TESTING'] = "True"
 
 
@@ -88,7 +87,7 @@ async def test_pathway(db_start_transaction) -> Pathway:
 
 @pytest.fixture
 async def test_milestone_type(db_start_transaction) -> MilestoneType:
-    mT: MilestoneType =  await MilestoneType.create(
+    mT: MilestoneType = await MilestoneType.create(
         name="Test Milestone",
         ref_name="ref_test_milestone",
         is_checkbox_hidden=True,
