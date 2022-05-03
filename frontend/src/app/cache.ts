@@ -13,6 +13,7 @@ export const cache: InMemoryCache = new InMemoryCache({
         getPatient: {
           merge: true,
         },
+        getUserConnection: relayStylePagination(),
       },
     },
   },

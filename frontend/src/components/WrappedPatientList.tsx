@@ -4,9 +4,9 @@ import React, { useState, useEffect, useContext } from 'react';
 import { gql, useQuery, useSubscription } from '@apollo/client';
 
 // APP
-import { getPatientOnPathwayConnection, getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones } from 'components/__generated__/getPatientOnPathwayConnection';
 import User from 'types/Users';
 import { AuthContext } from 'app/context';
+import edgesToNodes from 'app/pagination';
 
 // COMPONENTS
 import PatientList, { PatientListProps } from 'components/PatientList';
@@ -15,6 +15,7 @@ import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
 
 // GENERATED TYPES
 import { onPathwayUpdated } from 'components/__generated__/onPathwayUpdated';
+import { getPatientOnPathwayConnection } from 'components/__generated__/getPatientOnPathwayConnection';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -97,23 +98,6 @@ const usePatientsForPathwayQuery = (
   },
 );
 
-function edgesToNodes(
-  data: getPatientOnPathwayConnection | undefined, currentPage: number, patientsPerPage: number,
-) {
-  const pageCount = data
-    ? Math.ceil(data.getPatientOnPathwayConnection.totalCount / patientsPerPage)
-    : 0;
-
-  const allNodes = data?.getPatientOnPathwayConnection.edges?.map((edge) => edge?.node);
-  const pageInfo = data?.getPatientOnPathwayConnection.pageInfo;
-
-  const start = currentPage * patientsPerPage;
-  const end = start + patientsPerPage;
-  const nodes = allNodes?.slice(start, end);
-
-  return { nodes, pageCount, pageInfo };
-}
-
 export interface WrappedPatientListProps {
   pathwayId: string;
   patientsToDisplay: number;
@@ -158,17 +142,21 @@ const WrappedPatientList = ({
   }, [subscrData, refetch]);
 
   let listElements: PatientListProps['data'];
-  const { nodes, pageCount, pageInfo } = edgesToNodes(data, currentPage, patientsToDisplay);
+  type onPathwayNode = getPatientOnPathwayConnection['getPatientOnPathwayConnection']['edges'][0]['node'];
+  const { nodes, pageCount, pageInfo } = edgesToNodes<onPathwayNode>(
+    data?.getPatientOnPathwayConnection, currentPage, patientsToDisplay,
+  );
   if (nodes) {
     listElements = nodes.flatMap(
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
         let lastMilestone = null;
-        // eslint-disable-next-line camelcase, max-len
-        type GraphQLMilestone = getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones;
         if (n.onPathways?.[0].decisionPoints) {
           const decisionPoints = n.onPathways?.[0].decisionPoints;
 
+          // type magic to avoid import.
+          type GraphQLPatientEdges = NonNullable<getPatientOnPathwayConnection['getPatientOnPathwayConnection']['edges'][0]['node']['onPathways']>;
+          type GraphQLMilestone = NonNullable<NonNullable<GraphQLPatientEdges[0]['decisionPoints']>[0]['milestones']>[0];
           /**
            * Compare two milestones - used in our map/reduce below
            * @param currentMilestone Current Milestone to compare

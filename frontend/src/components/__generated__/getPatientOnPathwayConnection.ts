@@ -67,7 +67,7 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection {
   __typename: "PatientConnection";
   totalCount: number;
   pageInfo: getPatientOnPathwayConnection_getPatientOnPathwayConnection_pageInfo;
-  edges: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges[] | null;
+  edges: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges[];
 }
 
 export interface getPatientOnPathwayConnection {
