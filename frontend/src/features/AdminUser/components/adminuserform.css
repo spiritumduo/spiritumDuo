@@ -1,0 +1,14 @@
+.admin-user-flex {
+    row-gap: 1rem;
+    padding-top: 1rem;
+    align-items: center;
+}
+
+.user-role-arrow {
+    min-height: 5rem;
+}
+
+.user-roles-select {
+    height: 15rem;
+    width: 15rem;
+}

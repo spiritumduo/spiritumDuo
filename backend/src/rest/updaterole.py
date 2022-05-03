@@ -9,7 +9,7 @@ from fastapi import Request
 from pydantic import BaseModel
 from authentication.authentication import needsAuthorization
 from asyncpg.exceptions import UniqueViolationError
-from .restexceptions import UniqueViolationHTTPException, NotFoundHTTPException
+from .restexceptions import ConflictHTTPException, NotFoundHTTPException
 
 
 class UpdateRoleInput(BaseModel):
@@ -21,9 +21,9 @@ class UpdateRoleInput(BaseModel):
 @_FastAPI.post("/updaterole/")
 @needsAuthorization([Permissions.ROLE_UPDATE])
 async def update_role(request: Request, input: UpdateRoleInput):
-    async with db.transaction() as tx:
-        try:
-            role: Role = await Role.query.where(Role.id == input.id).gino.one_or_none()
+    try:
+        async with db.transaction() as tx:
+            role = await Role.query.where(Role.id == input.id).gino.one_or_none()
             if role is None:
                 raise NotFoundHTTPException("Role with that ID not found")
             await role.update(name=input.name).apply()
@@ -56,5 +56,5 @@ async def update_role(request: Request, input: UpdateRoleInput):
                 "permissions": [p.permission for p in updated_permissions]
             }, status_code=200)
 
-        except UniqueViolationError:
-            raise UniqueViolationHTTPException("Role with that name already exists")
+    except UniqueViolationError:
+        raise ConflictHTTPException("Role with that name already exists")

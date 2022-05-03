@@ -1,4 +1,21 @@
 
+
+def validate_parameters(first=None, after=None, last=None, before=None):
+    #  We only want to do forward OR backward pagination. Never both!
+    if after is not None and before is not None:
+        raise ValueError("Before and after both set")
+
+    if after is not None and first is None:
+        raise ValueError("After requires first argument")
+
+    if before is not None and last is None:
+        raise ValueError("Before requires last argument")
+
+    # We want a limit on initial query
+    if before is None and after is None and first is None:
+        raise ValueError("Require first argument if no cursors present")
+
+
 # Pagination
 def edges_to_return(
         all_edges=None, before=None, after=None, first=None, last=None
@@ -82,10 +99,10 @@ def make_connection(models, before, after, first, last):
     edges = edges_to_return(all_edges, before, after, first, last)
 
     if not edges or not edges[0]:
-        start_cursor = 0,
+        start_cursor = 0
         end_cursor = 0
     else:
-        start_cursor = edges[0]['cursor'],
+        start_cursor = edges[0]['cursor']
         end_cursor = edges[len(edges) - 1]['cursor']
 
     page_info = {

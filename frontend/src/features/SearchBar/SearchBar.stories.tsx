@@ -2,7 +2,7 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import SearchBar, { PATIENT_SEARCH_QUERY } from 'features/SearchBar';
+import { SearchBar, PATIENT_SEARCH_QUERY } from 'features/SearchBar';
 import { MemoryRouter } from 'react-router';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 

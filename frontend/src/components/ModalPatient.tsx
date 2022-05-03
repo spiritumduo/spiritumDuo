@@ -81,7 +81,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     ? patientData?.getPatient?.onPathways?.[0]?.id
     : undefined;
 
-  const userId = user?.id.toString();
+  const userId = user?.id;
   const storedOnPathwayUserId = data?.lockOnPathway.onPathway?.lockUser?.id;
 
   const hasLock = (

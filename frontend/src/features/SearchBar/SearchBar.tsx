@@ -5,7 +5,7 @@ import { Overlay } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { PathwayContext } from 'app/context';
-import SearchResults from 'features/SearchBar/SearchResults';
+import SearchResults from './components/SearchResults';
 import { patientSearch } from './__generated__/patientSearch';
 
 export const PATIENT_SEARCH_QUERY = gql`
@@ -24,7 +24,7 @@ interface SearchBarInput {
   searchBarInput: string;
 }
 
-const SearchBar = () => {
+export const SearchBar = () => {
   const [searchQuery, { data, loading, error }] = useLazyQuery<patientSearch>(PATIENT_SEARCH_QUERY);
   const { currentPathwayId } = useContext(PathwayContext);
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<SearchBarInput>();
@@ -90,5 +90,3 @@ const SearchBar = () => {
     </form>
   );
 };
-
-export default SearchBar;

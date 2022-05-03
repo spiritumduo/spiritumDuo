@@ -37,6 +37,7 @@ async def test_login_user(context):
     USER_INFO = {
         "first_name": "Test",
         "last_name": "User",
+        "email": "test@test.com",
         "department": "Test dummy department",
         "username": "tdummy",
         "password": "tdummy",
@@ -45,6 +46,7 @@ async def test_login_user(context):
     await User.create(
         first_name=USER_INFO['first_name'],
         last_name=USER_INFO['last_name'],
+        email=USER_INFO['email'],
         department=USER_INFO['department'],
         username=USER_INFO['username'],
         default_pathway_id=USER_INFO['default_pathway_id'],
@@ -113,6 +115,7 @@ async def test_gql_get_user(context, user_read_permission, get_user_query):
         "first_name": "Test",
         "last_name": "User",
         "department": "Test dummy department",
+        "email": "test@test.com",
         "username": "tdummy",
         "password": "tdummy",
         "default_pathway_id": context.PATHWAY.id
@@ -121,6 +124,7 @@ async def test_gql_get_user(context, user_read_permission, get_user_query):
         first_name=USER_INFO['first_name'],
         last_name=USER_INFO['last_name'],
         department=USER_INFO['department'],
+        email=USER_INFO['email'],
         username=USER_INFO['username'],
         default_pathway_id=USER_INFO['default_pathway_id'],
         password=hashpw(

@@ -1,20 +1,20 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
-import userEvent from '@testing-library/user-event';
 import * as stories from './SearchBar.stories';
 
 const { Default } = composeStories(stories);
 
-const renderDefault = () => {
+const renderDefault = async () => {
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
 };
 
 it('Should render properly', () => {

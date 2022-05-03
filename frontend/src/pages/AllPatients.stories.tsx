@@ -30,7 +30,7 @@ export default {
 } as Meta<typeof AllPatients>;
 
 export const Default: Story<AllPatientsProps> = (args: AllPatientsProps) => {
-  currentPathwayIdVar(1);
+  currentPathwayIdVar('1');
   return <AllPatients { ...args } />;
 };
 Default.args = { patientsPerPage: patientsPerPage };

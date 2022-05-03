@@ -45,8 +45,8 @@ def test_client():
     yield client
 
 
-@pytest.fixture
-async def create_test_database(event_loop) -> Gino:
+@pytest.fixture(autouse=True)
+async def create_test_database() -> Gino:
     if database_exists(TEST_DATABASE_URL):
         drop_database(TEST_DATABASE_URL)
     create_database(TEST_DATABASE_URL)
@@ -56,7 +56,7 @@ async def create_test_database(event_loop) -> Gino:
     drop_database(TEST_DATABASE_URL)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 async def db_start_transaction(create_test_database):
     engine = create_test_database
     conn: GinoConnection = await engine.acquire()
@@ -66,15 +66,15 @@ async def db_start_transaction(create_test_database):
     await conn.release()
 
 
-@pytest.fixture
-async def test_pathway() -> Pathway:
+@pytest.fixture(scope="function")
+async def test_pathway(db_start_transaction) -> Pathway:
     return await Pathway.create(
         name="BRONCHIECTASIS",
     )
 
 
 @pytest.fixture
-async def test_milestone_type() -> MilestoneType:
+async def test_milestone_type(db_start_transaction) -> MilestoneType:
     return await MilestoneType.create(
         name="Test Milestone",
         ref_name="ref_test_milestone",
@@ -101,7 +101,7 @@ async def test_patients(db_start_transaction) -> List[Role]:
 
 @pytest.fixture
 async def test_patients_on_pathway(
-        test_patients: List[Patient], test_pathway: Pathway
+        test_patients: List[Patient], test_pathway: Pathway, db_start_transaction
 ) -> List[OnPathway]:
     on_pathway_list = []
     for p in test_patients:
@@ -132,6 +132,7 @@ async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role
             user_info['password'].encode('utf-8'),
             gensalt()
         ).decode('utf-8'),
+        email="test@test.test",
         first_name="Test",
         last_name="User",
         department="Test Department",

@@ -19,11 +19,11 @@ interface MockAuthProviderProps {
  */
 export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JSX.Element => {
   const user: User = {
-    id: 1,
+    id: '1',
     firstName: 'Test-John',
     lastName: 'Test-Doe',
     department: 'Respiratory',
-    defaultPathwayId: 1,
+    defaultPathwayId: '1',
     roles: [],
     token: 'token',
   };
@@ -56,11 +56,11 @@ export const MockPathwayProvider = ({
 }: MockPathwayProviderProps ): JSX.Element => {
   const pathways: PathwayOption[] = [
     {
-      id: 1,
+      id: '1',
       name: 'Lung Cancer Test',
     },
     {
-      id: 2,
+      id: '2',
       name: 'Bronchieactasis Test',
     },
   ];
@@ -69,7 +69,7 @@ export const MockPathwayProvider = ({
     ? {
       pathwayOptions: pathways,
       updateCurrentPathwayId: () => { },
-      currentPathwayId: 1,
+      currentPathwayId: '1',
       updatePathwayOptions: () => { },
     }
     : value;
