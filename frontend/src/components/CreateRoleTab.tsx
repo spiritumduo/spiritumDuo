@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { gql, useQuery } from '@apollo/client';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
 import { getRolePermissions } from './__generated__/getRolePermissions';
 import { Input } from './nhs-style';
-
-export const GET_ROLE_PERMISSIONS = gql`
-  query getRolePermissions{
-    getRolePermissions{
-      name
-    }
-  }
-`;
 
 type CreateRoleForm = {
   name: string;
@@ -43,7 +35,12 @@ type CreateRoleSubmitHook = [
   (variables: CreateRoleInputs) => void
 ];
 
-export function useCreateRoleSubmit(setShowModal: (arg0: boolean) => void): CreateRoleSubmitHook {
+export function useCreateRoleSubmit(
+  setShowModal: (arg0: boolean) => void,
+  refetchRoles?: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<getRolePermissions>>,
+): CreateRoleSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
   const [data, setData] = useState<CreateRoleReturnData | undefined>(undefined);
@@ -96,6 +93,10 @@ export function useCreateRoleSubmit(setShowModal: (arg0: boolean) => void): Crea
 
       setData(decodedUpdateResponse);
       setShowModal(true);
+
+      if (refetchRoles) {
+        refetchRoles();
+      }
     } catch (err) {
       setError(err);
       setData(undefined);
@@ -105,18 +106,24 @@ export function useCreateRoleSubmit(setShowModal: (arg0: boolean) => void): Crea
   return [loading, error, data, createRole];
 }
 
-const CreateRoleTab = (): JSX.Element => {
+export interface CreateRoleTabProps {
+  disableForm?: boolean | undefined,
+  refetchRoles?: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<getRolePermissions>>,
+  rolePermissions: {name: string}[] | undefined,
+}
+
+const CreateRoleTab = (
+  { disableForm, refetchRoles, rolePermissions }: CreateRoleTabProps,
+): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [
     loading,
     error,
     data,
     createRole,
-  ] = useCreateRoleSubmit(setShowModal);
-
-  const { loading: getRolePermissionsLoading,
-    data: getRolePermissionsData,
-    error: getRolePermissionsError } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
+  ] = useCreateRoleSubmit(setShowModal, refetchRoles);
 
   const newRoleSchema = yup.object({
     name: yup.string().required('Role name is a required field'),
@@ -143,9 +150,9 @@ const CreateRoleTab = (): JSX.Element => {
   });
 
   useEffect(() => {
-    if (!permissionCheckboxesOrganised && getRolePermissionsData) {
-      const fieldProps: CreateRoleForm['permissions'] = getRolePermissionsData?.getRolePermissions
-        ? getRolePermissionsData.getRolePermissions.flatMap((rolePermission) => (
+    if (!permissionCheckboxesOrganised && rolePermissions) {
+      const fieldProps: CreateRoleForm['permissions'] = rolePermissions
+        ? rolePermissions.flatMap((rolePermission) => (
           {
             name: rolePermission.name,
             checked: false,
@@ -156,7 +163,7 @@ const CreateRoleTab = (): JSX.Element => {
       setPermissionCheckboxesOrganised(true);
     }
   }, [
-    getRolePermissionsData,
+    rolePermissions,
     appendPermissionFields,
     permissionCheckboxesOrganised,
     setPermissionCheckboxesOrganised,
@@ -170,13 +177,10 @@ const CreateRoleTab = (): JSX.Element => {
           createRole(getValues());
         }) }
       >
-        {
-          getRolePermissionsError?.message ? <ErrorMessage>{getRolePermissionsError?.message}</ErrorMessage> : ''
-        }
-        <Fieldset disabled={ getRolePermissionsLoading }>
+        <Fieldset disabled={ disableForm || loading }>
           <Input role="textbox" id="name" label="Role name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
         </Fieldset>
-        <Fieldset disabled={ getRolePermissionsLoading }>
+        <Fieldset disabled={ disableForm }>
           <Fieldset.Legend>Role permissions</Fieldset.Legend>
           {
             permissionFields?.map((permission, index) => (
@@ -196,7 +200,7 @@ const CreateRoleTab = (): JSX.Element => {
             ))
           }
         </Fieldset>
-        <Fieldset disabled={ getRolePermissionsLoading }>
+        <Fieldset disabled={ disableForm || loading }>
           <Button className="float-end">Create role</Button>
         </Fieldset>
       </Form>

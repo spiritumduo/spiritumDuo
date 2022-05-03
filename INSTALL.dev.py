@@ -367,7 +367,7 @@ for volumeName in [
             ))
             if result != volumeName:
                 if validateInput(f"""ERROR: an error has occured when deleting the volume `{volumeName}`.
-    Do you wish to continue? (Y/n)""") == "n":
+    Do you wish to continue? (Y/n)""", ["y", "n"]) == "n":
                     raise ComponentFailed(f"an error has occured when deleting the volume `{volumeName}`.")
             else:
                 print("\nSuccess! Volume deleted")

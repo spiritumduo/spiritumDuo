@@ -9,13 +9,18 @@ def pathway_create_mutation() -> str:
     return """
         mutation createPathway(
             $name: String!
+            $milestoneTypes: [MilestoneTypeInput!]
         ){
             createPathway(input: {
                 name: $name
+                milestoneTypes: $milestoneTypes
             }){
                 pathway{
                     id
                     name
+                    milestoneTypes{
+                        id
+                    }
                 }
                 userErrors{
                     field
@@ -28,7 +33,10 @@ def pathway_create_mutation() -> str:
 
 # Feature: Test createPathway GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
-async def test_add_new_pathway(context, pathway_create_permission, pathway_create_mutation):
+async def test_add_new_pathway(
+    context, pathway_create_permission,
+    pathway_create_mutation, test_milestone_type
+):
     """
     When: we create a pathway
     """
@@ -41,7 +49,10 @@ async def test_add_new_pathway(context, pathway_create_permission, pathway_creat
         json={
             "query": pathway_create_mutation,
             "variables": {
-                "name": PATHWAY.name
+                "name": PATHWAY.name,
+                "milestoneTypes": [{
+                    "id": test_milestone_type.id
+                }]
             }
         }
     )
@@ -65,6 +76,14 @@ async def test_add_new_pathway(context, pathway_create_permission, pathway_creat
     assert_that(
         create_pathway_query['pathway']['name'],
         equal_to(PATHWAY.name)
+    )
+    assert_that(
+        create_pathway_query['pathway']['milestoneTypes'],
+        not_none()
+    )
+    assert_that(
+        create_pathway_query['pathway']['milestoneTypes'][0]['id'],
+        equal_to(str(test_milestone_type.id))
     )
 
 

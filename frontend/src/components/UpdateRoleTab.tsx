@@ -1,33 +1,12 @@
-import React, { EventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { gql, useQuery } from '@apollo/client';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
-import { getRolePermissions } from './__generated__/getRolePermissions';
 import { Input, Select } from './nhs-style';
 import { getRoles } from './__generated__/getRoles';
-
-export const GET_ROLES = gql`
-  query getRoles{
-    getRoles{
-      id
-      name
-      permissions{
-        name
-      }
-    }
-  }
-`;
-
-export const GET_ROLE_PERMISSIONS = gql`
-  query getRolePerms{
-    getRolePermissions{
-      name
-    }
-  }
-`;
 
 type UpdateRoleForm = {
   name: string;
@@ -59,8 +38,9 @@ type UpdateRoleSubmitHook = [
 
 export function useUpdateRoleSubmit(
   setShowModal: (arg0: boolean) => void,
-  refetchRoles: () => void,
-  refetchRolePermissions: () => void,
+  refetchRoles?: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<getRoles>>,
 ): UpdateRoleSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
@@ -102,8 +82,9 @@ export function useUpdateRoleSubmit(
       const decodedResponse: UpdateRoleReturnData = await updateResponse.json();
       setData(decodedResponse);
       setShowModal(true);
-      refetchRoles();
-      refetchRolePermissions();
+      if (refetchRoles) {
+        refetchRoles();
+      }
     } catch (err) {
       setError(err);
       setData(undefined);
@@ -113,25 +94,30 @@ export function useUpdateRoleSubmit(
   return [loading, error, data, updateRole];
 }
 
-const UpdateRoleTab = (): JSX.Element => {
+export interface UpdateRoleTabProps {
+  disableForm?: boolean | undefined,
+  refetchRoles?: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<getRoles>>,
+  roles?: {
+    id: string;
+    name: string;
+    permissions: { name: string | undefined; }[];
+  }[] | undefined
+  rolePermissions?: {name: string}[],
+}
+
+const UpdateRoleTab = (
+  { disableForm, refetchRoles, roles, rolePermissions }: UpdateRoleTabProps,
+): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
-
-  const { loading: getRolesLoading,
-    data: getRolesData,
-    error: getRolesError,
-    refetch: refetchRoles } = useQuery<getRoles>(GET_ROLES);
-
-  const { loading: getRolePermissionsLoading,
-    data: getRolePermissionsData,
-    error: getRolePermissionsError,
-    refetch: refetchRolePermissions } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
 
   const [
     loading,
     error,
     data,
     updateRole,
-  ] = useUpdateRoleSubmit(setShowModal, refetchRoles, refetchRolePermissions);
+  ] = useUpdateRoleSubmit(setShowModal, refetchRoles);
 
   const [selectedRole, setSelectedRole] = useState<string>('-1');
 
@@ -162,9 +148,9 @@ const UpdateRoleTab = (): JSX.Element => {
   });
 
   useEffect(() => {
-    if (!permissionCheckboxesOrganised && getRolePermissionsData) {
-      const fieldProps: UpdateRoleForm['permissions'] = getRolePermissionsData?.getRolePermissions
-        ? getRolePermissionsData.getRolePermissions.flatMap((rolePermission) => (
+    if (!permissionCheckboxesOrganised && rolePermissions) {
+      const fieldProps: UpdateRoleForm['permissions'] = rolePermissions
+        ? rolePermissions.flatMap((rolePermission) => (
           {
             name: rolePermission.name,
             checked: false,
@@ -175,7 +161,7 @@ const UpdateRoleTab = (): JSX.Element => {
       setPermissionCheckboxesOrganised(true);
     }
   }, [
-    getRolePermissionsData,
+    rolePermissions,
     appendPermissionFields,
     permissionCheckboxesOrganised,
     setPermissionCheckboxesOrganised,
@@ -193,7 +179,7 @@ const UpdateRoleTab = (): JSX.Element => {
         setValue(`permissions.${index}.checked`, false);
       });
 
-      const permissionSet = getRolesData?.getRoles?.filter(
+      const permissionSet = roles?.filter(
         (role) => (role.id === selectedRole),
       )?.[0];
 
@@ -209,7 +195,7 @@ const UpdateRoleTab = (): JSX.Element => {
         });
       }
     }
-  }, [getRolePermissionsData, getRolesData, permissionFields, selectedRole, setValue]);
+  }, [rolePermissions, roles, permissionFields, selectedRole, setValue]);
 
   return (
     <>
@@ -219,11 +205,9 @@ const UpdateRoleTab = (): JSX.Element => {
           updateRole(getValues());
         }) }
       >
-        { getRolePermissionsError?.message ? <ErrorMessage>{getRolePermissionsError?.message}</ErrorMessage> : '' }
         <Fieldset
           disabled={
-            getRolePermissionsLoading || getRolesLoading
-            || !!getRolePermissionsError || !!getRolesError
+            disableForm || loading || showModal
           }
         >
           <Select
@@ -237,7 +221,7 @@ const UpdateRoleTab = (): JSX.Element => {
           >
             <option value="-1">Select a role</option>
             {
-              getRolesData?.getRoles?.map((role, index) => (
+              roles?.map((role) => (
                 <option key={ role.id } value={ role.id }>{ role.name }</option>
               ))
             }
@@ -245,8 +229,7 @@ const UpdateRoleTab = (): JSX.Element => {
         </Fieldset>
         <Fieldset
           disabled={
-            getRolePermissionsLoading || getRolesLoading
-            || !!getRolePermissionsError || !!getRolesError
+            disableForm || loading || showModal
             || selectedRole === '-1'
           }
         >
@@ -272,8 +255,7 @@ const UpdateRoleTab = (): JSX.Element => {
         </Fieldset>
         <Fieldset
           disabled={
-            getRolePermissionsLoading || getRolesLoading
-            || !!getRolePermissionsError || !!getRolesError
+            disableForm || loading || showModal
             || selectedRole === '-1'
           }
         >

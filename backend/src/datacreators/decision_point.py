@@ -1,4 +1,5 @@
-from dataloaders import OnPathwayByIdLoader, PatientByIdLoader
+from ctypes import Union
+from dataloaders import OnPathwayByIdLoader, PatientByIdLoader, MilestoneTypeLoaderByPathwayId
 from models import DecisionPoint, Milestone, OnPathway, MilestoneType, Patient
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -14,6 +15,14 @@ class UserDoesNotOwnLock(Exception):
     This is raised when the user attempts to
     submit a decision point whilst not owning
     the OnPathway lock
+    """
+
+
+class MilestoneTypeIdNotOnPathway(Exception):
+    """
+    This is raised when a milestone is added
+    but does not exist in the link-relationship
+    PathwayMilestoneType
     """
 
 
@@ -83,16 +92,29 @@ async def CreateDecisionPoint(
     _decisionPoint: DecisionPoint = await DecisionPoint.create(
         **decision_point_details
     )
-    patient_id = (await OnPathwayByIdLoader.load_from_id(
+
+    onPathwayInstance: OnPathway = (await OnPathwayByIdLoader.load_from_id(
         context=context,
         id=int(on_pathway_id))
-    ).patient_id
+    )
+
     patient: Patient = await PatientByIdLoader.load_from_id(
         context=context,
-        id=int(patient_id)
+        id=int(onPathwayInstance.patient_id)
     )
     if milestone_requests is not None:
+        pathwayId: int = onPathwayInstance.pathway_id
+
+        validMilestoneTypes: Union[MilestoneType, None] = \
+            await MilestoneTypeLoaderByPathwayId.load_from_id(
+                    context, pathwayId)
+        validMilestoneTypeIds = [str(mT.id) for mT in validMilestoneTypes]
+
         for requestInput in milestone_requests:
+            if str(requestInput['milestoneTypeId']) not in validMilestoneTypeIds:
+                raise MilestoneTypeIdNotOnPathway(
+                    requestInput['milestoneTypeId']
+                )
             testResultRequest = TestResultRequest_IE()
             testResultRequest.added_at = datetime.now()
             testResultRequest.updated_at = datetime.now()

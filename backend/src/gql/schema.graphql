@@ -13,7 +13,7 @@ type Query {
     getPathways: [Pathway!]!
     getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
-    getMilestoneTypes: [MilestoneType!]!
+    getMilestoneTypes(pathwayId: ID): [MilestoneType!]
     getRolePermissions: [RolePermission!]
     getRoles: [Role!]!
 
@@ -51,6 +51,8 @@ type Query {
 type Mutation {
     createPatient(input:PatientInput!): AddPatientPayload!
     createPathway(input:PathwayInput!): AddPathwayPayload!
+    updatePathway(input:UpdatePathwayInput!): AddPathwayPayload!
+    deletePathway(id: ID!): DeletePayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
     importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
@@ -82,6 +84,11 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
+type DeletePayload {
+    success: Boolean
+    userErrors: [UserError!]
+}
+
 type AddPatientPayload {
     patient:Patient
     userErrors:[UserError!]
@@ -125,7 +132,8 @@ type UserError {
 type Pathway {
     id: ID!
     name: String!
-    patients:[Patient]
+    patients: [Patient]
+    milestoneTypes: [MilestoneType!]
 }
 
 type Patient {
@@ -240,6 +248,7 @@ type MilestoneType {
     isDischarge: Boolean!
     isCheckboxHidden: Boolean!
     isTestRequest: Boolean!
+    pathways: [Pathway!]
 }
 
 
@@ -281,6 +290,10 @@ input MilestoneRequestInput {
     currentState: MilestoneState
 }
 
+input MilestoneTypeInput{
+    id: ID!
+}
+
 input MilestoneImportInput {
     onPathwayId: ID!
     milestoneTypeId: ID!
@@ -302,7 +315,14 @@ input LockOnPathwayInput{
 }
 
 input PathwayInput{
-    name:String!
+    name: String!
+    milestoneTypes: [MilestoneTypeInput!]
+}
+
+input UpdatePathwayInput{
+    id: ID!
+    name: String!
+    milestoneTypes: [MilestoneTypeInput!]
 }
 
 input GroupInput{
