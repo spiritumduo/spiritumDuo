@@ -121,6 +121,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
     email: yup.string().required('Email is a required field'),
     firstName: yup.string().required('First name is a required field').default(editUser?.firstName),
     lastName: yup.string().required('Last is a required field'),
+    username: yup.string().required('Username is a required field'),
     department: yup.string().required('Department is a required field'),
     isActive: yup.boolean().required(),
     roles: yup.array().of(yup.string()),
@@ -134,7 +135,6 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
     }
     : {
       ...initSchema, // if we're creating a user
-      username: yup.string().required('Username is a required field'),
       password: yup.string().required('Password is a required field'),
     };
 
@@ -155,6 +155,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
       firstName: editUser?.firstName,
       lastName: editUser?.lastName,
       email: editUser?.email,
+      username: editUser?.username,
       department: editUser?.department,
       defaultPathwayId: editUser?.defaultPathwayId,
       isActive: editUser?.isActive,
@@ -219,21 +220,15 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
                 { ...register('lastName') }
               />
             </Col>
-            {
-              editUser
-                ? false
-                : (
-                  <Col>
-                    <Input
-                      label="Username"
-                      autoCapitalize="off"
-                      autoCorrect="username"
-                      error={ errors.username?.message }
-                      { ...register('username') }
-                    />
-                  </Col>
-                )
-            }
+            <Col>
+              <Input
+                label="Username"
+                autoCapitalize="off"
+                autoCorrect="username"
+                error={ errors.username?.message }
+                { ...register('username') }
+              />
+            </Col>
             <Col>
               <Input
                 label={ editUser ? 'Update Password' : 'Password' }

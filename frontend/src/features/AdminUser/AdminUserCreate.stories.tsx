@@ -5,12 +5,13 @@ import { Story, Meta } from '@storybook/react';
 import fetchMock from 'fetch-mock';
 import User from 'types/Users';
 import { MemoryRouter } from 'react-router';
-import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+import { MockPathwayProvider } from 'test/mocks/mockContext';
 import { DocumentNode } from '@apollo/client';
 import { RequestHandler } from 'mock-apollo-client';
-import { MockPathwayProvider } from 'test/mocks/mockContext';
-import AdminUserUpdate, { USER_ADMIN_GET_USER_WITH_ROLES_QUERY } from './AdminUserUpdate';
-import { userAdminGetUserWithRoles } from './__generated__/userAdminGetUserWithRoles';
+import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+
+import { AdminUserCreate, USER_ADMIN_GET_ROLES_QUERY } from './AdminUserCreate';
+import { userAdminGetRoles } from './__generated__/userAdminGetRoles';
 
 // MOCKS
 
@@ -20,8 +21,7 @@ export type CreateUserReturnData = {
   detail?: string;
 };
 
-const mockUser: userAdminGetUserWithRoles['getUser'] = {
-  __typename: 'User',
+const mockUser: User = {
   id: '1',
   firstName: 'John',
   lastName: 'Doe',
@@ -32,19 +32,17 @@ const mockUser: userAdminGetUserWithRoles['getUser'] = {
   isActive: true,
   roles: [
     {
-      __typename: 'Role',
       id: '1',
       name: 'first role',
     },
     {
-      __typename: 'Role',
       id: '2',
       name: 'second role',
     },
   ],
 };
 
-const mockRoles: userAdminGetUserWithRoles['getRoles'] = [
+const mockRoles: userAdminGetRoles['getRoles'] = [
   {
     __typename: 'Role',
     id: '1',
@@ -67,41 +65,42 @@ const mockRoles: userAdminGetUserWithRoles['getRoles'] = [
   },
 ];
 
-// Successful creation
-const successfulCreateAccountMock: CreateUserReturnData = {
-  user: mockUser,
-};
-
 const apolloMocks: {
   query: DocumentNode;
-  mockFn: RequestHandler<userAdminGetUserWithRoles, { id: string }>;
+  mockFn: RequestHandler<userAdminGetRoles, unknown>;
 }[] = [
   {
-    query: USER_ADMIN_GET_USER_WITH_ROLES_QUERY,
+    query: USER_ADMIN_GET_ROLES_QUERY,
     mockFn: () => Promise.resolve({
       data: {
-        getUser: mockUser,
         getRoles: mockRoles,
       },
     }),
   },
 ];
 
+/**
+ * Successful creation
+ */
+const successfulCreateAccountMock: CreateUserReturnData = {
+  user: mockUser,
+};
+
 export default {
-  title: 'features/AdminUserUpdate',
-  component: AdminUserUpdate,
+  title: 'features/AdminUserCreate',
+  component: AdminUserCreate,
   decorators: [
-    (AdminUserUpdateStory) => (
+    (AdminUserCreateStory) => (
       <MemoryRouter>
         <MockPathwayProvider>
           <NewMockSdApolloProvider mocks={ apolloMocks }>
-            <AdminUserUpdateStory />
+            <AdminUserCreateStory />
           </NewMockSdApolloProvider>
         </MockPathwayProvider>
       </MemoryRouter>
     ),
   ],
-} as Meta<typeof AdminUserUpdate>;
+} as Meta<typeof AdminUserCreate>;
 
 // STORIES
 
@@ -109,8 +108,8 @@ export default {
  * Working state
  */
 export const Default: Story = () => {
-  fetchMock.restore().mock('end:/rest/updateuser/', successfulCreateAccountMock);
-  return <AdminUserUpdate updateUserId={ mockUser.id } />;
+  fetchMock.restore().mock('end:/rest/createuser/', successfulCreateAccountMock);
+  return <AdminUserCreate />;
 };
 Default.parameters = {
   apolloMocks: apolloMocks,
@@ -120,8 +119,8 @@ Default.parameters = {
  * Working state with loading delay
  */
 export const Loading: Story = () => {
-  fetchMock.restore().mock('end:/rest/updateuser/', successfulCreateAccountMock, { delay: 1000 });
-  return <AdminUserUpdate updateUserId={ mockUser.id } />;
+  fetchMock.restore().mock('end:/rest/createuser/', successfulCreateAccountMock, { delay: 1000 });
+  return <AdminUserCreate />;
 };
 Loading.parameters = {
   apolloMocks: apolloMocks,
@@ -131,9 +130,20 @@ Loading.parameters = {
  * HTTP error state
  */
 export const Error: Story = () => {
-  fetchMock.restore().mock('end:/rest/updateuser/', { body: { detail: 'Error: ±Server error' }, status: 500 });
-  return <AdminUserUpdate updateUserId={ mockUser.id } />;
+  fetchMock.restore().mock('end:/rest/createuser/', { body: { detail: 'Error: server error' }, status: 500 });
+  return <AdminUserCreate />;
 };
 Error.parameters = {
+  apolloMocks: apolloMocks,
+};
+
+/**
+ * User account already exists
+ */
+export const UsernameAlreadyExists: Story = () => {
+  fetchMock.restore().mock('end:/rest/createuser/', { body: { detail: 'an account with this username already exists' }, status: 422 });
+  return <AdminUserCreate />;
+};
+UsernameAlreadyExists.parameters = {
   apolloMocks: apolloMocks,
 };
