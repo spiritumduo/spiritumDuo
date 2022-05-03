@@ -14,6 +14,8 @@ from .import_milestone_payload import ImportMilestonePayloadObjectType
 from .lock_on_pathway_payload import LockOnPathwayPayloadObjectType
 from .role_permission import RolePermissionObjectType
 from .role import RoleObjectType
+from .milestone_type import MilestoneTypeType
+from .delete_payload import DeletePayloadObjectType
 
 object_types_list = [
     PatientObjectType,
@@ -32,4 +34,6 @@ object_types_list = [
     LockOnPathwayPayloadObjectType,
     RolePermissionObjectType,
     RoleObjectType,
+    MilestoneTypeType,
+    DeletePayloadObjectType,
 ]
