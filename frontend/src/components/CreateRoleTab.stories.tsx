@@ -5,9 +5,8 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
-import { Standard } from 'components/Notification.stories';
 import { cache } from 'app/cache';
-import CreateRoleTab, { GET_ROLE_PERMISSIONS, CreateRoleReturnData } from './CreateRoleTab';
+import CreateRoleTab, { CreateRoleReturnData } from './CreateRoleTab';
 
 const rolePermissions = [
   {
@@ -24,21 +23,8 @@ const rolePermissions = [
   },
 ];
 
-const apolloMocks = [
-  {
-    request: {
-      query: GET_ROLE_PERMISSIONS,
-    },
-    result: {
-      data: {
-        getRolePermissions: rolePermissions,
-      },
-    },
-  },
-];
-
 export default {
-  title: 'Components/Create Role Tab',
+  title: 'Tab Pages/Role Management/Create Role Tab',
   component: CreateRoleTab,
   decorators: [
     (CreateRoleTabStory) => {
@@ -71,28 +57,10 @@ const successfulRoleUpdateMock: CreateRoleReturnData = {
 export const Default: ComponentStory<typeof CreateRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', successfulRoleCreationMock);
   fetchMock.mock('end:/rest/updaterole/', successfulRoleUpdateMock);
-  return <CreateRoleTab />;
-};
-
-Default.parameters = {
-  apolloClient: {
-    mocks: [
-      ...apolloMocks,
-      Standard.parameters?.apolloClient.mocks[0], // notification mock
-    ],
-  },
+  return <CreateRoleTab rolePermissions={ rolePermissions } />;
 };
 
 export const RoleExistsError: ComponentStory<typeof CreateRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', { status: 409 });
-  return <CreateRoleTab />;
-};
-
-RoleExistsError.parameters = {
-  apolloClient: {
-    mocks: [
-      ...apolloMocks,
-      Standard.parameters?.apolloClient.mocks[0], // notification mock
-    ],
-  },
+  return <CreateRoleTab rolePermissions={ rolePermissions } />;
 };
