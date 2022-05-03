@@ -50,6 +50,15 @@ export interface MilestoneRequestInput {
   currentState?: MilestoneState | null;
 }
 
+export interface MilestoneTypeInput {
+  id: string;
+}
+
+export interface PathwayInput {
+  name: string;
+  milestoneTypes?: MilestoneTypeInput[] | null;
+}
+
 export interface PatientInput {
   firstName: string;
   lastName: string;
@@ -61,6 +70,12 @@ export interface PatientInput {
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
   milestones?: (MilestoneRequestInput | null)[] | null;
+}
+
+export interface UpdatePathwayInput {
+  id: string;
+  name: string;
+  milestoneTypes?: MilestoneTypeInput[] | null;
 }
 
 //==============================================================

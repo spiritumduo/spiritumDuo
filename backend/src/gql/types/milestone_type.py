@@ -1,16 +1,16 @@
 from ariadne.objects import ObjectType
 from dataloaders import (
-    MilestoneTypeLoaderByPathwayId,
+    PathwayLoaderByMilestoneType,
 )
 from models import MilestoneType
 from graphql.type import GraphQLResolveInfo
 
-PathwayObjectType = ObjectType("Pathway")
+MilestoneTypeType = ObjectType("MilestoneType")
 
 
-@PathwayObjectType.field("milestoneTypes")
+@MilestoneTypeType.field("pathways")
 async def resolve_pathways(
     obj: MilestoneType = None, info: GraphQLResolveInfo = None, *_
 ):
-    return await MilestoneTypeLoaderByPathwayId.load_from_id(
+    return await PathwayLoaderByMilestoneType.load_from_id(
         context=info.context, id=obj.id)

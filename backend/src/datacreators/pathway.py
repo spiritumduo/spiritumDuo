@@ -1,11 +1,13 @@
-from models import Pathway
+from typing import Dict, List
+from models import Pathway, PathwayMilestoneType
 from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
 from asyncpg.exceptions import UniqueViolationError
 
 
 async def CreatePathway(
     context: dict = None,
-    name: str = None
+    name: str = None,
+    milestone_types: List[Dict[str, int]] = None,
 ):
     """
     Creates a decision point object in the local database
@@ -13,6 +15,7 @@ async def CreatePathway(
     Keyword arguments:
         context (dict): the current request context
         name (string): the name of the pathway
+        milestoneTypes (list): list of milestone type IDs
     Returns:
         Pathway/DataCreatorInputErrors: newly created pathway object/errors
             object
@@ -23,9 +26,17 @@ async def CreatePathway(
         raise ReferencedItemDoesNotExistError("Name is not provided.")
 
     try:
-        return await Pathway.create(
+        newPathway: Pathway = await Pathway.create(
             name=name
         )
+
+        for milestoneType in milestone_types:
+            await PathwayMilestoneType.create(
+                pathway_id=int(newPathway.id),
+                milestone_type_id=int(milestoneType['id'])
+            )
+
+        return newPathway
     except UniqueViolationError:
         return DataCreatorInputErrors().addError(
             field="name",

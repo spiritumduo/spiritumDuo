@@ -3,6 +3,13 @@ import React from 'react';
 import { Container } from 'nhsuk-react-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
+// APP
+import { Input, Select, CheckboxBox } from 'components/nhs-style';
+import { PathwayContext } from 'app/context';
+
+import PathwayManagementTabSet from 'tabsets/PathwayManagement';
+import RoleManagementTabSet from 'tabsets/RoleManagement';
+
 import { AdminUser } from 'features/AdminUser';
 import CreateRoleTab from 'components/CreateRoleTab';
 import UpdateRoleTab from 'components/UpdateRoleTab';
@@ -14,27 +21,16 @@ const AdministrationPage = (): JSX.Element => (
       <TabList>
         <Tab>Users</Tab>
         <Tab>Roles management</Tab>
+        <Tab>Pathway management</Tab>
       </TabList>
       <TabPanel>
         <AdminUser />
       </TabPanel>
       <TabPanel>
-        <Tabs>
-          <TabList>
-            <Tab>Create role</Tab>
-            <Tab>Update role</Tab>
-            <Tab>Delete role</Tab>
-          </TabList>
-          <TabPanel>
-            <CreateRoleTab />
-          </TabPanel>
-          <TabPanel>
-            <UpdateRoleTab />
-          </TabPanel>
-          <TabPanel>
-            <DeleteRoleTab />
-          </TabPanel>
-        </Tabs>
+        <RoleManagementTabSet />
+      </TabPanel>
+      <TabPanel>
+        <PathwayManagementTabSet />
       </TabPanel>
     </Tabs>
   </Container>

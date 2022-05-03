@@ -1,5 +1,5 @@
 from aiodataloader import DataLoader
-from models import Pathway
+from models import Pathway, PathwayMilestoneType
 from typing import List, Union
 
 
@@ -183,3 +183,59 @@ class PathwayByNameLoader(DataLoader):
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
+
+
+class PathwayLoaderByMilestoneType(DataLoader):
+    """
+        This is class for loading Pathway objects and
+        caching the result in the request context by milestone type ID
+        using PathwayMilestoneType link table
+
+        Attributes:
+            loader_name (str): unique name of loader to cache data under
+    """
+
+    @classmethod
+    async def load_from_id(
+        cls,
+        context=None,
+        id=None
+    ) -> Union[Pathway, None]:
+        """
+            Loads MilestoneTypes from their associated
+            pathway ID from the PathwayMilestoneType link
+            table
+
+            Parameters:
+                context (dict): request context
+                id (int): ID of pathway ID to find
+            Returns:
+                [Pathway]/None
+        """
+        if not id or not context:
+            return None
+
+        _gino = context['db']
+
+        async with _gino.acquire(reuse=False) as conn:
+            query = _gino.select([Pathway])\
+                .select_from(
+                    _gino.join(
+                        Pathway,
+                        PathwayMilestoneType,
+                        Pathway.id == PathwayMilestoneType.pathway_id
+                    )
+                )\
+                .where(PathwayMilestoneType.milestone_type_id == int(id))
+
+            result = await conn.all(query)
+
+            if PathwayByIdLoader.loader_name not in context:
+                context[PathwayByIdLoader.loader_name] = PathwayByIdLoader(
+                    db=context['db']
+                )
+            for pW in result:
+                context[PathwayByIdLoader.loader_name].prime(pW.id, pW)
+
+            return result
+

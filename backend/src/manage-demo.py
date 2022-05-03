@@ -10,7 +10,8 @@ from models import (
     Session,
     OnPathway,
     Role,
-    RolePermission, UserRole
+    RolePermission, UserRole,
+    PathwayMilestoneType
 )
 from containers import SDContainer
 from models.db import db, DATABASE_URL
@@ -18,7 +19,7 @@ from api import app
 from faker import Faker
 from random import randint, getrandbits
 from datetime import date
-from SdTypes import DecisionTypes, MilestoneState, Permissions
+from SdTypes import MilestoneState, Permissions
 from itsdangerous import TimestampSigner
 from trustadapter.trustadapter import (
     Patient_IE,
@@ -29,7 +30,7 @@ from trustadapter.trustadapter import (
 )
 from config import config
 from base64 import b64encode
-from typing import Dict
+from typing import Dict, List
 from bcrypt import hashpw, gensalt
 
 faker = Faker()
@@ -37,7 +38,7 @@ app.container = SDContainer()
 
 
 NUMBER_OF_USERS_PER_PATHWAY = 10
-NUMBER_OF_PATHWAYS = 10
+NUMBER_OF_PATHWAYS = 1
 NUMBER_OF_PATIENTS_PER_PATHWAY = 30
 
 
@@ -45,6 +46,7 @@ class RequestPlaceholder(dict):
     """
     This is a test
     """
+
 
 _CONTEXT = {
     "db": db,
@@ -84,8 +86,9 @@ async def clear_existing_data():
     await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
     await Session.delete.gino.status()
     await User.delete.where(User.id >= 0).gino.status()
-    await Pathway.delete.where(Pathway.id >= 0).gino.status()
     await Patient.delete.where(Patient.id >= 0).gino.status()
+    await PathwayMilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
+    await Pathway.delete.where(Pathway.id >= 0).gino.status()
     await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
     print("********************")
     print("\33[31mNOTE: you may need to clear the `PSEUDOTIE` database in")
@@ -188,13 +191,92 @@ async def insert_demo_data():
         )
     }
 
-    for pathwayIndex in range(1, NUMBER_OF_PATHWAYS):
+    selectable_milestone_types: List[MilestoneType] = [
+        await MilestoneType.create(
+            name="PET-CT",
+            ref_name="Positron emission tomography with computed tomography (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="CT head - contrast",
+            ref_name="Computed tomography of head with contrast (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="MRI head",
+            ref_name="Magnetic resonance imaging of head (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="Lung function tests",
+            ref_name="Measurement of respiratory function (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="ECHO",
+            ref_name="Echocardiography (procedure)", 
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="CT guided biopsy thorax",
+            ref_name="Biopsy of thorax using computed tomography guidance (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="EBUS",
+            ref_name="Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="ECG",
+            ref_name="Electrocardiogram analysis (qualifier value)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="Thoracoscopy",
+            ref_name="Thoracoscopy (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="Bronchoscopy",
+            ref_name="Bronchoscopy (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="Pleural tap",
+            ref_name="Thoracentesis (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="CPET",
+            ref_name="Cardiopulmonary exercise test (procedure)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="Bloods",
+            ref_name="Blood test (procedure)",
+            is_test_request=True
+        ),
+    ]
+
+    for pathwayIndex in range(1, NUMBER_OF_PATHWAYS+1):
         sd_pathway: Pathway = await Pathway.create(
             name=f"Lung cancer demo {pathwayIndex}"
         )
         print(f"pathway id {sd_pathway.id} name {sd_pathway.name}")
 
-        for userIndex in range(1, NUMBER_OF_USERS_PER_PATHWAY):
+        for key, milestoneType in general_milestone_types.items():
+            await PathwayMilestoneType.create(
+                pathway_id=sd_pathway.id,
+                milestone_type_id=milestoneType.id
+            )
+        for milestoneType in selectable_milestone_types:
+            await PathwayMilestoneType.create(
+                pathway_id=sd_pathway.id,
+                milestone_type_id=milestoneType.id
+            )
+
+        for userIndex in range(1, NUMBER_OF_USERS_PER_PATHWAY+1):
             unencoded_password = f"22password{pathwayIndex}"
             sd_password = hashpw(
                 unencoded_password.encode('utf-8'),
@@ -229,13 +311,13 @@ async def insert_demo_data():
             hospital_number_prefix = "fMRN"
             hospital_number = f"{sd_pathway.id}{i}"
             while len(hospital_number) != 6:
-                hospital_number = str(randint(1,9)) + hospital_number
+                hospital_number = str(randint(1, 9)) + hospital_number
             hospital_number = hospital_number_prefix + hospital_number
 
             national_number_prefix = "fNHS"
             national_number = f"{sd_pathway.id}{i}"
             while len(national_number) != 9:
-                national_number = str(randint(1,9)) + national_number
+                national_number = str(randint(1, 9)) + national_number
             national_number = national_number_prefix + national_number
 
             date_of_birth = date(randint(1950, 1975), randint(1, 12), randint(1, 27))
