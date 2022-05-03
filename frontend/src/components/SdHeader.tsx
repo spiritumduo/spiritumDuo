@@ -6,7 +6,7 @@ import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import PathwaySelector from 'components/PathwaySelector';
 import sdInvertedImage from 'static/i/sd_inverted.png';
-import SearchBar from 'features/SearchBar';
+import { SearchBar } from 'features/SearchBar';
 
 import './SdHeader.css';
 
