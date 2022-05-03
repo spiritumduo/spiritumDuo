@@ -88,7 +88,7 @@ const apolloMocks: {
 ];
 
 export default {
-  title: 'features/AdminUserUpdate',
+  title: 'features/AdminUser/AdminUserUpdate',
   component: AdminUserUpdate,
   decorators: [
     (AdminUserUpdateStory) => (

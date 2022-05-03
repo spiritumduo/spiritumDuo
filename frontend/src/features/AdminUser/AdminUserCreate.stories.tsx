@@ -67,7 +67,7 @@ const mockRoles: userAdminGetRoles['getRoles'] = [
 
 const apolloMocks: {
   query: DocumentNode;
-  mockFn: RequestHandler<userAdminGetRoles, unknown>;
+  mockFn: RequestHandler<userAdminGetRoles, undefined>;
 }[] = [
   {
     query: USER_ADMIN_GET_ROLES_QUERY,
@@ -87,7 +87,7 @@ const successfulCreateAccountMock: CreateUserReturnData = {
 };
 
 export default {
-  title: 'features/AdminUserCreate',
+  title: 'features/AdminUser/AdminUserCreate',
   component: AdminUserCreate,
   decorators: [
     (AdminUserCreateStory) => (

@@ -23,7 +23,7 @@ export const AdminUser = (): JSX.Element => {
       <Container>
         <Tabs>
           <TabList>
-            <Tab>Users</Tab>
+            <Tab>All</Tab>
             <Tab>Create user</Tab>
           </TabList>
           <TabPanel>

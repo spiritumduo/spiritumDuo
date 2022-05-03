@@ -72,7 +72,7 @@ const apolloMocks: {
 ];
 
 export default {
-  title: 'features/UserList',
+  title: 'features/AdminUser/UserList',
   component: UserList,
   decorators: [
     (UserListStory) => (
