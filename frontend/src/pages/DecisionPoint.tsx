@@ -621,6 +621,7 @@ const DecisionPointPage = (
             <input type="hidden" value={ patient.id } { ...register('patientId', { required: true }) } />
             <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
             <input type="hidden" value={ onPathwayId } { ...register('onPathwayId', { required: true }) } />
+            <input type="hidden" value={ decisionType.toUpperCase() } { ...register('decisionType', { required: true }) } />
             {
               hiddenConfirmationFields.map((field, index) => (
                 <input
@@ -638,20 +639,6 @@ const DecisionPointPage = (
               }
             >
               <Row className="mt-4 align-items-center">
-                <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
-                  Decision:
-                </Col>
-                <Col xs={ 7 } sm={ 6 } md={ 3 }>
-                  <Select
-                    className="d-inline-block w-100"
-                    id="decisionType"
-                    defaultValue={ decisionType.toUpperCase() }
-                    // eslint-disable-next-line react/jsx-props-no-spreading
-                    { ...register('decisionType', { required: true }) }
-                  >
-                    { decisionSelectOptions }
-                  </Select>
-                </Col>
                 <Col xs={ 5 } sm={ 4 } md={ 3 } className="offset-sm-1 offset-md-0">
                   Under care of:
                 </Col>
