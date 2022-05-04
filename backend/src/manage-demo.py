@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from common import DataCreatorInputErrors
 from models import (
     Pathway,
@@ -38,7 +39,7 @@ app.container = SDContainer()
 
 
 NUMBER_OF_USERS_PER_PATHWAY = 10
-NUMBER_OF_PATHWAYS = 1
+NUMBER_OF_PATHWAYS = 10
 NUMBER_OF_PATIENTS_PER_PATHWAY = 30
 
 
@@ -282,7 +283,8 @@ async def insert_demo_data():
                 unencoded_password.encode('utf-8'),
                 gensalt()
             ).decode('utf-8')
-            username=f"demo-{pathwayIndex}-{userIndex}"
+            username = f"demo-{pathwayIndex}-{userIndex}"
+
             sd_user: User = await User.create(
                 username=username,
                 password=sd_password,
@@ -292,6 +294,7 @@ async def insert_demo_data():
                 department="Demo user",
                 default_pathway_id=sd_pathway.id
             )
+
             await UserRole.create(
                 user_id=sd_user.id,
                 role_id=roles['doctor'].id
@@ -395,5 +398,11 @@ async def insert_demo_data():
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
 loop.run_until_complete(check_connection())
-loop.run_until_complete(clear_existing_data())
-loop.run_until_complete(insert_demo_data())
+
+if len(sys.argv) > 1 and sys.argv[1] == "cleanup":
+    loop.run_until_complete(clear_existing_data())
+elif len(sys.argv) > 1:
+    print("Invalid arguments")
+else:
+    loop.run_until_complete(clear_existing_data())
+    loop.run_until_complete(insert_demo_data())
