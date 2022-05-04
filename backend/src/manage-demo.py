@@ -15,6 +15,7 @@ from models import (
     PathwayMilestoneType
 )
 from containers import SDContainer
+from asyncpg.exceptions import UndefinedTableError
 from models.db import db, DATABASE_URL
 from api import app
 from faker import Faker
@@ -96,6 +97,80 @@ async def clear_existing_data():
     print("the event of HTTP 409 (conflict)\33[0m")
     print("********************")
     await asyncio.sleep(2)
+
+async def clear_existing_data_for_migrations():
+    print("Clearing existing data from local database")
+    try:
+        await UserRole.delete.gino.status()
+        print("Table `UserRole` deleted")
+    except UndefinedTableError:
+        print("Table `UserRole` not found. Continuing")
+
+    try:
+        await RolePermission.delete.gino.status()
+        print("Table `RolePermission` deleted")
+    except UndefinedTableError:
+        print("Table `RolePermission` not found. Continuing")
+
+    try:
+        await Role.delete.gino.status()
+        print("Table `Role` deleted")
+    except UndefinedTableError:
+        print("Table `delete` not found. Continuing")
+
+    try:
+        await Milestone.delete.where(Milestone.id >= 0).gino.status()
+        print("Table `Milestone` deleted")
+    except UndefinedTableError:
+        print("Table `Milestone` not found. Continuing")
+
+    try:
+        await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
+        print("Table `DecisionPoint` deleted")
+    except UndefinedTableError:
+        print("Table `DecisionPoint` not found. Continuing")
+
+    try:
+        await OnPathway.delete.where(OnPathway.id >= 0).gino.status()
+        print("Table `OnPathway` deleted")
+    except UndefinedTableError:
+        print("Table `OnPathway` not found. Continuing")
+
+    try:
+        await Session.delete.gino.status()
+        print("Table `Session` deleted")
+    except UndefinedTableError:
+        print("Table `Session` not found. Continuing")
+
+    try:
+        await User.delete.where(User.id >= 0).gino.status()
+        print("Table `User` deleted")
+    except UndefinedTableError:
+        print("Table `delete` not found. Continuing")
+
+    try:
+        await Patient.delete.where(Patient.id >= 0).gino.status()
+        print("Table `Patient` deleted")
+    except UndefinedTableError:
+        print("Table `Patient` not found. Continuing")
+
+    try:
+        await PathwayMilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
+        print("Table `PathwayMilestoneType` deleted")
+    except UndefinedTableError:
+        print("Table `PathwayMilestoneType` not found. Continuing")
+
+    try:
+        await Pathway.delete.where(Pathway.id >= 0).gino.status()
+        print("Table `Pathway` deleted")
+    except UndefinedTableError:
+        print("Table `Pathway` not found. Continuing")
+
+    try:
+        await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
+        print("Table `MilestoneType` deleted")
+    except UndefinedTableError:
+        print("Table `MilestoneType` not found. Continuing")
 
 
 async def create_roles():
@@ -399,8 +474,8 @@ loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
 loop.run_until_complete(check_connection())
 
-if len(sys.argv) > 1 and sys.argv[1] == "cleanup":
-    loop.run_until_complete(clear_existing_data())
+if len(sys.argv) > 1 and sys.argv[1] == "prepareformigrations":
+    loop.run_until_complete(clear_existing_data_for_migrations())
 elif len(sys.argv) > 1:
     print("Invalid arguments")
 else:

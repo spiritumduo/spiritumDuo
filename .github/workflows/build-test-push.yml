@@ -180,7 +180,7 @@ jobs:
         run: ssh staging 'cd spiritumDuo && docker-compose down && docker-compose up -d'
       -
         name: Remove existing data
-        run: ssh staging 'docker exec sd-backend python manage-demo.py cleanup'
+        run: ssh staging 'docker exec sd-backend python manage-demo.py prepareformigration'
       -
         name: Migrate databases
         run: >
