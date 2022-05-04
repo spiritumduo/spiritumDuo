@@ -97,15 +97,12 @@ const renderUsernameAlreadyExists = () => render(
 test('Duplicate username should display to user', async () => {
   renderUsernameAlreadyExists();
   const createUserBtn = screen.getByRole('button', { name: /create\s+user/i });
-  const { type, click } = userEvent.setup();
-  await waitFor(async () => {
-    type(screen.getByLabelText(/username/i), 'Username');
-    type(screen.getByLabelText(/password/i), 'Password');
-    type(screen.getByLabelText(/email/i), 'Email@email');
-    type(screen.getByLabelText(/first name/i), 'First name');
-    type(screen.getByLabelText(/last name/i), 'Last name');
-    type(screen.getByLabelText(/department/i), 'Department');
-  });
-  await waitFor(() => click(createUserBtn));
+  userEvent.type(screen.getByLabelText(/username/i), 'Username');
+  userEvent.type(screen.getByLabelText(/password/i), 'Password');
+  userEvent.type(screen.getByLabelText(/email/i), 'Email@email');
+  userEvent.type(screen.getByLabelText(/first name/i), 'First name');
+  userEvent.type(screen.getByLabelText(/last name/i), 'Last name');
+  userEvent.type(screen.getByLabelText(/department/i), 'Department');
+  userEvent.click(createUserBtn);
   await waitFor(() => expect(screen.getByText(/an account with this username already exists/i)).toBeInTheDocument());
 });
