@@ -73,7 +73,7 @@ async def check_connection():
     except TrustIntegrationCommunicationError as e:
         print(e)
         print("Connection failed!")
-        raise SystemExit()
+        sys.exit(1)
     else:
         print("Connection successful!")
 
@@ -97,6 +97,7 @@ async def clear_existing_data():
     print("the event of HTTP 409 (conflict)\33[0m")
     print("********************")
     await asyncio.sleep(2)
+
 
 async def clear_existing_data_for_migrations():
     print("Clearing existing data from local database")
