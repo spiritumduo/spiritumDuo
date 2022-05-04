@@ -142,7 +142,7 @@ const CREATE_DECISION_NO_MILESTONE_MOCK = {
         onPathwayId: '1',
         clinicHistory: 'New Clinic History',
         comorbidities: 'New Comorbidities',
-        decisionType: DecisionPointType.TRIAGE.toString(),
+        decisionType: DecisionPointType.CLINIC.toString(),
         milestoneRequests: [],
         milestoneResolutions: ['6', '7'],
       },
@@ -170,7 +170,7 @@ const CREATE_DECISION_WITH_MILESTONE_MOCK = {
         onPathwayId: '1',
         clinicHistory: 'New Clinic History',
         comorbidities: 'New Comorbidities',
-        decisionType: DecisionPointType.TRIAGE.toString(),
+        decisionType: DecisionPointType.CLINIC.toString(),
         milestoneResolutions: ['6', '7'],
         milestoneRequests: [ // the order of these requests in this mock matters for some reason
           {
