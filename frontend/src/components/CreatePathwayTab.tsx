@@ -159,7 +159,7 @@ const CreatePathwayTab = (
         }) }
       >
         <Fieldset disabled={ disableForm || mutationLoading || showModal }>
-          <Input Pathway="textbox" id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
+          <Input role="textbox" id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
         </Fieldset>
         <Fieldset disabled={ disableForm || mutationLoading || showModal }>
           <Fieldset.Legend>Milestone types</Fieldset.Legend>
