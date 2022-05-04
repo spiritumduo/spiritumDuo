@@ -147,7 +147,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
           <TabPanel>
             <DecisionPointPage
               hospitalNumber={ hospitalNumber }
-              decisionType={ DecisionPointType.TRIAGE }
+              decisionType={ DecisionPointType.CLINIC }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
             />
           </TabPanel>
