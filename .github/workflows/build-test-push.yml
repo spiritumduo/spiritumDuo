@@ -176,11 +176,17 @@ jobs:
         name: Pull containers
         run: ssh staging 'docker pull spiritumduo/sd-nginx && docker pull spiritumduo/sd-backend && docker pull spiritumduo/sd-pseudotie'
       -
-        name: Restart services
-        run: ssh staging 'cd spiritumDuo && docker-compose down && docker-compose up -d'
+        name: Stop services
+        run: ssh staging 'cd spiritumDuo && docker-compose down'
       -
-        name: Remove existing data
-        run: ssh staging 'docker exec sd-backend python manage-demo.py prepareformigrations'
+        name: Remove existing databases
+        run: ssh staging 'docker volume rm spiritumduo_sd_postgres_data spiritumduo_sd_alembic_backend_data spiritumduo_sd_alembic_pseudotie_data'
+      -
+        name: Start services
+        run: ssh staging 'docker-compose up -d'
+      -
+        name: Restart services
+        run: ssh staging 'docker-compose restart'
       -
         name: Migrate databases
         run: >
