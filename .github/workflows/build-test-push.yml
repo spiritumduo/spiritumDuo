@@ -185,15 +185,15 @@ jobs:
         name: Start services
         run: ssh staging 'cd spiritumDuo && docker-compose up -d'
       -
-        name: Restart services
-        run: ssh staging 'cd spiritumDuo && docker-compose restart'
-      -
         name: Migrate databases
         run: >
           ssh staging 'docker exec sd-backend alembic revision -m commit-${{ github.ref }}-${{ github.sha }} --autogenerate --head head
           && docker exec sd-backend alembic upgrade head
           && docker exec sd-pseudotie alembic revision -m commit-${{ github.ref }}-${{ github.sha }} --autogenerate --head head
           && docker exec sd-pseudotie alembic upgrade head'
+      -
+        name: Restart services
+        run: ssh staging 'cd spiritumDuo && docker-compose restart'
       -
         name: Add demo data
         run: ssh staging 'docker exec sd-backend python manage-demo.py'
