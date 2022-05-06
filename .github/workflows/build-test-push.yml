@@ -183,10 +183,10 @@ jobs:
         run: ssh staging 'docker volume rm spiritumduo_sd_postgres_data spiritumduo_sd_alembic_backend_data spiritumduo_sd_alembic_pseudotie_data'
       -
         name: Start services
-        run: ssh staging 'docker-compose up -d'
+        run: ssh staging 'cd spiritumDuo && docker-compose up -d'
       -
         name: Restart services
-        run: ssh staging 'docker-compose restart'
+        run: ssh staging 'cd spiritumDuo && docker-compose restart'
       -
         name: Migrate databases
         run: >
