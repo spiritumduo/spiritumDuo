@@ -27,3 +27,10 @@ class DataCreatorInputErrors:
 
     def hasErrors(self):
         return len(self.errorList) > 0
+
+
+class UserDoesNotHavePathwayPermission(Exception):
+    """
+    Raised when a user attempts an operation
+    on a pathway they should not have access to
+    """
