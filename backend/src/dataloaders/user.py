@@ -148,7 +148,7 @@ class UserByUsernameLoader(DataLoader):
                 context[UserByIdLoader.loader_name] = UserByIdLoader(
                     db=context['db']
                 )
-            context[UserByIdLoader.loader_name].prime(user.id, user)
+            context[UserByIdLoader.loader_name].prime(user.id, user, context)
 
         return user
 
