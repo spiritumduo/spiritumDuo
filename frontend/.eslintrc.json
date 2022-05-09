@@ -45,6 +45,7 @@
       "depth": 3
     }],
     "no-underscore-dangle": [0],
+    "no-unused-expressions": ["error", { "allowTernary": true }],
     "react/require-default-props": [0]
   },
   "settings": {
