@@ -18,6 +18,7 @@ const PageLayout = ({
   children,
 }: PageLayoutProps): JSX.Element => {
   const { user } = useContext(AuthContext);
+  const { updateCurrentPathwayId } = useContext(PathwayContext);
   const { pathwayOptions, currentPathwayId } = useContext(PathwayContext);
   const actualCurrentPathwayId = currentPathwayId || pathwayOptions[0].id;
   return (
@@ -25,7 +26,7 @@ const PageLayout = ({
       <SdHeader
         pathwayOptions={ pathwayOptions }
         currentPathwayId={ actualCurrentPathwayId }
-        pathwayOnItemSelect={ () => console.log('item selected') }
+        pathwayOnItemSelect={ (pathwayId) => updateCurrentPathwayId(pathwayId) }
         searchOnSubmit={ () => console.log('search submit') }
         user={ user }
       />
