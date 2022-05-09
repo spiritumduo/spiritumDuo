@@ -4,12 +4,16 @@ from pyisemail import is_email
 from pyisemail.diagnosis import InvalidDiagnosis
 
 from SdTypes import Permissions
-from models import User, db, UserRole, Role
+from models import User, db, UserRole, Role, Pathway, UserPathways
 from .api import _FastAPI
 from fastapi import Request
 from pydantic import BaseModel
 from authentication.authentication import needsAuthorization
-from .restexceptions import NotFoundHTTPException, ConflictHTTPException, UnprocessableHTTPException
+from .restexceptions import (
+    NotFoundHTTPException,
+    ConflictHTTPException,
+    UnprocessableHTTPException
+)
 from asyncpg.exceptions import UniqueViolationError
 
 
@@ -23,6 +27,7 @@ class UpdateUserInput(BaseModel):
     defaultPathwayId: int
     isActive: bool
     roles: List[int]
+    pathways: List[int]
 
 
 @_FastAPI.post("/updateuser/")
@@ -49,8 +54,15 @@ async def update_user(request: Request, input: UpdateUserInput):
                     is_active=input.isActive,
                 ).apply()
 
-                incoming_roles = set(await Role.query.where(Role.id.in_(input.roles)).gino.all())
-                missing_role_ids = set(input.roles) - set(map(lambda r: r.id, incoming_roles))
+                incoming_roles = set(await Role.query.where(
+                    Role.id.in_(input.roles)).gino.all())
+                missing_role_ids = set(input.roles) - set(
+                    map(lambda r: r.id, incoming_roles))
+
+                incoming_pathways = set(await Pathway.query.where(
+                    Pathway.id.in_(input.pathways)).gino.all())
+                missing_pathway_ids = set(input.pathways) - set(
+                    map(lambda p: p.id, incoming_pathways))
 
                 if len(missing_role_ids) > 0:
                     error_message = "Role ids do not exist:"
@@ -58,9 +70,21 @@ async def update_user(request: Request, input: UpdateUserInput):
                         error_message = f"{error_message} {id}"
                     raise UnprocessableHTTPException(error_message)
 
-                current_roles = set(await UserRole.query.where(UserRole.user_id == user.id).gino.all())
+                if len(missing_pathway_ids) > 0:
+                    error_message = "Pathway ids do not exist:"
+                    for id in missing_pathway_ids:
+                        error_message = f"{error_message} {id}"
+                    raise UnprocessableHTTPException(error_message)
+
+                current_roles = set(await UserRole.query.where(
+                    UserRole.user_id == user.id).gino.all())
                 remove_roles = current_roles - incoming_roles
                 add_roles = incoming_roles - current_roles
+
+                current_pathways = set(await UserPathways.query.where(
+                    UserPathways.user_id == user.id).gino.all())
+                remove_pathways = current_pathways - incoming_pathways
+                add_pathways = incoming_pathways - current_pathways
 
                 for role in remove_roles:
                     await role.delete()
@@ -71,12 +95,31 @@ async def update_user(request: Request, input: UpdateUserInput):
                         user_id=user.id,
                     )
 
-                roles = await Role.join(UserRole).select().where(UserRole.user_id == user.id).gino.all()
+                for pathway in remove_pathways:
+                    await role.delete()
+
+                for pathway in add_pathways:
+                    await UserPathways.create(
+                        pathway_id=pathway.id,
+                        user_id=user.id,
+                    )
+
+                roles = await Role.join(UserRole).select().where(
+                    UserRole.user_id == user.id).gino.all()
                 role_dicts = []
                 for r in roles:
                     role_dicts.append({
                         "id": r.id,
                         "name": r.name
+                    })
+
+                db_pathways = await Pathway.join(UserPathways).select().where(
+                    UserPathways.user_id == user.id).gino.all()
+                db_pathways_dicts = []
+                for pw in db_pathways:
+                    db_pathways_dicts.append({
+                        "id": pw.id,
+                        "name": pw.name
                     })
 
                 return {
@@ -88,8 +131,9 @@ async def update_user(request: Request, input: UpdateUserInput):
                         "department": user.department,
                         "defaultPathwayId": user.default_pathway_id,
                         "isActive": user.is_active,
-                        "roles": role_dicts
+                        "roles": role_dicts,
+                        "pathways": db_pathways_dicts
                     }
                 }
-    except UniqueViolationError as e:
+    except UniqueViolationError:
         raise ConflictHTTPException("Unique violation error")
