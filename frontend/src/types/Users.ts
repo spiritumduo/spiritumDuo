@@ -1,4 +1,5 @@
 import Role from './Role';
+import PathwayOption from './PathwayOption';
 
 interface User {
     id: string;
@@ -12,6 +13,7 @@ interface User {
     roles: Role[];
     token?: string;
     isActive?: boolean;
+    pathways: PathwayOption[];
 }
 
 export default User;
