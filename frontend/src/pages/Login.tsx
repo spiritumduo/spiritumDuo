@@ -10,7 +10,6 @@ import { Button, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-rea
 import { Container } from 'react-bootstrap';
 import { Input } from 'components/nhs-style';
 import './login.css';
-import Role from 'types/Role';
 
 export type LoginData = {
   user?: User;

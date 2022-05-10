@@ -1,0 +1,24 @@
+.filter-toggle {
+    min-height: 2rem;
+    max-width: inherit;
+    border: 1px solid rgba(34,36,38,.15);
+    padding: 0.25rem;
+    width: 100%;
+}
+
+.filter-menu {
+    max-height: 25rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: white;
+    border-radius: 0 0 0.25rem 0.25rem;
+    min-width: calc(100%  - 32px);
+    width: calc(100% - 32px);
+    font-size: inherit;
+}
+
+.filter-toggle-button {
+    float: right;
+    border: none;
+    background: inherit;
+}
