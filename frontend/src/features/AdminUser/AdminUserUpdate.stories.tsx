@@ -42,6 +42,7 @@ const mockUser: userAdminGetUserWithRoles['getUser'] = {
       name: 'second role',
     },
   ],
+  pathways: [{ __typename: 'Pathway', id: '1', name: 'Pathway 1' }],
 };
 
 const mockRoles: userAdminGetUserWithRoles['getRoles'] = [

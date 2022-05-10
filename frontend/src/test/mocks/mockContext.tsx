@@ -18,6 +18,16 @@ interface MockAuthProviderProps {
  * @returns AuthContext.Provider
  */
 export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JSX.Element => {
+  const pathways: PathwayOption[] = [
+    {
+      id: '1',
+      name: 'Lung Cancer Test',
+    },
+    {
+      id: '2',
+      name: 'Bronchieactasis Test',
+    },
+  ];
   const user: User = {
     id: '1',
     firstName: 'Test-John',
@@ -26,6 +36,7 @@ export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JS
     defaultPathwayId: '1',
     roles: [],
     token: 'token',
+    pathways: pathways,
   };
   // eslint-disable-next-line no-unneeded-ternary
   const providerValue = value !== undefined
@@ -54,23 +65,10 @@ interface MockPathwayProviderProps {
 export const MockPathwayProvider = ({
   children, value,
 }: MockPathwayProviderProps ): JSX.Element => {
-  const pathways: PathwayOption[] = [
-    {
-      id: '1',
-      name: 'Lung Cancer Test',
-    },
-    {
-      id: '2',
-      name: 'Bronchieactasis Test',
-    },
-  ];
-
-  const providerValue = value?.pathwayOptions === undefined
+  const providerValue = value?.currentPathwayId === undefined
     ? {
-      pathwayOptions: pathways,
-      updateCurrentPathwayId: () => { },
       currentPathwayId: '1',
-      updatePathwayOptions: () => { },
+      updateCurrentPathwayId: () => { },
     }
     : value;
   return (

@@ -54,17 +54,17 @@ const successfulLoginMock: LoginPayload = {
     roles: [],
     defaultPathwayId: '1',
     token: 'authToken',
+    pathways: [
+      {
+        id: '1',
+        name: 'Lung Cancer',
+      },
+      {
+        id: '2',
+        name: 'Broncheastasis',
+      },
+    ],
   },
-  pathways: [
-    {
-      id: '1',
-      name: 'Lung Cancer',
-    },
-    {
-      id: '2',
-      name: 'Broncheastasis',
-    },
-  ],
   error: null,
 };
 
