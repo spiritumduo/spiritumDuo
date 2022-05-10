@@ -11,17 +11,16 @@ import { SearchBar } from 'features/SearchBar';
 import './SdHeader.css';
 
 export interface SdHeaderProps {
-  pathwayOptions: PathwayOption[];
-  currentPathwayId: string;
+  currentPathwayId?: string;
   pathwayOnItemSelect: (name: string) => void;
   searchOnSubmit: (e: React.FormEvent<EventTarget>) => void;
   user?: User;
 }
 
 const SdHeader = ({
-  pathwayOptions, currentPathwayId, pathwayOnItemSelect, searchOnSubmit, user,
+  currentPathwayId, pathwayOnItemSelect, searchOnSubmit, user,
 }: SdHeaderProps): JSX.Element => {
-  const currentOption = pathwayOptions.find((p) => p.id === currentPathwayId);
+  const currentOption = user?.pathways?.find((p) => p.id.toString() === currentPathwayId);
   const [searchState, setSearchState] = useState(false);
   const [navbarState, setNavbarState] = useState(false);
   return (
@@ -50,7 +49,7 @@ const SdHeader = ({
           <span className="nhsuk-u-visually-hidden">Search</span>
         </button>
         <PathwaySelector
-          options={ pathwayOptions }
+          options={ user?.pathways }
           currentOption={ currentOption }
           onItemSelect={ (name) => { pathwayOnItemSelect(name); } }
         />

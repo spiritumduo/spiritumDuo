@@ -81,11 +81,10 @@ const LoginPage = (): JSX.Element => {
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
   const navigate = useNavigate();
   const { updateUser } = useContext(AuthContext);
-  const { updatePathwayOptions, updateCurrentPathwayId } = useContext(PathwayContext);
+  const { updateCurrentPathwayId } = useContext(PathwayContext);
   useEffect(() => {
-    if (data?.user && data?.pathways) {
+    if (data?.user) {
       updateUser(data.user);
-      updatePathwayOptions(data.pathways);
       updateCurrentPathwayId(data.user?.defaultPathwayId);
       navigate('/', { replace: true });
     }

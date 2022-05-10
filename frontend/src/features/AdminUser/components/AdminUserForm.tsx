@@ -95,7 +95,8 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
   const url = editUser !== undefined
     ? '/api/rest/updateuser/'
     : '/api/rest/createuser/';
-  const { pathwayOptions } = useContext(PathwayContext);
+  const pathwayOptions: {id: string, name:string}[] = [];
+
   const [showModal, setShowModal] = useState<boolean>(false);
 
   // Add / remove user role state
