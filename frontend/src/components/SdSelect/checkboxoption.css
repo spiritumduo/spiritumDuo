@@ -1,0 +1,13 @@
+.checkbox-option:hover {
+    background-color: #e9ecef;
+}
+
+@media screen and (max-width: 480px) {
+    .checkbox-option-input {
+        display: none;
+    }
+
+    .checkbox-option {
+        font-size: 1.5rem;
+    }
+}
