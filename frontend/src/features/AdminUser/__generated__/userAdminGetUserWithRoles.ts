@@ -13,6 +13,12 @@ export interface userAdminGetUserWithRoles_getUser_roles {
   name: string;
 }
 
+export interface userAdminGetUserWithRoles_getUser_pathways {
+  __typename: "Pathway";
+  id: string;
+  name: string;
+}
+
 export interface userAdminGetUserWithRoles_getUser {
   __typename: "User";
   id: string;
@@ -24,6 +30,7 @@ export interface userAdminGetUserWithRoles_getUser {
   defaultPathwayId: string;
   isActive: boolean;
   roles: userAdminGetUserWithRoles_getUser_roles[];
+  pathways: userAdminGetUserWithRoles_getUser_pathways[];
 }
 
 export interface userAdminGetUserWithRoles_getRoles {
