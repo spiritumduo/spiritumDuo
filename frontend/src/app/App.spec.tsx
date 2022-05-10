@@ -15,37 +15,47 @@ import store from 'app/store';
 import { Provider } from 'react-redux';
 import App from './App';
 
-const fakeUser: User = {
+const fakePathways: PathwayOption[] = [
+  {
+    id: '1',
+    name: 'Lung Cancer Test',
+  },
+  {
+    id: '2',
+    name: 'Bronchieactasis Test',
+  },
+];
+
+const standardUser: User = {
   id: '1',
   firstName: 'Test-John',
   lastName: 'Test-Doe',
   department: 'Respiratory',
   roles: [],
-  defaultPathwayId: 1,
+  defaultPathwayId: '1',
   token: 'token',
+  pathways: fakePathways,
 };
 
-const fakePathways: PathwayOption[] = [
-  {
-    id: 1,
-    name: 'Lung Cancer Test',
-  },
-  {
-    id: 2,
-    name: 'Bronchieactasis Test',
-  },
-];
+const adminUser: User = {
+  id: '1000',
+  firstName: 'Admin-John',
+  lastName: 'Test-Doe',
+  department: 'Respiratory',
+  roles: [{ id: '1000', name: 'admin' }],
+  defaultPathwayId: '1',
+  token: 'token2',
+  pathways: fakePathways,
+};
 
 const mockAuthProviderProps: AuthContextInterface = {
   updateUser: () => {},
-  user: fakeUser,
+  user: standardUser,
 };
 
 const mockPathwayProviderProps: PathwayContextInterface = {
-  pathwayOptions: fakePathways,
   currentPathwayId: fakePathways[0].id,
   updateCurrentPathwayId: () => {},
-  updatePathwayOptions: () => {},
 };
 
 interface AppElementProps {
@@ -88,13 +98,26 @@ test('Should render home page with valid user and pathways', () => {
   expect(screen.getByText(/To do/i)).toBeInTheDocument();
 });
 
-test('Should display error if no pathways present while logged in', () => {
+test('Should display error if no pathways present while logged in as standard user', () => {
   renderApp({
     pathwayProviderProps: {
-      pathwayOptions: [],
       updateCurrentPathwayId: () => {},
-      updatePathwayOptions: () => {},
     },
   });
-  expect(screen.getByText(/application not configured/i)).toBeInTheDocument();
+  expect(screen.getByText(/the current logged in user does not have access to any pathways/i)).toBeInTheDocument();
+  expect(screen.queryByText(/administration panel/i)).not.toBeInTheDocument();
+});
+
+test('Should display error with link to administration page if no pathways present while logged in as admin user', () => {
+  renderApp({
+    pathwayProviderProps: {
+      updateCurrentPathwayId: () => {},
+    },
+    authProviderProps: {
+      user: adminUser,
+      updateUser: () => {},
+    },
+  });
+  expect(screen.getByText(/the current logged in user does not have access to any pathways/i)).toBeInTheDocument();
+  expect(screen.getByText(/administration panel/i)).toBeInTheDocument();
 });
