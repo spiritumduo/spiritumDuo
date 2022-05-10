@@ -1,14 +1,13 @@
 import { InMemoryCache, ReactiveVar, makeVar } from '@apollo/client';
 import { relayStylePagination } from '@apollo/client/utilities';
 import User from 'types/Users';
-import PathwayOption from 'types/PathwayOption';
 
 export const cache: InMemoryCache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
-        pathwayOptions: { read: () => pathwayOptionsVar() },
-        loggedInUser: { read: () => pathwayOptionsVar() },
+        pathwayOptions: { read: () => loggedInUserVar()?.pathways },
+        loggedInUser: { read: () => loggedInUserVar() },
         getPatientOnPathwayConnection: relayStylePagination(['outstanding', 'pathwayId', 'underCareOf', 'includeDischarged']),
         getPatient: {
           merge: true,
@@ -48,29 +47,6 @@ function makePersistantVar<T>(value: T, storageKey: string): ReactiveVar<T> {
   return persistantReactiveVar;
 }
 
-// Get initial pathway options from LocalStorage if cached.
-const pathwayOptionsArray: PathwayOption[] = [];
-const pathwayOptionsLocalStorage = localStorage.getItem('pathwayOptions');
-if (pathwayOptionsLocalStorage) {
-  try {
-    const pathwayOptions = JSON.parse(pathwayOptionsLocalStorage);
-    if (Array.isArray(pathwayOptions)) {
-      pathwayOptions.forEach((p) => {
-        const pathway = { id: p.id, name: p.name };
-        pathwayOptionsArray.push(pathway);
-      });
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-}
-
-// eslint-disable-next-line max-len
-export const pathwayOptionsVar: ReactiveVar<PathwayOption[]> = makePersistantVar<PathwayOption[]>(
-  pathwayOptionsArray,
-  'pathwayOptions',
-);
-
 // Here we reconstruct the user from local storage. If any fields are missing, we
 // don't use it
 let sanitisedUser: User | null = {
@@ -81,6 +57,7 @@ let sanitisedUser: User | null = {
   roles: [],
   defaultPathwayId: '0',
   token: '',
+  pathways: [],
 };
 
 const localStorageUserJson = localStorage.getItem('loggedInUser');
@@ -94,6 +71,7 @@ if (localStorageUserJson) {
     sanitisedUser.roles = localStorageUser.roles;
     sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId;
     sanitisedUser.token = localStorageUser.token;
+    sanitisedUser.pathways = localStorageUser.pathways;
   } catch (err) {
     sanitisedUser = null;
   }
@@ -107,20 +85,23 @@ export const loggedInUserVar: ReactiveVar<User | null> = makePersistantVar<User 
 );
 
 const currentPathwayIdLocalStorage = localStorage.getItem('currentPathwayId');
+const currentPathwayId = currentPathwayIdLocalStorage
+  ? JSON.parse(currentPathwayIdLocalStorage)
+  : null;
 const userDefaultPathway = loggedInUserVar()?.defaultPathwayId;
 
 let _currentPathway;
-if (currentPathwayIdLocalStorage) {
-  _currentPathway = currentPathwayIdLocalStorage;
+if (currentPathwayId) {
+  _currentPathway = currentPathwayId;
 } else if (userDefaultPathway) {
   _currentPathway = userDefaultPathway;
-} else if (pathwayOptionsArray[0]) {
-  _currentPathway = pathwayOptionsArray[0].id;
+} else if (loggedInUserVar()?.pathways?.[0]) {
+  _currentPathway = loggedInUserVar()?.pathways[0].id;
 } else {
-  _currentPathway = '0';
+  _currentPathway = null;
 }
 
 // Save the current pathway ID
-export const currentPathwayIdVar: ReactiveVar<string> = makePersistantVar<string>(
+export const currentPathwayIdVar: ReactiveVar<string | null> = makePersistantVar<string | null>(
   _currentPathway, 'currentPathwayId',
 );
