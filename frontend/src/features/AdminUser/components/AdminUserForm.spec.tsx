@@ -32,45 +32,21 @@ test('Create user should require username and password', async () => {
   expect(screen.getByText(/Password is a required field/i)).toBeInTheDocument();
 });
 
-describe('When available roles are selected', () => {
-  let availableRoleSelect: HTMLElement; 
-  let selectedRoleSelect: HTMLElement;
-  beforeEach( async () => {
-    await renderDefault();
-    availableRoleSelect = screen.getByRole('listbox', { name: /available\s+roles/i });
-    selectedRoleSelect = screen.getByRole('listbox', { name: /selected\s+roles/i });
-  });
-
-  it('Selected roles should be empty to start with', () => {
-    const selectedRoles = within(selectedRoleSelect).queryAllByRole('option');
-    expect(selectedRoles.length).toBe(0);
-  });
-
-  it('Roles should move from available to selected', async () => {
-    const { click, selectOptions } = userEvent.setup();
-    await waitFor(async () => {
-      const availableRoleOptions = within(availableRoleSelect).getAllByRole('option');
-      await selectOptions(availableRoleSelect, [availableRoleOptions[0], availableRoleOptions[1]]);
-      await click(screen.getByRole('button', { name: /add\s+roles/i }));
-    });
-    const finalSelectedRoles = within(selectedRoleSelect).getAllByRole('option');
-    expect(finalSelectedRoles.length).toBe(2);
-  });
-
-  it('Roles should move from selected to available', async () => {
-    const { click, selectOptions } = userEvent.setup();
-    await waitFor(async () => {
-      const availableRoleOptions = within(availableRoleSelect).getAllByRole('option');
-      await selectOptions(availableRoleSelect, availableRoleOptions);
-      await click(screen.getByRole('button', { name: /add\s+roles/i }));
-    });
-
-    await waitFor(async () => {
-      const selectedRoleOptions = within(selectedRoleSelect).getAllByRole('option');
-      await selectOptions(selectedRoleSelect, selectedRoleOptions[1]);
-      await click(screen.getByRole('button', { name: /remove\s+roles/i }));
-    });
-    const finalSelectedRoles = within(selectedRoleSelect).getAllByRole('option');
-    expect(finalSelectedRoles.length).toBe(3);
-  });
+test('Selected roles should be empty to start with', async () => {
+  await renderDefault();
+  const selectedRoles = await within(
+    screen.getByRole('listbox', { name: /roles/i }),
+  ).queryAllByText(/role/i);
+  expect(selectedRoles.length).toBe(0);
 });
+
+/**
+ * Figure out how to make popper appear in test dom to make this work
+test('Roles should appear in dropdown', async () => {
+  await renderDefault();
+  const { click } = userEvent.setup();
+  const toggleButton = screen.getByRole('button', { name: /toggle\smenu/i });
+  await waitFor(() => click(toggleButton));
+  expect(screen.getByRole('textbox', { name: /filter\s+menu/i })).toBeInTheDocument();
+});
+ */
