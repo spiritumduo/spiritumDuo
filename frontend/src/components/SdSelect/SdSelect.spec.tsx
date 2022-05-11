@@ -14,7 +14,7 @@ const renderDefault = () => render(<Default />);
 it('Should render the component', () => {
   renderDefault();
   expect(screen.getByRole('button', { name: /toggle\smenu/i })).toBeInTheDocument();
-  expect(screen.getByRole('listbox', { name: /select\slistbox/i })).toBeInTheDocument();
+  expect(screen.getByRole('listbox', { name: /select/i })).toBeInTheDocument();
 });
 
 /**

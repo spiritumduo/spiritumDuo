@@ -9,13 +9,10 @@ export type CheckboxOptionProps = {
 } & React.HTMLProps<HTMLDivElement>;
 
 const CheckboxOption = (
-  { value, style, className, name, id, defaultChecked, label,
+  { value, style, className, name, id, label,
     ...props }: CheckboxOptionProps,
 ): JSX.Element => {
   const { selectedOptions, optionOnClick } = useContext(SdSelectContext);
-  useEffect(() => {
-    if (defaultChecked) optionOnClick(value, label);
-  });
 
   const clickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault();

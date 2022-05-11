@@ -19,14 +19,14 @@ const renderDefault = async () => {
   await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
 };
 
-it('Should render the component', () => {
-  renderDefault();
+it('Should render the component', async () => {
+  await renderDefault();
   expect(screen.getByText(/all/i)).toBeInTheDocument();
   expect(screen.getByText(/create\s+user/i)).toBeInTheDocument();
 });
 
 it('Should change tabs when clicked', async () => {
-  renderDefault();
+  await renderDefault();
   const { click } = userEvent.setup();
   await waitFor(() => click(screen.getByText(/create\s+user/i)));
   expect(screen.getByRole('textbox', { name: /first\s+name/i })).toBeInTheDocument();

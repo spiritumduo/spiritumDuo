@@ -1,13 +1,9 @@
-import React, { useContext, useEffect, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 // LIBRARIES
-
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons';
-
 import { Button, ErrorMessage, Fieldset, SummaryList, Form } from 'nhsuk-react-components';
 import { Row, Col, Modal } from 'react-bootstrap';
 import { Input, Select, CheckboxBox } from 'components/nhs-style';
@@ -19,6 +15,8 @@ import useRESTSubmit from 'app/hooks/rest-submit';
 import User from 'types/Users';
 import Role from 'types/Role';
 
+import SdSelect from 'components/SdSelect/SdSelect';
+import CheckboxOption from 'components/SdSelect/CheckboxOption';
 import './adminuserform.css';
 
 export type CreateUserReturnUser = {
@@ -62,16 +60,7 @@ export type UserReturnData = {
   user?: CreateUserReturnUser;
 };
 
-interface UserRestFields {
-  roles: string[];
-}
-
-interface UserFormFields {
-  availableRoles: string[];
-  selectedRoles: string[];
-}
-
-interface UserInputFields {
+export interface UserFormInput {
   id?: string;
   username?: string;
   password?: string;
@@ -81,10 +70,8 @@ interface UserInputFields {
   department: string;
   isActive: boolean;
   defaultPathwayId: string;
+  roles: string[];
 }
-
-export type UserFormInput = UserInputFields & UserFormFields;
-export type UserRestInput = UserRestFields & UserFormFields;
 
 interface AdminUserFormProps {
   roles?: Role[];
@@ -98,24 +85,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
   const { pathwayOptions } = useContext(PathwayContext);
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  // Add / remove user role state
-  // We are using a set of Role['id'] (i.e. string) because JS doesn't properly support deep object
-  // equality in sets.
-  const roleReducer = (state: Set<Role['id']>, action: {
-    add?: Role['id'];
-    delete?: Role['id'];
-  }): Set<Role['id']> => {
-    const newState: Set<Role['id']> = new Set(Array.from(state));
-    if (action.delete) newState.delete(action.delete);
-    if (action.add) newState.add(action.add);
-    return newState;
-  };
-  const [selectedRoleIds, dispatchSelectedRoleIds] = useReducer<typeof roleReducer>(
-    roleReducer,
-    new Set<Role['id']>(),
-  );
-
-  const [loading, error, data, createUser] = useRESTSubmit<UserReturnData, UserRestInput>(url);
+  const [loading, error, data, createUser] = useRESTSubmit<UserReturnData, UserFormInput>(url);
 
   const initSchema = {
     email: yup.string().required('Email is a required field'),
@@ -166,32 +136,14 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
   useEffect(() => {
     if (data?.user) setShowModal(true);
   }, [data]);
-
-  useEffect(() => {
-    if (editUser?.roles) {
-      editUser.roles.forEach((r) => dispatchSelectedRoleIds({ add: r.id }));
-    }
-  }, [editUser]);
-
-  // Because we are overriding the behaviour of the select / option list to move roles back and
-  // forth, we have to get the values from selectedRoleIds
-
-  const removeRoleOnClick = () => {
-    const ids = getValues().selectedRoles;
-    ids.forEach((i) => dispatchSelectedRoleIds({ delete: i }));
-  };
-  const addRoleOnClick = () => {
-    const ids = getValues().availableRoles;
-    ids.forEach((i) => dispatchSelectedRoleIds({ add: i }));
-  };
+  const currentRoles = new Set(editUser?.roles.map((r) => r.id));
 
   return (
     <>
       <Form
         onSubmit={ handleSubmit( () => {
           const values = getValues();
-          const newValues = { ...values, roles: Array.from(selectedRoleIds) };
-          createUser(newValues);
+          createUser(values);
         } ) }
       >
         {
@@ -255,7 +207,12 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
               />
             </Col>
             <Col>
-              <Select className="w-100" label="Default pathway" { ...register('defaultPathwayId') } defaultValue={ editUser?.defaultPathwayId }>
+              <Select
+                className="w-100"
+                label="Default pathway"
+                { ...register('defaultPathwayId') }
+                defaultValue={ editUser?.defaultPathwayId }
+              >
                 {
                   pathwayOptions?.map((item) => (
                     <option
@@ -269,67 +226,17 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
               </Select>
             </Col>
           </Row>
-          <Row xs="3" className="admin-user-flex">
-            <Col>
-              <Select
-                size="40"
-                multiple
-                className="user-roles-select"
-                label="Available Roles"
-                { ...register('availableRoles') }
-              >
-                {
-                  roles?.filter((r) => !selectedRoleIds.has(r.id)).map((r) => (
-                    <option
-                      key={ `role-option-${r.id}` }
-                      value={ r.id }
-                    >
-                      {r.name}
-                    </option>
-                  ))
-                }
-              </Select>
-            </Col>
-            <Col>
-              <Row className="user-role-arrow">
-                <button
-                  type="button"
-                  onClick={ removeRoleOnClick }
-                >
-                  <ArrowLeft size={ 50 } />
-                  <span className="nhsuk-u-visually-hidden">Remove Roles</span>
-                </button>
-              </Row>
-              <Row className="user-role-arrow">
-                <button
-                  type="button"
-                  onClick={ addRoleOnClick }
-                >
-                  <ArrowRight size={ 50 } />
-                  <span className="nhsuk-u-visually-hidden">Add Roles</span>
-                </button>
-              </Row>
-            </Col>
-            <Col>
-              <Select
-                size="40"
-                multiple
-                className="user-roles-select"
-                label="Selected Roles"
-                { ...register('selectedRoles') }
-              >
-                {
-                  roles?.filter((r) => selectedRoleIds.has(r.id)).map((r) => (
-                    <option
-                      key={ `selected-role-option-${r.id}` }
-                      value={ r.id }
-                    >
-                      {r.name}
-                    </option>
-                  ))
-                }
-              </Select>
-            </Col>
+          <Row xs="3" md="2" className="admin-user-flex">
+            <SdSelect label="Roles" { ...register('roles') }>
+              {roles?.map((r) => (
+                <CheckboxOption
+                  key={ r.id }
+                  value={ r.id }
+                  label={ r.name }
+                  defaultChecked={ currentRoles.has(r.id) }
+                />
+              ))}
+            </SdSelect>
           </Row>
           <Row xs="1" md="2" className="admin-user-flex">
             <Col>
@@ -349,7 +256,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
           </Row>
         </Fieldset>
       </Form>
-      <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
+      <Modal size="lg" show={ showModal } onHide={ (() => setShowModal(false)) }>
         <Modal.Header>
           <Modal.Title>
             {

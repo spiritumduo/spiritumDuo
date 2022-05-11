@@ -15,6 +15,7 @@ for (let i = 0; i < 5; ++i) {
   options.push({
     value: i.toString(),
     name: `Value ${i.toString()}`,
+    selected: (i % 2 === 0),
   });
 }
 
@@ -26,6 +27,9 @@ export default {
 const Template: ComponentStory<typeof SdSelect> = (args) => <SdSelect { ...args } />;
 
 export const Default = Template.bind({});
+Default.args = {
+  label: 'Select',
+};
 
 export const InForm:ComponentStory<typeof SdSelect> = () => {
   interface FormType {
@@ -46,7 +50,7 @@ export const InForm:ComponentStory<typeof SdSelect> = () => {
           doSubmit(values);
         }) }
       >
-        <SdSelect { ...register('sdselect') }>
+        <SdSelect label="Select" { ...register('sdselect') }>
           {
             options.map((o) => (
               <CheckboxOption
@@ -54,6 +58,7 @@ export const InForm:ComponentStory<typeof SdSelect> = () => {
                 value={ o.value }
                 name={ o.name }
                 label={ o.name }
+                defaultChecked={ o.selected }
               />
             ))
           }

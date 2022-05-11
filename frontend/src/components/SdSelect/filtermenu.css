@@ -1,7 +1,7 @@
 .filter-toggle {
     min-height: 2rem;
     max-width: inherit;
-    border: 1px solid rgba(34,36,38,.15);
+    border: 2px solid rgb(76, 98, 114);
     padding: 0.25rem;
     width: 100%;
 }
@@ -15,6 +15,9 @@
     min-width: calc(100%  - 32px);
     width: calc(100% - 32px);
     font-size: inherit;
+    z-index: 1;
+    border: 2px solid rgb(76, 98, 114);
+    box-shadow: 1px 1px;
 }
 
 .filter-toggle-button {

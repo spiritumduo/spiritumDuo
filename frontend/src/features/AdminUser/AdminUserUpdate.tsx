@@ -22,7 +22,7 @@ export interface AdminUserUpdateProps {
 }
 
 export const AdminUserUpdate = ({ updateUserId }: AdminUserUpdateProps): JSX.Element => {
-  const { loading, error, data } = useQuery<userAdminGetUserWithRoles>(
+  const { data } = useQuery<userAdminGetUserWithRoles>(
     USER_ADMIN_GET_USER_WITH_ROLES_QUERY, {
       variables: {
         id: updateUserId,

@@ -1,11 +1,13 @@
-import React, { InputHTMLAttributes, useEffect, useContext, useRef, useState, ChangeEvent } from 'react';
+import React, { InputHTMLAttributes, useEffect, useContext, useRef, useState, ChangeEvent, useMemo } from 'react';
 import { Overlay } from 'react-bootstrap';
 import SdSelectContext, { SdSelectContextProvider } from 'components/SdSelect/SdSelectContext';
 import FilterMenu, { FilterToggle } from './FilterMenu';
 
 import './sdselect.css';
 
-export type SdSelectProps = React.PropsWithChildren<InputHTMLAttributes<HTMLSelectElement>>;
+export type SdSelectProps = {
+  label: string;
+} & React.PropsWithChildren<InputHTMLAttributes<HTMLSelectElement>>;
 
 const SdSelectElement = React.forwardRef<
   HTMLSelectElement,
@@ -28,11 +30,12 @@ const SdSelectElement = React.forwardRef<
     if (onChange) onChange(e as unknown as ChangeEvent<HTMLSelectElement>);
   }
 
-  const element = (
+  return (
     <select
       name={ name }
       style={ { display: 'none' } }
       onBlur={ onBlur }
+      onChange={ (e) => onChangeFn(e as unknown as HTMLElementEventMap['change']) }
       ref={ (elem) => {
         elem?.addEventListener<'change'>('change', onChangeFn);
         innerRef.current = elem;
@@ -53,7 +56,7 @@ const SdSelectElement = React.forwardRef<
           // eslint-disable-next-line jsx-a11y/control-has-associated-label
           <option
             key={ o[1].value }
-            value={ o[1].value || '' }
+            value={ o[1].value }
           >
             {o[1].name}
           </option>
@@ -61,40 +64,53 @@ const SdSelectElement = React.forwardRef<
       )}
     </select>
   );
-  return element;
 });
 SdSelectElement.displayName = 'SdSelectElement';
 
 const SdSelect = React.forwardRef<HTMLSelectElement, SdSelectProps>(
-  ({ children, name, onChange, onBlur }, ref): JSX.Element => {
+  ({ children, name, onChange, onBlur, label }, ref): JSX.Element => {
     const target = useRef<HTMLDivElement>(null);
     const container = useRef<HTMLDivElement>(null);
     const [show, setShow] = useState<boolean>(false);
     function toggleOnClick() {
       setShow(!show);
     }
+    const defaultChecked = useMemo(() => React.Children.map(children, (child) => {
+      if (React.isValidElement(child)) {
+        if (child.props.defaultChecked && child.props.value && child.props.label) {
+          return {
+            value: child.props.value,
+            name: child.props.label,
+          };
+        }
+      }
+      return undefined;
+    }), [children]);
     return (
-      <SdSelectContextProvider>
-        <div
-          role="listbox"
-          aria-multiselectable
-          aria-label="Select listbox"
-        >
-          <SdSelectElement
-            name={ name }
-            ref={ ref }
-            onChange={ onChange }
-            onBlur={ onBlur }
-          />
-          <div className="checkbox-select-container" ref={ container }>
-            <FilterToggle onClick={ () => toggleOnClick() } ref={ target } />
+      <SdSelectContextProvider initialChecked={ defaultChecked || undefined }>
+        <label htmlFor={ name }>
+          {label}
+          <div
+            role="listbox"
+            aria-multiselectable
+            aria-label={ label }
+          >
+            <SdSelectElement
+              name={ name }
+              ref={ ref }
+              onChange={ onChange }
+              onBlur={ onBlur }
+            />
+            <div className="checkbox-select-container" ref={ container }>
+              <FilterToggle onClick={ () => toggleOnClick() } ref={ target } />
+            </div>
+            <Overlay container={ container } target={ target.current } show={ show } placement="bottom-start" onHide={ () => setShow(false) } rootClose>
+              <FilterMenu>
+                {children}
+              </FilterMenu>
+            </Overlay>
           </div>
-          <Overlay container={ container } target={ target.current } show={ show } placement="bottom-start" onHide={ () => setShow(false) } rootClose>
-            <FilterMenu>
-              {children}
-            </FilterMenu>
-          </Overlay>
-        </div>
+        </label>
       </SdSelectContextProvider>
     );
   },

@@ -16,7 +16,7 @@
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
     "react/jsx-props-no-spreading": ["error", {
       "html": "ignore",
-      "exceptions": ["Input", "Select", "Textarea", "Checkboxes", "CheckboxBox"]
+      "exceptions": ["Input", "Select", "Textarea", "Checkboxes", "CheckboxBox", "SdSelect"]
     }],
     "camelcase": ["error", {"ignoreImports": true}],
     "no-shadow": "off",

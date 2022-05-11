@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useCallback, useReducer } from 'react';
+import React, { InputHTMLAttributes, useCallback, useEffect, useReducer } from 'react';
 
 export type SdSelectOptionValue = InputHTMLAttributes<HTMLInputElement>['value'];
 
@@ -21,21 +21,53 @@ const SdSelectContext = React.createContext<SdSelectContextInterface>({
 });
 
 function selectedOptionsReducer(
-  state: Map<string, SdSelectOption>, action: SdSelectOption,
+  state: Map<string, SdSelectOption>,
+  action: {
+    type: 'toggle' | 'reset',
+    payload: SdSelectOption | SdSelectOption[],
+  },
 ): Map<string, SdSelectOption> {
-  const newState = new Map(state);
-  newState.has(action.value)
-    ? newState.delete(action.value)
-    : newState.set(action.value, action);
-  return newState;
+  switch (action.type) {
+    case 'toggle': {
+      if (Array.isArray(action.payload)) {
+        throw new Error('Array used in toggle');
+      }
+      const newState = new Map(state);
+      newState.has(action.payload.value)
+        ? newState.delete(action.payload.value)
+        : newState.set(action.payload.value, action.payload);
+      return newState;
+    }
+    case 'reset': {
+      if (Array.isArray(action.payload)) {
+        return new Map(action.payload.map((ic) => [ic.value, ic]));
+      }
+      throw new Error('Array required for reset');
+    }
+    default:
+      throw new Error('Invalid action type');
+  }
 }
 
-export const SdSelectContextProvider = (
-  { children }: React.PropsWithChildren<Partial<{value: SdSelectContextInterface}>>,
-): JSX.Element => {
+interface SdSelectContextProviderProps {
+  initialChecked: SdSelectOption[];
+}
+
+export const SdSelectContextProvider = ({
+  children, initialChecked,
+}: React.PropsWithChildren<Partial<SdSelectContextProviderProps>>): JSX.Element => {
   const [
     selectedOptions, dispatchSelectedOption,
-  ] = useReducer(selectedOptionsReducer, new Map<string, SdSelectOption>());
+  ] = useReducer(selectedOptionsReducer, new Map());
+
+  useEffect(() => {
+    if (initialChecked) {
+      dispatchSelectedOption({
+        type: 'reset',
+        payload: initialChecked,
+      });
+    }
+  }, [initialChecked]);
 
   const onClickFn = useCallback((value: SdSelectOptionValue, name: string) => {
     let valueString;
@@ -46,7 +78,12 @@ export const SdSelectContextProvider = (
         valueString = value as string;
       }
     }
-    if (valueString) dispatchSelectedOption({ value: valueString, name: name });
+    if (valueString) {
+      dispatchSelectedOption({
+        type: 'toggle',
+        payload: { value: valueString, name: name },
+      });
+    }
   }, []);
 
   return (
