@@ -16,7 +16,7 @@
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
     "react/jsx-props-no-spreading": ["error", {
       "html": "ignore",
-      "exceptions": ["Input", "Select", "Textarea", "Checkboxes", "CheckboxBox"]
+      "exceptions": ["Input", "Select", "Textarea", "Checkboxes", "CheckboxBox", "SdSelect"]
     }],
     "camelcase": ["error", {"ignoreImports": true}],
     "no-shadow": "off",
@@ -45,6 +45,7 @@
       "depth": 3
     }],
     "no-underscore-dangle": [0],
+    "no-unused-expressions": ["error", { "allowTernary": true }],
     "react/require-default-props": [0]
   },
   "settings": {
