@@ -1,8 +1,9 @@
 import json
-import logging
-
 import pytest
-from hamcrest import assert_that, equal_to, has_item, not_, has_entries, contains_string
+from hamcrest import (
+    assert_that, equal_to, has_item,
+    not_, has_entries, contains_string
+)
 from models.User import User
 
 
@@ -15,15 +16,18 @@ def new_clinician(test_pathway):
         "email": "test@test.com",
         "password": "VERYSECUREPASSWORD",
         "department": "ONCOLOGY",
-        "defaultPathwayId": test_pathway.id,
-        "isActive": True
+        "isActive": True,
+        "pathways": [],
+        "roles": [],
     }
 
 
 # Feature: User account operations
 # Scenario: a new user needs to be added into the system
 @pytest.mark.asyncio
-async def test_create_user_correct(context, user_create_permission, new_clinician):
+async def test_create_user_correct(
+    context, user_create_permission, new_clinician
+):
     """
     When: we create their user account
     """
@@ -33,6 +37,7 @@ async def test_create_user_correct(context, user_create_permission, new_clinicia
         url="rest/createuser/",
         json=NEW_CLINICIAN
     )
+    print(json.loads(create_user_account.text))
     assert_that(create_user_account.status_code, equal_to(200))
 
     query_result = json.loads(create_user_account.text)
@@ -46,7 +51,9 @@ async def test_create_user_correct(context, user_create_permission, new_clinicia
 # Scenario: a new user needs to be added into the system but
 # username already exists
 @pytest.mark.asyncio
-async def test_create_user_username_preexists(context, user_create_permission, new_clinician):
+async def test_create_user_username_preexists(
+    context, user_create_permission, new_clinician
+):
     """
     When: we create their user account
     """
@@ -58,7 +65,6 @@ async def test_create_user_username_preexists(context, user_create_permission, n
         email=new_clinician['email'],
         username=new_clinician['username'],
         password=new_clinician['password'],
-        default_pathway_id=new_clinician['defaultPathwayId'],
         is_active=new_clinician['isActive']
     )
 
@@ -67,7 +73,7 @@ async def test_create_user_username_preexists(context, user_create_permission, n
     res = await context.client.post(
         url="rest/createuser/",
         json=NEW_CLINICIAN
-    )
+    )   
     assert_that(res.status_code, equal_to(409))
 
     post_result = res.json()
@@ -89,7 +95,10 @@ async def test_user_lacks_permission(login_user, test_client, new_clinician):
     assert_that(post_result['detail'], contains_string('permissions'))
 
 
-async def test_invalid_email(login_user, test_client, user_create_permission, new_clinician):
+async def test_invalid_email(
+    login_user, test_client,
+    user_create_permission, new_clinician
+):
     """
     When the email format is invalid, it should reject with HTTP status 422
     """
