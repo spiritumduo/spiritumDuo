@@ -7,6 +7,12 @@
 // GraphQL query operation: userAdminGetUserWithRoles
 // ====================================================
 
+export interface userAdminGetUserWithRoles_getUser_defaultPathway {
+  __typename: "Pathway";
+  id: string;
+  name: string;
+}
+
 export interface userAdminGetUserWithRoles_getUser_roles {
   __typename: "Role";
   id: string;
@@ -27,8 +33,8 @@ export interface userAdminGetUserWithRoles_getUser {
   lastName: string;
   email: string;
   department: string;
-  defaultPathwayId: string;
   isActive: boolean;
+  defaultPathway: userAdminGetUserWithRoles_getUser_defaultPathway;
   roles: userAdminGetUserWithRoles_getUser_roles[];
   pathways: userAdminGetUserWithRoles_getUser_pathways[];
 }
@@ -39,9 +45,16 @@ export interface userAdminGetUserWithRoles_getRoles {
   name: string;
 }
 
+export interface userAdminGetUserWithRoles_getPathways {
+  __typename: "Pathway";
+  id: string;
+  name: string;
+}
+
 export interface userAdminGetUserWithRoles {
   getUser: userAdminGetUserWithRoles_getUser | null;
   getRoles: userAdminGetUserWithRoles_getRoles[];
+  getPathways: userAdminGetUserWithRoles_getPathways[];
 }
 
 export interface userAdminGetUserWithRolesVariables {

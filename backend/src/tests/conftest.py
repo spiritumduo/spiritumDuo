@@ -1,14 +1,13 @@
 # It's very important this happens first
 from starlette.config import environ
 
+
 environ['TESTING'] = "True"
 
 
 from typing import List
-import logging
 from SdTypes import Permissions
 from sdpubsub import SdPubSub
-import asyncio
 from gino import GinoConnection
 import dataclasses
 from async_asgi_testclient import TestClient
@@ -28,7 +27,8 @@ from models import (
     RolePermission,
     Patient,
     OnPathway,
-    PathwayMilestoneType
+    PathwayMilestoneType,
+    UserPathway
 )
 
 from api import app
@@ -160,6 +160,10 @@ async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role
     await UserRole.create(
         user_id=user.id,
         role_id=test_role.id
+    )
+    await UserPathway.create(
+        user_id=user.id,
+        pathway_id=pathway.id
     )
     return UserFixture(
         user=user,

@@ -10,7 +10,7 @@ from models import (
     OnPathway,
     MilestoneType,
     Patient,
-    UserPathways
+    UserPathway
 )
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -91,9 +91,9 @@ async def CreateDecisionPoint(
         id=on_pathway_id
     )
 
-    userHasPathwayPermission: Union[UserPathways, None] = await UserPathways\
-        .query.where(UserPathways.user_id == clinician_id)\
-        .where(UserPathways.pathway_id == on_pathway.pathway_id)\
+    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
+        .query.where(UserPathway.user_id == clinician_id)\
+        .where(UserPathway.pathway_id == on_pathway.pathway_id)\
         .gino.one_or_none()
 
     if userHasPathwayPermission is None:

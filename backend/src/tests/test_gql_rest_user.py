@@ -1,7 +1,7 @@
 import json
 import pytest
 from .conftest import UserFixture
-from models import User
+from models import User, UserPathway
 from hamcrest import assert_that, equal_to, not_none, contains_string
 from bcrypt import hashpw, gensalt
 from httpx import Response
@@ -43,7 +43,8 @@ async def test_login_user(context):
         "password": "tdummy",
         "default_pathway_id": context.PATHWAY.id
     }
-    await User.create(
+
+    user: User = await User.create(
         first_name=USER_INFO['first_name'],
         last_name=USER_INFO['last_name'],
         email=USER_INFO['email'],
@@ -55,6 +56,12 @@ async def test_login_user(context):
             gensalt()
         ).decode('utf-8'),
     )
+
+    await UserPathway.create(
+        user_id=user.id,
+        pathway_id=context.PATHWAY.id
+    )
+    
     login_query = await context.client.post(
         url='/rest/login/',
         json=USER_INFO
@@ -82,16 +89,21 @@ async def test_login_user(context):
         login_result['user']['username'], equal_to(USER_INFO['username'])
     )
     assert_that(
-        login_result['user']['defaultPathwayId'],
+        login_result['user']['defaultPathway'],
+        not_none()
+    )
+    assert_that(
+        login_result['user']['defaultPathway']['id'],
         equal_to(USER_INFO['default_pathway_id'])
     )
-    assert_that(login_result['pathways'], not_none())
-    assert_that(login_result['pathways'][0], not_none())
+    assert_that(login_result['user']['pathways'], not_none())
+    assert_that(login_result['user']['pathways'][0], not_none())
     assert_that(
-        login_result['pathways'][0]['id'], equal_to(context.PATHWAY.id)
+        login_result['user']['pathways'][0]['id'], equal_to(context.PATHWAY.id)
     )
     assert_that(
-        login_result['pathways'][0]['name'], equal_to(context.PATHWAY.name)
+        login_result['user']['pathways'][0]['name'],
+        equal_to(context.PATHWAY.name)
     )
 
 
@@ -103,7 +115,10 @@ async def test_user_roles_on_login(
     When a user logs in, they should have their roles
     """
     login_payload = json.loads(login_user.text)
-    assert_that(login_payload['user']['roles'][0]['name'], equal_to(test_user.role.name))
+    assert_that(
+        login_payload['user']['roles'][0]['name'],
+        equal_to(test_user.role.name)
+    )
 
 
 # Scenario: we need to get a user's information
@@ -187,4 +202,7 @@ async def test_user_lacks_permission(login_user, test_client, get_user_query):
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )

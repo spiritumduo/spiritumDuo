@@ -6,7 +6,7 @@ interface User {
     firstName: string;
     lastName: string;
     department: string;
-    defaultPathwayId: string;
+    defaultPathway?: PathwayOption;
     username?: string;
     email?: string;
     lastAccess?: Date;

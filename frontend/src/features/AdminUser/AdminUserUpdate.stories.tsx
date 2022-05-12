@@ -11,6 +11,7 @@ import { RequestHandler } from 'mock-apollo-client';
 import { MockPathwayProvider } from 'test/mocks/mockContext';
 import { AdminUserUpdate, USER_ADMIN_GET_USER_WITH_ROLES_QUERY } from './AdminUserUpdate';
 import { userAdminGetUserWithRoles } from './__generated__/userAdminGetUserWithRoles';
+import { userAdminGetRolesWithPathways } from './__generated__/userAdminGetRolesWithPathways';
 
 // MOCKS
 
@@ -20,6 +21,14 @@ export type CreateUserReturnData = {
   detail?: string;
 };
 
+const mockPathways: userAdminGetRolesWithPathways['getPathways'] = [
+  {
+    __typename: 'Pathway',
+    id: '1',
+    name: 'test',
+  },
+];
+
 const mockUser: userAdminGetUserWithRoles['getUser'] = {
   __typename: 'User',
   id: '1',
@@ -28,7 +37,7 @@ const mockUser: userAdminGetUserWithRoles['getUser'] = {
   email: 'test@test.com',
   username: 'jdoe',
   department: 'Respiratory',
-  defaultPathwayId: '1',
+  defaultPathway: mockPathways[0],
   isActive: true,
   roles: [
     {
@@ -42,7 +51,7 @@ const mockUser: userAdminGetUserWithRoles['getUser'] = {
       name: 'second role',
     },
   ],
-  pathways: [{ __typename: 'Pathway', id: '1', name: 'Pathway 1' }],
+  pathways: mockPathways,
 };
 
 const mockRoles: userAdminGetUserWithRoles['getRoles'] = [
@@ -83,6 +92,7 @@ const apolloMocks: {
       data: {
         getUser: mockUser,
         getRoles: mockRoles,
+        getPathways: mockPathways,
       },
     }),
   },

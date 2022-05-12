@@ -20,7 +20,9 @@ export interface SdHeaderProps {
 const SdHeader = ({
   currentPathwayId, pathwayOnItemSelect, searchOnSubmit, user,
 }: SdHeaderProps): JSX.Element => {
-  const currentOption = user?.pathways?.find((p) => p.id.toString() === currentPathwayId);
+  const currentOption = user?.pathways?.find(
+    (p) => p.id.toString() === currentPathwayId?.toString(),
+  );
   const [searchState, setSearchState] = useState(false);
   const [navbarState, setNavbarState] = useState(false);
   return (

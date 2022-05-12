@@ -1,5 +1,5 @@
 from ctypes import Union
-from models import Patient, OnPathway, UserPathways
+from models import Patient, OnPathway, UserPathway
 from common import UserDoesNotHavePathwayPermission
 from SdTypes import MilestoneState
 from dataloaders import OnPathwayByIdLoader, PatientByIdLoader
@@ -43,9 +43,9 @@ async def ImportMilestone(
         id=int(on_pathway_id))
     )
 
-    userHasPathwayPermission: Union[UserPathways, None] = await UserPathways\
-        .query.where(UserPathways.user_id == context['request']['user'].id)\
-        .where(UserPathways.pathway_id == on_pathway.pathway_id)\
+    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
+        .query.where(UserPathway.user_id == context['request']['user'].id)\
+        .where(UserPathway.pathway_id == on_pathway.pathway_id)\
         .gino.one_or_none()
 
     if userHasPathwayPermission is None:

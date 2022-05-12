@@ -88,7 +88,7 @@ class PathwayByIdLoader(DataLoader):
         return await context[cls.loader_name].load_many(ids)
 
     @classmethod
-    async def load_all(cls) -> Union[List[Pathway], None]:
+    async def load_all(cls, context) -> Union[List[Pathway], None]:
         """
             Loads all Pathway records
 
@@ -97,7 +97,12 @@ class PathwayByIdLoader(DataLoader):
             Returns:
                 List[Pathway]/None
         """
-        return await Pathway.query.gino.all()
+        db = context['db']
+        result = None
+        async with db.acquire(reuse=False) as conn:
+            result = await conn.all(Pathway.query)
+
+        return result
 
 
 class PathwayByNameLoader(DataLoader):

@@ -84,7 +84,7 @@ const LoginPage = (): JSX.Element => {
   useEffect(() => {
     if (data?.user) {
       updateUser(data.user);
-      updateCurrentPathwayId(data.user?.defaultPathwayId);
+      updateCurrentPathwayId(data.user.defaultPathway?.id || '0');
       navigate('/', { replace: true });
     }
   });

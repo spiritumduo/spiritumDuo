@@ -368,7 +368,6 @@ async def insert_demo_data():
                 first_name="Demo",
                 last_name=f"User {pathwayIndex} {userIndex}",
                 department="Demo user",
-                default_pathway_id=sd_pathway.id
             )
 
             await UserRole.create(

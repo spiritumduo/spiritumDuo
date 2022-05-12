@@ -32,7 +32,7 @@ const standardUser: User = {
   lastName: 'Test-Doe',
   department: 'Respiratory',
   roles: [],
-  defaultPathwayId: '1',
+  defaultPathway: fakePathways[0],
   token: 'token',
   pathways: fakePathways,
 };
@@ -43,7 +43,7 @@ const adminUser: User = {
   lastName: 'Test-Doe',
   department: 'Respiratory',
   roles: [{ id: '1000', name: 'admin' }],
-  defaultPathwayId: '1',
+  defaultPathway: fakePathways[0],
   token: 'token2',
   pathways: fakePathways,
 };
