@@ -6,8 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
 import { Select } from 'components/nhs-style';
-import { getPathways } from '../__generated__/getPathways';
-import { deletePathway } from './__generated__/deletePathway';
+import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
+import { deletePathway } from 'features/PathwayManagement/tabpages/__generated__/deletePathway';
 
 export const DELETE_PATHWAY_MUTATION = gql`
 mutation deletePathway($pathwayId: ID!){

@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
 import { Select } from 'components/nhs-style';
-import { getRoles } from '../__generated__/getRoles';
+import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
 type DeleteRoleForm = {
   name: string;

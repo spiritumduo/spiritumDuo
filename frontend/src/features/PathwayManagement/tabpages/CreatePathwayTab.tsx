@@ -7,8 +7,8 @@ import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
 import { Input } from 'components/nhs-style';
-import { createPathway } from './__generated__/createPathway';
-import { getPathways } from '../__generated__/getPathways';
+import { createPathway } from 'features/PathwayManagement/tabpages/__generated__/createPathway';
+import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
 
 export const CREATE_PATHWAY_MUTATION = gql`
 mutation createPathway($input: PathwayInput!){

@@ -7,8 +7,8 @@ import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
 import { Input, Select } from 'components/nhs-style';
-import { updatePathway } from './__generated__/updatePathway';
-import { getPathways } from '../__generated__/getPathways';
+import { updatePathway } from 'features/PathwayManagement/tabpages/__generated__/updatePathway';
+import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
 
 export const UPDATE_PATHWAY_MUTATION = gql`
 mutation updatePathway($input: UpdatePathwayInput!){

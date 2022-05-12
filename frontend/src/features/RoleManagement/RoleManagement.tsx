@@ -39,8 +39,7 @@ const RoleManagementTabSet = (): JSX.Element => {
 
   const { loading: loadingRolePermissions,
     data: dataRolePermissions,
-    error: errorRolePermissions,
-    refetch: refetchRolePermissions } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
+    error: errorRolePermissions } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
 
   return (
     <Tabs>
