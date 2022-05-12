@@ -215,7 +215,7 @@ type User {
     defaultPathway: Pathway
     isActive: Boolean!
     roles: [Role!]!
-    pathways: [Pathway!]
+    pathways: [Pathway!]!
 }
 
 type DecisionPoint {
