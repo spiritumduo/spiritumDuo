@@ -18,6 +18,6 @@ class User(db.Model):
     )
     is_active = db.Column(db.Boolean(), nullable=False, default=True)
     default_pathway_id = db.Column(
-        db.Integer(), db.ForeignKey('tbl_pathway.id'), nullable=False
+        db.Integer(), db.ForeignKey('tbl_pathway.id'), nullable=True
     )
 
