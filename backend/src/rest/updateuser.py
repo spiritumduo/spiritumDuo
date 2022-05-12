@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Union
 
 from pyisemail import is_email
 from pyisemail.diagnosis import InvalidDiagnosis
 
 from SdTypes import Permissions
-from models import User, db, UserRole, Role, Pathway, UserPathways
+from models import User, db, UserRole, Role, Pathway, UserPathway
 from .api import _FastAPI
 from fastapi import Request
 from pydantic import BaseModel
@@ -24,7 +24,6 @@ class UpdateUserInput(BaseModel):
     department: str
     username: str
     email: str
-    defaultPathwayId: int
     isActive: bool
     roles: List[int]
     pathways: List[int]
@@ -50,7 +49,6 @@ async def update_user(request: Request, input: UpdateUserInput):
                     username=input.username,
                     department=input.department,
                     email=input.email,
-                    default_pathway_id=input.defaultPathwayId,
                     is_active=input.isActive,
                 ).apply()
 
@@ -81,8 +79,8 @@ async def update_user(request: Request, input: UpdateUserInput):
                 remove_roles = current_roles - incoming_roles
                 add_roles = incoming_roles - current_roles
 
-                current_pathways = set(await UserPathways.query.where(
-                    UserPathways.user_id == user.id).gino.all())
+                current_pathways = set(await UserPathway.query.where(
+                    UserPathway.user_id == user.id).gino.all())
                 remove_pathways = current_pathways - incoming_pathways
                 add_pathways = incoming_pathways - current_pathways
 
@@ -96,13 +94,17 @@ async def update_user(request: Request, input: UpdateUserInput):
                     )
 
                 for pathway in remove_pathways:
-                    await role.delete()
+                    await pathway.delete()
 
                 for pathway in add_pathways:
-                    await UserPathways.create(
+                    await UserPathway.create(
                         pathway_id=pathway.id,
                         user_id=user.id,
                     )
+
+                defaultPathway: Union[Pathway, None] = await conn.one_or_none(
+                    Pathway.query.where(Pathway.id == user.default_pathway_id)
+                )
 
                 roles = await Role.join(UserRole).select().where(
                     UserRole.user_id == user.id).gino.all()
@@ -113,8 +115,8 @@ async def update_user(request: Request, input: UpdateUserInput):
                         "name": r.name
                     })
 
-                db_pathways = await Pathway.join(UserPathways).select().where(
-                    UserPathways.user_id == user.id).gino.all()
+                db_pathways = await Pathway.join(UserPathway).select().where(
+                    UserPathway.user_id == user.id).gino.all()
                 db_pathways_dicts = []
                 for pw in db_pathways:
                     db_pathways_dicts.append({
@@ -129,7 +131,7 @@ async def update_user(request: Request, input: UpdateUserInput):
                         "lastName": user.last_name,
                         "email": user.email,
                         "department": user.department,
-                        "defaultPathwayId": user.default_pathway_id,
+                        "defaultPathway": defaultPathway,
                         "isActive": user.is_active,
                         "roles": role_dicts,
                         "pathways": db_pathways_dicts
