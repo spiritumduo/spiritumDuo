@@ -6,13 +6,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
-import { Input } from './nhs-style';
-import { createPathway } from './__generated__/createPathway';
-import { getPathways } from './__generated__/getPathways';
+import { Input, Select } from 'components/nhs-style';
+import { updatePathway } from './__generated__/updatePathway';
+import { getPathways } from '../__generated__/getPathways';
 
-export const CREATE_PATHWAY_MUTATION = gql`
-mutation createPathway($input: PathwayInput!){
-  createPathway(input: $input){
+export const UPDATE_PATHWAY_MUTATION = gql`
+mutation updatePathway($input: UpdatePathwayInput!){
+  updatePathway(input: $input){
     pathway{
       id
       name
@@ -30,7 +30,8 @@ mutation createPathway($input: PathwayInput!){
 }
 `;
 
-type CreatePathwayForm = {
+type UpdatePathwayForm = {
+  pathwayIndex: string;
   name: string;
   milestoneTypes: {
     milestoneTypeId: string;
@@ -40,43 +41,53 @@ type CreatePathwayForm = {
   }[];
 };
 
-export interface CreatePathwayInputs {
+export interface UpdatePathwayInputs {
   name: string;
   milestoneTypes: { id: string, name: string; refName: string; checked: boolean; }[];
 }
 
-export interface CreatePathwayTabProps {
+export interface UpdatePathwayTabProps {
   disableForm?: boolean | undefined,
   refetchPathways?: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<getPathways>>,
   milestoneTypes: {id: string, name: string, refName: string}[] | undefined,
+  pathways: (
+    {
+      id: string;
+      name: string;
+      milestoneTypes: {
+        id: string;
+        name: string;
+        refName: string;
+      }[] | undefined;
+    } | null
+  )[] | undefined
 }
 
-const CreatePathwayTab = (
-  {
-    disableForm,
-    milestoneTypes,
-    refetchPathways,
-  }: CreatePathwayTabProps,
+const UpdatePathwayTab = (
+  { disableForm, milestoneTypes, pathways, refetchPathways }: UpdatePathwayTabProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedPathway, setSelectedPathway] = useState<string>('-1');
 
-  const [createPathwayFunc, {
+  const [updatePathwayFunc, {
     data: mutationData, loading: mutationLoading, error: mutationError,
-  }] = useMutation<createPathway>(CREATE_PATHWAY_MUTATION);
+  }] = useMutation<updatePathway>(UPDATE_PATHWAY_MUTATION);
 
   const onSubmit = (
-    mutation: typeof createPathwayFunc, values: CreatePathwayForm,
+    mutation: typeof updatePathwayFunc, values: UpdatePathwayForm,
   ) => {
     const selectedMilestoneTypes = values.milestoneTypes?.filter(
       (mT) => (mT.checked !== false || null),
     ).map((mT) => ({
-      id: mT.checked as unknown as string,
+      id: mT.milestoneTypeId as unknown as string,
     }));
+
     mutation({
       variables: {
         input: {
+          id: selectedPathway,
           name: values.name,
           milestoneTypes: selectedMilestoneTypes,
         },
@@ -85,7 +96,7 @@ const CreatePathwayTab = (
   };
 
   useEffect(() => {
-    if (mutationData?.createPathway?.pathway?.id !== undefined) {
+    if (mutationData?.updatePathway?.pathway?.id !== undefined) {
       setShowModal(true);
       if (refetchPathways) {
         refetchPathways();
@@ -106,8 +117,9 @@ const CreatePathwayTab = (
     handleSubmit,
     formState: { errors: formErrors },
     getValues,
+    setValue,
     control,
-  } = useForm<CreatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
+  } = useForm<UpdatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
 
   const {
     fields: milestoneTypeFields,
@@ -119,7 +131,7 @@ const CreatePathwayTab = (
 
   useEffect(() => {
     if (!checkboxesOrganised && milestoneTypes) {
-      const fieldProps: CreatePathwayForm['milestoneTypes'] = milestoneTypes
+      const fieldProps: UpdatePathwayForm['milestoneTypes'] = milestoneTypes
         ? milestoneTypes.flatMap((mT) => (
           {
             milestoneTypeId: mT.id,
@@ -139,15 +151,45 @@ const CreatePathwayTab = (
     setCheckboxesOrganised,
   ]);
 
+  useEffect(() => {
+    milestoneTypeFields?.forEach((mT, index) => {
+      setValue(`milestoneTypes.${index}.checked`, false);
+    });
+
+    setValue('name', '');
+
+    if (selectedPathway !== '-1' && selectedPathway) {
+      milestoneTypeFields?.forEach((mT, index) => {
+        setValue(`milestoneTypes.${index}.checked`, false);
+      });
+
+      const currPathway = pathways?.filter(
+        (pathway) => (pathway?.id === selectedPathway),
+      )?.[0];
+
+      if (currPathway) {
+        setValue('name', currPathway.name);
+        currPathway?.milestoneTypes?.forEach((milestoneType) => {
+          if (milestoneType) {
+            milestoneTypeFields.find((mT, index) => (
+              mT.name === milestoneType.name
+              && setValue(`milestoneTypes.${index}.checked`, true)
+            ));
+          }
+        });
+      }
+    }
+  }, [pathways, milestoneTypeFields, selectedPathway, setValue]);
+
   return (
     <>
       { mutationError ? <ErrorMessage>{mutationError.message}</ErrorMessage> : null}
-      { mutationData?.createPathway?.userErrors
+      { mutationData?.updatePathway?.userErrors
         ? (
           <ErrorMessage>
             An error occured:&nbsp;
             {
-              mutationData?.createPathway?.userErrors?.map((userError) => (
+              mutationData?.updatePathway?.userErrors?.map((userError) => (
                 `${userError.message}`
               ))
             }
@@ -155,13 +197,47 @@ const CreatePathwayTab = (
         ) : null}
       <Form
         onSubmit={ handleSubmit( () => {
-          onSubmit(createPathwayFunc, getValues());
+          onSubmit(updatePathwayFunc, getValues());
         }) }
       >
-        <Fieldset disabled={ disableForm || mutationLoading || showModal }>
-          <Input role="textbox" id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
+        <Fieldset
+          disabled={
+            mutationLoading || showModal || disableForm
+          }
+        >
+          <Select
+            className="col-12"
+            label="Select existing pathway"
+            { ...register('pathwayIndex') }
+            onChange={ (
+              (e: { currentTarget: { value: React.SetStateAction<string> } }) => {
+                setSelectedPathway(e.currentTarget.value);
+              }) }
+          >
+            <option value="-1">Select a pathway</option>
+            {
+              pathways?.map((pathway) => (
+                pathway ? <option key={ pathway.id } value={ pathway.id }>{ pathway.name }</option>
+                  : null
+              ))
+            }
+          </Select>
         </Fieldset>
-        <Fieldset disabled={ disableForm || mutationLoading || showModal }>
+
+        <Fieldset
+          disabled={
+            mutationLoading || showModal
+            || disableForm
+          }
+        >
+          <Input id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
+        </Fieldset>
+        <Fieldset
+          disabled={
+            mutationLoading || showModal
+            || disableForm
+          }
+        >
           <Fieldset.Legend>Milestone types</Fieldset.Legend>
           {
             milestoneTypeFields.map((mT, index) => (
@@ -181,27 +257,32 @@ const CreatePathwayTab = (
             ))
           }
         </Fieldset>
-        <Fieldset disabled={ disableForm || mutationLoading || showModal }>
-          <Button className="float-end">Create pathway</Button>
+        <Fieldset
+          disabled={
+            mutationLoading || showModal
+            || disableForm
+          }
+        >
+          <Button className="float-end">Update pathway</Button>
         </Fieldset>
       </Form>
       <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
         <Modal.Header>
-          <Modal.Title>Pathway created</Modal.Title>
+          <Modal.Title>Pathway Updated</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <SummaryList>
             <SummaryList.Row>
               <SummaryList.Key>Pathway name</SummaryList.Key>
-              <SummaryList.Value>{mutationData?.createPathway?.pathway?.name}</SummaryList.Value>
+              <SummaryList.Value>{mutationData?.updatePathway?.pathway?.name}</SummaryList.Value>
             </SummaryList.Row>
             <SummaryList.Row>
               <SummaryList.Key>Permissions</SummaryList.Key>
               <SummaryList.Value>
                 <ul>
                   {
-                    mutationData?.createPathway?.pathway?.milestoneTypes?.map((mT) => (
-                      <li key={ `create_pathway_modal_perm_${mT.id}` }>{mT.name}</li>
+                    mutationData?.updatePathway?.pathway?.milestoneTypes?.map((mT) => (
+                      <li key={ `update_pathway_modal_perm_${mT.id}` }>{mT.name}</li>
                     ))
                   }
                 </ul>
@@ -216,4 +297,4 @@ const CreatePathwayTab = (
     </>
   );
 };
-export default CreatePathwayTab;
+export default UpdatePathwayTab;

@@ -4,24 +4,15 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { ApolloQueryResult, gql, OperationVariables, useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
-import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
+import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
+import { Select } from 'components/nhs-style';
+import { getPathways } from '../__generated__/getPathways';
+import { deletePathway } from './__generated__/deletePathway';
 
-import { Input, Select } from './nhs-style';
-import { updatePathway } from './__generated__/updatePathway';
-import { getPathways } from './__generated__/getPathways';
-
-export const UPDATE_PATHWAY_MUTATION = gql`
-mutation updatePathway($input: UpdatePathwayInput!){
-  updatePathway(input: $input){
-    pathway{
-      id
-      name
-      milestoneTypes{
-        id
-        name
-        refName
-      }
-    }
+export const DELETE_PATHWAY_MUTATION = gql`
+mutation deletePathway($pathwayId: ID!){
+  deletePathway(id: $pathwayId){
+    success
     userErrors{
       field
       message
@@ -30,9 +21,9 @@ mutation updatePathway($input: UpdatePathwayInput!){
 }
 `;
 
-type UpdatePathwayForm = {
+type DeletePathwayForm = {
+  name: string
   pathwayIndex: string;
-  name: string;
   milestoneTypes: {
     milestoneTypeId: string;
     name: string;
@@ -46,7 +37,13 @@ export interface UpdatePathwayInputs {
   milestoneTypes: { id: string, name: string; refName: string; checked: boolean; }[];
 }
 
-export interface UpdatePathwayTabProps {
+export type DeletePathwayReturnData = {
+  id: number,
+  name: string,
+  permissions: string[],
+};
+
+export interface DeletePathwayTabProps {
   disableForm?: boolean | undefined,
   refetchPathways?: (
     variables?: Partial<OperationVariables> | undefined
@@ -65,46 +62,17 @@ export interface UpdatePathwayTabProps {
   )[] | undefined
 }
 
-const UpdatePathwayTab = (
-  { disableForm, milestoneTypes, pathways, refetchPathways }: UpdatePathwayTabProps,
-): JSX.Element => {
+const DeletePathwayTab = ({
+  disableForm, milestoneTypes, pathways, refetchPathways,
+}: DeletePathwayTabProps): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedPathway, setSelectedPathway] = useState<string>('-1');
 
-  const [updatePathwayFunc, {
+  const [deletePathwayFunc, {
     data: mutationData, loading: mutationLoading, error: mutationError,
-  }] = useMutation<updatePathway>(UPDATE_PATHWAY_MUTATION);
+  }] = useMutation<deletePathway>(DELETE_PATHWAY_MUTATION);
 
-  const onSubmit = (
-    mutation: typeof updatePathwayFunc, values: UpdatePathwayForm,
-  ) => {
-    const selectedMilestoneTypes = values.milestoneTypes?.filter(
-      (mT) => (mT.checked !== false || null),
-    ).map((mT) => ({
-      id: mT.milestoneTypeId as unknown as string,
-    }));
-
-    mutation({
-      variables: {
-        input: {
-          id: selectedPathway,
-          name: values.name,
-          milestoneTypes: selectedMilestoneTypes,
-        },
-      },
-    });
-  };
-
-  useEffect(() => {
-    if (mutationData?.updatePathway?.pathway?.id !== undefined) {
-      setShowModal(true);
-      if (refetchPathways) {
-        refetchPathways();
-      }
-    }
-  }, [mutationData, setShowModal, refetchPathways]);
-
-  const newPathwaySchema = yup.object({
+  const deletePathwaySchema = yup.object({
     name: yup.string().required('Pathway name is a required field'),
   }).required();
 
@@ -112,14 +80,14 @@ const UpdatePathwayTab = (
     checkboxesOrganised,
     setCheckboxesOrganised,
   ] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors: formErrors },
     getValues,
     setValue,
     control,
-  } = useForm<UpdatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
+  } = useForm<DeletePathwayForm>({ resolver: yupResolver(deletePathwaySchema) });
 
   const {
     fields: milestoneTypeFields,
@@ -131,7 +99,7 @@ const UpdatePathwayTab = (
 
   useEffect(() => {
     if (!checkboxesOrganised && milestoneTypes) {
-      const fieldProps: UpdatePathwayForm['milestoneTypes'] = milestoneTypes
+      const fieldProps: DeletePathwayForm['milestoneTypes'] = milestoneTypes
         ? milestoneTypes.flatMap((mT) => (
           {
             milestoneTypeId: mT.id,
@@ -181,15 +149,34 @@ const UpdatePathwayTab = (
     }
   }, [pathways, milestoneTypeFields, selectedPathway, setValue]);
 
+  const onSubmit = (
+    mutation: typeof deletePathwayFunc, values: DeletePathwayForm,
+  ) => {
+    mutation({
+      variables: {
+        pathwayId: values.pathwayIndex,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (mutationData?.deletePathway?.success === true) {
+      setShowModal(true);
+      if (refetchPathways) {
+        refetchPathways();
+      }
+    }
+  }, [mutationData, refetchPathways, setShowModal]);
+
   return (
     <>
       { mutationError ? <ErrorMessage>{mutationError.message}</ErrorMessage> : null}
-      { mutationData?.updatePathway?.userErrors
+      { mutationData?.deletePathway?.userErrors
         ? (
           <ErrorMessage>
             An error occured:&nbsp;
             {
-              mutationData?.updatePathway?.userErrors?.map((userError) => (
+              mutationData?.deletePathway?.userErrors?.map((userError) => (
                 `${userError.message}`
               ))
             }
@@ -197,7 +184,7 @@ const UpdatePathwayTab = (
         ) : null}
       <Form
         onSubmit={ handleSubmit( () => {
-          onSubmit(updatePathwayFunc, getValues());
+          onSubmit(deletePathwayFunc, getValues());
         }) }
       >
         <Fieldset
@@ -217,26 +204,15 @@ const UpdatePathwayTab = (
             <option value="-1">Select a pathway</option>
             {
               pathways?.map((pathway) => (
-                pathway ? <option key={ pathway.id } value={ pathway.id }>{ pathway.name }</option>
+                pathway?.id
+                  ? <option key={ pathway.id } value={ pathway.id }>{ pathway.name }</option>
                   : null
               ))
             }
           </Select>
         </Fieldset>
-
         <Fieldset
-          disabled={
-            mutationLoading || showModal
-            || disableForm
-          }
-        >
-          <Input id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
-        </Fieldset>
-        <Fieldset
-          disabled={
-            mutationLoading || showModal
-            || disableForm
-          }
+          disabled
         >
           <Fieldset.Legend>Milestone types</Fieldset.Legend>
           {
@@ -259,37 +235,22 @@ const UpdatePathwayTab = (
         </Fieldset>
         <Fieldset
           disabled={
-            mutationLoading || showModal
-            || disableForm
+            mutationLoading || showModal || disableForm
           }
         >
-          <Button className="float-end">Update pathway</Button>
+          <Button
+            type="submit"
+            name="submitBtn"
+            className="float-end"
+          >
+            Delete pathway
+          </Button>
         </Fieldset>
       </Form>
       <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
         <Modal.Header>
-          <Modal.Title>Pathway Updated</Modal.Title>
+          <Modal.Title>Pathway deleted</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <SummaryList>
-            <SummaryList.Row>
-              <SummaryList.Key>Pathway name</SummaryList.Key>
-              <SummaryList.Value>{mutationData?.updatePathway?.pathway?.name}</SummaryList.Value>
-            </SummaryList.Row>
-            <SummaryList.Row>
-              <SummaryList.Key>Permissions</SummaryList.Key>
-              <SummaryList.Value>
-                <ul>
-                  {
-                    mutationData?.updatePathway?.pathway?.milestoneTypes?.map((mT) => (
-                      <li key={ `update_pathway_modal_perm_${mT.id}` }>{mT.name}</li>
-                    ))
-                  }
-                </ul>
-              </SummaryList.Value>
-            </SummaryList.Row>
-          </SummaryList>
-        </Modal.Body>
         <Modal.Footer>
           <Button onClick={ (() => setShowModal(false)) }>Close</Button>
         </Modal.Footer>
@@ -297,4 +258,4 @@ const UpdatePathwayTab = (
     </>
   );
 };
-export default UpdatePathwayTab;
+export default DeletePathwayTab;

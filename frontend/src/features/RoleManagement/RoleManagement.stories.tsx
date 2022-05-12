@@ -8,7 +8,7 @@ import fetchMock from 'fetch-mock';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 
-import { CreateRoleReturnData } from '../components/CreateRoleTab';
+import { CreateRoleReturnData } from './tabpages/CreateRoleTab';
 
 import RoleManagementTabSet, { GET_ROLE_PERMISSIONS, GET_ROLES } from './RoleManagement';
 

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { ApolloQueryResult, gql, OperationVariables } from '@apollo/client';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
-import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
-import { Select } from './nhs-style';
-import { getRoles } from './__generated__/getRoles';
+import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
+import { Input, Select } from 'components/nhs-style';
+import { getRoles } from '../__generated__/getRoles';
 
-type DeleteRoleForm = {
+type UpdateRoleForm = {
   name: string;
   roleIndex: string;
   permissions: {
@@ -17,36 +17,36 @@ type DeleteRoleForm = {
   }[];
 };
 
-export interface DeleteRoleInputs {
+export interface UpdateRoleInputs {
   name: string;
   roleIndex: string;
   permissions: { name: string; checked: boolean; }[];
 }
 
-export type DeleteRoleReturnData = {
+export type UpdateRoleReturnData = {
   id: number,
   name: string,
   permissions: string[],
 };
 
-type DeleteRoleSubmitHook = [
+type UpdateRoleSubmitHook = [
   boolean,
   any,
-  DeleteRoleReturnData | undefined,
-  (variables: DeleteRoleInputs) => void
+  UpdateRoleReturnData | undefined,
+  (variables: UpdateRoleInputs) => void
 ];
 
-export function useDeleteRoleSubmit(
+export function useUpdateRoleSubmit(
   setShowModal: (arg0: boolean) => void,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<getRoles>>,
-): DeleteRoleSubmitHook {
+): UpdateRoleSubmitHook {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<unknown>(undefined);
-  const [data, setData] = useState<DeleteRoleReturnData | undefined>(undefined);
+  const [data, setData] = useState<UpdateRoleReturnData | undefined>(undefined);
 
-  async function deleteRole(variables: DeleteRoleInputs) {
+  async function updateRole(variables: UpdateRoleInputs) {
     setLoading(true);
     setData(undefined);
     setError(undefined);
@@ -55,25 +55,31 @@ export function useDeleteRoleSubmit(
       const { location } = window;
       const uriPrefix = `${location.protocol}//${location.host}`;
 
-      const deleteResponse = await window.fetch(`${uriPrefix}/api/rest/deleterole/`, {
+      const listOfPermissions = variables.permissions.filter(
+        (perm) => (perm.checked !== false || null),
+      ).map((value) => (value.name));
+
+      const updateResponse = await window.fetch(`${uriPrefix}/api/rest/updaterole/`, {
         method: 'POST',
         headers: {
           'content-type': 'application/json;charset=UTF-8',
         },
         body: JSON.stringify({
           id: variables.roleIndex,
+          name: variables.name,
+          permissions: listOfPermissions,
         }),
       });
-      if (!deleteResponse.ok) {
-        const decoded = await deleteResponse.json();
-        if (decoded) {
-          setError(`Error: ${decoded.error} (HTTP${deleteResponse.status} ${deleteResponse.statusText})`);
-          throw new Error(`Error: ${decoded.error} (HTTP${deleteResponse.status} ${deleteResponse.statusText})`);
+      if (!updateResponse.ok) {
+        if (updateResponse.status === 409) {
+          setError('Error: a role with this name already exists');
+          throw new Error('Error: a role with this name already exists');
+        } else {
+          setError(`Error: Response ${updateResponse.status} ${updateResponse.statusText}`);
+          throw new Error(`Error: Response ${updateResponse.status} ${updateResponse.statusText}`);
         }
-        setError(`Error: Response ${deleteResponse.status} ${deleteResponse.statusText}`);
-        throw new Error(`Error: Response ${deleteResponse.status} ${deleteResponse.statusText}}`);
       }
-      const decodedResponse: DeleteRoleReturnData = await deleteResponse.json();
+      const decodedResponse: UpdateRoleReturnData = await updateResponse.json();
       setData(decodedResponse);
       setShowModal(true);
       if (refetchRoles) {
@@ -85,10 +91,10 @@ export function useDeleteRoleSubmit(
     }
     setLoading(false);
   }
-  return [loading, error, data, deleteRole];
+  return [loading, error, data, updateRole];
 }
 
-export interface DeleteRoleTabProps {
+export interface UpdateRoleTabProps {
   disableForm?: boolean | undefined,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
@@ -101,8 +107,8 @@ export interface DeleteRoleTabProps {
   rolePermissions?: {name: string}[],
 }
 
-const DeleteRoleTab = (
-  { disableForm, refetchRoles, roles, rolePermissions }: DeleteRoleTabProps,
+const UpdateRoleTab = (
+  { disableForm, refetchRoles, roles, rolePermissions }: UpdateRoleTabProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -110,8 +116,8 @@ const DeleteRoleTab = (
     loading,
     error,
     data,
-    deleteRole,
-  ] = useDeleteRoleSubmit(setShowModal, refetchRoles);
+    updateRole,
+  ] = useUpdateRoleSubmit(setShowModal, refetchRoles);
 
   const [selectedRole, setSelectedRole] = useState<string>('-1');
 
@@ -131,7 +137,7 @@ const DeleteRoleTab = (
     getValues,
     setValue,
     control,
-  } = useForm<DeleteRoleForm>({ resolver: yupResolver(newRoleSchema) });
+  } = useForm<UpdateRoleForm>({ resolver: yupResolver(newRoleSchema) });
 
   const {
     fields: permissionFields,
@@ -143,7 +149,7 @@ const DeleteRoleTab = (
 
   useEffect(() => {
     if (!permissionCheckboxesOrganised && rolePermissions) {
-      const fieldProps: DeleteRoleForm['permissions'] = rolePermissions
+      const fieldProps: UpdateRoleForm['permissions'] = rolePermissions
         ? rolePermissions.flatMap((rolePermission) => (
           {
             name: rolePermission.name,
@@ -165,6 +171,8 @@ const DeleteRoleTab = (
     permissionFields?.forEach((permission, index) => {
       setValue(`permissions.${index}.checked`, false);
     });
+
+    setValue('name', '');
 
     if (selectedRole !== '-1' && selectedRole) {
       permissionFields?.forEach((permission, index) => {
@@ -194,12 +202,12 @@ const DeleteRoleTab = (
       { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
       <Form
         onSubmit={ handleSubmit( () => {
-          deleteRole(getValues());
+          updateRole(getValues());
         }) }
       >
         <Fieldset
           disabled={
-            disableForm || loading
+            disableForm || loading || showModal
           }
         >
           <Select
@@ -220,8 +228,12 @@ const DeleteRoleTab = (
           </Select>
         </Fieldset>
         <Fieldset
-          disabled
+          disabled={
+            disableForm || loading || showModal
+            || selectedRole === '-1'
+          }
         >
+          <Input role="textbox" id="name" label="Role name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
           <Fieldset.Legend>Role permissions</Fieldset.Legend>
           {
             permissionFields?.map((permission, index) => (
@@ -243,7 +255,7 @@ const DeleteRoleTab = (
         </Fieldset>
         <Fieldset
           disabled={
-            disableForm || loading
+            disableForm || loading || showModal
             || selectedRole === '-1'
           }
         >
@@ -252,14 +264,34 @@ const DeleteRoleTab = (
             name="submitBtn"
             className="float-end"
           >
-            Delete role
+            Update role
           </Button>
         </Fieldset>
       </Form>
       <Modal show={ showModal } onHide={ (() => setShowModal(false)) }>
         <Modal.Header>
-          <Modal.Title>Role deleted</Modal.Title>
+          <Modal.Title>Role updated</Modal.Title>
         </Modal.Header>
+        <Modal.Body>
+          <SummaryList>
+            <SummaryList.Row>
+              <SummaryList.Key>Role name</SummaryList.Key>
+              <SummaryList.Value>{data?.name}</SummaryList.Value>
+            </SummaryList.Row>
+            <SummaryList.Row>
+              <SummaryList.Key>Permissions</SummaryList.Key>
+              <SummaryList.Value>
+                <ul>
+                  {
+                    data?.permissions.map((name) => (
+                      <li key={ `update_role_modal_perm_${name}` }>{name}</li>
+                    ))
+                  }
+                </ul>
+              </SummaryList.Value>
+            </SummaryList.Row>
+          </SummaryList>
+        </Modal.Body>
         <Modal.Footer>
           <Button onClick={ (() => setShowModal(false)) }>Close</Button>
         </Modal.Footer>
@@ -267,4 +299,4 @@ const DeleteRoleTab = (
     </>
   );
 };
-export default DeleteRoleTab;
+export default UpdateRoleTab;
