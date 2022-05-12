@@ -56,7 +56,7 @@ if (pathwayOptionsLocalStorage) {
     const pathwayOptions = JSON.parse(pathwayOptionsLocalStorage);
     if (Array.isArray(pathwayOptions)) {
       pathwayOptions.forEach((p) => {
-        const pathway = { id: p.id, name: p.name };
+        const pathway = { id: p.id.toString(), name: p.name };
         pathwayOptionsArray.push(pathway);
       });
     }
@@ -86,13 +86,13 @@ let sanitisedUser: User | null = {
 const localStorageUserJson = localStorage.getItem('loggedInUser');
 if (localStorageUserJson) {
   try {
-    const localStorageUser: User = JSON.parse(localStorageUserJson) as User;
-    sanitisedUser.id = localStorageUser.id;
+    const localStorageUser: User = JSON.parse(localStorageUserJson);
+    sanitisedUser.id = localStorageUser.id.toString();
     sanitisedUser.firstName = localStorageUser.firstName;
     sanitisedUser.lastName = localStorageUser.lastName;
     sanitisedUser.department = localStorageUser.department;
     sanitisedUser.roles = localStorageUser.roles;
-    sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId;
+    sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId.toString();
     sanitisedUser.token = localStorageUser.token;
   } catch (err) {
     sanitisedUser = null;
