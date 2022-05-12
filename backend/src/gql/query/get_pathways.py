@@ -11,4 +11,4 @@ async def resolve_get_pathway(
     obj=None,
     info: GraphQLResolveInfo = None
 ):
-    return await PathwayByIdLoader.load_all()
+    return await PathwayByIdLoader.load_all(info.context)
