@@ -36,5 +36,5 @@ export interface UserParts {
   isActive: boolean;
   defaultPathway: UserParts_defaultPathway | null;
   roles: UserParts_roles[];
-  pathways: UserParts_pathways[] | null;
+  pathways: UserParts_pathways[];
 }

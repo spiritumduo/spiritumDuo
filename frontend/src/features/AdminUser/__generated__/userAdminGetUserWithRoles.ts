@@ -34,7 +34,7 @@ export interface userAdminGetUserWithRoles_getUser {
   email: string;
   department: string;
   isActive: boolean;
-  defaultPathway: userAdminGetUserWithRoles_getUser_defaultPathway;
+  defaultPathway: userAdminGetUserWithRoles_getUser_defaultPathway | null;
   roles: userAdminGetUserWithRoles_getUser_roles[];
   pathways: userAdminGetUserWithRoles_getUser_pathways[];
 }
