@@ -1,7 +1,7 @@
 from ctypes import Union
 from containers import SDContainer
 from dependency_injector.wiring import Provide, inject
-from models import OnPathway, UserPathways
+from models import OnPathway, UserPathway
 from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
@@ -30,9 +30,9 @@ async def resolve_lock_on_pathway(
         OnPathway.id == onPathwayId
     ).gino.one()
 
-    userHasPathwayPermission: Union[UserPathways, None] = await UserPathways\
-        .query.where(UserPathways.user_id == userId)\
-        .where(UserPathways.pathway_id == onPathway.pathway_id)\
+    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
+        .query.where(UserPathway.user_id == userId)\
+        .where(UserPathway.pathway_id == onPathway.pathway_id)\
         .gino.one_or_none()
 
     if userHasPathwayPermission is None:

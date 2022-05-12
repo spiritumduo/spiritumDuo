@@ -1,8 +1,8 @@
 from .db import db
 
 
-class UserPathways(db.Model):
-    __tablename__ = "tbl_user_pathways"
+class UserPathway(db.Model):
+    __tablename__ = "tbl_user_pathway"
 
     user_id = db.Column(
         db.Integer(),
