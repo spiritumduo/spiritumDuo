@@ -55,7 +55,7 @@ let sanitisedUser: User | null = {
   lastName: '',
   department: '',
   roles: [],
-  defaultPathwayId: '0',
+  defaultPathway: undefined,
   token: '',
   pathways: [],
 };
@@ -69,7 +69,7 @@ if (localStorageUserJson) {
     sanitisedUser.lastName = localStorageUser.lastName;
     sanitisedUser.department = localStorageUser.department;
     sanitisedUser.roles = localStorageUser.roles;
-    sanitisedUser.defaultPathwayId = localStorageUser.defaultPathwayId;
+    sanitisedUser.defaultPathway = localStorageUser.defaultPathway;
     sanitisedUser.token = localStorageUser.token;
     sanitisedUser.pathways = localStorageUser.pathways;
   } catch (err) {
@@ -88,7 +88,7 @@ const currentPathwayIdLocalStorage = localStorage.getItem('currentPathwayId');
 const currentPathwayId = currentPathwayIdLocalStorage
   ? JSON.parse(currentPathwayIdLocalStorage)
   : null;
-const userDefaultPathway = loggedInUserVar()?.defaultPathwayId;
+const userDefaultPathway = loggedInUserVar()?.defaultPathway?.id;
 
 let _currentPathway;
 if (currentPathwayId) {

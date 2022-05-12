@@ -33,7 +33,7 @@ export const MockAuthProvider = ({ children, value }: MockAuthProviderProps): JS
     firstName: 'Test-John',
     lastName: 'Test-Doe',
     department: 'Respiratory',
-    defaultPathwayId: '1',
+    defaultPathway: pathways[0],
     roles: [],
     token: 'token',
     pathways: pathways,

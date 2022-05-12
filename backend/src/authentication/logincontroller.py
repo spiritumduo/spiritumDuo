@@ -4,7 +4,7 @@ from gino.loader import ModelLoader
 from gino import Gino
 from starlette.responses import JSONResponse
 from models.db import db
-from models import User, Session, Pathway, Role, UserRole, UserPathways
+from models import User, Session, Pathway, Role, UserRole, UserPathway
 from starlette.requests import Request
 from bcrypt import checkpw
 from random import getrandbits
@@ -94,12 +94,22 @@ class LoginController:
                 .execution_options(loader=ModelLoader(Role))
             roles = await conn.all(role_query)
 
-            pathway_query = Pathway.outerjoin(UserPathways)\
+            pathway_query = Pathway.outerjoin(UserPathway)\
                 .outerjoin(User)\
                 .select()\
                 .where(User.id == user.id)\
                 .execution_options(loader=ModelLoader(Pathway))
             pathways = await conn.all(pathway_query)
+
+            default_pathway: Union[Pathway, None] = await conn.one_or_none(
+                Pathway.query.where(Pathway.id == sdUser.default_pathway_id)
+            )
+            default_pathway_dict=None
+            if default_pathway:
+                default_pathway_dict = {
+                    "id": default_pathway.id,
+                    "name": default_pathway.name
+                }
 
             role_dicts = []
             for r in roles:
@@ -142,7 +152,7 @@ class LoginController:
                 "firstName": sdUser.firstName,
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
-                "defaultPathwayId": sdUser.default_pathway_id,
+                "defaultPathway": default_pathway_dict,
                 "token": str(sessionKey),
                 "roles": role_dicts,
                 "pathways": user_pathways
