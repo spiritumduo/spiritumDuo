@@ -17,6 +17,7 @@ import './App.css';
 
 const LoggedInRoutes = () => (
   <PageLayout>
+    <RequirePathways>
     <Routes>
       <Route
         path="/patient/:hospitalNumber"
@@ -43,6 +44,7 @@ const LoggedInRoutes = () => (
         ) }
       />
     </Routes>
+    </RequirePathways>
   </PageLayout>
 );
 
