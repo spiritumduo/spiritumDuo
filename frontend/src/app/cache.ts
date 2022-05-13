@@ -55,7 +55,7 @@ let sanitisedUser: User | null = {
   lastName: '',
   department: '',
   roles: [],
-  defaultPathway: undefined,
+  defaultPathway: null,
   token: '',
   pathways: [],
 };
