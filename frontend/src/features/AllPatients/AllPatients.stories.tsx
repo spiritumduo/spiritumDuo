@@ -1,10 +1,17 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import WrappedPatientList, { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'components/WrappedPatientList';
+import { useAppDispatch } from 'app/hooks';
+import searchBarReducer, { setQuery } from 'features/SearchBar/SearchBar.slice';
+
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+
+import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'components/WrappedPatientList';
 import Patient from 'types/Patient';
-import { MemoryRouter } from 'react-router';
-import { Standard } from 'components/Notification.stories';
+import { MockPathwayProvider } from 'test/mocks/mockContext';
+import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+import AllPatients, { PATIENT_SEARCH_QUERY } from './AllPatients';
 
 // Dummy data for display
 const patientArray: Patient[] = [];
@@ -13,6 +20,33 @@ const patient = {
   firstName: 'John',
   lastName: 'Doe',
 };
+
+const milestones = [
+  {
+    id: '1',
+    updatedAt: new Date(2021, 1, 5),
+    currentState: 'COMPLETED',
+    milestoneType: {
+      name: 'Triage',
+    },
+  },
+  {
+    id: '2',
+    updatedAt: new Date(2020, 1, 5),
+    currentState: 'INIT',
+    milestoneType: {
+      name: 'Second',
+    },
+  },
+  {
+    id: '3',
+    updatedAt: new Date(2022, 1, 5),
+    currentState: 'COMPLETED',
+    milestoneType: {
+      name: 'Third Milestone',
+    },
+  },
+];
 
 for (let i = 0; i < 15; ++i) {
   let lockUser = null;
@@ -43,22 +77,11 @@ for (let i = 0; i < 15; ++i) {
     onPathways: [
       {
         id: i.toString(),
-        outstandingMilestone: [{
-          id: '3',
-          updatedAt: new Date(2022, 1, 5),
-          currentState: 'COMPLETED',
-          milestoneType: {
-            name: 'Third Milestone',
+        decisionPoints: [
+          {
+            milestones: milestones,
           },
-        }],
-        milestone: [{
-          id: '1',
-          updatedAt: new Date(2021, 1, 5),
-          currentState: 'COMPLETED',
-          milestoneType: {
-            name: 'Triage',
-          },
-        }],
+        ],
         updatedAt: new Date(2021, 1, 10),
         lockEndTime: lockEndTime,
         lockUser: lockUser,
@@ -74,37 +97,23 @@ const edges = patientArray.map((p) => ({
 }));
 
 export default {
-  title: 'Components/WrappedPatientList',
-  component: WrappedPatientList,
-  decorators: [
-    (WrappedPatientListStory) => (
-      <MemoryRouter>
-        <WrappedPatientListStory />
-      </MemoryRouter>
-    ),
-  ],
-} as ComponentMeta<typeof WrappedPatientList>;
+  title: 'Features/AllPatients',
+  component: AllPatients,
+} as ComponentMeta<typeof AllPatients>;
 
-const Template: ComponentStory<typeof WrappedPatientList> = (
-  args,
-) => <WrappedPatientList { ...args } />;
+const Template: ComponentStory<typeof AllPatients> = (args) => <AllPatients { ...args } />;
 
 const patientsPerPage = 10;
-
 export const Default = Template.bind({});
 Default.args = {
   pathwayId: '1',
-  patientsToDisplay: 10,
-  outstanding: false,
-  underCareOf: true,
-  includeDischarged: true,
+  patientsPerPage: patientsPerPage,
 };
 Default.parameters = {
   patients: patientArray,
   edges: edges,
   apolloClient: {
     mocks: [
-      Standard.parameters?.apolloClient.mocks[0], // notification mock
       { // PAGE 1
         request: {
           query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
@@ -113,7 +122,7 @@ Default.parameters = {
             first: patientsPerPage,
             after: undefined,
             outstanding: false,
-            underCareOf: true,
+            underCareOf: false,
             includeDischarged: true,
           },
         },
@@ -158,3 +167,73 @@ Default.parameters = {
     ],
   },
 };
+
+const SearchMock = () => {
+  const dispatch = useAppDispatch();
+  dispatch(setQuery('Test'));
+  return <></>;
+};
+
+export const Search = Template.bind({});
+Search.args = {
+  pathwayId: '1',
+  patientsPerPage: 10,
+};
+const apolloMocks = [{
+  query: PATIENT_SEARCH_QUERY,
+  variables: { query: 'Test', pathwayId: '1 ' },
+  mockFn: () => Promise.resolve({
+    data: {
+      patientSearch: [
+        {
+          id: '1',
+          firstName: 'Test',
+          lastName: 'Test',
+          hospitalNumber: 'fMRN1234567',
+          nationalNumber: 'fNHS1234567890',
+          dateOfBirth: new Date(),
+          onPathways: [{
+            outstandingMilestone: [{
+              id: '1',
+              updatedAt: new Date(),
+              milestoneType: {
+                name: 'Test request',
+              },
+            }],
+            milestone: [{
+              id: '1',
+              updatedAt: new Date(),
+              milestoneType: {
+                name: 'Test request',
+              },
+            }],
+            lockUser: {
+              id: '1',
+              firstName: 'Test',
+              lastName: 'User',
+            },
+            lockEndTime: new Date(),
+          }],
+        },
+      ],
+    },
+  }),
+}];
+Search.decorators = [
+  (Story) => {
+    const store = configureStore({
+      reducer: { searchBar: searchBarReducer },
+    });
+
+    return (
+      <NewMockSdApolloProvider mocks={ apolloMocks }>
+        <MockPathwayProvider>
+          <Provider store={ store }>
+            <SearchMock />
+            <Story />
+          </Provider>
+        </MockPathwayProvider>
+      </NewMockSdApolloProvider>
+    );
+  },
+];

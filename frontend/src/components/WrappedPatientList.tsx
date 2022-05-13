@@ -43,14 +43,20 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
           dateOfBirth
           onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
             id
-            decisionPoints {
-              milestones {
-                id
-                updatedAt
-                currentState
-                milestoneType {
-                  name
-                }
+            outstandingMilestone: milestones(outstanding: true, limit: 1) {
+              id
+              updatedAt
+              currentState
+              milestoneType {
+                name
+              }
+            }
+            milestone: milestones(outstanding: false, limit: 1) {
+              id
+              updatedAt
+              currentState
+              milestoneType {
+                name
               }
             }
             lockEndTime
@@ -136,7 +142,6 @@ const WrappedPatientList = ({
   const user = contextUser as User;
   const dispatch = useAppDispatch();
 
-  // THIS IS THE SOURCE OF THE ACT WARNINGS!
   useEffect(() => {
     refetch();
   }, [subscrData, refetch]);
@@ -150,53 +155,21 @@ const WrappedPatientList = ({
     listElements = nodes.flatMap(
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
-        let lastMilestone = null;
-        if (n.onPathways?.[0].decisionPoints) {
-          const decisionPoints = n.onPathways?.[0].decisionPoints;
-
-          // type magic to avoid import.
-          type GraphQLPatientEdges = NonNullable<getPatientOnPathwayConnection['getPatientOnPathwayConnection']['edges'][0]['node']['onPathways']>;
-          type GraphQLMilestone = NonNullable<NonNullable<GraphQLPatientEdges[0]['decisionPoints']>[0]['milestones']>[0];
-          /**
-           * Compare two milestones - used in our map/reduce below
-           * @param currentMilestone Current Milestone to compare
-           * @param mostRecentCompletedMilestone Completed Milestone with most recent updatedAt
-           * @returns Milestone that was completed most recently
-           */
-          const compareMilestones = (
-            mostRecentCompletedMilestone: GraphQLMilestone | undefined,
-            currentMilestone: GraphQLMilestone | undefined,
-          ) => {
-            let returnMilestone;
-            if (mostRecentCompletedMilestone === undefined) {
-              returnMilestone = currentMilestone;
-            } else if (
-              currentMilestone?.currentState === 'COMPLETED'
-              // eslint-disable-next-line max-len
-              && currentMilestone.updatedAt.valueOf() > mostRecentCompletedMilestone?.updatedAt.valueOf()
-            ) {
-              returnMilestone = currentMilestone;
-            } else {
-              returnMilestone = mostRecentCompletedMilestone;
-            }
-            return returnMilestone;
-          };
-
-          const milestone = decisionPoints.flatMap(
-            (dp) => dp.milestones?.reduce(compareMilestones, undefined),
-          ).reduce(compareMilestones, undefined);
-          if (milestone) lastMilestone = milestone;
-        }
+        const pathway = n.onPathways?.[0];
+        const lastMilestone = pathway?.outstandingMilestone?.[0] || pathway?.milestone?.[0];
         const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
         const updatedAt = lastMilestone?.updatedAt
           ? lastMilestone.updatedAt
           : n.onPathways?.[0].updatedAt;
 
-        const isOnPathwayLockedByOther = n.onPathways?.[0].lockEndTime > new Date() && (
-          n.onPathways?.[0]?.lockUser?.id
-            ? n.onPathways?.[0]?.lockUser?.id !== user?.id
-            : false
-        );
+        let isOnPathwayLockedByOther = false;
+        const lockUser = n.onPathways?.[0].lockUser;
+        const lockEndTime = n.onPathways?.[0].lockEndTime;
+        if (lockUser && lockEndTime) {
+          if (lockUser.id !== user?.id && lockEndTime > Date.now()) {
+            isOnPathwayLockedByOther = true;
+          }
+        }
         return {
           id: n.id,
           firstName: n.firstName,

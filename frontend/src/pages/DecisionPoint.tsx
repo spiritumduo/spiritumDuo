@@ -16,7 +16,6 @@ import { AuthContext, PathwayContext } from 'app/context';
 import { DecisionPointType } from 'types/DecisionPoint';
 import Patient from 'types/Patient';
 import User from 'types/Users';
-import { enumKeys } from 'sdutils';
 import { setIsTabDisabled } from 'components/ModalPatient.slice';
 import { useAppDispatch } from 'app/hooks';
 
@@ -578,10 +577,6 @@ const DecisionPointPage = (
     ? data.getPatient.onPathways[0].decisionPoints[0]
     : null;
 
-  const decisionKeys = enumKeys(DecisionPointType);
-  const decisionSelectOptions = decisionKeys.map(
-    (k) => <option value={ k } key={ `decisionType-${k}` }>{ DecisionPointType[k] }</option>,
-  );
   const onPathwayId = data.getPatient.onPathways?.[0].id;
   const underCareOf = data.getPatient.onPathways?.[0].underCareOf;
 

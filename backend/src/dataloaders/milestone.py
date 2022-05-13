@@ -1,7 +1,15 @@
-from typing import List, Dict, Optional
+import asyncio
+from dataclasses import dataclass
+from typing import List, Dict, Optional, Any
 from aiodataloader import DataLoader
+from operator import and_
+
+from sqlalchemy import desc
+
+from SdTypes import MilestoneState
 from models import Milestone
 from typing import Union
+from abc import abstractmethod
 
 
 class MilestoneByDecisionPointLoader(DataLoader):
@@ -93,21 +101,85 @@ class MilestoneByDecisionPointLoader(DataLoader):
         return cls._get_loader_from_context(context).prime(id, value)
 
 
-class MilestoneByOnPathway:
+class SdDataLoader(DataLoader):
+
+    def __init__(self, db, loader_name):
+        super().__init__()
+        self._db = db
+        self._loader_name = loader_name
+
+    @classmethod
+    def _get_loader_from_context(cls, loader_name: str, context: dict) -> "SdDataLoader":
+        if loader_name not in context:
+            context[loader_name] = cls(db=context['db'], loader_name=loader_name)
+        return context[loader_name]
+
+    @classmethod
+    async def _load_from_id(cls, loader_name: str = None, context: dict = None, id: Any = None) -> Optional[Any]:
+        """
+            Load a single entry from its ID
+
+            :param id: Any hashable value
+            :param context: request context dictionary
+            :param loader_name: name of loader
+            :returns Any
+
+        """
+        if not id:
+            return None
+        return await cls._get_loader_from_context(loader_name, context).load(id)
+
+    @classmethod
+    async def _load_many_from_id(cls, loader_name: str = None, context: dict = None, ids: Any = None) -> List:
+        """
+            Loads multiple entries from their IDs
+
+            :param loader_name: Name of loader
+            :param context: request context
+            :param ids: IDs to find
+            :return List of items found
+
+        """
+        if not ids:
+            return []
+        return await cls._get_loader_from_context(loader_name, context).load_many(ids)
+
+
+class MilestoneByOnPathwayIdLoader(SdDataLoader):
     """
         This is class for loading milestones and
         caching the result in the request context
-
-        Attributes:
-            None
     """
+    @dataclass(frozen=True, eq=True)
+    class MilestoneByOnPathwayKey:
+        id: int
+        outstanding: bool
+        limit: int
 
-    @staticmethod
-    async def load_many_from_id(
-        context=None,
-        id=None,
-        notOnDecisionPoint=None
-    ) -> Union[List[Milestone], None]:
+    loader_name = "_milestone_by_on_pathway_loader"
+
+    async def fetch(self, key: MilestoneByOnPathwayKey) -> Dict[MilestoneByOnPathwayKey, List[Milestone]]:
+        async with self._db.acquire(reuse=False) as conn:
+            query = Milestone.query.where(Milestone.on_pathway_id == key.id)
+            if key.outstanding:
+                query = query.where(and_(
+                    Milestone.fwd_decision_point_id.is_(None), Milestone.current_state == MilestoneState.COMPLETED
+                ))
+            if key.limit != 0:
+                query = query.order_by(desc(Milestone.updated_at)).limit(key.limit)
+            return await conn.all(query)
+
+    async def batch_load_fn(self, keys: List[MilestoneByOnPathwayKey]) -> List[List[Milestone]]:
+        # So this currently queries in a loop, which is very bad. However, this could be batched into two loads - those
+        # outstanding, and those not, and then filtering. In case of a limit flag, those might be the greatest-N per
+        # group problem? So there could be a solution involving grouping and limiting by ID.
+        results = await asyncio.gather(*[self.fetch(k) for k in keys])
+        return list(map(lambda r: r if not isinstance(r, Exception) else None, results))
+
+    @classmethod
+    async def load_from_id(
+            cls, context=None, id: int = None, outstanding: bool = False, limit: int = None
+    ) -> List[Milestone]:
         """
             Load a multiple entries from their record ID
 
@@ -118,25 +190,10 @@ class MilestoneByOnPathway:
                     milestones based on whether they have a DecisionPoint ID
                     set
             Returns:
-                List[Milestone]/None
+                List[Milestone]
         """
 
-        if not context or not id:
-            return None
-
-        _gino = context['db']
-        async with _gino.acquire(reuse=False) as conn:
-            query = Milestone.query.where(Milestone.on_pathway_id == id)
-            if notOnDecisionPoint:
-                query = query.where(Milestone.decision_point_id.is_(None))
-            milestones = await conn.all(query)
-
-        if MilestoneByDecisionPointLoader.loader_name not in context:
-            context[MilestoneByDecisionPointLoader.loader_name] = \
-                MilestoneByDecisionPointLoader(db=context['db'])
-        for milestone in milestones:
-            context[MilestoneByDecisionPointLoader.loader_name].prime(
-                milestone.id,
-                milestone
-            )
-        return milestones
+        key = cls.MilestoneByOnPathwayKey(
+            id=id, outstanding=outstanding, limit=limit
+        )
+        return await cls._get_loader_from_context(cls.loader_name, context).load(key)

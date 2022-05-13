@@ -63,8 +63,8 @@ let sanitisedUser: User | null = {
 const localStorageUserJson = localStorage.getItem('loggedInUser');
 if (localStorageUserJson) {
   try {
-    const localStorageUser: User = JSON.parse(localStorageUserJson) as User;
-    sanitisedUser.id = localStorageUser.id;
+    const localStorageUser: User = JSON.parse(localStorageUserJson);
+    sanitisedUser.id = localStorageUser.id.toString();
     sanitisedUser.firstName = localStorageUser.firstName;
     sanitisedUser.lastName = localStorageUser.lastName;
     sanitisedUser.department = localStorageUser.department;
