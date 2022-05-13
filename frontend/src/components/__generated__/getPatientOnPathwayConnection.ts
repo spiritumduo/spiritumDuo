@@ -13,22 +13,30 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_pag
   endCursor: string;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones_milestoneType {
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone_milestoneType {
   __typename: "MilestoneType";
   name: string;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones {
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone {
   __typename: "Milestone";
   id: string;
   updatedAt: any;
   currentState: string;
-  milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones_milestoneType;
+  milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone_milestoneType;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints {
-  __typename: "DecisionPoint";
-  milestones: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints_milestones[] | null;
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone_milestoneType {
+  __typename: "MilestoneType";
+  name: string;
+}
+
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone {
+  __typename: "Milestone";
+  id: string;
+  updatedAt: any;
+  currentState: string;
+  milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone_milestoneType;
 }
 
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_lockUser {
@@ -41,7 +49,8 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edg
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways {
   __typename: "OnPathway";
   id: string;
-  decisionPoints: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_decisionPoints[] | null;
+  outstandingMilestone: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone[] | null;
+  milestone: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone[] | null;
   lockEndTime: any | null;
   lockUser: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_lockUser | null;
   updatedAt: any;
