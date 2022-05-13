@@ -9,42 +9,50 @@ import { AuthContext, PathwayContext } from 'app/context';
 import HomePage from 'pages/HomePage';
 import LoginPage from 'pages/Login';
 import PageLayout from 'components/PageLayout';
-import './App.css';
 import AdministrationPage from 'pages/Administration';
+
+import './App.css';
+
+const LoggedInRoutes = () => (
+  <PageLayout>
+    <Routes>
+      <Route
+        path="/patient/:hospitalNumber"
+        element={ (
+          <HomePage patientsPerPage={ 20 } modalPatient />
+        ) }
+      />
+      <Route
+        path="/"
+        element={ (
+          <HomePage patientsPerPage={ 20 } />
+        ) }
+      />
+      <Route
+        path="/patients/all"
+        element={ <HomePage patientsPerPage={ 20 } allPatients /> }
+      />
+      <Route
+        path="/admin"
+        element={ (
+          <RequireAdmin>
+            <AdministrationPage />
+          </RequireAdmin>
+        ) }
+      />
+    </Routes>
+  </PageLayout>
+);
 
 const App = (): JSX.Element => (
   <Routes>
     <Route path="/login" element={ <LoginPage /> } />
     <Route path="/logout" element={ <Logout /> } />
     <Route
-      path="/patient/:hospitalNumber"
+      path="/*"
       element={ (
         <RequireAuth>
-          <PageLayout>
-            <HomePage patientsPerPage={ 20 } modalPatient />
-          </PageLayout>
-        </RequireAuth>
-      ) }
-    />
-    <Route
-      path="/"
-      element={ (
-        <RequireAuth>
-          <PageLayout>
-            <HomePage patientsPerPage={ 20 } />
-          </PageLayout>
-        </RequireAuth>
-      ) }
-    />
-    <Route
-      path="/admin"
-      element={ (
-        <RequireAuth>
-          <PageLayout>
-            <RequireAdmin>
-              <AdministrationPage />
-            </RequireAdmin>
-          </PageLayout>
+          <LoggedInRoutes />
         </RequireAuth>
       ) }
     />

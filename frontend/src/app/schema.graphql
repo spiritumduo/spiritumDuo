@@ -10,10 +10,12 @@ schema {
 type Query {
     getPatient(id:ID, hospitalNumber:String): Patient
     getPathway(id:ID!): Pathway
-    getPathways: [Pathway]
+    getPathways: [Pathway!]!
     getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
-    getMilestoneTypes: [MilestoneType!]
+    getMilestoneTypes(pathwayId: ID): [MilestoneType!]
+    getRolePermissions: [RolePermission!]
+    getRoles: [Role!]!
 
     """
     getPatentOnPathwayConnection:
@@ -35,11 +37,22 @@ type Query {
         outstanding: Boolean
         underCareOf: Boolean
     ): PatientConnection!
+
+    getUserConnection(
+        first: Int
+        after: String
+        last: Int
+        before: String
+    ): UserConnection!,
+
+    patientSearch(query: String!, pathwayId: ID!): [Patient!]!
 }
 
 type Mutation {
     createPatient(input:PatientInput!): AddPatientPayload!
     createPathway(input:PathwayInput!): AddPathwayPayload!
+    updatePathway(input:UpdatePathwayInput!): AddPathwayPayload!
+    deletePathway(id: ID!): DeletePayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
     importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
@@ -48,6 +61,10 @@ type Mutation {
 
 type Subscription {
     milestoneResolved(clinicianID: ID): Milestone!
+    onPathwayUpdated(
+        pathwayId: ID
+        includeDischarged: Boolean
+    ): OnPathway!
 }
 
 enum PatientCommunicationMethods {
@@ -67,29 +84,47 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
+type DeletePayload {
+    success: Boolean
+    userErrors: [UserError!]
+}
+
 type AddPatientPayload {
     patient:Patient
     userErrors:[UserError!]
 }
+
 type AddPathwayPayload {
     pathway:Pathway
     userErrors:[UserError!]
 }
-type AddDecisionPointPayload{
+
+type AddDecisionPointPayload {
     decisionPoint:DecisionPoint
     userErrors:[UserError!]    
 }
-type ImportMilestonePayload{
+
+type ImportMilestonePayload {
     milestone: Milestone
     userErrors:[UserError!]
 }
-type LockOnPathwayPayload{
+
+type LockOnPathwayPayload {
     onPathway: OnPathway
     userErrors:[UserError!]
 }
 
 #### DATA TYPES
-type UserError{
+type Role {
+    id: ID!
+    name: String!
+    permissions: [RolePermission]!
+}
+type RolePermission {
+    name: String!
+}
+
+type UserError {
     message:String!
     field:String!
 }
@@ -97,7 +132,8 @@ type UserError{
 type Pathway {
     id: ID!
     name: String!
-    patients:[Patient]
+    patients: [Patient]
+    milestoneTypes: [MilestoneType!]
 }
 
 type Patient {
@@ -127,12 +163,23 @@ type PageInfo {
 type PatientConnection {
     totalCount: Int!
     pageInfo: PageInfo!
-    edges: [PatientEdge!]
+    edges: [PatientEdge!]!
 }
 
 type PatientEdge {
     node: Patient!
     cursor: String!
+}
+
+type UserEdge {
+    node: User!
+    cursor: String!
+}
+
+type UserConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [UserEdge!]!
 }
 
 type Group {
@@ -151,7 +198,11 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
-    milestones(notOnDecisionPoint: Boolean = True): [Milestone!]
+    milestones(
+        notOnDecisionPoint: Boolean = True
+        outstanding: Boolean = False
+        limit: Int = 0
+    ): [Milestone!]
     underCareOf: User
     lockUser: User
     lockEndTime: DateTime
@@ -162,9 +213,13 @@ type User {
     firstName: String!
     lastName: String!
     username: String!
+    email: String!
+    defaultPathwayId: ID!
     lastLogin: DateTime
     department: String!
     defaultPathway: Pathway!
+    isActive: Boolean!
+    roles: [Role!]!
 }
 
 type DecisionPoint {
@@ -197,6 +252,7 @@ type MilestoneType {
     isDischarge: Boolean!
     isCheckboxHidden: Boolean!
     isTestRequest: Boolean!
+    pathways: [Pathway!]
 }
 
 
@@ -238,6 +294,10 @@ input MilestoneRequestInput {
     currentState: MilestoneState
 }
 
+input MilestoneTypeInput{
+    id: ID!
+}
+
 input MilestoneImportInput {
     onPathwayId: ID!
     milestoneTypeId: ID!
@@ -259,7 +319,14 @@ input LockOnPathwayInput{
 }
 
 input PathwayInput{
-    name:String!
+    name: String!
+    milestoneTypes: [MilestoneTypeInput!]
+}
+
+input UpdatePathwayInput{
+    id: ID!
+    name: String!
+    milestoneTypes: [MilestoneTypeInput!]
 }
 
 input GroupInput{

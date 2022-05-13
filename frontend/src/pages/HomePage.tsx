@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 // LIBRARIES
 import { Container } from 'nhsuk-react-components';
@@ -13,6 +13,7 @@ import { RootState } from 'app/store';
 // COMPONENTS
 import WrappedPatientList from 'components/WrappedPatientList';
 import ModalPatient from 'components/ModalPatient';
+import AllPatients from 'features/AllPatients/AllPatients';
 
 // LOCAL IMPORT
 import './homepage.css';
@@ -21,9 +22,10 @@ import { setModalPatientHospitalNumber } from './HomePage.slice';
 export interface HomePageProps {
   patientsPerPage: number;
   modalPatient?: boolean;
+  allPatients?: boolean;
 }
 
-const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element => {
+const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
   const pathwayId = currentPathwayId as string;
   const dispatch = useAppDispatch();
@@ -37,13 +39,25 @@ const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element
 
   const modalCloseCallback = () => {
     dispatch(setModalPatientHospitalNumber(undefined));
-    navigate('/');
+    // navigate('/');
   };
+
+  const onSelect = useCallback((index: number) => {
+    switch (index) {
+      case 0:
+        navigate('/');
+        break;
+      case 1:
+        navigate('/patients/all');
+        break;
+      default:
+    }
+  }, [navigate]);
 
   return (
     <>
       <Container>
-        <Tabs>
+        <Tabs selectedIndex={ allPatients ? 1 : 0 } onSelect={ onSelect }>
           <TabList>
             <Tab>To do</Tab>
             <Tab>All patients</Tab>
@@ -57,13 +71,7 @@ const HomePage = ({ patientsPerPage, modalPatient }: HomePageProps): JSX.Element
             />
           </TabPanel>
           <TabPanel>
-            <WrappedPatientList
-              pathwayId={ pathwayId }
-              patientsToDisplay={ patientsPerPage }
-              outstanding={ false }
-              underCareOf={ false }
-              includeDischarged
-            />
+            <AllPatients pathwayId={ pathwayId } patientsPerPage={ patientsPerPage } />
           </TabPanel>
         </Tabs>
       </Container>
