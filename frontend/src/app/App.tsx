@@ -18,32 +18,32 @@ import './App.css';
 const LoggedInRoutes = () => (
   <PageLayout>
     <RequirePathways>
-    <Routes>
-      <Route
-        path="/patient/:hospitalNumber"
-        element={ (
-          <HomePage patientsPerPage={ 20 } modalPatient />
-        ) }
-      />
-      <Route
-        path="/"
-        element={ (
-          <HomePage patientsPerPage={ 20 } />
-        ) }
-      />
-      <Route
-        path="/patients/all"
-        element={ <HomePage patientsPerPage={ 20 } allPatients /> }
-      />
-      <Route
-        path="/admin"
-        element={ (
-          <RequireAdmin>
-            <AdministrationPage />
-          </RequireAdmin>
-        ) }
-      />
-    </Routes>
+      <Routes>
+        <Route
+          path="/patient/:hospitalNumber"
+          element={ (
+            <HomePage patientsPerPage={ 20 } modalPatient />
+          ) }
+        />
+        <Route
+          path="/"
+          element={ (
+            <HomePage patientsPerPage={ 20 } />
+          ) }
+        />
+        <Route
+          path="/patients/all"
+          element={ <HomePage patientsPerPage={ 20 } allPatients /> }
+        />
+        <Route
+          path="/admin"
+          element={ (
+            <RequireAdmin>
+              <AdministrationPage />
+            </RequireAdmin>
+          ) }
+        />
+      </Routes>
     </RequirePathways>
   </PageLayout>
 );
