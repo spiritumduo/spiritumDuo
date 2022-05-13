@@ -104,7 +104,7 @@ class LoginController:
             default_pathway: Union[Pathway, None] = await conn.one_or_none(
                 Pathway.query.where(Pathway.id == sdUser.default_pathway_id)
             )
-            default_pathway_dict=None
+            default_pathway_dict = None
             if default_pathway:
                 default_pathway_dict = {
                     "id": default_pathway.id,
