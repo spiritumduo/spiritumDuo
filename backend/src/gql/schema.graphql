@@ -198,7 +198,10 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
-    milestones(notOnDecisionPoint: Boolean = True): [Milestone!]
+    milestones(
+        outstanding: Boolean = False
+        limit: Int = 0
+    ): [Milestone!]
     underCareOf: User
     lockUser: User
     lockEndTime: DateTime

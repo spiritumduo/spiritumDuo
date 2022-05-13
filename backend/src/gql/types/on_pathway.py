@@ -1,11 +1,16 @@
 from ariadne.objects import ObjectType
-from models import OnPathway
+from operator import and_
+
+from sqlalchemy import desc
+
+from SdTypes import MilestoneState
+from models import OnPathway, Milestone
 from dataloaders import (
     PatientByIdLoader,
     PathwayByIdLoader,
     DecisionPointsByOnPathway,
     UserByIdLoader,
-    MilestoneByOnPathway
+    MilestoneByOnPathwayIdLoader
 )
 from graphql.type import GraphQLResolveInfo
 
@@ -48,12 +53,13 @@ async def resolve_under_care_of(
 async def resolver(
     obj: OnPathway = None,
     info: GraphQLResolveInfo = None,
-    notOnDecisionPoint: bool = True, *_
+    outstanding: bool = False,
+    limit: int = 0, *_
 ):
-    return await MilestoneByOnPathway.load_many_from_id(
-        context=info.context, id=obj.id,
-        notOnDecisionPoint=notOnDecisionPoint
+    result = await MilestoneByOnPathwayIdLoader.load_from_id(
+        context=info.context, id=obj.id, outstanding=outstanding, limit=limit
     )
+    return result
 
 
 @OnPathwayObjectType.field("lockUser")
