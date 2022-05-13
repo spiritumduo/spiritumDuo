@@ -104,7 +104,6 @@ async def insert_user():
     first_name = "John " + user_num
     last_name = "Doe " + user_num
     department = "Respiratory"
-    default_pathway_id = 1
     try:
         user: User = await CreateUser(
             username,
@@ -112,7 +111,6 @@ async def insert_user():
             first_name,
             last_name,
             department,
-            default_pathway_id,
             True
         )
         print("User inserted")

@@ -1,4 +1,6 @@
-from models import Patient
+from ctypes import Union
+from models import Patient, OnPathway, UserPathway
+from common import UserDoesNotHavePathwayPermission
 from SdTypes import MilestoneState
 from dataloaders import OnPathwayByIdLoader, PatientByIdLoader
 from dependency_injector.wiring import Provide, inject
@@ -36,14 +38,25 @@ async def ImportMilestone(
         Milestone: newly created milestone object
     """
 
-    patient_id: int = (await OnPathwayByIdLoader.load_from_id(
+    on_pathway: OnPathway = (await OnPathwayByIdLoader.load_from_id(
         context=context,
         id=int(on_pathway_id))
-    ).patient_id
+    )
+
+    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
+        .query.where(UserPathway.user_id == context['request']['user'].id)\
+        .where(UserPathway.pathway_id == on_pathway.pathway_id)\
+        .gino.one_or_none()
+
+    if userHasPathwayPermission is None:
+        raise UserDoesNotHavePathwayPermission(
+            f"User ID: {context['request']['user'].id}"
+            f"; Pathway ID: {on_pathway.pathway_id}"
+        )
 
     patient: Patient = await PatientByIdLoader.load_from_id(
         context=context,
-        id=int(patient_id)
+        id=int(on_pathway.patient_id)
     )
 
     testResult: TestResult_IE = await trust_adapter.create_test_result(

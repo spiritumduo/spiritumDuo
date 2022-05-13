@@ -32,7 +32,6 @@ const pathways: PathwayOption[] = [
 
 export const Standard = Template.bind({});
 Standard.args = {
-  pathwayOptions: pathways,
   currentPathwayId: pathways[0].id,
   pathwayOnItemSelect: (name) => console.log(name),
   searchOnSubmit: (e) => {
@@ -43,16 +42,16 @@ Standard.args = {
     id: '1',
     firstName: 'John',
     lastName: 'Doe',
-    defaultPathwayId: '1',
+    defaultPathway: pathways[0],
     department: 'Test department',
     roles: [{ id: '1', name: 'test' }],
     token: 'token',
+    pathways: pathways,
   },
 };
 
 export const Admin = Template.bind({});
 Admin.args = {
-  pathwayOptions: pathways,
   currentPathwayId: pathways[0].id,
   pathwayOnItemSelect: (name) => console.log(name),
   searchOnSubmit: (e) => {
@@ -62,9 +61,10 @@ Admin.args = {
     id: '1',
     firstName: 'Eileen',
     lastName: 'Streiter',
-    defaultPathwayId: '1',
+    defaultPathway: pathways[0],
     department: 'Test department',
     roles: [{ id: '1', name: 'test' }],
     token: 'token',
+    pathways: pathways,
   },
 };

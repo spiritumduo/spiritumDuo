@@ -12,3 +12,4 @@ from .Session import Session
 from .User import User
 from .UserRole import UserRole
 from .PathwayMilestoneType import PathwayMilestoneType
+from .UserPathway import UserPathway

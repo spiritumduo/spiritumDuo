@@ -4,12 +4,12 @@ import { gql, useQuery } from '@apollo/client';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { ErrorMessage } from 'nhsuk-react-components';
 
-import CreatePathwayTab from '../components/CreatePathwayTab';
-import UpdatePathwayTab from '../components/UpdatePathwayTab';
-import DeletePathwayTab from '../components/DeletePathwayTab';
+import CreatePathwayTab from './tabpages/CreatePathwayTab';
+import UpdatePathwayTab from './tabpages/UpdatePathwayTab';
+import DeletePathwayTab from './tabpages/DeletePathwayTab';
 
-import { getMilestoneTypes } from '../components/__generated__/getMilestoneTypes';
-import { getPathways } from '../components/__generated__/getPathways';
+import { getMilestoneTypes } from './__generated__/getMilestoneTypes';
+import { getPathways } from './__generated__/getPathways';
 
 export const GET_MILESTONE_TYPES = gql`
   query getMilestoneTypes{

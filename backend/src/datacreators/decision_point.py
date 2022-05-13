@@ -1,13 +1,27 @@
 from ctypes import Union
-from dataloaders import OnPathwayByIdLoader, PatientByIdLoader, MilestoneTypeLoaderByPathwayId
-from models import DecisionPoint, Milestone, OnPathway, MilestoneType, Patient
+from dataloaders import (
+    OnPathwayByIdLoader,
+    PatientByIdLoader,
+    MilestoneTypeLoaderByPathwayId
+)
+from models import (
+    DecisionPoint,
+    Milestone,
+    OnPathway,
+    MilestoneType,
+    Patient,
+    UserPathway
+)
 from SdTypes import DecisionTypes
 from typing import List, Dict
 from containers import SDContainer
 from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from datetime import datetime
-from common import ReferencedItemDoesNotExistError
+from common import (
+    ReferencedItemDoesNotExistError,
+    UserDoesNotHavePathwayPermission
+)
 
 
 class UserDoesNotOwnLock(Exception):
@@ -76,6 +90,18 @@ async def CreateDecisionPoint(
         context=context,
         id=on_pathway_id
     )
+
+    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
+        .query.where(UserPathway.user_id == clinician_id)\
+        .where(UserPathway.pathway_id == on_pathway.pathway_id)\
+        .gino.one_or_none()
+
+    if userHasPathwayPermission is None:
+        raise UserDoesNotHavePathwayPermission(
+            f"User ID: {clinician_id}"
+            f"; Pathway ID: {on_pathway.pathway_id}"
+        )
+
     if on_pathway.lock_user_id != clinician_id:
         raise UserDoesNotOwnLock()
 
@@ -93,17 +119,12 @@ async def CreateDecisionPoint(
         **decision_point_details
     )
 
-    onPathwayInstance: OnPathway = (await OnPathwayByIdLoader.load_from_id(
-        context=context,
-        id=int(on_pathway_id))
-    )
-
     patient: Patient = await PatientByIdLoader.load_from_id(
         context=context,
-        id=int(onPathwayInstance.patient_id)
+        id=int(on_pathway.patient_id)
     )
     if milestone_requests is not None:
-        pathwayId: int = onPathwayInstance.pathway_id
+        pathwayId: int = on_pathway.pathway_id
 
         validMilestoneTypes: Union[MilestoneType, None] = \
             await MilestoneTypeLoaderByPathwayId.load_from_id(
@@ -111,7 +132,8 @@ async def CreateDecisionPoint(
         validMilestoneTypeIds = [str(mT.id) for mT in validMilestoneTypes]
 
         for requestInput in milestone_requests:
-            if str(requestInput['milestoneTypeId']) not in validMilestoneTypeIds:
+            if str(requestInput['milestoneTypeId']) not\
+                    in validMilestoneTypeIds:
                 raise MilestoneTypeIdNotOnPathway(
                     requestInput['milestoneTypeId']
                 )

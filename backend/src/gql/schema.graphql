@@ -210,12 +210,12 @@ type User {
     lastName: String!
     username: String!
     email: String!
-    defaultPathwayId: ID!
     lastLogin: DateTime
     department: String!
-    defaultPathway: Pathway!
+    defaultPathway: Pathway
     isActive: Boolean!
     roles: [Role!]!
+    pathways: [Pathway!]!
 }
 
 type DecisionPoint {

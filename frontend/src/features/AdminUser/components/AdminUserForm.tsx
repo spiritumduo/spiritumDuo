@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // LIBRARIES
 import * as yup from 'yup';
@@ -6,11 +6,10 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, ErrorMessage, Fieldset, SummaryList, Form } from 'nhsuk-react-components';
 import { Row, Col, Modal } from 'react-bootstrap';
-import { Input, Select, CheckboxBox } from 'components/nhs-style';
+import { Input, CheckboxBox } from 'components/nhs-style';
 import { gql } from '@apollo/client';
 
 // APP
-import { PathwayContext } from 'app/context';
 import useRESTSubmit from 'app/hooks/rest-submit';
 import User from 'types/Users';
 import Role from 'types/Role';
@@ -18,6 +17,7 @@ import Role from 'types/Role';
 import SdSelect from 'components/SdSelect/SdSelect';
 import CheckboxOption from 'components/SdSelect/CheckboxOption';
 import './adminuserform.css';
+import PathwayOption from 'types/PathwayOption';
 
 export type CreateUserReturnUser = {
   username: string;
@@ -25,9 +25,9 @@ export type CreateUserReturnUser = {
   lastName: string;
   email: string;
   department: string;
-  defaultPathwayId: number;
   isActive: boolean;
   roles: Role[];
+  pathways: PathwayOption[];
 };
 
 export const GET_ROLES_FRAGMENT = gql`
@@ -45,12 +45,26 @@ export const GET_USER_FRAGMENT = gql`
     lastName
     email
     department
-    defaultPathwayId
     isActive
+    defaultPathway{
+      id
+      name
+    }
     roles {
       id
       name
     }
+    pathways { 
+      id
+      name
+    }
+  }
+`;
+
+export const GET_PATHWAYS_FRAGMENT = gql`
+  fragment PathwayParts on Pathway {
+    id
+    name
   }
 `;
 
@@ -69,20 +83,21 @@ export interface UserFormInput {
   lastName: string;
   department: string;
   isActive: boolean;
-  defaultPathwayId: string;
   roles: string[];
+  pathways: string[];
 }
 
 interface AdminUserFormProps {
   roles?: Role[];
   editUser?: User;
+  pathways?: PathwayOption[];
 }
 
-const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
+const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
   const url = editUser !== undefined
     ? '/api/rest/updateuser/'
     : '/api/rest/createuser/';
-  const { pathwayOptions } = useContext(PathwayContext);
+
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const [loading, error, data, createUser] = useRESTSubmit<UserReturnData, UserFormInput>(url);
@@ -95,6 +110,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
     department: yup.string().required('Department is a required field'),
     isActive: yup.boolean().required(),
     roles: yup.array().of(yup.string()),
+    pathways: yup.array().of(yup.string()),
   };
 
   const schema = editUser
@@ -127,7 +143,6 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
       email: editUser?.email,
       username: editUser?.username,
       department: editUser?.department,
-      defaultPathwayId: editUser?.defaultPathwayId,
       isActive: editUser?.isActive,
     }),
     [editUser, reset],
@@ -137,7 +152,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
     if (data?.user) setShowModal(true);
   }, [data]);
   const currentRoles = new Set(editUser?.roles.map((r) => r.id));
-
+  const currentPathways = new Set(editUser?.pathways.map((p) => p.id));
   return (
     <>
       <Form
@@ -195,7 +210,7 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
               <Input
                 label="Email"
                 type="email"
-                error={ errors.department?.message }
+                error={ errors.email?.message }
                 { ...register('email') }
               />
             </Col>
@@ -206,25 +221,6 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
                 { ...register('department') }
               />
             </Col>
-            <Col>
-              <Select
-                className="w-100"
-                label="Default pathway"
-                { ...register('defaultPathwayId') }
-                defaultValue={ editUser?.defaultPathwayId }
-              >
-                {
-                  pathwayOptions?.map((item) => (
-                    <option
-                      key={ `pathway-option-${item.id}` }
-                      value={ item.id }
-                    >
-                      {item.name}
-                    </option>
-                  ))
-                }
-              </Select>
-            </Col>
           </Row>
           <Row xs="3" md="2" className="admin-user-flex">
             <SdSelect label="Roles" { ...register('roles') }>
@@ -234,6 +230,18 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
                   value={ r.id }
                   label={ r.name }
                   defaultChecked={ currentRoles.has(r.id) }
+                />
+              ))}
+            </SdSelect>
+          </Row>
+          <Row xs="3" md="2" className="admin-user-flex">
+            <SdSelect label="Pathways" { ...register('pathways') }>
+              {pathways?.map((p) => (
+                <CheckboxOption
+                  key={ p.id }
+                  value={ p.id }
+                  label={ p.name }
+                  defaultChecked={ currentPathways.has(p.id) }
                 />
               ))}
             </SdSelect>
@@ -296,7 +304,15 @@ const AdminUserForm = ({ editUser, roles }: AdminUserFormProps) => {
               <SummaryList.Key>Roles</SummaryList.Key>
               <SummaryList.Value>
                 <ul>
-                  {data?.user?.roles.map((r) => <li key={ `role-result-${r.id}` }>{r.name}</li>)}
+                  {data?.user?.roles?.map((r) => <li key={ `role-result-${r.id}` }>{r.name}</li>)}
+                </ul>
+              </SummaryList.Value>
+            </SummaryList.Row>
+            <SummaryList.Row>
+              <SummaryList.Key>Pathways</SummaryList.Key>
+              <SummaryList.Value>
+                <ul>
+                  {data?.user?.pathways?.map((p) => <li key={ `role-result-${p.id}` }>{p.name}</li>)}
                 </ul>
               </SummaryList.Value>
             </SummaryList.Row>

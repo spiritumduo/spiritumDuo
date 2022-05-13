@@ -42,6 +42,17 @@ type LoginPayload = {
   error: string | null;
 };
 
+const mockPathways: PathwayOption[] = [
+  {
+    id: '1',
+    name: 'Lung Cancer',
+  },
+  {
+    id: '2',
+    name: 'Broncheastasis',
+  },
+];
+
 /**
  * Successful login
  */
@@ -52,19 +63,10 @@ const successfulLoginMock: LoginPayload = {
     lastName: 'Doe',
     department: 'Respiratory',
     roles: [],
-    defaultPathwayId: '1',
+    defaultPathway: mockPathways[0],
     token: 'authToken',
+    pathways: mockPathways,
   },
-  pathways: [
-    {
-      id: '1',
-      name: 'Lung Cancer',
-    },
-    {
-      id: '2',
-      name: 'Broncheastasis',
-    },
-  ],
   error: null,
 };
 

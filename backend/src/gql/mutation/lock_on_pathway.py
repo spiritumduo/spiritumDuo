@@ -1,17 +1,19 @@
+from ctypes import Union
 from containers import SDContainer
 from dependency_injector.wiring import Provide, inject
-from models import OnPathway
+from models import OnPathway, UserPathway
 from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from datetime import datetime, timedelta
 from config import config
-from common import DataCreatorInputErrors
+from common import DataCreatorInputErrors, UserDoesNotHavePathwayPermission
 from SdTypes import Permissions
 
 
 @mutation.field("lockOnPathway")
-@needsAuthorization([Permissions.ON_PATHWAY_UPDATE, Permissions.ON_PATHWAY_READ])
+@needsAuthorization(
+    [Permissions.ON_PATHWAY_UPDATE, Permissions.ON_PATHWAY_READ])
 @inject
 async def resolve_lock_on_pathway(
     obj: OnPathway = None,
@@ -23,13 +25,25 @@ async def resolve_lock_on_pathway(
     userId = int(info.context['request'].user.id)
     onPathwayId = int(input['onPathwayId'])
     unlock = ('unlock' in input and input['unlock']) or False
-    pathway = await OnPathway.query.where(
+
+    onPathway: OnPathway = await OnPathway.query.where(
         OnPathway.id == onPathwayId
     ).gino.one()
 
+    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
+        .query.where(UserPathway.user_id == userId)\
+        .where(UserPathway.pathway_id == onPathway.pathway_id)\
+        .gino.one_or_none()
+
+    if userHasPathwayPermission is None:
+        raise UserDoesNotHavePathwayPermission(
+            f"User ID: {userId}"
+            f"; Pathway ID: {onPathway.pathway_id}"
+        )
+
     if unlock:
-        if userId == pathway.lock_user_id:
-            await pathway.update(
+        if userId == onPathway.lock_user_id:
+            await onPathway.update(
                 lock_user_id=None,
                 lock_end_time=None
             ).apply()
@@ -40,16 +54,16 @@ async def resolve_lock_on_pathway(
             )
     else:
         if (
-            pathway.lock_end_time is not None and
-            pathway.lock_end_time > datetime.now() and
-            pathway.lock_user_id != userId
+            onPathway.lock_end_time is not None and
+            onPathway.lock_end_time > datetime.now() and
+            onPathway.lock_user_id != userId
         ):
             errors.addError(
                 "lock_end_time",
                 "A lock is already in place by another user!"
             )
         else:
-            await pathway.update(
+            await onPathway.update(
                 lock_user_id=userId,
                 lock_end_time=(
                     datetime.now() +
@@ -69,6 +83,6 @@ async def resolve_lock_on_pathway(
     )
 
     return {
-        "onPathway": pathway,
+        "onPathway": onPathway,
         "userErrors": returnErrors
     }

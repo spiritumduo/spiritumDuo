@@ -10,8 +10,8 @@ import { DocumentNode } from '@apollo/client';
 import { RequestHandler } from 'mock-apollo-client';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 
-import { AdminUserCreate, USER_ADMIN_GET_ROLES_QUERY } from './AdminUserCreate';
-import { userAdminGetRoles } from './__generated__/userAdminGetRoles';
+import { AdminUserCreate, USER_ADMIN_GET_ROLES_WITH_PATHWAYS_QUERY } from './AdminUserCreate';
+import { userAdminGetRolesWithPathways } from './__generated__/userAdminGetRolesWithPathways';
 
 // MOCKS
 
@@ -21,6 +21,14 @@ export type CreateUserReturnData = {
   detail?: string;
 };
 
+const mockPathways: userAdminGetRolesWithPathways['getPathways'] = [
+  {
+    __typename: 'Pathway',
+    id: '1',
+    name: 'test',
+  },
+];
+
 const mockUser: User = {
   id: '1',
   firstName: 'John',
@@ -28,7 +36,7 @@ const mockUser: User = {
   email: 'test@test.com',
   username: 'jdoe',
   department: 'Respiratory',
-  defaultPathwayId: '1',
+  defaultPathway: mockPathways[0],
   isActive: true,
   roles: [
     {
@@ -40,9 +48,10 @@ const mockUser: User = {
       name: 'second role',
     },
   ],
+  pathways: mockPathways,
 };
 
-const mockRoles: userAdminGetRoles['getRoles'] = [
+const mockRoles: userAdminGetRolesWithPathways['getRoles'] = [
   {
     __typename: 'Role',
     id: '1',
@@ -67,13 +76,14 @@ const mockRoles: userAdminGetRoles['getRoles'] = [
 
 const apolloMocks: {
   query: DocumentNode;
-  mockFn: RequestHandler<userAdminGetRoles, undefined>;
+  mockFn: RequestHandler<userAdminGetRolesWithPathways, undefined>;
 }[] = [
   {
-    query: USER_ADMIN_GET_ROLES_QUERY,
+    query: USER_ADMIN_GET_ROLES_WITH_PATHWAYS_QUERY,
     mockFn: () => Promise.resolve({
       data: {
         getRoles: mockRoles,
+        getPathways: mockPathways,
       },
     }),
   },

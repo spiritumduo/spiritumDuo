@@ -1,7 +1,6 @@
-from typing import List
 from ariadne.objects import ObjectType
 from dataloaders import PathwayByIdLoader
-from models import User, Role, UserRole
+from models import User, Role, UserRole, Pathway, UserPathway
 from graphql.type import GraphQLResolveInfo
 from models.db import db
 
@@ -19,12 +18,18 @@ async def resolve_roles(
     obj: User = None, info: GraphQLResolveInfo = None, *_
 ):
     async with db.acquire(reuse=False) as conn:
-        roles_query = db.select([Role]).where(
-            User.id == UserRole.user_id
-        ).where(
-            Role.id == UserRole.role_id
-        ).where(
-            obj.id == UserRole.user_id
-        )
-        roles = await conn.all(roles_query)
+        query = Role.join(UserRole).select()\
+            .where(UserRole.user_id == obj.id)
+        roles = await conn.all(query)
     return roles
+
+
+@UserObjectType.field("pathways")
+async def resolve_pathways(
+    obj: User = None, info: GraphQLResolveInfo = None, *_
+):
+    async with db.acquire(reuse=False) as conn:
+        query = Pathway.join(UserPathway).select()\
+            .where(UserPathway.user_id == obj.id)
+        pathways = await conn.all(query)
+    return pathways

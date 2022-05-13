@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React, { useState } from 'react';
 import User from 'types/Users';
-import PathwayOption from 'types/PathwayOption';
-import { currentPathwayIdVar, loggedInUserVar, pathwayOptionsVar } from 'app/cache';
+import { currentPathwayIdVar, loggedInUserVar } from 'app/cache';
 
 export interface AuthContextInterface {
     user?: User;
@@ -30,37 +29,20 @@ export const AuthProvider = ({ children }: React.ComponentPropsWithRef<any>): JS
 };
 
 export interface PathwayContextInterface {
-    pathwayOptions: PathwayOption[];
-    updatePathwayOptions: (pathways: PathwayOption[]) => void;
     currentPathwayId?: string;
     updateCurrentPathwayId: (id: string) => void;
 }
 export const PathwayContext = React.createContext<PathwayContextInterface>({
-  pathwayOptions: [],
-  updatePathwayOptions: () => { },
   updateCurrentPathwayId: () => { },
 });
 
 export const PathwayProvider = ({ children }: React.ComponentPropsWithRef<any>): JSX.Element => {
-  const [pathwayOptions, updatePathwayOptionsState] = useState<PathwayOption[]>([]);
   const [currentPathwayId, updateCurrentPathwayIdState] = useState<string | undefined>();
-
-  if (pathwayOptions.length === 0) {
-    const localStoragePathwayOptions = pathwayOptionsVar();
-    if (localStoragePathwayOptions.length !== 0) {
-      updatePathwayOptionsState(localStoragePathwayOptions);
-    }
-  }
 
   if (!currentPathwayId) {
     const localStorageCurrentPathwayId = currentPathwayIdVar();
     if (localStorageCurrentPathwayId) updateCurrentPathwayIdState(localStorageCurrentPathwayId);
   }
-
-  const updatePathwayOptions = (pathways: PathwayOption[]) => {
-    updatePathwayOptionsState(pathways);
-    pathwayOptionsVar(pathways);
-  };
 
   const updateCurrentPathwayId = (id: string) => {
     updateCurrentPathwayIdState(id);
@@ -70,8 +52,6 @@ export const PathwayProvider = ({ children }: React.ComponentPropsWithRef<any>):
   return (
     <PathwayContext.Provider
       value={ {
-        pathwayOptions,
-        updatePathwayOptions,
         currentPathwayId,
         updateCurrentPathwayId,
       } }

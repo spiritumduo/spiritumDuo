@@ -1,13 +1,12 @@
-import { Select } from 'nhsuk-react-components';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Select } from 'nhsuk-react-components';
 import PathwayOption from 'types/PathwayOption';
 
 interface PathwaySelectorProps {
   /**
   * List of pathways to present the user
   */
-  options: PathwayOption[];
+  options?: PathwayOption[];
   /**
   * Current selected option
   */
@@ -25,14 +24,22 @@ const PathwaySelector = ({
   options, currentOption, onItemSelect,
 }: PathwaySelectorProps): JSX.Element => {
   // filter out the current option from the item list
-  const itemList = options.map((pathway) => (
-    pathway !== currentOption ? <Select.Option key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option> : <Select.Option value={ pathway.id } key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option>
+  const itemList = options?.map((pathway) => (
+    <Select.Option value={ pathway.id } key={ `pathwaySelect-${pathway.id}` }>{pathway.name}</Select.Option>
   ));
 
   return (
-    <select className="nhsuk-select float-end" disabled defaultValue={ currentOption?.id } onChange={ (e) => onItemSelect(e.currentTarget.value) }>
-      {itemList}
-    </select>
+    (itemList?.length as number) > 0
+      ? (
+        <select className="nhsuk-select float-end" defaultValue={ currentOption?.id } onChange={ (e) => onItemSelect(e.currentTarget.value) }>
+          { itemList }
+        </select>
+      )
+      : (
+        <select className="nhsuk-select float-end" disabled>
+          <Select.Option>No pathways available</Select.Option>
+        </select>
+      )
   );
 };
 

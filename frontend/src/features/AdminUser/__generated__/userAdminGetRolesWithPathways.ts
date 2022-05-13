@@ -4,22 +4,22 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: userAdminGetRoles
+// GraphQL query operation: userAdminGetRolesWithPathways
 // ====================================================
 
-export interface userAdminGetRoles_getRoles {
+export interface userAdminGetRolesWithPathways_getRoles {
   __typename: "Role";
   id: string;
   name: string;
 }
 
-export interface userAdminGetRoles_getPathways {
+export interface userAdminGetRolesWithPathways_getPathways {
   __typename: "Pathway";
   id: string;
   name: string;
 }
 
-export interface userAdminGetRoles {
-  getRoles: userAdminGetRoles_getRoles[];
-  getPathways: userAdminGetRoles_getPathways[];
+export interface userAdminGetRolesWithPathways {
+  getRoles: userAdminGetRolesWithPathways_getRoles[];
+  getPathways: userAdminGetRolesWithPathways_getPathways[];
 }

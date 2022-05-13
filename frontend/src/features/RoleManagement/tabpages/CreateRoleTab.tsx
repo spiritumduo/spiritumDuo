@@ -6,8 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
-import { Input } from './nhs-style';
-import { getRoles } from './__generated__/getRoles';
+import { Input } from 'components/nhs-style';
+import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
 type CreateRoleForm = {
   name: string;

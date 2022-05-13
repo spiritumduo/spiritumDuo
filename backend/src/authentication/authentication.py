@@ -1,14 +1,9 @@
-import logging
-
 from starlette.authentication import (
     AuthenticationBackend, BaseUser,
     AuthCredentials, has_required_scope
 )
 import inspect
-
-from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
-
 from ariadne.format_error import GraphQLError
 from SdTypes import Permissions
 from models.db import db
@@ -25,7 +20,8 @@ class PermissionsError(HTTPException):
     permission
     """
     def __init__(self, detail: str):
-        super(PermissionsError, self).__init__(detail=detail, status_code=403)
+        super(PermissionsError, self).__init__(
+            detail=detail, status_code=403)
 
 
 class AuthenticationError(HTTPException):
@@ -33,7 +29,8 @@ class AuthenticationError(HTTPException):
     Raised when a user is lacking a valid login
     """
     def __init__(self, detail: str):
-        super(AuthenticationError, self).__init__(detail=detail, status_code=401)
+        super(AuthenticationError, self).__init__(
+            detail=detail, status_code=401)
 
 
 class SessionAlreadyExists(Exception):
@@ -115,7 +112,8 @@ class SDAuthentication(AuthenticationBackend):
                             .outerjoin(User)\
                             .select()\
                             .where(User.id == user.id)
-                        permissions: List[RolePermission] = await conn.all(query)
+                        permissions: List[RolePermission] = await conn.all(
+                            query)
                     scopes = [Permissions.AUTHENTICATED]
                     for p in permissions:
                         scopes.append(p.permission)

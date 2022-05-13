@@ -6,9 +6,9 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import { CREATE_PATHWAY_MUTATION } from 'components/CreatePathwayTab';
-import { UPDATE_PATHWAY_MUTATION } from 'components/UpdatePathwayTab';
-import { DELETE_PATHWAY_MUTATION } from 'components/DeletePathwayTab';
+import { CREATE_PATHWAY_MUTATION } from './tabpages/CreatePathwayTab';
+import { UPDATE_PATHWAY_MUTATION } from './tabpages/UpdatePathwayTab';
+import { DELETE_PATHWAY_MUTATION } from './tabpages/DeletePathwayTab';
 import PathwayManagementTabSet, { GET_MILESTONE_TYPES, GET_PATHWAYS } from './PathwayManagement';
 
 const milestoneTypes = [

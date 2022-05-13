@@ -1,11 +1,10 @@
-import json
-import logging
 from base64 import b64encode
-
+from typing import Dict, List, Union
 from gino.loader import ModelLoader
+from gino import Gino
 from starlette.responses import JSONResponse
 from models.db import db
-from models import User, Session, Pathway, Role, UserRole
+from models import User, Session, Pathway, Role, UserRole, UserPathway
 from starlette.requests import Request
 from bcrypt import checkpw
 from random import getrandbits
@@ -94,11 +93,36 @@ class LoginController:
                 .where(User.id == user.id)\
                 .execution_options(loader=ModelLoader(Role))
             roles = await conn.all(role_query)
+
+            pathway_query = Pathway.outerjoin(UserPathway)\
+                .outerjoin(User)\
+                .select()\
+                .where(User.id == user.id)\
+                .execution_options(loader=ModelLoader(Pathway))
+            pathways = await conn.all(pathway_query)
+
+            default_pathway: Union[Pathway, None] = await conn.one_or_none(
+                Pathway.query.where(Pathway.id == sdUser.default_pathway_id)
+            )
+            default_pathway_dict = None
+            if default_pathway:
+                default_pathway_dict = {
+                    "id": default_pathway.id,
+                    "name": default_pathway.name
+                }
+
             role_dicts = []
             for r in roles:
                 role_dicts.append({
                     "id": r.id,
                     "name": r.name
+                })
+
+            user_pathways = []
+            for p in pathways:
+                user_pathways.append({
+                    "id": p.id,
+                    "name": p.name
                 })
 
         sessionKey = None
@@ -121,15 +145,6 @@ class LoginController:
             user_id=sdUser.id
         )
 
-        pathways = None
-        async with self._db.acquire(reuse=False) as conn:
-            pathways = await conn.all(
-                Pathway.query
-            )
-        preparedPathways = []
-        for pathway in pathways:
-            preparedPathways.append(pathway.to_dict())
-
         res = JSONResponse({
             "user": {
                 "id": sdUser.id,
@@ -137,12 +152,11 @@ class LoginController:
                 "firstName": sdUser.firstName,
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,
-                "defaultPathwayId": sdUser.default_pathway_id,
-                "isAdmin": sdUser.isAdmin,
+                "defaultPathway": default_pathway_dict,
                 "token": str(sessionKey),
-                "roles": role_dicts
+                "roles": role_dicts,
+                "pathways": user_pathways
             },
-            "pathways": preparedPathways,
         })
 
         signer = itsdangerous.TimestampSigner(

@@ -1,6 +1,7 @@
 import re
+from typing import List
 from SdTypes import Permissions
-from models import User
+from models import User, UserPathway, Pathway, Role, UserRole
 from .api import _FastAPI
 from fastapi import Request
 from pydantic import BaseModel
@@ -19,8 +20,9 @@ class CreateUserInput(BaseModel):
     firstName: str
     lastName: str
     department: str
-    defaultPathwayId: int
     isActive: bool
+    pathways: List[int]
+    roles: List[int]
 
 
 @_FastAPI.post("/createuser/")
@@ -38,9 +40,39 @@ async def create_user(request: Request, input: CreateUserInput):
             first_name=input.firstName,
             last_name=input.lastName,
             department=input.department,
-            default_pathway_id=int(input.defaultPathwayId),
             is_active=input.isActive
         )
+
+        for pathwayId in input.pathways:
+            await UserPathway.create(
+                user_id=user.id,
+                pathway_id=pathwayId
+            )
+
+        db_pathways = await Pathway.join(UserPathway).select().where(
+            UserPathway.user_id == user.id).gino.all()
+        db_pathways_dicts = []
+        for pw in db_pathways:
+            db_pathways_dicts.append({
+                "id": pw.id,
+                "name": pw.name
+            })
+
+        for roleId in input.roles:
+            await UserRole.create(
+                user_id=user.id,
+                role_id=roleId
+            )
+
+        db_roles = await Role.join(UserRole).select().where(
+            UserRole.user_id == user.id).gino.all()
+        db_roles_dicts = []
+        for role in db_roles:
+            db_roles_dicts.append({
+                "id": role.id,
+                "name": role.name
+            })
+
         return {
             "user": {
                 "username": user.username,
@@ -48,13 +80,16 @@ async def create_user(request: Request, input: CreateUserInput):
                 "lastName": user.last_name,
                 "email": user.email,
                 "department": user.department,
-                "defaultPathwayId": user.default_pathway_id,
-                "isActive": user.is_active
+                "isActive": user.is_active,
+                "pathways": db_pathways_dicts,
+                "roles": db_roles_dicts,
             }
         }
 
     except UniqueViolationError as e:
         if re.search("username", e.message):
-            raise ConflictHTTPException("An account with this username already exists")
+            raise ConflictHTTPException(
+                "An account with this username already exists")
         elif re.search("email", e.message):
-            raise ConflictHTTPException("An account with this email already exists")
+            raise ConflictHTTPException(
+                "An account with this email already exists")

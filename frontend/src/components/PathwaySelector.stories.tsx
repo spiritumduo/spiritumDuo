@@ -32,6 +32,7 @@ const pathways: PathwayOption[] = [
 ];
 
 export const Standard = Template.bind({});
+export const NoPathways = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Standard.args = {
   options: pathways,

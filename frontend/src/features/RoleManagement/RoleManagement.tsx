@@ -4,12 +4,12 @@ import { gql, useQuery } from '@apollo/client';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { ErrorMessage } from 'nhsuk-react-components';
 
-import { getRoles } from 'components/__generated__/getRoles';
-import { getRolePermissions } from '../components/__generated__/getRolePermissions';
+import { getRoles } from './__generated__/getRoles';
+import { getRolePermissions } from './__generated__/getRolePermissions';
 
-import CreateRoleTab from '../components/CreateRoleTab';
-import UpdateRoleTab from '../components/UpdateRoleTab';
-import DeleteRoleTab from '../components/DeleteRoleTab';
+import CreateRoleTab from './tabpages/CreateRoleTab';
+import UpdateRoleTab from './tabpages/UpdateRoleTab';
+import DeleteRoleTab from './tabpages/DeleteRoleTab';
 
 export const GET_ROLES = gql`
   query getRoles{
@@ -39,8 +39,7 @@ const RoleManagementTabSet = (): JSX.Element => {
 
   const { loading: loadingRolePermissions,
     data: dataRolePermissions,
-    error: errorRolePermissions,
-    refetch: refetchRolePermissions } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
+    error: errorRolePermissions } = useQuery<getRolePermissions>(GET_ROLE_PERMISSIONS);
 
   return (
     <Tabs>
