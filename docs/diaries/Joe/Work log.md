@@ -91,3 +91,30 @@ This week I refactored a lot of the backend with flake8 (a linter). This just en
 ### 28th March - 1st April 2022
 
 This week was a continuation of patient locking. In the grand scheme of things it's a large - and quite important - function to get right, there are just a lot of edge cases and considerations. I also worked to ensure that the pseudotie persistently stores test result return times, meaning that we could run a small scale simulation wherein test results are returning in hours or days, as opposed to just a few minutes. 
+
+### 4th - 8th April 2022
+
+This week I updated some of the documentation and looked into automated document generation software. After reading comparisons I ended up choosing to use Doxygen for our Python backend, and directing others to the storybook for frontend documentation - this seems to be common practice. I also did some more work on the installation instructions. To finish the week I worked on adding GraphQL subscriptions to the patient list on the home page, making it so it updates whenever the state of a patient changes. This involved me learning about GQL subscriptions and Apollo's implementation of them. 
+
+
+### 11th - 15th April 2022
+
+This week I designed and implemented an administration page for pathway management - creating, updating and deleting pathways without having to manually edit the database. 
+
+### 18th - 22nd April 2022
+
+Annual leave
+
+### 25th - 29th April 2022
+
+This week I was working on the administration interface for role management. This involved creating new graphql queries and adapting the frontend as appropriate, as well as creating new RESTful endpoints on the backend. 
+
+### 2nd - 6th May 2022
+
+This week was a continuation of the last, working on the administration interface. I had to learn how Jest (frontend React testing library) worked wrt asynchrony and awaiting events. I also diagnosed and corrected an issue wherein our staging server would not upgrade enum definitions on the postgres database. I chose to remove the database volume on the CD workflow to circumvent this. In a production environment, we'll have to edit the migrations manually - to be expected using Alembic. 
+
+### 9th - 13th May 2022
+
+This week I was tasked with adding mechanisms to give users access to pathways so they can take part in multiple pathways. This was a much bigger task than I expected. Backend modifications to this was minimal since permissions for this is a separate story (it's a very large task that will involve the development of a DAO layer). Frontend modifications, I had a lot to learn. I learnt about React contexts and how they should be used. This week was a hit to my confidence as I struggled more than I thought I would. I also had to discard some of my initial work on the backend as it was - rightly pointed out - a massive anti-pattern (adding authorization to dataloaders) so I lost about a day's worth of work. A learning experience if nothing else. Wrt the frontend, a large part of my issue stemmed from moving pathways from their own separate object onto the user object. This required large changes to both our user/auth and pathway contexts
+
+I also added the ability to assign a user pathways on the user management tab in administration. 
