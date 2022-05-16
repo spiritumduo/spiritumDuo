@@ -12,7 +12,8 @@ async def test_create_role(login_user, test_client, role_create_permission):
         }
     )
 
-    role_from_db = await Role.query.where(Role.name == role_name).gino.one_or_none()
+    role_from_db = await Role.query.where(
+        Role.name == role_name).gino.one_or_none()
     assert_that(role_from_db, not_none())
 
     result = res.json()

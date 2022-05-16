@@ -83,7 +83,8 @@ def decision_query() -> str:
 # Scenario: a patient needs a decision point added and milestones requested
 @pytest.mark.asyncio
 async def test_add_decision_point_to_patient(
-        context, decision_create_permission, milestone_create_permission, decision_query
+        context, decision_create_permission,
+        milestone_create_permission, decision_query
 ):
     """
     When: we run the GraphQL mutation to add the decision point and milestones

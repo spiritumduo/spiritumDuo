@@ -2,7 +2,8 @@ import json
 import pytest
 from hamcrest import (
     assert_that, equal_to, has_item,
-    not_, has_entries, contains_string
+    not_, has_entries, contains_string,
+    not_none
 )
 from models.User import User
 
@@ -47,6 +48,40 @@ async def test_create_user_correct(
     assert_that(query_result['user'], has_entries(NEW_CLINICIAN))
 
 
+# Scenario: a new user needs to be added into the system and uses
+# weird caps for username
+@pytest.mark.asyncio
+async def test_create_user_wierd_caps(
+    context, user_create_permission, new_clinician
+):
+    """
+    When: we create their user account
+    """
+    NEW_CLINICIAN = new_clinician
+
+    new_clinician['username'] = "JoHn.SmItH123"
+
+    create_user_account = await context.client.post(
+        url="rest/createuser/",
+        json=NEW_CLINICIAN
+    )
+    print(json.loads(create_user_account.text))
+    assert_that(create_user_account.status_code, equal_to(200))
+
+    query_result = json.loads(create_user_account.text)
+
+    del NEW_CLINICIAN['password']  # will not be returned
+    new_clinician['username'] = str(new_clinician['username']).lower()
+    assert_that(query_result, not_(has_item('error')))
+    assert_that(query_result['user'], has_entries(NEW_CLINICIAN))
+
+    user: User = await User.query.where(
+        User.username == new_clinician['username'])\
+        .gino.one_or_none()
+
+    assert_that(user, not_none())
+
+
 # Feature: User account operations
 # Scenario: a new user needs to be added into the system but
 # username already exists
@@ -73,7 +108,7 @@ async def test_create_user_username_preexists(
     res = await context.client.post(
         url="rest/createuser/",
         json=NEW_CLINICIAN
-    )   
+    )
     assert_that(res.status_code, equal_to(409))
 
     post_result = res.json()

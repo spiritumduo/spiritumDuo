@@ -2,11 +2,10 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient, RolePermission
+from models import Patient
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, MilestoneState
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
-from SdTypes import Permissions
 
 
 @pytest.fixture
@@ -87,10 +86,14 @@ def patient_create_query() -> str:
         }
     """
 
+
 # Feature: GraphQL patient operations
 # Scenario: a new patient needs to be added into the system
 @pytest.mark.asyncio
-async def test_add_new_patient_to_system(context, patient_create_permission, patient_create_query):
+async def test_add_new_patient_to_system(
+    context, patient_create_permission,
+    patient_create_query
+):
     """
     When: we run the GraphQL mutation to add the patient onto the pathway
     """

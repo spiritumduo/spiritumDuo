@@ -1,13 +1,8 @@
-import logging
-
 import pytest
-
-from sdpubsub import SdPubSub
 import asyncio
 from httpx import Response
 from hamcrest import assert_that, equal_to, contains_string
 from ariadne.asgi import (
-    GQL_CONNECTION_ACK,
     GQL_CONNECTION_INIT,
     GQL_START
 )
@@ -42,7 +37,9 @@ async def subscription_ws(login_user: Response, test_client):
 
 
 async def test_milestone_resolved(
-        subscription_ws, test_sdpubsub, milestone_read_permission, milestone_resolved_query
+        subscription_ws, test_sdpubsub,
+        milestone_read_permission,
+        milestone_resolved_query
 ):
     """
     It should return the milestone with a valid user
@@ -53,12 +50,25 @@ async def test_milestone_resolved(
     }
     receive_task = asyncio.create_task(subscription_ws.receive_json())
     await asyncio.sleep(0.01)  # advance the event loop
-    asyncio.create_task(test_sdpubsub.publish("milestone-resolutions", TEST_MILESTONE))
+    asyncio.create_task(
+        test_sdpubsub.publish(
+            "milestone-resolutions",
+            TEST_MILESTONE
+        )
+    )
     res = await receive_task
-    assert_that(res['payload']['data']['milestoneResolved'], equal_to(TEST_MILESTONE))
+    assert_that(
+        res['payload']['data']['milestoneResolved'],
+        equal_to(TEST_MILESTONE)
+    )
 
 
-async def test_milestone_resolved_invalid_permissions(subscription_ws, milestone_resolved_query):
+async def test_milestone_resolved_invalid_permissions(
+    subscription_ws, milestone_resolved_query
+):
     await subscription_ws.send_json(milestone_resolved_query)
     res = await subscription_ws.receive_json()
-    assert_that(res['payload']['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        res['payload']['message'],
+        contains_string("Missing one or many permissions")
+    )

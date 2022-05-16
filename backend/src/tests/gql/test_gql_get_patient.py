@@ -109,9 +109,13 @@ def get_patient_query() -> str:
         }
     """
 
+
 # Scenario: a patient's record is searched for
 @pytest.mark.asyncio
-async def test_search_for_patient(context, patient_read_permission, get_patient_query):
+async def test_search_for_patient(
+    context, patient_read_permission,
+    get_patient_query
+):
     """
     When: we run the GraphQL mutation to search for a patient
     """

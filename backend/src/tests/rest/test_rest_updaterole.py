@@ -50,7 +50,8 @@ async def test_update_role(login_user, test_client, role_update_permission):
 
     assert_that(res.status_code, equal_to(200))
 
-    role_from_db: Role = await Role.query.where(Role.name == new_role_name).gino.one_or_none()
+    role_from_db: Role = await Role.query.where(
+        Role.name == new_role_name).gino.one_or_none()
     assert_that(role_from_db, not_none())
     permissions_from_db: List[RolePermission] = await RolePermission.query\
         .where(RolePermission.role_id == role.id)\

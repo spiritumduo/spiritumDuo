@@ -3,7 +3,11 @@ import pytest
 from datetime import date
 from models import Patient, OnPathway
 from trustadapter.trustadapter import Patient_IE
-from hamcrest import assert_that, equal_to, not_, not_none, has_key, contains_string
+from hamcrest import (
+    assert_that, equal_to,
+    not_, not_none, has_key,
+    contains_string
+)
 
 
 @pytest.fixture
@@ -24,7 +28,9 @@ def get_patient_on_pathway_query() -> str:
 # Feature: testing getPatientsOnPathway
 # Scenario: the getPatientsOnPathway function is called
 async def test_get_patients_on_pathway(
-        context, patient_read_permission, on_pathway_read_permission, get_patient_on_pathway_query
+        context, patient_read_permission,
+        on_pathway_read_permission,
+        get_patient_on_pathway_query
 ):
     context.trust_adapter_mock.test_connection.return_value = True
     """
@@ -143,7 +149,10 @@ async def test_get_patients_on_pathway(
 # Feature: testing getPatientsOnPathwayConnection
 # Scenario: the getPatientsOnPathwayConnection function is called
 @pytest.mark.asyncio
-async def test_get_patient_on_pathway_connection(context, patient_read_permission, on_pathway_read_permission):
+async def test_get_patient_on_pathway_connection(
+    context, patient_read_permission,
+    on_pathway_read_permission
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have patients on a pathway
@@ -349,7 +358,10 @@ async def test_get_patient_on_pathway_connection(context, patient_read_permissio
     )
 
 
-async def test_user_lacks_permission(login_user, test_client, get_patient_on_pathway_query):
+async def test_user_lacks_permission(
+    login_user, test_client,
+    get_patient_on_pathway_query
+):
     """
     Given the user's test role lacks the required permission
     """
@@ -367,4 +379,7 @@ async def test_user_lacks_permission(login_user, test_client, get_patient_on_pat
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )

@@ -1,8 +1,11 @@
 import json
 import pytest
-from models import MilestoneType, RolePermission
-from SdTypes import Permissions
-from hamcrest import assert_that, equal_to, has_entries, has_items, contains_string
+from models import MilestoneType
+from hamcrest import (
+    assert_that, equal_to,
+    has_entries, has_items,
+    contains_string
+)
 
 
 @pytest.fixture
@@ -20,11 +23,13 @@ async def milestone_query() -> dict:
         }
 
 
-
 # Feature: Test get milestone types
 # Scenario: the GraphQL query for getMilestoneTypes is executed
 @pytest.mark.asyncio
-async def test_get_milestone_types(context, milestone_query, milestone_type_read_permission):
+async def test_get_milestone_types(
+    context, milestone_query,
+    milestone_type_read_permission
+):
     """
     Given: MilestoneTypes are in the system
     """

@@ -32,10 +32,14 @@ def milestone_create_mutation() -> str:
         }
     """
 
+
 # Feature: testing importMilestone
 # Scenario: a milestone has to be imported onto a patient;s record
 @pytest.mark.asyncio
-async def test_import_milestone(context, milestone_create_mutation, milestone_create_permission):
+async def test_import_milestone(
+    context, milestone_create_mutation,
+    milestone_create_permission
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given: we have a patient on a pathway
@@ -91,7 +95,10 @@ async def test_import_milestone(context, milestone_create_mutation, milestone_cr
     assert_that(import_milestone_mutation['milestone']['id'], not_none())
 
 
-async def test_user_lacks_permission(login_user, test_client, milestone_create_mutation):
+async def test_user_lacks_permission(
+    login_user, test_client,
+    milestone_create_mutation
+):
     """
     Given the user's test role lacks the required permission
     """
@@ -112,4 +119,7 @@ async def test_user_lacks_permission(login_user, test_client, milestone_create_m
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )

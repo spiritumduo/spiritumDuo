@@ -181,7 +181,10 @@ async def test_get_pathways(context, pathway_read_permission):
     assert_that(get_pathway_query[2]['name'], equal_to(PATHWAY_TWO.name))
 
 
-async def test_user_lacks_permission(login_user, test_client, pathway_create_mutation):
+async def test_user_lacks_permission(
+    login_user, test_client,
+    pathway_create_mutation
+):
     """
     Given the user's test role lacks the required permission
     """
@@ -199,4 +202,7 @@ async def test_user_lacks_permission(login_user, test_client, pathway_create_mut
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions"
+    ))

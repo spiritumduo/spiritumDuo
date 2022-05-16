@@ -1,13 +1,11 @@
-import logging
-
 import pytest
-from models import Patient
 from hamcrest import assert_that, has_item
 from trustadapter.trustadapter import Patient_IE
 
 
 async def test_patient_search(
-        login_user, test_client, patient_read_permission, test_patients, test_patients_on_pathway, test_pathway,
+        login_user, test_client, patient_read_permission,
+        test_patients, test_patients_on_pathway, test_pathway,
         mock_trust_adapter,
 ):
     mock_patients = []
@@ -44,7 +42,8 @@ async def test_patient_search(
     patient_4 = mock_patients[7]
 
     mock_trust_adapter.patient_search.return_value = [
-        patient_1, patient_2, patient_3, patient_4, invalid_patient_1, invalid_patient_2
+        patient_1, patient_2, patient_3, patient_4,
+        invalid_patient_1, invalid_patient_2
     ]
 
     query_string = f"{patient_1.last_name} {patient_2.first_name} {patient_3.hospital_number} {patient_4.national_number}"
@@ -86,4 +85,3 @@ async def test_patient_search(
 
     for value in expected_values:
         assert_that(received_values, has_item(value))
-

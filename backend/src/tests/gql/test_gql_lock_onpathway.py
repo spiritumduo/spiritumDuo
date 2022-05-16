@@ -34,11 +34,14 @@ def on_pathway_lock_mutation() -> str:
         }
     """
 
+
 # Feature: testing lockOnPathway
 # Scenario: an OnPathway record needs to be locked to a user
 @pytest.mark.asyncio
 async def test_lock_on_pathway(
-        context, on_pathway_update_permission, on_pathway_read_permission, on_pathway_lock_mutation
+        context, on_pathway_update_permission,
+        on_pathway_read_permission,
+        on_pathway_lock_mutation
 ):
     context.trust_adapter_mock.test_connection.return_value = True
     """
@@ -103,7 +106,10 @@ async def test_lock_on_pathway(
 
 # Scenario: an OnPathway record needs to be unlocked
 @pytest.mark.asyncio
-async def test_unlock_lock_on_pathway(context, on_pathway_update_permission, on_pathway_read_permission):
+async def test_unlock_lock_on_pathway(
+    context, on_pathway_update_permission,
+    on_pathway_read_permission
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given we have a patient on a pathway
@@ -191,7 +197,9 @@ async def test_unlock_lock_on_pathway(context, on_pathway_update_permission, on_
 # Scenario: attempted onPathway lock while already being locked
 @pytest.mark.asyncio
 async def test_locked_lock_on_pathway(
-        context, on_pathway_update_permission, on_pathway_read_permission, on_pathway_lock_mutation
+        context, on_pathway_update_permission,
+        on_pathway_read_permission,
+        on_pathway_lock_mutation
 ):
     context.trust_adapter_mock.test_connection.return_value = True
     """
@@ -259,7 +267,10 @@ async def test_locked_lock_on_pathway(
 
 # Scenario: attempted onPathway unlock while locked by someone else
 @pytest.mark.asyncio
-async def test_unlocked_locked_lock_on_pathway(context, on_pathway_update_permission, on_pathway_read_permission):
+async def test_unlocked_locked_lock_on_pathway(
+    context, on_pathway_update_permission,
+    on_pathway_read_permission
+):
     context.trust_adapter_mock.test_connection.return_value = True
     """
     Given we have a patient on a pathway
@@ -350,7 +361,10 @@ async def test_unlocked_locked_lock_on_pathway(context, on_pathway_update_permis
     assert_that(userErrors[0]['field'], equal_to("lock_user_id"))
 
 
-async def test_user_lacks_permission(login_user, test_client, on_pathway_lock_mutation):
+async def test_user_lacks_permission(
+    login_user, test_client,
+    on_pathway_lock_mutation
+):
     """
     Given the user's test role lacks the required permission
     """
@@ -368,4 +382,7 @@ async def test_user_lacks_permission(login_user, test_client, on_pathway_lock_mu
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )
