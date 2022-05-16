@@ -186,9 +186,6 @@ class MilestoneByOnPathwayIdLoader(SdDataLoader):
             Parameters:
                 context (dict): request context
                 id (List[int]): IDs to find
-                notOnDecisionPoint (bool): this is a filter that will return
-                    milestones based on whether they have a DecisionPoint ID
-                    set
             Returns:
                 List[Milestone]
         """

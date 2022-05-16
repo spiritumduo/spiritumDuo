@@ -63,7 +63,7 @@ export const GET_PATIENT_QUERY = gql`
             firstName
             lastName
           }
-          milestones(notOnDecisionPoint: false) {
+          milestones{
             id
             forwardDecisionPoint {
               id

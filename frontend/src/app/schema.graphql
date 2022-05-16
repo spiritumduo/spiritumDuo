@@ -199,7 +199,6 @@ type OnPathway {
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
     milestones(
-        notOnDecisionPoint: Boolean = True
         outstanding: Boolean = False
         limit: Int = 0
     ): [Milestone!]
