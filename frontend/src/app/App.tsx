@@ -86,7 +86,7 @@ const RequirePathways = ({ children, location }: React.ComponentPropsWithRef<any
   const { user } = useContext(AuthContext);
   const { currentPathwayId } = useContext(PathwayContext);
   const isAdmin = user?.roles.find((r) => r.name === 'admin');
-  if (isAdmin && !user?.pathways?.[0]) {
+  if (isAdmin && (!user?.pathways?.[0] || !currentPathwayId)) {
     return <Navigate to="/admin" state={ { from: location } } />;
   }
   if (!user?.pathways?.[0] || !currentPathwayId) {
