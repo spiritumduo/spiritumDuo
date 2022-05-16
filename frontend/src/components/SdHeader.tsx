@@ -23,6 +23,7 @@ const SdHeader = ({
   const currentOption = user?.pathways?.find(
     (p) => p.id.toString() === currentPathwayId?.toString(),
   );
+  const hasPathways = !!user?.pathways?.[0];
   const [searchState, setSearchState] = useState(false);
   const [navbarState, setNavbarState] = useState(false);
   return (
@@ -36,6 +37,7 @@ const SdHeader = ({
           aria-label="Open search"
           aria-expanded={ navbarState ? 'true' : 'false' }
           onClick={ () => setNavbarState(!navbarState) }
+          disabled={ !hasPathways }
         >
           <ThreeDots />
         </button>
@@ -46,6 +48,7 @@ const SdHeader = ({
           aria-label="Open search"
           aria-expanded={ searchState ? 'true' : 'false' }
           onClick={ () => setSearchState(!searchState) }
+          disabled={ !hasPathways }
         >
           <SearchIcon />
           <span className="nhsuk-u-visually-hidden">Search</span>
@@ -57,7 +60,7 @@ const SdHeader = ({
         />
         <div className="nhsuk-header__search" aria-disabled>
           <div className={ `nhsuk-header__search-wrap ${searchState ? 'js-show' : ''}` }>
-            <SearchBar />
+            { hasPathways ? <SearchBar /> : '' }
           </div>
         </div>
       </Header.Container>
@@ -67,15 +70,22 @@ const SdHeader = ({
             <span>Menu</span>
           </p>
           <ul className="nhsuk-header__navigation-list">
-            <li className="nhsuk-header__navigation-item">
-              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app">Home</a>
-            </li>
-            <li className="nhsuk-header__navigation-item">
-              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#mdt">MDT</a>
-            </li>
-            <li className="nhsuk-header__navigation-item">
-              <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
-            </li>
+            {
+              hasPathways
+                ? (
+                  <>
+                    <li className="nhsuk-header__navigation-item">
+                      <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app">Home</a>
+                    </li>
+                    <li className="nhsuk-header__navigation-item">
+                      <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#mdt">MDT</a>
+                    </li>
+                    <li className="nhsuk-header__navigation-item">
+                      <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>
+                    </li>
+                  </>
+                ) : ''
+            }
             {
               user?.roles?.find((r) => r.name === 'admin')
                 ? (
