@@ -12,7 +12,7 @@ def new_clinician(test_pathway):
     return {
         "firstName": "JOHN",
         "lastName": "SMITH",
-        "username": "JOHN.SMITH123",
+        "username": "john.smith123",
         "email": "test@test.com",
         "password": "VERYSECUREPASSWORD",
         "department": "ONCOLOGY",

@@ -141,7 +141,7 @@ class UserFixture:
 @pytest.fixture
 async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role) -> UserFixture:
     user_info = {
-        "username": "testUser",
+        "username": "testuser",
         "password": "testPassword"
     }
     pathway = test_pathway
