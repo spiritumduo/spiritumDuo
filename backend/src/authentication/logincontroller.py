@@ -1,5 +1,5 @@
 from base64 import b64encode
-from typing import Dict, List, Union
+from typing import Union
 from gino.loader import ModelLoader
 from gino import Gino
 from starlette.responses import JSONResponse
@@ -57,10 +57,10 @@ class LoginController:
                 "error": self._WRONG_USERNAME_OR_PASSWORD_PROMPT
             })
 
-        username = inputData['username']
+        username = str(inputData['username']).lower()
         password = inputData['password']
         async with self._db.acquire(reuse=False) as conn:
-            user = await conn.one_or_none(
+            user: User = await conn.one_or_none(
                 User.query.where(User.username == username)
             )
 
@@ -148,7 +148,7 @@ class LoginController:
         res = JSONResponse({
             "user": {
                 "id": sdUser.id,
-                "username": sdUser.username,
+                "username": sdUser.username.lower(),
                 "firstName": sdUser.firstName,
                 "lastName": sdUser.lastName,
                 "department": sdUser.department,

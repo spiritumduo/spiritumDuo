@@ -43,7 +43,7 @@ async def CreateUser(
     hashedPassword = hashedPassword.decode('utf-8')
 
     newUser = await User.create(
-        username=username,
+        username=username.lower(),
         password=hashedPassword,
         email=email,
         first_name=first_name,
