@@ -71,7 +71,7 @@ const renderError = () => render(
 test('Error should display to user', async () => {
   renderError();
   const { click, type } = userEvent.setup();
-  const createUserBtn = screen.getByRole('button', { name: /create\s+user/i });
+  // const createUserBtn = screen.getByRole('button', { name: /create\s+user/i });
   await waitFor(() => {
     type(screen.getByLabelText(/username/i), 'Username');
     type(screen.getByLabelText(/password/i), 'Password');
@@ -80,6 +80,8 @@ test('Error should display to user', async () => {
     type(screen.getByLabelText(/last name/i), 'Last name');
     type(screen.getByLabelText(/department/i), 'Department');
   });
-  await waitFor(() => click(createUserBtn));
-  expect(screen.getByText(/Error: /i)).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByRole('button', { name: /Update user/i })));
+  const updateBtn = screen.getByRole('button', { name: /Update user/i });
+  await updateBtn.click();
+  await waitFor(() => expect(screen.getByText(/Error: /i)).toBeInTheDocument());
 });
