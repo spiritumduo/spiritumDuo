@@ -104,11 +104,10 @@ test('Should display error if no pathways present while logged in as standard us
       updateCurrentPathwayId: () => {},
     },
   });
-  expect(screen.getByText(/the current logged in user does not have access to any pathways/i)).toBeInTheDocument();
-  expect(screen.queryByText(/administration panel/i)).not.toBeInTheDocument();
+  expect(screen.getByText(/This user account has no access to pathways/i)).toBeInTheDocument();
 });
 
-test('Should display error with link to administration page if no pathways present while logged in as admin user', () => {
+test('Should redirect to administration page if no pathways present while logged in as admin user', async () => {
   renderApp({
     pathwayProviderProps: {
       updateCurrentPathwayId: () => {},
@@ -118,6 +117,5 @@ test('Should display error with link to administration page if no pathways prese
       updateUser: () => {},
     },
   });
-  expect(screen.getByText(/the current logged in user does not have access to any pathways/i)).toBeInTheDocument();
-  expect(screen.getByText(/administration panel/i)).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByText(/Roles management/i)).toBeInTheDocument() );
 });

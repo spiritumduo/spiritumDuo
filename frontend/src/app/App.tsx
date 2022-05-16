@@ -35,14 +35,6 @@ const LoggedInRoutes = () => (
           path="/patients/all"
           element={ <HomePage patientsPerPage={ 20 } allPatients /> }
         />
-        <Route
-          path="/admin"
-          element={ (
-            <RequireAdmin>
-              <AdministrationPage />
-            </RequireAdmin>
-          ) }
-        />
       </Routes>
     </RequirePathways>
   </PageLayout>
@@ -52,6 +44,16 @@ const App = (): JSX.Element => (
   <Routes>
     <Route path="/login" element={ <LoginPage /> } />
     <Route path="/logout" element={ <Logout /> } />
+    <Route
+      path="/admin"
+      element={ (
+        <RequireAdmin>
+          <PageLayout>
+            <AdministrationPage />
+          </PageLayout>
+        </RequireAdmin>
+      ) }
+    />
     <Route
       path="/*"
       element={ (
@@ -85,46 +87,19 @@ const RequirePathways = ({ children, location }: React.ComponentPropsWithRef<any
   const navigate = useNavigate();
   const { currentPathwayId } = useContext(PathwayContext);
   const isAdmin = user?.roles.find((r) => r.name === 'admin');
+  if (isAdmin) {
+    return <Navigate to="/admin" state={ { from: location} } />;
+  }
   if (!user?.pathways?.[0] || !currentPathwayId) {
     return (
-      <Container>
-        <ErrorSummary aria-labelledby="error-summary-title" role="alert" tabIndex={ -1 }>
-          <ErrorSummary.Title>A configuration error has occured</ErrorSummary.Title>
+      <Container className="mt-4">
+        <ErrorSummary className="mb-4" aria-labelledby="error-summary-title" role="alert" tabIndex={ -1 }>
+          <ErrorSummary.Title>This user account has no access to pathways</ErrorSummary.Title>
           <ErrorSummary.Body>
             <ErrorSummary.List>
               <ErrorSummary.Item>The current logged in user does not have access to any pathways.</ErrorSummary.Item>
               <ErrorSummary.Item>Please contact a system administrator.</ErrorSummary.Item>
             </ErrorSummary.List>
-            <div className="mt-4">
-              {
-                isAdmin
-                  ? (
-                    <Button
-                      onClick={ () => {
-                        navigate(
-                          '/admin',
-                          { state: { from: location } },
-                        );
-                      } }
-                      className="mb-0 me-2"
-                    >
-                      Administration panel
-                    </Button>
-                  )
-                  : ''
-              }
-              <Button
-                onClick={ () => {
-                  navigate(
-                    '/logout',
-                    { state: { from: location } },
-                  );
-                } }
-                className="mb-0"
-              >
-                Logout
-              </Button>
-            </div>
           </ErrorSummary.Body>
         </ErrorSummary>
       </Container>
