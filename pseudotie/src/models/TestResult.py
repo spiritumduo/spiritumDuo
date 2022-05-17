@@ -9,6 +9,7 @@ class TestResult(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     patient_id = db.Column(
         db.Integer(), db.ForeignKey('tbl_patient.id'), nullable=True)
+    pathway_name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     type_reference_name = db.Column(db.String(), nullable=False)
     current_state = db.Column(
