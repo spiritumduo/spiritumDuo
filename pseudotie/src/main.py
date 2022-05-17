@@ -102,7 +102,6 @@ async def patient_post(request: Request, input: PatientInput):
             date_of_birth=input.date_of_birth,
         )
         return {
-            "id": patient.id,
             "hospital_number": patient.hospital_number,
             "national_number": patient.national_number,
             "communication_method": patient.communication_method,
@@ -127,7 +126,6 @@ async def get_patient_hospital_id(request: Request, id: str):
     ).gino.first()
     if patient is not None:
         return {
-            "id": patient.id,
             "hospital_number": patient.hospital_number,
             "national_number": patient.national_number,
             "communication_method": patient.communication_method,
@@ -156,7 +154,6 @@ async def post_patient_hospital_id(request: Request, input: List[str]):
         res = []
         for patient in patients:
             res.append({
-                "id": patient.id,
                 "hospital_number": patient.hospital_number,
                 "national_number": patient.national_number,
                 "communication_method": patient.communication_method,

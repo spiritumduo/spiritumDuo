@@ -1,15 +1,14 @@
-import dataclasses
 import httpx
 from models import MilestoneType
 from abc import ABC, abstractmethod
-from typing import List, Optional, Set
+from typing import List, Optional
 from datetime import date, datetime
 from dataclasses import dataclass
 from enum import Enum
 
+
 @dataclass
 class Patient_IE:
-    id: int = None
     first_name: str = None
     last_name: str = None
     hospital_number: str = None
@@ -221,7 +220,6 @@ class PseudoTrustAdapter(TrustAdapter):
             return None
 
         return Patient_IE(
-            id=patientRecord['id'],
             first_name=patientRecord['first_name'],
             last_name=patientRecord['last_name'],
             hospital_number=patientRecord['hospital_number'],
@@ -245,7 +243,6 @@ class PseudoTrustAdapter(TrustAdapter):
         if patientRecord is None:
             return None
         return Patient_IE(
-            id=patientRecord['id'],
             first_name=patientRecord['first_name'],
             last_name=patientRecord['last_name'],
             hospital_number=patientRecord['hospital_number'],
@@ -271,7 +268,6 @@ class PseudoTrustAdapter(TrustAdapter):
         for patientRecord in patientList:
             patientObjectList.append(
                 Patient_IE(
-                    id=patientRecord['id'],
                     first_name=patientRecord['first_name'],
                     last_name=patientRecord['last_name'],
                     hospital_number=patientRecord['hospital_number'],
