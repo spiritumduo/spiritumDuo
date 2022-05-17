@@ -215,7 +215,8 @@ async def CreatePatient(
             TestResultRequest_IE(
                 type_id=milestone["milestoneTypeId"],
                 current_state=milestone["currentState"],
-                hospital_number=hospital_number
+                hospital_number=hospital_number,
+                pathway_name=_pathway.name
             ),
             auth_token=auth_token
         )

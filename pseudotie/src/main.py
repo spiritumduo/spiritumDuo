@@ -13,10 +13,10 @@ from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from sqlalchemy import or_, inspect
+from sqlalchemy import or_
 from typing import List, Optional, Union
 from RecordTypes import TestResultState
-from placeholder_data import TEST_RESULT_DATA, TEST_RESULT_DATA_SERIES
+from placeholder_data import getTestResultFromCharacteristics
 import httpx
 
 log = logging.getLogger("uvicorn")
@@ -183,30 +183,6 @@ async def patient_national_id(request: Request, id: str):
     return patient
 
 
-def getTestResultDescription(
-    typeName: str = None, hospitalNumber: str = None
-) -> str:
-    description = (
-        "Vitae itaque illo ut. Non "
-        "voluptatum aut qui porro dolores autem saepe.")
-    if typeName in TEST_RESULT_DATA:
-        try:
-            series_id = int(hospitalNumber[-1:])
-            description = TEST_RESULT_DATA_SERIES[
-                (series_id - 1)][typeName]['result']
-        except Exception as e:
-            log.warn(
-                "Error when pulling data from data series, falling"
-                f" back to milestone_demo_data.json\nERROR: {e}")
-            description = TEST_RESULT_DATA[(
-                typeName)]['result']
-    else:
-        log.warn(
-            f"TYPE REFERENCE '{typeName} HAS NO "
-            "DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
-    return description
-
-
 async def proc_wrapper(func):
     loop = asyncio.get_event_loop()
     loop.create_task(func)
@@ -214,14 +190,15 @@ async def proc_wrapper(func):
 
 async def updateTestResultAtRandomTime(
     testResultId: int = None, hospital_number: str = None,
-    delay: int = None
+    delay: int = None, pathwayName: str = None
 ):
     await asyncio.sleep(delay)
     testResult: TestResult = await TestResult.get(testResultId)
 
-    description = getTestResultDescription(
+    description = getTestResultFromCharacteristics(
         typeName=testResult.type_reference_name,
-        hospitalNumber=hospital_number
+        hospitalNumber=hospital_number,
+        pathwayName=pathwayName
     )
 
     await testResult.update(
@@ -249,6 +226,7 @@ class TestResultRequest(BaseModel):
     updatedAt: Optional[datetime]
     description: Optional[str]
     hospitalNumber: str
+    pathwayName: str
 
 
 @app.post("/testresult")
@@ -268,6 +246,7 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
 
     data = {
         "type_reference_name": input.typeReferenceName,
+        "pathway_name": input.pathwayName
     }
     if input.currentState is not None:
         data["current_state"] = input.currentState
@@ -281,10 +260,12 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
     data['patient_id'] = patient.id
 
     if input.currentState is not None and input.currentState == "COMPLETED":
-        data["description"] = input.description or getTestResultDescription(
-            typeName=input.typeReferenceName,
-            hospitalNumber=input.hospitalNumber
-        )
+        data["description"] = input.description or \
+            getTestResultFromCharacteristics(
+                typeName=input.typeReferenceName,
+                hospitalNumber=input.hospitalNumber,
+                pathwayName=input.pathwayName
+            )
 
     plannedReturnDelay = 0 if (
         input.currentState is not None and
@@ -303,6 +284,7 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
         bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
                 testResultId=testResult.id,
                 hospital_number=input.hospitalNumber,
+                pathwayName=input.pathwayName,
                 delay=plannedReturnDelay
             )
         )

@@ -1,12 +1,11 @@
 import dataclasses
-
 import httpx
 from models import MilestoneType
 from abc import ABC, abstractmethod
 from typing import List, Optional, Set
 from datetime import date, datetime
 from dataclasses import dataclass
-
+from enum import Enum
 
 @dataclass
 class Patient_IE:
@@ -27,6 +26,7 @@ class TestResultRequest_IE:
     updated_at: datetime = datetime.now()
     description: str = None
     hospital_number: str = None
+    pathway_name: str = None
 
 
 @dataclass
@@ -136,18 +136,24 @@ class TrustIntegrationCommunicationError(Exception):
     """
 
 
+class HTTPRequestType(Enum):
+    POST = "POST"
+    GET = "GET"
+
+
 async def httpRequest(
-    method: str, endpoint: str, json: dict = {}, cookies: dict = {}
+    method: HTTPRequestType, endpoint: str,
+    json: dict = {}, cookies: dict = {}
 ):
     try:
         async with httpx.AsyncClient() as client:
-            if method == "post":
+            if method == HTTPRequestType.POST:
                 response = await client.post(
                     endpoint,
                     json=json,
                     cookies=cookies
                 )
-            elif method == "get":
+            elif method == HTTPRequestType.GET:
                 response = await client.get(
                     endpoint,
                     cookies=cookies
@@ -185,7 +191,7 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def test_connection(self, auth_token: str = None):
         return await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/test/',
             cookies={"SDSESSION": auth_token}
         )
@@ -202,7 +208,7 @@ class PseudoTrustAdapter(TrustAdapter):
             "date_of_birth": patient.date_of_birth.isoformat(),
         }
         patientRecord = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/',
             json=json,
             cookies={"SDSESSION": auth_token}
@@ -228,7 +234,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, hospitalNumber: str = None, auth_token: str = None
     ) -> Optional[Patient_IE]:
         patientRecord = await httpRequest(
-            "get",
+            HTTPRequestType.GET,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}',
             cookies={"SDSESSION": auth_token}
             )
@@ -252,7 +258,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, hospitalNumbers: List = None, auth_token: str = None
     ) -> List[Optional[Patient_IE]]:
         patientList = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/',
             json=hospitalNumbers,
             cookies={"SDSESSION": auth_token}
@@ -287,6 +293,7 @@ class PseudoTrustAdapter(TrustAdapter):
         )
         params['typeReferenceName'] = milestoneType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
+        params['pathwayName'] = testResult.pathway_name
 
         if testResult.current_state:
             params['currentState'] = testResult.current_state.value
@@ -298,13 +305,15 @@ class PseudoTrustAdapter(TrustAdapter):
             params['description'] = testResult.description
 
         testResultRecord = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult',
             json=params,
             cookies={"SDSESSION": auth_token}
         )
+
         if not testResultRecord:
             return None
+
         testResultRecord = testResultRecord.json()
 
         testResultRecord['added_at'] = datetime.fromisoformat(
@@ -322,7 +331,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, recordId: str = None, auth_token: str = None
     ) -> Optional[TestResult_IE]:
         testResultRecord = await httpRequest(
-            "get",
+            HTTPRequestType.GET,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}',
             cookies={"SDSESSION": auth_token}
         )
@@ -345,7 +354,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, recordIds: List = None, auth_token: str = None
     ) -> List[Optional[TestResult_IE]]:
         testResultList = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/',
             json=recordIds,
             cookies={"SDSESSION": auth_token}
@@ -368,7 +377,7 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def patient_search(self, query: str) -> List[Patient_IE]:
         response = await httpRequest(
-            "get",
+            HTTPRequestType.GET,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patientsearch/{query}'
         )
 
