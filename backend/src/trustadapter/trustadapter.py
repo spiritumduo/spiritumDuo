@@ -127,6 +127,13 @@ class TrustAdapter(ABC):
         :return: List of patients
         """
 
+    @abstractmethod
+    async def clear_database(self) -> bool:
+        """
+        Clears pseudotie database, for debug reasons only
+        :return: boolean success
+        """
+
 
 class TrustIntegrationCommunicationError(Exception):
     """
@@ -208,7 +215,7 @@ class PseudoTrustAdapter(TrustAdapter):
         }
         patientRecord = await httpRequest(
             HTTPRequestType.POST,
-            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/',
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/debug/patient/',
             json=json,
             cookies={"SDSESSION": auth_token}
         )
@@ -385,3 +392,11 @@ class PseudoTrustAdapter(TrustAdapter):
                 Patient_IE(**r)
             )
         return patient_list
+
+    async def clear_database(self, auth_token: str = None) -> bool:
+        await httpRequest(
+            HTTPRequestType.POST,
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/debug/cleardatabase/',
+            cookies={"SDSESSION": auth_token}
+        )
+        return True

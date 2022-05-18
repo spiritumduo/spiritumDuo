@@ -74,45 +74,6 @@ async def test_post(request: Request):
     return Response(status_code=200)
 
 
-class PatientInput(BaseModel):
-    hospital_number: str
-    national_number: str
-    communication_method: str
-    first_name: str
-    last_name: str
-    date_of_birth: date
-
-
-@app.post("/patient/")
-@needs_authentication
-async def patient_post(request: Request, input: PatientInput):
-    """
-    Create patient
-    :param _: Request - ignored
-    :param input: PatientInput - patient data to input
-    :return: JSONResponse of created patient
-    """
-    try:
-        patient = await Patient.create(
-            hospital_number=input.hospital_number,
-            national_number=input.national_number,
-            communication_method=input.communication_method,
-            first_name=input.first_name,
-            last_name=input.last_name,
-            date_of_birth=input.date_of_birth,
-        )
-        return {
-            "hospital_number": patient.hospital_number,
-            "national_number": patient.national_number,
-            "communication_method": patient.communication_method,
-            "first_name": patient.first_name,
-            "last_name": patient.last_name,
-            "date_of_birth": patient.date_of_birth
-        }
-    except UniqueViolationError:
-        return JSONResponse(status_code=409)
-
-
 @app.get("/patient/hospital/{id}")
 @needs_authentication
 async def get_patient_hospital_id(request: Request, id: str):
@@ -351,5 +312,57 @@ async def get_test_result_get(request: Request, id: str = None):
         "added_at": testResult.added_at,
         "updated_at": testResult.updated_at
     }
+
+
+class PatientInput(BaseModel):
+    hospital_number: str
+    national_number: str
+    communication_method: str
+    first_name: str
+    last_name: str
+    date_of_birth: date
+
+
+@app.post("/debug/patient/")
+@needs_authentication
+async def debug_patient_post(request: Request, input: PatientInput):
+    """
+    Create patient
+    :param _: Request - ignored
+    :param input: PatientInput - patient data to input
+    :return: JSONResponse of created patient
+    """
+    try:
+        patient = await Patient.create(
+            hospital_number=input.hospital_number,
+            national_number=input.national_number,
+            communication_method=input.communication_method,
+            first_name=input.first_name,
+            last_name=input.last_name,
+            date_of_birth=input.date_of_birth,
+        )
+        return {
+            "hospital_number": patient.hospital_number,
+            "national_number": patient.national_number,
+            "communication_method": patient.communication_method,
+            "first_name": patient.first_name,
+            "last_name": patient.last_name,
+            "date_of_birth": patient.date_of_birth
+        }
+    except UniqueViolationError:
+        return JSONResponse(status_code=409)
+
+
+@app.post("/debug/cleardatabase/")
+@needs_authentication
+async def debug_clear_db(request: Request):
+    """
+    Clears database
+    :return:
+    """
+    await TestResult.delete.gino.status()
+    await Patient.delete.gino.status()
+
+    return JSONResponse({"success": True}, status_code=200)
 
 db.init_app(app)

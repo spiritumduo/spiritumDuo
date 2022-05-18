@@ -122,3 +122,11 @@ class TrustAdapterService(BaseService):
         :return: List of patients
         """
         return await self._trust_adapter_client.patient_search(query)
+
+
+    async def clear_database(self) -> bool:
+        """
+        Clears pseudotie database
+        :return: boolean success
+        """
+        return await self._trust_adapter_client.clear_database()
