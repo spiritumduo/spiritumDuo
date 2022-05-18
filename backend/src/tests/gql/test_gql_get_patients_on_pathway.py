@@ -41,7 +41,6 @@ async def test_get_patients_on_pathway(
         national_number="fNHS111111111"
     )
     PATIENT_ONE_IE = Patient_IE(
-        id=1000,
         first_name="Test",
         last_name="One",
         hospital_number=PATIENT_ONE.hospital_number,
@@ -53,7 +52,6 @@ async def test_get_patients_on_pathway(
         national_number="fNHS22222222"
     )
     PATIENT_TWO_IE = Patient_IE(
-        id=2000,
         first_name="Test",
         last_name="Two",
         hospital_number=PATIENT_TWO.hospital_number,
@@ -65,7 +63,6 @@ async def test_get_patients_on_pathway(
         national_number="fNHS33333333"
     )
     PATIENT_THREE_IE = Patient_IE(
-        id=3000,
         first_name="Test",
         last_name="Three",
         hospital_number=PATIENT_THREE.hospital_number,
@@ -162,7 +159,6 @@ async def test_get_patient_on_pathway_connection(
         national_number="fNHS111111111"
     )
     PATIENT_ONE_IE = Patient_IE(
-        id=1000,
         first_name="Test",
         last_name="One",
         hospital_number=PATIENT_ONE.hospital_number,
@@ -174,7 +170,6 @@ async def test_get_patient_on_pathway_connection(
         national_number="fNHS22222222"
     )
     PATIENT_TWO_IE = Patient_IE(
-        id=2000,
         first_name="Test",
         last_name="Two",
         hospital_number=PATIENT_TWO.hospital_number,
@@ -186,7 +181,6 @@ async def test_get_patient_on_pathway_connection(
         national_number="fNHS33333333"
     )
     PATIENT_THREE_IE = Patient_IE(
-        id=3000,
         first_name="Test",
         last_name="Three",
         hospital_number=PATIENT_THREE.hospital_number,

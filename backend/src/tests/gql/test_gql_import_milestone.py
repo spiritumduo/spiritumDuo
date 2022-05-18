@@ -49,7 +49,6 @@ async def test_import_milestone(
         national_number="fNHS12345678"
     )
     PATIENT_IE = Patient_IE(
-        id=1000,
         hospital_number="fMRN123456",
         national_number="fNHS12345678",
         first_name="Test",

@@ -105,7 +105,6 @@ async def test_add_new_patient_to_system(
     )
 
     PATIENT_IE = Patient_IE(
-        id=PATIENT.id,
         first_name="Test",
         last_name="User",
         hospital_number=PATIENT.hospital_number,

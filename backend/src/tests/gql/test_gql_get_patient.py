@@ -126,7 +126,6 @@ async def test_search_for_patient(
     )
 
     PATIENT_IE = Patient_IE(
-        id=PATIENT.id,
         first_name="Test",
         last_name="User",
         hospital_number=PATIENT.hospital_number,
