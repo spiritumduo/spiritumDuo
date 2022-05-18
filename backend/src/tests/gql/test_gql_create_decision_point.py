@@ -96,16 +96,6 @@ async def test_add_decision_point_to_patient(
         national_number=f"fNHS{randint(100000000,999999999)}",
     )
 
-    Patient_IE(
-        id=PATIENT.id,
-        first_name="Test",
-        last_name="User",
-        hospital_number=PATIENT.hospital_number,
-        national_number=PATIENT.national_number,
-        date_of_birth="2000-01-01",
-        communication_method="LETTER"
-    )
-
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
         pathway_id=context.PATHWAY.id,

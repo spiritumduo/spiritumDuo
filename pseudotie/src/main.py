@@ -13,10 +13,10 @@ from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from sqlalchemy import or_, inspect
+from sqlalchemy import or_
 from typing import List, Optional, Union
 from RecordTypes import TestResultState
-from placeholder_data import TEST_RESULT_DATA, TEST_RESULT_DATA_SERIES
+from placeholder_data import getTestResultFromCharacteristics
 import httpx
 
 log = logging.getLogger("uvicorn")
@@ -74,46 +74,6 @@ async def test_post(request: Request):
     return Response(status_code=200)
 
 
-class PatientInput(BaseModel):
-    hospital_number: str
-    national_number: str
-    communication_method: str
-    first_name: str
-    last_name: str
-    date_of_birth: date
-
-
-@app.post("/patient/")
-@needs_authentication
-async def patient_post(request: Request, input: PatientInput):
-    """
-    Create patient
-    :param _: Request - ignored
-    :param input: PatientInput - patient data to input
-    :return: JSONResponse of created patient
-    """
-    try:
-        patient = await Patient.create(
-            hospital_number=input.hospital_number,
-            national_number=input.national_number,
-            communication_method=input.communication_method,
-            first_name=input.first_name,
-            last_name=input.last_name,
-            date_of_birth=input.date_of_birth,
-        )
-        return {
-            "id": patient.id,
-            "hospital_number": patient.hospital_number,
-            "national_number": patient.national_number,
-            "communication_method": patient.communication_method,
-            "first_name": patient.first_name,
-            "last_name": patient.last_name,
-            "date_of_birth": patient.date_of_birth
-        }
-    except UniqueViolationError:
-        return JSONResponse(status_code=409)
-
-
 @app.get("/patient/hospital/{id}")
 @needs_authentication
 async def get_patient_hospital_id(request: Request, id: str):
@@ -127,7 +87,6 @@ async def get_patient_hospital_id(request: Request, id: str):
     ).gino.first()
     if patient is not None:
         return {
-            "id": patient.id,
             "hospital_number": patient.hospital_number,
             "national_number": patient.national_number,
             "communication_method": patient.communication_method,
@@ -156,7 +115,6 @@ async def post_patient_hospital_id(request: Request, input: List[str]):
         res = []
         for patient in patients:
             res.append({
-                "id": patient.id,
                 "hospital_number": patient.hospital_number,
                 "national_number": patient.national_number,
                 "communication_method": patient.communication_method,
@@ -183,30 +141,6 @@ async def patient_national_id(request: Request, id: str):
     return patient
 
 
-def getTestResultDescription(
-    typeName: str = None, hospitalNumber: str = None
-) -> str:
-    description = (
-        "Vitae itaque illo ut. Non "
-        "voluptatum aut qui porro dolores autem saepe.")
-    if typeName in TEST_RESULT_DATA:
-        try:
-            series_id = int(hospitalNumber[-1:])
-            description = TEST_RESULT_DATA_SERIES[
-                (series_id - 1)][typeName]['result']
-        except Exception as e:
-            log.warn(
-                "Error when pulling data from data series, falling"
-                f" back to milestone_demo_data.json\nERROR: {e}")
-            description = TEST_RESULT_DATA[(
-                typeName)]['result']
-    else:
-        log.warn(
-            f"TYPE REFERENCE '{typeName} HAS NO "
-            "DESCRIPTION DEFINITION. DEFAULTING TO PLACEHOLDER TEXT")
-    return description
-
-
 async def proc_wrapper(func):
     loop = asyncio.get_event_loop()
     loop.create_task(func)
@@ -214,14 +148,15 @@ async def proc_wrapper(func):
 
 async def updateTestResultAtRandomTime(
     testResultId: int = None, hospital_number: str = None,
-    delay: int = None
+    delay: int = None, pathwayName: str = None
 ):
     await asyncio.sleep(delay)
     testResult: TestResult = await TestResult.get(testResultId)
 
-    description = getTestResultDescription(
+    description = getTestResultFromCharacteristics(
         typeName=testResult.type_reference_name,
-        hospitalNumber=hospital_number
+        hospitalNumber=hospital_number,
+        pathwayName=pathwayName
     )
 
     await testResult.update(
@@ -243,12 +178,9 @@ async def updateTestResultAtRandomTime(
 
 
 class TestResultRequest(BaseModel):
-    currentState: Optional[str]
     typeReferenceName: str
-    addedAt: Optional[datetime]
-    updatedAt: Optional[datetime]
-    description: Optional[str]
     hospitalNumber: str
+    pathwayName: str
 
 
 @app.post("/testresult")
@@ -266,46 +198,30 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
     results and send them all at once to backend
     """
 
-    data = {
-        "type_reference_name": input.typeReferenceName,
-    }
-    if input.currentState is not None:
-        data["current_state"] = input.currentState
-    if input.addedAt is not None:
-        data["added_at"] = input.addedAt
-    if input.updatedAt is not None:
-        data["updated_at"] = input.updatedAt
-
     patient: Patient = await Patient.query.where(
         Patient.hospital_number == input.hospitalNumber).gino.one_or_none()
-    data['patient_id'] = patient.id
-
-    if input.currentState is not None and input.currentState == "COMPLETED":
-        data["description"] = input.description or getTestResultDescription(
-            typeName=input.typeReferenceName,
-            hospitalNumber=input.hospitalNumber
-        )
-
-    plannedReturnDelay = 0 if (
-        input.currentState is not None and
-        input.currentState == "COMPLETED"
-    ) else randint(30, 60)
-
+    plannedReturnDelay = randint(30, 60)
     plannedReturnTime = datetime.now() + timedelta(seconds=plannedReturnDelay)
-    data['planned_return_time'] = plannedReturnTime
+
+    data = {
+        "type_reference_name": input.typeReferenceName,
+        "pathway_name": input.pathwayName,
+        "patient_id": patient.id,
+        "planned_return_time": plannedReturnTime
+    }
 
     testResult: TestResult = await TestResult.create(
         **data
     )
 
     bg = BackgroundTasks()
-    if "description" not in data:
-        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
-                testResultId=testResult.id,
-                hospital_number=input.hospitalNumber,
-                delay=plannedReturnDelay
-            )
+    bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
+            testResultId=testResult.id,
+            hospital_number=input.hospitalNumber,
+            pathwayName=input.pathwayName,
+            delay=plannedReturnDelay
         )
+    )
 
     return JSONResponse({
         "id": testResult.id,
@@ -372,5 +288,139 @@ async def get_test_result_get(request: Request, id: str = None):
         "added_at": testResult.added_at,
         "updated_at": testResult.updated_at
     }
+
+
+class PatientInput(BaseModel):
+    hospital_number: str
+    national_number: str
+    communication_method: str
+    first_name: str
+    last_name: str
+    date_of_birth: date
+
+
+@app.post("/debug/patient/")
+@needs_authentication
+async def debug_patient_post(request: Request, input: PatientInput):
+    """
+    Create patient
+    :param _: Request - ignored
+    :param input: PatientInput - patient data to input
+    :return: JSONResponse of created patient
+    """
+    try:
+        patient = await Patient.create(
+            hospital_number=input.hospital_number,
+            national_number=input.national_number,
+            communication_method=input.communication_method,
+            first_name=input.first_name,
+            last_name=input.last_name,
+            date_of_birth=input.date_of_birth,
+        )
+        return {
+            "hospital_number": patient.hospital_number,
+            "national_number": patient.national_number,
+            "communication_method": patient.communication_method,
+            "first_name": patient.first_name,
+            "last_name": patient.last_name,
+            "date_of_birth": patient.date_of_birth
+        }
+    except UniqueViolationError:
+        return JSONResponse(status_code=409)
+
+
+@app.post("/debug/cleardatabase/")
+@needs_authentication
+async def debug_clear_db(request: Request):
+    """
+    Clears database
+    :return:
+    """
+    await TestResult.delete.gino.status()
+    await Patient.delete.gino.status()
+
+    return JSONResponse({"success": True}, status_code=200)
+
+
+class DebugTestResultRequest(BaseModel):
+    currentState: Optional[str]
+    typeReferenceName: str
+    addedAt: Optional[datetime]
+    updatedAt: Optional[datetime]
+    description: Optional[str]
+    hospitalNumber: str
+    pathwayName: str
+
+
+@app.post("/debug/testresult/")
+@needs_authentication
+async def debug_create_test_result(
+    request: Request, input: DebugTestResultRequest
+):
+    """
+    Create test result
+    :return: JSONResponse containing ID of created test result or error data
+    """
+    """
+    Runs as it does currently, opens up a thread to wait until the time
+    is right
+    Additionally, when pseudotie starts it'll query the database for a
+    list of not yet completed
+    results and send them all at once to backend
+    """
+
+    data = {
+        "type_reference_name": input.typeReferenceName,
+        "pathway_name": input.pathwayName
+    }
+    if input.currentState is not None:
+        data["current_state"] = input.currentState
+    if input.addedAt is not None:
+        data["added_at"] = input.addedAt
+    if input.updatedAt is not None:
+        data["updated_at"] = input.updatedAt
+
+    patient: Patient = await Patient.query.where(
+        Patient.hospital_number == input.hospitalNumber).gino.one_or_none()
+    data['patient_id'] = patient.id
+
+    if input.currentState is not None and input.currentState == "COMPLETED":
+        data["description"] = input.description or \
+            getTestResultFromCharacteristics(
+                typeName=input.typeReferenceName,
+                hospitalNumber=input.hospitalNumber,
+                pathwayName=input.pathwayName
+            )
+
+    plannedReturnDelay = 0 if (
+        input.currentState is not None and
+        input.currentState == "COMPLETED"
+    ) else randint(30, 60)
+
+    data['planned_return_time'] = datetime.now() + timedelta(
+        seconds=plannedReturnDelay)
+
+    testResult: TestResult = await TestResult.create(
+        **data
+    )
+
+    bg = BackgroundTasks()
+    if "description" not in data:
+        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
+                testResultId=testResult.id,
+                hospital_number=input.hospitalNumber,
+                pathwayName=input.pathwayName,
+                delay=plannedReturnDelay
+            )
+        )
+
+    return JSONResponse({
+        "id": testResult.id,
+        "description":  testResult.description,
+        "type_reference_name": testResult.type_reference_name,
+        "current_state": testResult.current_state.value,
+        "added_at": testResult.added_at.isoformat(),
+        "updated_at": testResult.updated_at.isoformat()
+    }, background=bg)
 
 db.init_app(app)

@@ -1,7 +1,6 @@
 import json
 import pytest
 from datetime import datetime
-from random import randint
 from models import Patient
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, MilestoneState
@@ -100,12 +99,11 @@ async def test_add_new_patient_to_system(
     context.trust_adapter_mock.test_connection.return_value = True
 
     PATIENT = await Patient.create(
-        hospital_number=f"fMRN{randint(100000,999999)}",
-        national_number=f"fNHS{randint(100000000,999999999)}",
+        hospital_number="fMRN123456",
+        national_number="fNHS123456789",
     )
 
     PATIENT_IE = Patient_IE(
-        id=PATIENT.id,
         first_name="Test",
         last_name="User",
         hospital_number=PATIENT.hospital_number,
@@ -152,7 +150,7 @@ async def test_add_new_patient_to_system(
         communication_method=PATIENT_IE.communication_method
     )
 
-    context.trust_adapter_mock.create_test_result.return_value = TEST_RESULT
+    context.trust_adapter_mock.create_test_result_immediately.return_value = TEST_RESULT
     context.trust_adapter_mock.load_test_result.return_value = TEST_RESULT
     context.trust_adapter_mock.load_many_test_results.return_value = [
         TEST_RESULT
@@ -249,13 +247,10 @@ async def test_add_new_patient_to_system(
         onPathway['milestones'][0]['testResult']['description'],
         equal_to(TEST_RESULT.description)
     )
-    # TODO: this is an issue, need to correct return type for currentState as
-    # returns string of enum
-    # assert_that(
-    #     onPathway['milestones'][0]['testResult']['currentState'],
-    #     equal_to(str(TEST_RESULT.current_state.value))
-    # )
-
+    assert_that(
+        onPathway['milestones'][0]['testResult']['currentState'],
+        equal_to(str(TEST_RESULT.current_state.value))
+    )
     assert_that(
         onPathway['milestones'][0]['testResult']['addedAt'],
         equal_to(TEST_RESULT.added_at.isoformat())
@@ -274,7 +269,9 @@ async def test_add_new_patient_to_system(
     PATIENT_IE.onPathwayId = patient_record['onPathways'][0]['id']
 
 
-async def test_user_lacks_permission(login_user, test_client, patient_create_query):
+async def test_user_lacks_permission(
+    login_user, test_client, patient_create_query
+):
     """
     Given the user's test role lacks the required permission
     """

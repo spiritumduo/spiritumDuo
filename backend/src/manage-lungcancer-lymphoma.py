@@ -40,9 +40,9 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS_PER_PATHWAY = 5
-NUMBER_OF_PATHWAYS = 20
-NUMBER_OF_PATIENTS_PER_PATHWAY = 5
+NUMBER_OF_PATHWAYS = 5
+NUMBER_OF_LUNG_CANCER_PATIENTS = 5
+NUMBER_OF_LYMPHOMA_PATIENTS = 2
 
 
 class RequestPlaceholder(dict):
@@ -332,39 +332,83 @@ async def insert_demo_data():
         ),
     ]
 
-    for pathwayIndex in range(1, NUMBER_OF_PATHWAYS+1):
-        pathways: List[Pathway] = [
-            await Pathway.create(
-                name=f"Lung cancer demo {pathwayIndex}-1"
-            )
-        ]
+    lymphoma_milestone_types: List[MilestoneType] = [
+        await MilestoneType.create(
+            name="I don't know",
+            ref_name="I don't know (I don't know)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="I don't know v2",
+            ref_name="I don't know v2 (I don't know v2)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="I don't know v3",
+            ref_name="I don't know v3 (I don't know v3)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="I don't know v4",
+            ref_name="I don't know v4 (I don't know v4)",
+            is_test_request=True
+        ),
+        await MilestoneType.create(
+            name="I don't know v5",
+            ref_name="I don't know v5 (I don't know v5)",
+            is_test_request=True
+        ),
+    ]
 
+    for pathwaySetIndex in range(1, NUMBER_OF_PATHWAYS + 1):
+        lung_pathway: Pathway = await Pathway.create(
+            name=f"Lung cancer {pathwaySetIndex}"
+        )
         for key in general_milestone_types:
             await PathwayMilestoneType.create(
-                pathway_id=pathways[0].id,
+                pathway_id=lung_pathway.id,
                 milestone_type_id=general_milestone_types[key].id
             )
 
         for mT in lung_cancer_milestone_types:
             await PathwayMilestoneType.create(
-                pathway_id=pathways[0].id,
+                pathway_id=lung_pathway.id,
                 milestone_type_id=mT.id
             )
 
-        for userIndex in range(1, NUMBER_OF_USERS_PER_PATHWAY+1):
-            unencoded_password = f"22password{pathwayIndex}"
+        lymphoma_pathway: Pathway = await Pathway.create(
+            name=f"Lymphoma {pathwaySetIndex}"
+        )
+
+        for key in general_milestone_types:
+            await PathwayMilestoneType.create(
+                pathway_id=lymphoma_pathway.id,
+                milestone_type_id=general_milestone_types[key].id
+            )
+
+        for mT in lymphoma_milestone_types:
+            await PathwayMilestoneType.create(
+                pathway_id=lymphoma_pathway.id,
+                milestone_type_id=mT.id
+            )
+
+        print(f"pathway id {lung_pathway.id} name {lung_pathway.name}")
+        print(f"pathway id {lymphoma_pathway.id} name {lymphoma_pathway.name}")
+
+        for userIndex in range(1, 6):
+            unencoded_password = f"22password{pathwaySetIndex}"
             sd_password = hashpw(
                 unencoded_password.encode('utf-8'),
                 gensalt()
             ).decode('utf-8')
-            username = f"demo-{pathwayIndex}-{userIndex}"
+            username = f"demo-{pathwaySetIndex}-{userIndex}"
 
             sd_user: User = await User.create(
                 username=username,
                 password=sd_password,
                 email=f"{username}@sd-test.testdomain",
                 first_name="Demo",
-                last_name=f"User {pathwayIndex} {userIndex}",
+                last_name=f"User {pathwaySetIndex} {userIndex}",
                 department="Demo user",
             )
 
@@ -377,25 +421,36 @@ async def insert_demo_data():
                     user_id=sd_user.id,
                     role_id=roles['admin'].id
                 )
-            
+
             await UserPathway.create(
                 user_id=sd_user.id,
-                pathway_id=pathways[0].id
+                pathway_id=lung_pathway.id
+            )
+
+            await UserPathway.create(
+                user_id=sd_user.id,
+                pathway_id=lymphoma_pathway.id
             )
 
             print(f"Creating user (username: {sd_user.username}; password {unencoded_password}")
 
-        for i in range(1, NUMBER_OF_PATIENTS_PER_PATHWAY+1):
+        for pathwayIndex in range(1, 3):
+            if pathwayIndex == 1:
+                currentPathway = lung_pathway
+                NUMBER_OF_PATIENTS = 5
+            elif pathwayIndex == 2:
+                currentPathway = lymphoma_pathway
+                NUMBER_OF_PATIENTS = 2
 
-            for pathway in pathways:
+            for i in range(1, NUMBER_OF_PATIENTS+1):
                 hospital_number_prefix = "fMRN"
-                hospital_number = f"{pathway.id}{i}"
+                hospital_number = f"{currentPathway.id}{i}"
                 while len(hospital_number) != 6:
                     hospital_number = str(randint(1, 9)) + hospital_number
                 hospital_number = hospital_number_prefix + hospital_number
 
                 national_number_prefix = "fNHS"
-                national_number = f"{pathway.id}{i}"
+                national_number = f"{currentPathway.id}{i}"
                 while len(national_number) != 9:
                     national_number = str(randint(1, 9)) + national_number
                 national_number = national_number_prefix + national_number
@@ -411,9 +466,6 @@ async def insert_demo_data():
                     national_number=national_number
                 )
 
-                if isinstance(sd_patient, DataCreatorInputErrors):
-                    raise Exception(sd_patient.errorList)
-
                 await PseudoTrustAdapter().create_patient(
                     patient=Patient_IE(
                         first_name=faker.first_name(),
@@ -428,7 +480,7 @@ async def insert_demo_data():
 
                 sd_onpathway: OnPathway = await OnPathway.create(
                     patient_id=sd_patient.id,
-                    pathway_id=pathway.id,
+                    pathway_id=currentPathway.id,
                 )
 
                 tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
@@ -436,7 +488,7 @@ async def insert_demo_data():
                         type_id=general_milestone_types["referral_letter"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
-                        pathway_name=pathway.name
+                        pathway_name=currentPathway.name
                     ),
                     auth_token=SESSION_COOKIE
                 )
@@ -453,7 +505,7 @@ async def insert_demo_data():
                         type_id=general_milestone_types["chest_xray"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
-                        pathway_name=pathway.name
+                        pathway_name=currentPathway.name
                     ),
                     auth_token=SESSION_COOKIE
                 )
@@ -469,7 +521,7 @@ async def insert_demo_data():
                         type_id=general_milestone_types["ct_chest"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
-                        pathway_name=pathway.name
+                        pathway_name=currentPathway.name
                     ),
                     auth_token=SESSION_COOKIE
                 )
@@ -480,6 +532,8 @@ async def insert_demo_data():
                     milestone_type_id=general_milestone_types["ct_chest"].id,
                 )
 
+                if isinstance(sd_patient, DataCreatorInputErrors):
+                    raise Exception(sd_patient.errorList)
 
 loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))

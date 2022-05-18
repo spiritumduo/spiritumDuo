@@ -1,0 +1,90 @@
+{
+    "Referral letter (record artifact)": {
+        "name": "Referral letter",
+        "result": "fallback data goes here"
+    },
+    "Plain chest X-ray (procedure)": {
+        "name": "Chest X-ray",
+        "result": "fallback data goes here"
+    },    
+    "Computed tomography of chest (procedure)": {
+        "name": "CT chest",
+        "result": "fallback data goes here"
+    },
+    "Positron emission tomography with computed tomography (procedure)": {
+        "name": "PET-CT",
+        "result": "fallback data goes here"
+    },
+    "Computed tomography of head with contrast (procedure)": {
+        "name": "CT head - contrast",
+        "result": "fallback data goes here"
+    },
+    "Magnetic resonance imaging of head (procedure)": {
+        "name": "MRI head",
+        "result": "fallback data goes here"
+    },
+    "Measurement of respiratory function (procedure)": {
+        "name": "Lung function tests",
+        "result": "fallback data goes here"
+    },
+    "Echocardiography (procedure)": {
+        "name": "ECHO",
+        "result": "fallback data goes here"
+    },
+    "Biopsy of thorax using computed tomography guidance (procedure)": {
+        "name": "CT guided biopsy thorax",
+        "result": "fallback data goes here"
+    },
+    "Pathology report (record artifact)": {
+        "name": "Pathology",
+        "result": "fallback data goes here"
+    },
+    "Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)": {
+        "name": "EBUS",
+        "result": "fallback data goes here"
+    },
+    "Electrocardiogram analysis (qualifier value)": {
+        "name": "ECG",
+        "result": "fallback data goes here"
+    },
+    "Prehabilitation (regime/therapy)": {
+        "name": "Prehad referral",
+        "result": "fallback data goes here"
+    },
+    "Patient referral to dietitian (procedure)": {
+        "name": "Dietician referral",
+        "result": "fallback data goes here"
+    },
+    "Thoracoscopy (procedure)": {
+        "name": "Thoracoscopy",
+        "result": "fallback data goes here"
+    },
+    "Bronchoscopy (procedure)": {
+        "name": "Bronchoscopy",
+        "result": "fallback data goes here"
+    },
+    "Thoracentesis (procedure)": {
+        "name": "Pleural tap",
+        "result": "fallback data goes here"
+    },
+    "Cardiopulmonary exercise test (procedure)": {
+        "name": "CPET",
+        "result": "fallback data goes here"
+    },
+    "Referral to smoking cessation service (procedure)": {
+        "name": "Smoking cessation referral",
+        "result": "fallback data goes here"
+    },
+    "Blood test (procedure)": {
+        "name": "Bloods",
+        "result": "fallback data goes here"
+    },
+    "Assessment by multidisciplinary team (procedure)": {
+        "name": "Add to MDT",
+        "result": "fallback data goes here"
+    },
+    "Appointment (record artifact)": {
+        "name": "Book clinic appointment",
+        "result": "fallback data goes here"
+    }
+}

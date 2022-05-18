@@ -1,0 +1,1 @@
+from .placeholder_data import getTestResultFromCharacteristics

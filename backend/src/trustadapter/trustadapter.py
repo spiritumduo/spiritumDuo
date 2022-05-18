@@ -1,16 +1,14 @@
-import dataclasses
-
 import httpx
 from models import MilestoneType
 from abc import ABC, abstractmethod
-from typing import List, Optional, Set
+from typing import List, Optional
 from datetime import date, datetime
 from dataclasses import dataclass
+from enum import Enum
 
 
 @dataclass
 class Patient_IE:
-    id: int = None
     first_name: str = None
     last_name: str = None
     hospital_number: str = None
@@ -22,11 +20,19 @@ class Patient_IE:
 @dataclass
 class TestResultRequest_IE:
     type_id: int = None
+    hospital_number: str = None
+    pathway_name: str = None
+
+
+@dataclass
+class TestResultRequestImmediately_IE:
+    type_id: int = None
     current_state: str = None
     added_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
     description: str = None
     hospital_number: str = None
+    pathway_name: str = None
 
 
 @dataclass
@@ -128,6 +134,24 @@ class TrustAdapter(ABC):
         :return: List of patients
         """
 
+    @abstractmethod
+    async def clear_database(self) -> bool:
+        """
+        Clears pseudotie database, for debug reasons only
+        :return: boolean success
+        """
+
+    @abstractmethod
+    async def create_test_result_immediately(
+        self, testResult: TestResultRequest_IE = None, auth_token: str = None
+    ) -> TestResult_IE:
+        """
+        Create a test result
+        :param auth_token: Auth token string to pass to backend
+        :param testResult: Test result to create
+        :return: String ID of created test result
+        """
+
 
 class TrustIntegrationCommunicationError(Exception):
     """
@@ -136,18 +160,24 @@ class TrustIntegrationCommunicationError(Exception):
     """
 
 
+class HTTPRequestType(Enum):
+    POST = "POST"
+    GET = "GET"
+
+
 async def httpRequest(
-    method: str, endpoint: str, json: dict = {}, cookies: dict = {}
+    method: HTTPRequestType, endpoint: str,
+    json: dict = {}, cookies: dict = {}
 ):
     try:
         async with httpx.AsyncClient() as client:
-            if method == "post":
+            if method == HTTPRequestType.POST:
                 response = await client.post(
                     endpoint,
                     json=json,
                     cookies=cookies
                 )
-            elif method == "get":
+            elif method == HTTPRequestType.GET:
                 response = await client.get(
                     endpoint,
                     cookies=cookies
@@ -185,7 +215,7 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def test_connection(self, auth_token: str = None):
         return await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/test/',
             cookies={"SDSESSION": auth_token}
         )
@@ -202,8 +232,8 @@ class PseudoTrustAdapter(TrustAdapter):
             "date_of_birth": patient.date_of_birth.isoformat(),
         }
         patientRecord = await httpRequest(
-            "post",
-            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/',
+            HTTPRequestType.POST,
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/debug/patient/',
             json=json,
             cookies={"SDSESSION": auth_token}
         )
@@ -215,7 +245,6 @@ class PseudoTrustAdapter(TrustAdapter):
             return None
 
         return Patient_IE(
-            id=patientRecord['id'],
             first_name=patientRecord['first_name'],
             last_name=patientRecord['last_name'],
             hospital_number=patientRecord['hospital_number'],
@@ -228,7 +257,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, hospitalNumber: str = None, auth_token: str = None
     ) -> Optional[Patient_IE]:
         patientRecord = await httpRequest(
-            "get",
+            HTTPRequestType.GET,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}',
             cookies={"SDSESSION": auth_token}
             )
@@ -239,7 +268,6 @@ class PseudoTrustAdapter(TrustAdapter):
         if patientRecord is None:
             return None
         return Patient_IE(
-            id=patientRecord['id'],
             first_name=patientRecord['first_name'],
             last_name=patientRecord['last_name'],
             hospital_number=patientRecord['hospital_number'],
@@ -252,7 +280,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, hospitalNumbers: List = None, auth_token: str = None
     ) -> List[Optional[Patient_IE]]:
         patientList = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/',
             json=hospitalNumbers,
             cookies={"SDSESSION": auth_token}
@@ -265,7 +293,6 @@ class PseudoTrustAdapter(TrustAdapter):
         for patientRecord in patientList:
             patientObjectList.append(
                 Patient_IE(
-                    id=patientRecord['id'],
                     first_name=patientRecord['first_name'],
                     last_name=patientRecord['last_name'],
                     hospital_number=patientRecord['hospital_number'],
@@ -287,24 +314,18 @@ class PseudoTrustAdapter(TrustAdapter):
         )
         params['typeReferenceName'] = milestoneType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
-
-        if testResult.current_state:
-            params['currentState'] = testResult.current_state.value
-        if testResult.added_at:
-            params['addedAt'] = testResult.added_at.isoformat()
-        if testResult.updated_at:
-            params['updatedAt'] = testResult.updated_at.isoformat()
-        if testResult.description:
-            params['description'] = testResult.description
+        params['pathwayName'] = testResult.pathway_name
 
         testResultRecord = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult',
             json=params,
             cookies={"SDSESSION": auth_token}
         )
+
         if not testResultRecord:
             return None
+
         testResultRecord = testResultRecord.json()
 
         testResultRecord['added_at'] = datetime.fromisoformat(
@@ -322,7 +343,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, recordId: str = None, auth_token: str = None
     ) -> Optional[TestResult_IE]:
         testResultRecord = await httpRequest(
-            "get",
+            HTTPRequestType.GET,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}',
             cookies={"SDSESSION": auth_token}
         )
@@ -345,7 +366,7 @@ class PseudoTrustAdapter(TrustAdapter):
         self, recordIds: List = None, auth_token: str = None
     ) -> List[Optional[TestResult_IE]]:
         testResultList = await httpRequest(
-            "post",
+            HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresults/get/',
             json=recordIds,
             cookies={"SDSESSION": auth_token}
@@ -368,7 +389,7 @@ class PseudoTrustAdapter(TrustAdapter):
 
     async def patient_search(self, query: str) -> List[Patient_IE]:
         response = await httpRequest(
-            "get",
+            HTTPRequestType.GET,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patientsearch/{query}'
         )
 
@@ -380,3 +401,52 @@ class PseudoTrustAdapter(TrustAdapter):
                 Patient_IE(**r)
             )
         return patient_list
+
+    async def clear_database(self, auth_token: str = None) -> bool:
+        await httpRequest(
+            HTTPRequestType.POST,
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/debug/cleardatabase/',
+            cookies={"SDSESSION": auth_token}
+        )
+        return True
+
+    async def create_test_result_immediately(
+        self, testResult: TestResultRequestImmediately_IE = None,
+        auth_token: str = None
+    ) -> TestResult_IE:
+        params = {}
+        milestoneType: MilestoneType = await MilestoneType.get(
+            int(testResult.type_id)
+        )
+        params['typeReferenceName'] = milestoneType.ref_name
+        params['hospitalNumber'] = testResult.hospital_number
+        params['pathwayName'] = testResult.pathway_name
+        params['addedAt'] = str(testResult.added_at) if (
+            testResult.added_at) else None
+        params['updatedAt'] = str(testResult.updated_at) if (
+            testResult.updated_at) else None
+        params['currentState'] = testResult.current_state if (
+            testResult.current_state) else None
+
+        testResultRecord = await httpRequest(
+            HTTPRequestType.POST,
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/debug/testresult/',
+            json=params,
+            cookies={"SDSESSION": auth_token}
+        )
+
+        if not testResultRecord:
+            return None
+
+        testResultRecord = testResultRecord.json()
+
+        testResultRecord['added_at'] = datetime.fromisoformat(
+            testResultRecord['added_at']
+        )
+        testResultRecord['updated_at'] = datetime.fromisoformat(
+            testResultRecord['updated_at']
+        )
+
+        return TestResult_IE(
+            **testResultRecord
+        )

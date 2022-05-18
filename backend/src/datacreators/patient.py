@@ -13,7 +13,7 @@ from typing import Optional, List, Union
 from trustadapter.trustadapter import (
     Patient_IE,
     TestResult_IE,
-    TestResultRequest_IE,
+    TestResultRequestImmediately_IE,
     TrustAdapter
 )
 from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
@@ -211,11 +211,12 @@ async def CreatePatient(
     )
 
     for milestone in milestones:
-        test_result: TestResult_IE = await trust_adapter.create_test_result(
-            TestResultRequest_IE(
+        test_result: TestResult_IE = await trust_adapter.create_test_result_immediately(
+            TestResultRequestImmediately_IE(
                 type_id=milestone["milestoneTypeId"],
                 current_state=milestone["currentState"],
-                hospital_number=hospital_number
+                hospital_number=hospital_number,
+                pathway_name=_pathway.name
             ),
             auth_token=auth_token
         )

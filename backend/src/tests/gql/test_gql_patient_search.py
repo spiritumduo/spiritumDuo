@@ -12,7 +12,6 @@ async def test_patient_search(
     for patient in test_patients:
         mock_patients.append(
             Patient_IE(
-                id=patient.id,
                 hospital_number=patient.hospital_number,
                 national_number=patient.national_number,
                 first_name=f"test-patient-{patient.id}",
@@ -22,14 +21,12 @@ async def test_patient_search(
         )
     # Patients that don't exist in our system but do externally
     invalid_patient_1 = Patient_IE(
-        id=9090,
         hospital_number="invalid_hospital_number_1",
         national_number="invalid_national_number_1",
         first_name="invalid patient 1",
         last_name="invalid patient 1"
     )
     invalid_patient_2 = Patient_IE(
-        id=9080,
         hospital_number="invalid_hospital_number_2",
         national_number="invalid_national_number_2",
         first_name="invalid patient 2",

@@ -52,7 +52,6 @@ async def test_lock_on_pathway(
         national_number="fNHS123456"
     )
     PATIENT_IE = Patient_IE(
-        id=1000,
         hospital_number="fMRN123456",
         national_number="fNHS12345678",
         first_name="Test",
@@ -119,7 +118,6 @@ async def test_unlock_lock_on_pathway(
         national_number="fNHS123456"
     )
     PATIENT_IE = Patient_IE(
-        id=1000,
         hospital_number="fMRN123456",
         national_number="fNHS12345678",
         first_name="Test",
@@ -210,7 +208,6 @@ async def test_locked_lock_on_pathway(
         national_number="fNHS123456"
     )
     PATIENT_IE = Patient_IE(
-        id=1000,
         hospital_number="fMRN123456",
         national_number="fNHS12345678",
         first_name="Test",
@@ -280,7 +277,6 @@ async def test_unlocked_locked_lock_on_pathway(
         national_number="fNHS123456"
     )
     PATIENT_IE = Patient_IE(
-        id=1000,
         hospital_number="fMRN123456",
         national_number="fNHS12345678",
         first_name="Test",

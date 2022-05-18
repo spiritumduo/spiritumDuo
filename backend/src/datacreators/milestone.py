@@ -1,8 +1,11 @@
 from ctypes import Union
-from models import Patient, OnPathway, UserPathway
+from models import Patient, OnPathway, UserPathway, Pathway
 from common import UserDoesNotHavePathwayPermission
 from SdTypes import MilestoneState
-from dataloaders import OnPathwayByIdLoader, PatientByIdLoader
+from dataloaders import (
+    OnPathwayByIdLoader, PatientByIdLoader,
+    PathwayByIdLoader
+)
 from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
 from trustadapter.trustadapter import (
@@ -43,6 +46,9 @@ async def ImportMilestone(
         id=int(on_pathway_id))
     )
 
+    pathway: Pathway = await PathwayByIdLoader.load_from_id(
+        context, on_pathway.pathway_id)
+
     userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
         .query.where(UserPathway.user_id == context['request']['user'].id)\
         .where(UserPathway.pathway_id == on_pathway.pathway_id)\
@@ -58,13 +64,13 @@ async def ImportMilestone(
         context=context,
         id=int(on_pathway.patient_id)
     )
-
     testResult: TestResult_IE = await trust_adapter.create_test_result(
         TestResultRequest_IE(
             type_id=milestone_type_id,
             description=description,
             current_state=current_state,
-            hospital_number=patient.hospital_number
+            hospital_number=patient.hospital_number,
+            pathway_name=pathway.name
         ), auth_token=context['request'].cookies['SDSESSION']
     )
 

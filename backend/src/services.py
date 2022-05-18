@@ -122,3 +122,22 @@ class TrustAdapterService(BaseService):
         :return: List of patients
         """
         return await self._trust_adapter_client.patient_search(query)
+
+    async def clear_database(self) -> bool:
+        """
+        Clears pseudotie database
+        :return: boolean success
+        """
+        return await self._trust_adapter_client.clear_database()
+
+    async def create_test_result_immediately(
+        self, testResult: TestResultRequest_IE = None, auth_token: str = None
+    ) -> TestResult_IE:
+        """
+        Create a test result
+        :param auth_token: Auth token string to pass to backend
+        :param testResult: Test result to create
+        :return: String ID of created test result
+        """
+        return await self._trust_adapter_client.create_test_result_immediately(
+            testResult=testResult, auth_token=auth_token)

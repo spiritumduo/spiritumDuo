@@ -40,9 +40,9 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS_PER_PATHWAY = 5
+NUMBER_OF_USERS_PER_PATHWAY = 10
 NUMBER_OF_PATHWAYS = 20
-NUMBER_OF_PATIENTS_PER_PATHWAY = 5
+NUMBER_OF_PATIENTS_PER_PATHWAY = 50
 
 
 class RequestPlaceholder(dict):
@@ -336,6 +336,9 @@ async def insert_demo_data():
         pathways: List[Pathway] = [
             await Pathway.create(
                 name=f"Lung cancer demo {pathwayIndex}-1"
+            ),
+            await Pathway.create(
+                name=f"Lung cancer demo {pathwayIndex}-2"
             )
         ]
 
@@ -344,10 +347,18 @@ async def insert_demo_data():
                 pathway_id=pathways[0].id,
                 milestone_type_id=general_milestone_types[key].id
             )
+            await PathwayMilestoneType.create(
+                pathway_id=pathways[1].id,
+                milestone_type_id=general_milestone_types[key].id
+            )
 
         for mT in lung_cancer_milestone_types:
             await PathwayMilestoneType.create(
                 pathway_id=pathways[0].id,
+                milestone_type_id=mT.id
+            )
+            await PathwayMilestoneType.create(
+                pathway_id=pathways[1].id,
                 milestone_type_id=mT.id
             )
 
@@ -381,6 +392,10 @@ async def insert_demo_data():
             await UserPathway.create(
                 user_id=sd_user.id,
                 pathway_id=pathways[0].id
+            )
+            await UserPathway.create(
+                user_id=sd_user.id,
+                pathway_id=pathways[1].id
             )
 
             print(f"Creating user (username: {sd_user.username}; password {unencoded_password}")

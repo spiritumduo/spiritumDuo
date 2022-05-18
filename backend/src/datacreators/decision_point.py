@@ -2,7 +2,8 @@ from ctypes import Union
 from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
-    MilestoneTypeLoaderByPathwayId
+    MilestoneTypeLoaderByPathwayId,
+    PathwayByIdLoader
 )
 from models import (
     DecisionPoint,
@@ -91,6 +92,9 @@ async def CreateDecisionPoint(
         id=on_pathway_id
     )
 
+    pathway = await PathwayByIdLoader.load_from_id(
+        context, on_pathway.pathway_id)
+
     userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
         .query.where(UserPathway.user_id == clinician_id)\
         .where(UserPathway.pathway_id == on_pathway.pathway_id)\
@@ -142,6 +146,7 @@ async def CreateDecisionPoint(
             testResultRequest.updated_at = datetime.now()
             testResultRequest.type_id = requestInput['milestoneTypeId']
             testResultRequest.hospital_number = patient.hospital_number
+            testResultRequest.pathway_name = pathway.name
 
             # TODO: batch these
             if "currentState" in requestInput:

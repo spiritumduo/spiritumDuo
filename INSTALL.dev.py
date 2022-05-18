@@ -553,9 +553,9 @@ print(
 )
 print(
     "NOTE: TO REMEDY THIS, CHANGE THE FORMAT OF GENERATED STRINGS IN"
-    " MANAGE.PY OR ADD DATA MANUALLY!")
+    " MANAGE-DEMO.PY OR ADD DATA MANUALLY!")
 subprocess.run(
-    "docker exec -ti sd-backend bash -c 'python manage.py'",
+    "docker exec -ti sd-backend bash -c 'python manage-demo.py'",
     shell=True)
 
 print("""
