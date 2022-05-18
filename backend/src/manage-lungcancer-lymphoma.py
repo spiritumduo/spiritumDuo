@@ -79,6 +79,11 @@ async def check_connection():
 
 
 async def clear_existing_data():
+    print("Clearing existing data from pseudotie database")
+    await PseudoTrustAdapter().clear_database(
+        auth_token=_CONTEXT['request'].cookies['SDSESSION']
+    )
+
     print("Clearing existing data from local database")
 
     try:
@@ -533,9 +538,5 @@ loop = asyncio.get_event_loop()
 engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
 loop.run_until_complete(check_connection())
 loop.run_until_complete(clear_existing_data())
-print("********************")
-print("\33[31mNOTE: you may need to clear the `PSEUDOTIE` database in")
-print("the event of HTTP 409 (conflict)\33[0m")
-print("********************")
 loop.run_until_complete(asyncio.sleep(2))
 loop.run_until_complete(insert_demo_data())
