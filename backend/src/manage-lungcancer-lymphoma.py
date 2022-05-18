@@ -28,6 +28,7 @@ from trustadapter.trustadapter import (
     Patient_IE,
     TestResult_IE,
     TestResultRequest_IE,
+    TestResultRequestImmediately_IE,
     TrustIntegrationCommunicationError,
     PseudoTrustAdapter
 )
@@ -483,7 +484,7 @@ async def insert_demo_data():
                 )
 
                 tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
-                    testResult=TestResultRequest_IE(
+                    testResult=TestResultRequestImmediately_IE(
                         type_id=general_milestone_types["referral_letter"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
@@ -500,7 +501,7 @@ async def insert_demo_data():
                 )
 
                 tie_testresult_cxr: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
-                    testResult=TestResultRequest_IE(
+                    testResult=TestResultRequestImmediately_IE(
                         type_id=general_milestone_types["chest_xray"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
@@ -516,7 +517,7 @@ async def insert_demo_data():
                 )
 
                 tie_testresult_ctx: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
-                    testResult=TestResultRequest_IE(
+                    testResult=TestResultRequestImmediately_IE(
                         type_id=general_milestone_types["ct_chest"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
