@@ -482,7 +482,7 @@ async def insert_demo_data():
                     pathway_id=currentPathway.id,
                 )
 
-                tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
                     testResult=TestResultRequest_IE(
                         type_id=general_milestone_types["referral_letter"].id,
                         current_state=MilestoneState.COMPLETED,
@@ -499,7 +499,7 @@ async def insert_demo_data():
                     milestone_type_id=general_milestone_types["referral_letter"].id,
                 )
 
-                tie_testresult_cxr: TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                tie_testresult_cxr: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
                     testResult=TestResultRequest_IE(
                         type_id=general_milestone_types["chest_xray"].id,
                         current_state=MilestoneState.COMPLETED,
@@ -515,7 +515,7 @@ async def insert_demo_data():
                     milestone_type_id=general_milestone_types["chest_xray"].id,
                 )
 
-                tie_testresult_ctx: TestResult_IE = await PseudoTrustAdapter().create_test_result(
+                tie_testresult_ctx: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
                     testResult=TestResultRequest_IE(
                         type_id=general_milestone_types["ct_chest"].id,
                         current_state=MilestoneState.COMPLETED,

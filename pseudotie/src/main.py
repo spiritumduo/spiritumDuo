@@ -178,11 +178,7 @@ async def updateTestResultAtRandomTime(
 
 
 class TestResultRequest(BaseModel):
-    currentState: Optional[str]
     typeReferenceName: str
-    addedAt: Optional[datetime]
-    updatedAt: Optional[datetime]
-    description: Optional[str]
     hospitalNumber: str
     pathwayName: str
 
@@ -202,50 +198,30 @@ async def create_test_result_post(request: Request, input: TestResultRequest):
     results and send them all at once to backend
     """
 
-    data = {
-        "type_reference_name": input.typeReferenceName,
-        "pathway_name": input.pathwayName
-    }
-    if input.currentState is not None:
-        data["current_state"] = input.currentState
-    if input.addedAt is not None:
-        data["added_at"] = input.addedAt
-    if input.updatedAt is not None:
-        data["updated_at"] = input.updatedAt
-
     patient: Patient = await Patient.query.where(
         Patient.hospital_number == input.hospitalNumber).gino.one_or_none()
-    data['patient_id'] = patient.id
-
-    if input.currentState is not None and input.currentState == "COMPLETED":
-        data["description"] = input.description or \
-            getTestResultFromCharacteristics(
-                typeName=input.typeReferenceName,
-                hospitalNumber=input.hospitalNumber,
-                pathwayName=input.pathwayName
-            )
-
-    plannedReturnDelay = 0 if (
-        input.currentState is not None and
-        input.currentState == "COMPLETED"
-    ) else randint(30, 60)
-
+    plannedReturnDelay = randint(30, 60)
     plannedReturnTime = datetime.now() + timedelta(seconds=plannedReturnDelay)
-    data['planned_return_time'] = plannedReturnTime
+
+    data = {
+        "type_reference_name": input.typeReferenceName,
+        "pathway_name": input.pathwayName,
+        "patient_id": patient.id,
+        "planned_return_time": plannedReturnTime
+    }
 
     testResult: TestResult = await TestResult.create(
         **data
     )
 
     bg = BackgroundTasks()
-    if "description" not in data:
-        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
-                testResultId=testResult.id,
-                hospital_number=input.hospitalNumber,
-                pathwayName=input.pathwayName,
-                delay=plannedReturnDelay
-            )
+    bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
+            testResultId=testResult.id,
+            hospital_number=input.hospitalNumber,
+            pathwayName=input.pathwayName,
+            delay=plannedReturnDelay
         )
+    )
 
     return JSONResponse({
         "id": testResult.id,
@@ -364,5 +340,87 @@ async def debug_clear_db(request: Request):
     await Patient.delete.gino.status()
 
     return JSONResponse({"success": True}, status_code=200)
+
+
+class DebugTestResultRequest(BaseModel):
+    currentState: Optional[str]
+    typeReferenceName: str
+    addedAt: Optional[datetime]
+    updatedAt: Optional[datetime]
+    description: Optional[str]
+    hospitalNumber: str
+    pathwayName: str
+
+
+@app.post("/debug/testresult/")
+@needs_authentication
+async def debug_create_test_result(
+    request: Request, input: DebugTestResultRequest
+):
+    """
+    Create test result
+    :return: JSONResponse containing ID of created test result or error data
+    """
+    """
+    Runs as it does currently, opens up a thread to wait until the time
+    is right
+    Additionally, when pseudotie starts it'll query the database for a
+    list of not yet completed
+    results and send them all at once to backend
+    """
+
+    data = {
+        "type_reference_name": input.typeReferenceName,
+        "pathway_name": input.pathwayName
+    }
+    if input.currentState is not None:
+        data["current_state"] = input.currentState
+    if input.addedAt is not None:
+        data["added_at"] = input.addedAt
+    if input.updatedAt is not None:
+        data["updated_at"] = input.updatedAt
+
+    patient: Patient = await Patient.query.where(
+        Patient.hospital_number == input.hospitalNumber).gino.one_or_none()
+    data['patient_id'] = patient.id
+
+    if input.currentState is not None and input.currentState == "COMPLETED":
+        data["description"] = input.description or \
+            getTestResultFromCharacteristics(
+                typeName=input.typeReferenceName,
+                hospitalNumber=input.hospitalNumber,
+                pathwayName=input.pathwayName
+            )
+
+    plannedReturnDelay = 0 if (
+        input.currentState is not None and
+        input.currentState == "COMPLETED"
+    ) else randint(30, 60)
+
+    data['planned_return_time'] = datetime.now() + timedelta(
+        seconds=plannedReturnDelay)
+
+    testResult: TestResult = await TestResult.create(
+        **data
+    )
+
+    bg = BackgroundTasks()
+    if "description" not in data:
+        bg.add_task(proc_wrapper, updateTestResultAtRandomTime(
+                testResultId=testResult.id,
+                hospital_number=input.hospitalNumber,
+                pathwayName=input.pathwayName,
+                delay=plannedReturnDelay
+            )
+        )
+
+    return JSONResponse({
+        "id": testResult.id,
+        "description":  testResult.description,
+        "type_reference_name": testResult.type_reference_name,
+        "current_state": testResult.current_state.value,
+        "added_at": testResult.added_at.isoformat(),
+        "updated_at": testResult.updated_at.isoformat()
+    }, background=bg)
 
 db.init_app(app)

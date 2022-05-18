@@ -28,6 +28,7 @@ from trustadapter.trustadapter import (
     Patient_IE,
     TestResult_IE,
     TestResultRequest_IE,
+    TestResultRequestImmediately_IE,
     TrustIntegrationCommunicationError,
     PseudoTrustAdapter
 )
@@ -445,8 +446,8 @@ async def insert_demo_data():
                     pathway_id=pathway.id,
                 )
 
-                tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
+                tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
+                    testResult=TestResultRequestImmediately_IE(
                         type_id=general_milestone_types["referral_letter"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
@@ -462,8 +463,8 @@ async def insert_demo_data():
                     milestone_type_id=general_milestone_types["referral_letter"].id,
                 )
 
-                tie_testresult_cxr: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
+                tie_testresult_cxr: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
+                    testResult=TestResultRequestImmediately_IE(
                         type_id=general_milestone_types["chest_xray"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,
@@ -478,8 +479,8 @@ async def insert_demo_data():
                     milestone_type_id=general_milestone_types["chest_xray"].id,
                 )
 
-                tie_testresult_ctx: TestResult_IE = await PseudoTrustAdapter().create_test_result(
-                    testResult=TestResultRequest_IE(
+                tie_testresult_ctx: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
+                    testResult=TestResultRequestImmediately_IE(
                         type_id=general_milestone_types["ct_chest"].id,
                         current_state=MilestoneState.COMPLETED,
                         hospital_number=hospital_number,

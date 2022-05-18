@@ -20,6 +20,13 @@ class Patient_IE:
 @dataclass
 class TestResultRequest_IE:
     type_id: int = None
+    hospital_number: str = None
+    pathway_name: str = None
+
+
+@dataclass
+class TestResultRequestImmediately_IE:
+    type_id: int = None
     current_state: str = None
     added_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
@@ -132,6 +139,17 @@ class TrustAdapter(ABC):
         """
         Clears pseudotie database, for debug reasons only
         :return: boolean success
+        """
+
+    @abstractmethod
+    async def create_test_result_immediately(
+        self, testResult: TestResultRequest_IE = None, auth_token: str = None
+    ) -> TestResult_IE:
+        """
+        Create a test result
+        :param auth_token: Auth token string to pass to backend
+        :param testResult: Test result to create
+        :return: String ID of created test result
         """
 
 
@@ -298,15 +316,6 @@ class PseudoTrustAdapter(TrustAdapter):
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name
 
-        if testResult.current_state:
-            params['currentState'] = testResult.current_state.value
-        if testResult.added_at:
-            params['addedAt'] = testResult.added_at.isoformat()
-        if testResult.updated_at:
-            params['updatedAt'] = testResult.updated_at.isoformat()
-        if testResult.description:
-            params['description'] = testResult.description
-
         testResultRecord = await httpRequest(
             HTTPRequestType.POST,
             f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult',
@@ -400,3 +409,44 @@ class PseudoTrustAdapter(TrustAdapter):
             cookies={"SDSESSION": auth_token}
         )
         return True
+
+    async def create_test_result_immediately(
+        self, testResult: TestResultRequestImmediately_IE = None,
+        auth_token: str = None
+    ) -> TestResult_IE:
+        params = {}
+        milestoneType: MilestoneType = await MilestoneType.get(
+            int(testResult.type_id)
+        )
+        params['typeReferenceName'] = milestoneType.ref_name
+        params['hospitalNumber'] = testResult.hospital_number
+        params['pathwayName'] = testResult.pathway_name
+        params['addedAt'] = str(testResult.added_at) if (
+            testResult.added_at) else None
+        params['updatedAt'] = str(testResult.updated_at) if (
+            testResult.updated_at) else None
+        params['currentState'] = testResult.current_state if (
+            testResult.current_state) else None
+
+        testResultRecord = await httpRequest(
+            HTTPRequestType.POST,
+            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/debug/testresult/',
+            json=params,
+            cookies={"SDSESSION": auth_token}
+        )
+
+        if not testResultRecord:
+            return None
+
+        testResultRecord = testResultRecord.json()
+
+        testResultRecord['added_at'] = datetime.fromisoformat(
+            testResultRecord['added_at']
+        )
+        testResultRecord['updated_at'] = datetime.fromisoformat(
+            testResultRecord['updated_at']
+        )
+
+        return TestResult_IE(
+            **testResultRecord
+        )
