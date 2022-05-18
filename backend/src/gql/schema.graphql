@@ -54,8 +54,6 @@ type Mutation {
     updatePathway(input:UpdatePathwayInput!): AddPathwayPayload!
     deletePathway(id: ID!): DeletePayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
-
-    importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
     lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
 }
 
@@ -102,11 +100,6 @@ type AddPathwayPayload {
 type AddDecisionPointPayload {
     decisionPoint:DecisionPoint
     userErrors:[UserError!]    
-}
-
-type ImportMilestonePayload {
-    milestone: Milestone
-    userErrors:[UserError!]
 }
 
 type LockOnPathwayPayload {
@@ -295,13 +288,6 @@ input MilestoneRequestInput {
 
 input MilestoneTypeInput{
     id: ID!
-}
-
-input MilestoneImportInput {
-    onPathwayId: ID!
-    milestoneTypeId: ID!
-    description: String!
-    currentState: MilestoneState!
 }
 
 input DecisionPointInput{

@@ -10,7 +10,6 @@ from .add_decision_point_type import AddDecisionPointPayloadObjectType
 from .milestone import MilestoneObjectType
 from .milestone_state import MilestoneStateEnum
 from .test_result import TestResultObjectType
-from .import_milestone_payload import ImportMilestonePayloadObjectType
 from .lock_on_pathway_payload import LockOnPathwayPayloadObjectType
 from .role_permission import RolePermissionObjectType
 from .role import RoleObjectType
@@ -30,7 +29,6 @@ object_types_list = [
     MilestoneObjectType,
     MilestoneStateEnum,
     TestResultObjectType,
-    ImportMilestonePayloadObjectType,
     LockOnPathwayPayloadObjectType,
     RolePermissionObjectType,
     RoleObjectType,
