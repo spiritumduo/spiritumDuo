@@ -40,7 +40,7 @@ from bcrypt import hashpw, gensalt
 faker = Faker()
 app.container = SDContainer()
 
-NUMBER_OF_USERS_PER_PATHWAY = 5
+NUMBER_OF_USERS_PER_PATHWAY = 10
 NUMBER_OF_PATHWAYS = 20
 NUMBER_OF_PATIENTS_PER_PATHWAY = 50
 
