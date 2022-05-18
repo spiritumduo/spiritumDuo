@@ -42,7 +42,7 @@ app.container = SDContainer()
 
 NUMBER_OF_USERS_PER_PATHWAY = 5
 NUMBER_OF_PATHWAYS = 20
-NUMBER_OF_PATIENTS_PER_PATHWAY = 5
+NUMBER_OF_PATIENTS_PER_PATHWAY = 50
 
 
 class RequestPlaceholder(dict):
