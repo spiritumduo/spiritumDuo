@@ -12,28 +12,39 @@ const LoadingSpinner = ({
 }: LoadingSpinnerProps): JSX.Element => {
   const [showSpinner, setShowSpinner] = useState<boolean>(false);
   const [delayPassed, setDelayPassed] = useState<boolean>(false);
+  const [delayTimeout, setDelayTimeout] = useState<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
-    if (loading === true) {
+    let isMounted = true;
+    if (loading) {
       setShowSpinner(true);
       if (setLoadingSpinnerShown) {
         setLoadingSpinnerShown(true);
       }
       setDelayPassed(false);
-      setTimeout(() => setDelayPassed(true), 500);
-    } else if (delayPassed === true) {
+      setDelayTimeout(setTimeout(() => isMounted && setDelayPassed(true), 500));
+    } else if (delayPassed) {
       setShowSpinner(false);
-      if (setLoadingSpinnerShown) {
+      if (isMounted && setLoadingSpinnerShown) {
         setLoadingSpinnerShown(false);
       }
     } else {
       setTimeout(() => {
-        setShowSpinner(false);
-        if (setLoadingSpinnerShown) {
+        if (delayTimeout) {
+          clearTimeout(delayTimeout);
+        }
+        if (isMounted) { setShowSpinner(false); }
+        if (isMounted && setLoadingSpinnerShown) {
           setLoadingSpinnerShown(false);
         }
       }, 500);
     }
+    return () => {
+      isMounted = false;
+      if (delayTimeout) {
+        clearTimeout(delayTimeout);
+      }
+    };
   }, [delayPassed, loading, setLoadingSpinnerShown]);
 
   return (
