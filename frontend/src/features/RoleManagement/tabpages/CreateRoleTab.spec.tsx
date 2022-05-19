@@ -59,7 +59,7 @@ test('Submitting should disable form input', async () => {
 });
 
 // ROLE ALREADY EXISTS
-test('Submitting should disable form input', async () => {
+test('Form should display error if role already exists', async () => {
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <RoleExistsError />
@@ -70,8 +70,6 @@ test('Submitting should disable form input', async () => {
   await waitFor(() => {
     userEvent.type(roleNameTxt, 'Test role name');
     userEvent.click(submitButton);
-    expect(roleNameTxt).toBeDisabled();
-    expect(submitButton).toBeDisabled();
   });
   await waitFor(() => {
     expect(screen.getByText('Error: a role with this name already exists'));
