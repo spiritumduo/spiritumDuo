@@ -19,6 +19,16 @@
       "exceptions": ["Input", "Select", "Textarea", "Checkboxes", "CheckboxBox", "SdSelect"]
     }],
     "camelcase": ["error", {"ignoreImports": true}],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.spec.*",
+          "**/*.stories.*",
+          "**/.storybook/**/*.*"
+        ]
+      }
+    ],
     "no-shadow": "off",
     "no-nested-ternary": 0,
     "space-in-parens": "off",
