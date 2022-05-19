@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, act, waitForElementToBeRemoved } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
@@ -8,23 +8,30 @@ import * as stories from './WrappedPatientList.stories';
 
 const { Default } = composeStories(stories);
 const renderDefault = async () => {
-  render(
-    <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-      <Default />
-    </MockSdApolloProvider>,
-  );
-  // this lets the subscription resolve and removes act warnings
-  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
-};
-
-test('Patient lists should display loading', async () => {
-  await waitFor(() => {
+  jest.useFakeTimers(); // allows us to manipulate setInterval/setTimeout, etc
+  jest.spyOn(global, 'setTimeout');
+  await act(async () => {
     render(
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
         <Default />
       </MockSdApolloProvider>,
     );
-    expect(screen.getByText('Loading!')).toBeInTheDocument();
+    await jest.advanceTimersByTime(1000);
+  });
+  await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+  jest.useRealTimers(); // cleanup timer changes
+};
+
+test('Patient lists should display loading icon', async () => {
+  await act(async () => {
+    await render(
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>,
+    );
+  });
+  await waitFor(() => {
+    expect(screen.getByText(/loading animation/i)).toBeInTheDocument();
   });
 });
 
@@ -32,11 +39,9 @@ test('Patient lists should contain patients', async () => {
   const patientsPerPage = Default.args?.patientsToDisplay;
   if (patientsPerPage) {
     await renderDefault();
-    await waitFor(
-      () => expect(
-        screen.getAllByRole('row').length,
-      ).toEqual(patientsPerPage + 1), // all patients plus header
-    );
+    await waitFor(() => expect(
+      screen.getAllByRole('row').length,
+    ).toEqual(patientsPerPage + 1)); // all patients plus header
   } else {
     throw new Error('No patients per page specified in story');
   }
