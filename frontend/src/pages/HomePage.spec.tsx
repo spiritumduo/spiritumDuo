@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { waitFor, render, screen, within } from '@testing-library/react';
+import { waitFor, render, screen, within, act } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import '@testing-library/jest-dom';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
@@ -12,18 +12,9 @@ import * as stories from './HomePage.stories';
 
 const { Default } = composeStories(stories);
 const renderDefault = async () => {
-  render(
-    <Provider store={ store }>
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>
-    </Provider>,
-  );
-  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
-};
-
-test('Patient lists should display loading', async () => {
-  await waitFor(() => {
+  jest.useFakeTimers(); // allows us to manipulate setInterval/setTimeout, etc
+  jest.spyOn(global, 'setTimeout');
+  await act(async () => {
     render(
       <Provider store={ store }>
         <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
@@ -31,7 +22,24 @@ test('Patient lists should display loading', async () => {
         </MockSdApolloProvider>
       </Provider>,
     );
-    expect(screen.getByText('Loading!')).toBeInTheDocument();
+    await jest.advanceTimersByTime(1000);
+  });
+  await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+  jest.useRealTimers(); // cleanup timer changes
+};
+
+test('Patient lists should display loading', async () => {
+  await act(async () => {
+    render(
+      <Provider store={ store }>
+        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+          <Default />
+        </MockSdApolloProvider>
+      </Provider>,
+    );
+  });
+  await waitFor(() => {
+    expect(screen.getByText('Loading animation')).toBeInTheDocument();
   });
 });
 
