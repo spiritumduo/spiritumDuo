@@ -43,7 +43,7 @@ test('Submitting should disable form input', async () => {
       <Default />
     </MockSdApolloProvider>,
   );
-  const roleNameTxt = screen.getByLabelText(/Role name/);
+  const roleNameTxt = screen.getByRole('textbox', { name: /role\s+name/i });
   const submitButton = screen.getByRole('button', { name: 'Create role' });
   await waitFor(() => {
     userEvent.type(roleNameTxt, 'Test role name');
