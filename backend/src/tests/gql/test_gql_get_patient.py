@@ -113,8 +113,12 @@ def get_patient_query() -> str:
 # Scenario: a patient's record is searched for
 @pytest.mark.asyncio
 async def test_search_for_patient(
-    context, patient_read_permission,
-    get_patient_query
+    patient_read_permission,
+    get_patient_query,
+    test_pathway,
+    test_user, test_milestone_type,
+    mock_trust_adapter,
+    httpx_test_client, httpx_login_user,
 ):
     """
     When: we run the GraphQL mutation to search for a patient
@@ -136,13 +140,13 @@ async def test_search_for_patient(
 
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
-        pathway_id=context.PATHWAY.id,
+        pathway_id=test_pathway.id,
         is_discharged=False,
-        under_care_of_id=context.USER.id
+        under_care_of_id=test_user.user.id
     )
 
     DECISION_POINT = await DecisionPoint.create(
-        clinician_id=context.USER.id,
+        clinician_id=test_user.user.id,
         on_pathway_id=ONPATHWAY.id,
         decision_type=DecisionTypes.TRIAGE,
         clinic_history="Test go brrrrt",
@@ -153,7 +157,7 @@ async def test_search_for_patient(
         on_pathway_id=ONPATHWAY.id,
         test_result_reference_id="1000",
         current_state=MilestoneState.COMPLETED.value,
-        milestone_type_id=context.PATHWAY.id,
+        milestone_type_id=test_pathway.id,
         fwd_decision_point_id=DECISION_POINT.id
     )
 
@@ -162,7 +166,7 @@ async def test_search_for_patient(
         decision_point_id=DECISION_POINT.id,
         test_result_reference_id="2000",
         current_state=MilestoneState.COMPLETED.value,
-        milestone_type_id=context.PATHWAY.id
+        milestone_type_id=test_pathway.id
     )
 
     FIRST_TEST_RESULT = TestResult_IE(
@@ -171,7 +175,7 @@ async def test_search_for_patient(
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=context.MILESTONE_TYPE.ref_name,
+        type_reference_name=test_milestone_type.ref_name,
     )
     SECOND_TEST_RESULT = TestResult_IE(
         id=2000,
@@ -179,7 +183,7 @@ async def test_search_for_patient(
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=context.MILESTONE_TYPE.ref_name,
+        type_reference_name=test_milestone_type.ref_name,
     )
 
     async def create_test_result(**kwargs):
@@ -199,19 +203,19 @@ async def test_search_for_patient(
             retVal.append(SECOND_TEST_RESULT)
         return retVal
 
-    context.trust_adapter_mock.create_test_result = create_test_result
-    context.trust_adapter_mock.load_test_result = load_test_result
-    context.trust_adapter_mock.load_many_test_results = load_many_test_results
+    mock_trust_adapter.create_test_result = create_test_result
+    mock_trust_adapter.load_test_result = load_test_result
+    mock_trust_adapter.load_many_test_results = load_many_test_results
 
     async def load_patient(**kwargs):
         return PATIENT_IE
-    context.trust_adapter_mock.load_patient = load_patient
+    mock_trust_adapter.load_patient = load_patient
 
     async def load_many_patients(**kwargs):
         return [PATIENT_IE]
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_many_patients = load_many_patients
 
-    get_patient_result = await context.client.post(
+    get_patient_result = await httpx_test_client.post(
         url="graphql",
         json={
             "query": get_patient_query,
@@ -252,8 +256,8 @@ async def test_search_for_patient(
     on_pathway = patient_record['onPathways'][0]
 
     assert_that(on_pathway['pathway'], not_none())
-    assert_that(on_pathway['pathway']['id'], context.PATHWAY.id)
-    assert_that(on_pathway['pathway']['name'], context.PATHWAY.name)
+    assert_that(on_pathway['pathway']['id'], test_pathway.id)
+    assert_that(on_pathway['pathway']['name'], test_pathway.name)
     assert_that(on_pathway['id'], not_none())
     assert_that(on_pathway['patient'], not_none())
     assert_that(on_pathway['patient']['id'], equal_to(str(PATIENT.id)))
@@ -268,19 +272,19 @@ async def test_search_for_patient(
     assert_that(on_pathway['underCareOf'], not_none())
     assert_that(
         on_pathway['underCareOf']['id'],
-        equal_to(str(context.USER.id))
+        equal_to(str(test_user.user.id))
     )
     assert_that(
         on_pathway['underCareOf']['username'],
-        equal_to(context.USER.username)
+        equal_to(test_user.user.username)
     )
     assert_that(
         on_pathway['underCareOf']['firstName'],
-        equal_to(context.USER.first_name)
+        equal_to(test_user.user.first_name)
     )
     assert_that(
         on_pathway['underCareOf']['lastName'],
-        equal_to(context.USER.last_name)
+        equal_to(test_user.user.last_name)
     )
     milestones = on_pathway['milestones'][0]
     assert_that(milestones, not_none())
@@ -288,11 +292,11 @@ async def test_search_for_patient(
     assert_that(milestones['milestoneType'], not_none())
     assert_that(
         milestones['milestoneType']['id'],
-        equal_to(str(context.MILESTONE_TYPE.id))
+        equal_to(str(test_milestone_type.id))
     )
     assert_that(
         milestones['milestoneType']['name'],
-        equal_to(context.MILESTONE_TYPE.name)
+        equal_to(test_milestone_type.name)
     )
     assert_that(milestones['onPathway'], not_none())
     assert_that(milestones['onPathway']['id'], equal_to(str(ONPATHWAY.id)))
@@ -340,11 +344,11 @@ async def test_search_for_patient(
     assert_that(dp_milestone['milestoneType'], not_none())
     assert_that(
         dp_milestone['milestoneType']['id'],
-        equal_to(str(context.MILESTONE_TYPE.id))
+        equal_to(str(test_milestone_type.id))
     )
     assert_that(
         dp_milestone['milestoneType']['name'],
-        equal_to(context.MILESTONE_TYPE.name)
+        equal_to(test_milestone_type.name)
     )
     assert_that(dp_milestone['testResult'], not_none())
     assert_that(
@@ -381,7 +385,9 @@ async def test_search_for_patient(
     )
 
 
-async def test_user_lacks_permission(login_user, test_client, get_patient_query):
+async def test_user_lacks_permission(
+    login_user, test_client, get_patient_query
+):
     """
     Given the user's test role lacks the required permission
     """
@@ -399,4 +405,7 @@ async def test_user_lacks_permission(login_user, test_client, get_patient_query)
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )

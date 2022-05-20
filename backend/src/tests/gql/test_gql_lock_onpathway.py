@@ -39,11 +39,16 @@ def on_pathway_lock_mutation() -> str:
 # Scenario: an OnPathway record needs to be locked to a user
 @pytest.mark.asyncio
 async def test_lock_on_pathway(
-        context, on_pathway_update_permission,
+        on_pathway_update_permission,
         on_pathway_read_permission,
-        on_pathway_lock_mutation
+        on_pathway_lock_mutation,
+        mock_trust_adapter,
+        test_pathway,
+        httpx_test_client,
+        httpx_login_user,
+        test_user
 ):
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
     """
     Given we have a patient on a pathway
     """
@@ -60,18 +65,18 @@ async def test_lock_on_pathway(
     )
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
-        pathway_id=context.PATHWAY.id
+        pathway_id=test_pathway.id
     )
 
     async def load_patient(): return PATIENT_IE
     async def load_many_patients(): return [PATIENT_IE]
-    context.trust_adapter_mock.load_patient = load_patient
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_patient = load_patient
+    mock_trust_adapter.load_many_patients = load_many_patients
 
     """
     When: we run the GQL mutation to lock an OnPathway record
     """
-    lock_on_pathway_mutation = await context.client.post(
+    lock_on_pathway_mutation = await httpx_test_client.post(
         url="graphql",
         json={
             "query": on_pathway_lock_mutation,
@@ -97,8 +102,8 @@ async def test_lock_on_pathway(
     assert_that(onPathway['id'], equal_to(str(ONPATHWAY.id)))
     lockUser = onPathway['lockUser']
     assert_that(lockUser, not_none())
-    assert_that(lockUser['id'], equal_to(str(context.USER.id)))
-    assert_that(lockUser['username'], equal_to(context.USER.username))
+    assert_that(lockUser['id'], equal_to(str(test_user.user.id)))
+    assert_that(lockUser['username'], equal_to(test_user.user.username))
 
     assert_that(onPathway['lockEndTime'], not_none())
 
@@ -106,10 +111,13 @@ async def test_lock_on_pathway(
 # Scenario: an OnPathway record needs to be unlocked
 @pytest.mark.asyncio
 async def test_unlock_lock_on_pathway(
-    context, on_pathway_update_permission,
-    on_pathway_read_permission
+    on_pathway_update_permission,
+    on_pathway_read_permission,
+    mock_trust_adapter,
+    test_pathway, test_user,
+    httpx_test_client, httpx_login_user
 ):
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
     """
     Given we have a patient on a pathway
     """
@@ -126,19 +134,19 @@ async def test_unlock_lock_on_pathway(
     )
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
-        pathway_id=context.PATHWAY.id,
-        lock_user_id=context.USER.id,
+        pathway_id=test_pathway.id,
+        lock_user_id=test_user.user.id,
         lock_end_time=datetime.now()+timedelta(seconds=60)
     )
 
     async def load_patient(): return PATIENT_IE
     async def load_many_patients(): return [PATIENT_IE]
-    context.trust_adapter_mock.load_patient = load_patient
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_patient = load_patient
+    mock_trust_adapter.load_many_patients = load_many_patients
     """
     When: we run the GQL mutation to unlock an OnPathway record
     """
-    unlock_lock_on_pathway_mutation = await context.client.post(
+    unlock_lock_on_pathway_mutation = await httpx_test_client.post(
         url="graphql",
         json={
             "query": """
@@ -195,11 +203,14 @@ async def test_unlock_lock_on_pathway(
 # Scenario: attempted onPathway lock while already being locked
 @pytest.mark.asyncio
 async def test_locked_lock_on_pathway(
-        context, on_pathway_update_permission,
+        on_pathway_update_permission,
         on_pathway_read_permission,
-        on_pathway_lock_mutation
+        on_pathway_lock_mutation,
+        mock_trust_adapter,
+        test_pathway,
+        httpx_test_client, httpx_login_user
 ):
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
     """
     Given we have a patient on a pathway
     """
@@ -223,20 +234,20 @@ async def test_locked_lock_on_pathway(
     )
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
-        pathway_id=context.PATHWAY.id,
+        pathway_id=test_pathway.id,
         lock_user_id=USER.id,
         lock_end_time=datetime.now()+timedelta(seconds=60)
     )
 
     async def load_patient(): return PATIENT_IE
     async def load_many_patients(): return [PATIENT_IE]
-    context.trust_adapter_mock.load_patient = load_patient
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_patient = load_patient
+    mock_trust_adapter.load_many_patients = load_many_patients
 
     """
     When: we run the GQL mutation to lock an OnPathway record
     """
-    lock_on_pathway_mutation = await context.client.post(
+    lock_on_pathway_mutation = await httpx_test_client.post(
         url="graphql",
         json={
             "query": on_pathway_lock_mutation,
@@ -265,10 +276,13 @@ async def test_locked_lock_on_pathway(
 # Scenario: attempted onPathway unlock while locked by someone else
 @pytest.mark.asyncio
 async def test_unlocked_locked_lock_on_pathway(
-    context, on_pathway_update_permission,
-    on_pathway_read_permission
+    on_pathway_update_permission,
+    on_pathway_read_permission,
+    mock_trust_adapter,
+    test_pathway, httpx_login_user,
+    httpx_test_client
 ):
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
     """
     Given we have a patient on a pathway
     """
@@ -292,20 +306,20 @@ async def test_unlocked_locked_lock_on_pathway(
     )
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
-        pathway_id=context.PATHWAY.id,
+        pathway_id=test_pathway.id,
         lock_user_id=USER.id,
         lock_end_time=datetime.now()+timedelta(seconds=60)
     )
 
     async def load_patient(): return PATIENT_IE
     async def load_many_patients(): return [PATIENT_IE]
-    context.trust_adapter_mock.load_patient = load_patient
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_patient = load_patient
+    mock_trust_adapter.load_many_patients = load_many_patients
 
     """
     When: we run the GQL mutation to lock an OnPathway record
     """
-    lock_on_pathway_mutation = await context.client.post(
+    lock_on_pathway_mutation = await httpx_test_client.post(
         url="graphql",
         json={
             "query": """

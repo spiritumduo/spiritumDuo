@@ -90,13 +90,18 @@ def patient_create_query() -> str:
 # Scenario: a new patient needs to be added into the system
 @pytest.mark.asyncio
 async def test_add_new_patient_to_system(
-    context, patient_create_permission,
-    patient_create_query
+    patient_create_permission,
+    patient_create_query,
+    mock_trust_adapter,
+    httpx_test_client,
+    httpx_login_user,
+    test_milestone_type,
+    test_pathway
 ):
     """
     When: we run the GraphQL mutation to add the patient onto the pathway
     """
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
 
     PATIENT = await Patient.create(
         hospital_number="fMRN123456",
@@ -121,18 +126,18 @@ async def test_add_new_patient_to_system(
             date_of_birth=datetime(year=2000, month=1, day=1).date(),
             communication_method="LETTER"
         )
-    context.trust_adapter_mock.load_patient = load_patient
+    mock_trust_adapter.load_patient = load_patient
 
     TEST_RESULT = TestResult_IE(
         current_state=MilestoneState.COMPLETED,
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=context.MILESTONE_TYPE.ref_name,
+        type_reference_name=test_milestone_type.ref_name,
         id=1000
     )
 
-    context.trust_adapter_mock.load_many_patients.return_value = [Patient_IE(
+    mock_trust_adapter.load_many_patients.return_value = [Patient_IE(
         first_name="Test",
         last_name="User",
         hospital_number=PATIENT.hospital_number,
@@ -141,7 +146,7 @@ async def test_add_new_patient_to_system(
         communication_method=PATIENT_IE.communication_method
     )]
 
-    context.trust_adapter_mock.create_patient.return_value = Patient_IE(
+    mock_trust_adapter.create_patient.return_value = Patient_IE(
         first_name="Test",
         last_name="User",
         hospital_number=PATIENT.hospital_number,
@@ -150,13 +155,14 @@ async def test_add_new_patient_to_system(
         communication_method=PATIENT_IE.communication_method
     )
 
-    context.trust_adapter_mock.create_test_result_immediately.return_value = TEST_RESULT
-    context.trust_adapter_mock.load_test_result.return_value = TEST_RESULT
-    context.trust_adapter_mock.load_many_test_results.return_value = [
+    mock_trust_adapter.create_test_result_immediately.return_value = (
+        TEST_RESULT)
+    mock_trust_adapter.load_test_result.return_value = TEST_RESULT
+    mock_trust_adapter.load_many_test_results.return_value = [
         TEST_RESULT
     ]
 
-    create_patient_result = await context.client.post(
+    create_patient_result = await httpx_test_client.post(
         url="graphql",
         json={
             "query": patient_create_query,
@@ -166,8 +172,8 @@ async def test_add_new_patient_to_system(
                 "hospitalNumber": PATIENT_IE.hospital_number,
                 "nationalNumber": PATIENT_IE.national_number,
                 "dateOfBirth": PATIENT_IE.date_of_birth,
-                "pathwayId": context.PATHWAY.id,
-                "milestoneTypeId": context.MILESTONE_TYPE.id
+                "pathwayId": test_pathway.id,
+                "milestoneTypeId": test_milestone_type.id
             }
         },
     )
@@ -212,8 +218,8 @@ async def test_add_new_patient_to_system(
     onPathway = patient_record['onPathways'][0]
 
     assert_that(onPathway['pathway'], not_none())
-    assert_that(onPathway['pathway']['id'], context.PATHWAY.id)
-    assert_that(onPathway['pathway']['name'], context.PATHWAY.name)
+    assert_that(onPathway['pathway']['id'], test_pathway.id)
+    assert_that(onPathway['pathway']['name'], test_pathway.name)
     assert_that(onPathway['id'], not_none())
     assert_that(onPathway['patient'], not_none())
     assert_that(onPathway['patient']['id'], equal_to(str(PATIENT.id)))
@@ -232,11 +238,11 @@ async def test_add_new_patient_to_system(
     assert_that(onPathway['milestones'][0]['milestoneType'], not_none())
     assert_that(
         onPathway['milestones'][0]['milestoneType']['id'],
-        context.MILESTONE_TYPE.id
+        test_milestone_type.id
     )
     assert_that(
         onPathway['milestones'][0]['milestoneType']['name'],
-        context.MILESTONE_TYPE.name
+        test_milestone_type.name
     )
     assert_that(onPathway['milestones'][0]['testResult'], not_none())
     assert_that(
@@ -263,10 +269,6 @@ async def test_add_new_patient_to_system(
         onPathway['milestones'][0]['testResult']['typeReferenceName'],
         equal_to(TEST_RESULT.type_reference_name)
     )
-
-    context.patient_record = patient_record  # save entire record for future
-    PATIENT_IE.id = patient_record['id']
-    PATIENT_IE.onPathwayId = patient_record['onPathways'][0]['id']
 
 
 async def test_user_lacks_permission(
@@ -295,4 +297,7 @@ async def test_user_lacks_permission(
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )

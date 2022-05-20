@@ -83,13 +83,16 @@ def decision_query() -> str:
 # Scenario: a patient needs a decision point added and milestones requested
 @pytest.mark.asyncio
 async def test_add_decision_point_to_patient(
-        context, decision_create_permission,
-        milestone_create_permission, decision_query
+    mock_trust_adapter, test_user,
+    decision_create_permission,
+    milestone_create_permission, decision_query,
+    test_pathway, test_milestone_type,
+    httpx_test_client, httpx_login_user
 ):
     """
     When: we run the GraphQL mutation to add the decision point and milestones
     """
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
 
     PATIENT = await Patient.create(
         hospital_number=f"fMRN{randint(100000,999999)}",
@@ -98,20 +101,20 @@ async def test_add_decision_point_to_patient(
 
     ONPATHWAY = await OnPathway.create(
         patient_id=PATIENT.id,
-        pathway_id=context.PATHWAY.id,
+        pathway_id=test_pathway.id,
         is_discharged=False,
-        lock_user_id=context.USER.id,
+        lock_user_id=test_user.user.id,
         lock_end_time=datetime(2030, 1, 1, 3, 0, 0)
     )
 
     FIRST_MILESTONE = await Milestone.create(
         on_pathway_id=ONPATHWAY.id,
         test_result_reference_id="1000",
-        milestone_type_id=context.MILESTONE_TYPE.id
+        milestone_type_id=test_milestone_type.id
     )
 
     DECISION_POINT = DecisionPoint(
-        clinician_id=context.USER.id,
+        clinician_id=test_user.user.id,
         on_pathway_id=ONPATHWAY.id,
         decision_type=DecisionTypes.TRIAGE,
         clinic_history="Test data blah blah blah",
@@ -124,7 +127,7 @@ async def test_add_decision_point_to_patient(
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=context.MILESTONE_TYPE.ref_name,
+        type_reference_name=test_milestone_type.ref_name,
     )
     SECOND_TEST_RESULT = TestResult_IE(
         id=2000,
@@ -132,7 +135,7 @@ async def test_add_decision_point_to_patient(
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=context.MILESTONE_TYPE.ref_name,
+        type_reference_name=test_milestone_type.ref_name,
     )
 
     async def create_test_result(**kwargs):
@@ -152,9 +155,9 @@ async def test_add_decision_point_to_patient(
             retVal.append(SECOND_TEST_RESULT)
         return retVal
 
-    context.trust_adapter_mock.create_test_result = create_test_result
-    context.trust_adapter_mock.load_test_result = load_test_result
-    context.trust_adapter_mock.load_many_test_results = load_many_test_results
+    mock_trust_adapter.create_test_result = create_test_result
+    mock_trust_adapter.load_test_result = load_test_result
+    mock_trust_adapter.load_many_test_results = load_many_test_results
 
     async def load_patient(**kwargs):
         return Patient_IE(
@@ -165,9 +168,9 @@ async def test_add_decision_point_to_patient(
             date_of_birth=datetime(year=2000, month=1, day=1).date(),
             communication_method="LETTER"
         )
-    context.trust_adapter_mock.load_patient = load_patient
+    mock_trust_adapter.load_patient = load_patient
 
-    create_decision_point_result = await context.client.post(
+    create_decision_point_result = await httpx_test_client.post(
         url="graphql",
         json={
             "query": decision_query,
@@ -176,7 +179,7 @@ async def test_add_decision_point_to_patient(
                 "decisionType": DECISION_POINT.decision_type.value,
                 "clinicHistory": DECISION_POINT.clinic_history,
                 "comorbidities": DECISION_POINT.comorbidities,
-                "milestoneOneId": context.MILESTONE_TYPE.id,
+                "milestoneOneId": test_milestone_type.id,
                 "milestoneResolutionId": FIRST_MILESTONE.id
             }
         }
@@ -203,11 +206,11 @@ async def test_add_decision_point_to_patient(
     assert_that(decision_point['clinician'], not_none())
     assert_that(
         decision_point['clinician']['id'],
-        equal_to(str(context.USER.id))
+        equal_to(str(test_user.user.id))
     )
     assert_that(
         decision_point['clinician']['username'],
-        equal_to(context.USER.username)
+        equal_to(test_user.user.username)
     )
 
     assert_that(decision_point['onPathway'], not_none())
@@ -215,11 +218,11 @@ async def test_add_decision_point_to_patient(
     assert_that(decision_point['onPathway']['pathway'], not_none())
     assert_that(
         decision_point['onPathway']['pathway']['id'],
-        equal_to(str(context.PATHWAY.id))
+        equal_to(str(test_pathway.id))
     )
     assert_that(
         decision_point['onPathway']['pathway']['name'],
-        equal_to(context.PATHWAY.name)
+        equal_to(test_pathway.name)
     )
 
     assert_that(decision_point['milestones'][0], not_none())
@@ -227,10 +230,10 @@ async def test_add_decision_point_to_patient(
     assert_that(decision_point['milestones'][0]['milestoneType'], not_none())
     assert_that(
         decision_point['milestones'][0]['milestoneType']['id'],
-        context.MILESTONE_TYPE.id)
+        test_milestone_type.id)
     assert_that(
         decision_point['milestones'][0]['milestoneType']['name'],
-        context.MILESTONE_TYPE.name)
+        test_milestone_type.name)
     assert_that(decision_point['milestones'][0]['testResult'], none())
     assert_that(decision_point['milestoneResolutions'], not_none())
     assert_that(decision_point['milestoneResolutions'][0], not_none())
@@ -260,4 +263,7 @@ async def test_user_lacks_permission(login_user, test_client, decision_query):
     """
     payload = res.json()
     assert_that(res.status_code, equal_to(200))
-    assert_that(payload['errors'][0]['message'], contains_string("Missing one or many permissions"))
+    assert_that(
+        payload['errors'][0]['message'],
+        contains_string("Missing one or many permissions")
+    )
