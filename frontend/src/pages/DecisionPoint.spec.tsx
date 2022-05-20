@@ -1,5 +1,5 @@
 import React from 'react';
-import { waitFor, render, screen } from '@testing-library/react';
+import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
@@ -11,12 +11,20 @@ import * as stories from './DecisionPoint.stories';
 const { Default } = composeStories(stories);
 
 describe('When page loads', () => {
-  beforeEach(() => {
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>,
-    );
+  beforeEach(async () => {
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+    await act(async () => {
+      render(
+        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+          <Default />
+        </MockSdApolloProvider>,
+      );
+      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
+      jest.advanceTimersByTime(2000);
+    });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
   });
 
   it('Should display the last clinical history', async () => {

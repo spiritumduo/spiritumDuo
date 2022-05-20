@@ -95,13 +95,19 @@ describe('When page loads and user gets the lock', () => {
       getPatientMock,
       getPatientCurrentPathwayMock,
     ];
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
     await act(async () => {
       render(
         <NewMockSdApolloProvider mocks={ mocks }>
           <Default />
         </NewMockSdApolloProvider>,
       );
+      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
+      jest.advanceTimersByTime(2000);
     });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
   });
 
   it('Should display the patient', async () => {
@@ -117,8 +123,8 @@ describe('When page loads and user gets the lock', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument());
   });
 
-  it('Should send the lock mutation', () => {
-    expect(mocks[0].mockFn).toBeCalledTimes(1);
+  it('Should send the lock mutation', async () => {
+    await waitFor(() => expect(mocks[0].mockFn).toBeCalledTimes(1));
   });
 
   it('Should send the unlock mutation once when component unmounted', async () => {
@@ -163,13 +169,19 @@ describe('When the page loads and the user does not get the lock', () => {
       getPatientMock,
       getPatientCurrentPathwayMock,
     ];
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
     await act(async () => {
       render(
         <NewMockSdApolloProvider mocks={ mocks }>
           <Default />
         </NewMockSdApolloProvider>,
       );
+      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
+      jest.advanceTimersByTime(2000);
     });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
   });
 
   it('Should display the patient', () => {
@@ -198,11 +210,21 @@ describe('When page loads and a user submits a decision without milestones', () 
   // let tabState: boolean;
   beforeEach( async () => {
     const { click, keyboard } = userEvent.setup();
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>,
-    );
+
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+    await act(async () => {
+      render(
+        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+          <Default />
+        </MockSdApolloProvider>,
+      );
+      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
+      jest.advanceTimersByTime(2000);
+    });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
+
     const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
     const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
     // wait for page to render fully
@@ -218,7 +240,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should warn the user when they submit', async () => {
-    expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
   });
 
   it('Should succed when they click submit', async () => {
@@ -227,7 +249,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Cancel' })));
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
     });
@@ -243,13 +265,15 @@ describe('When page loads and a user submits a decision without milestones', () 
     });
   });
 
-  it('Should disable the tabs', () => {
-    expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
-    expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
+  it('Should disable the tabs', async () => {
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
+      expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
+    });
   });
 
-  it('Should re-enable the tabs when the user cancels', () => {
-    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+  it('Should re-enable the tabs when the user cancels', async () => {
+    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Cancel' })));
     expect(screen.getByRole('tab', { name: /new decision/i })).toBeEnabled();
     expect(screen.getByRole('tab', { name: /previous decisions/i })).toBeEnabled();
   });
@@ -258,11 +282,21 @@ describe('When page loads and a user submits a decision without milestones', () 
 describe('When page loads and a user submits a decision with milestones', () => {
   beforeEach( async () => {
     const { click, keyboard } = userEvent.setup();
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>,
-    );
+
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
+    await act(async () => {
+      render(
+        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+          <Default />
+        </MockSdApolloProvider>,
+      );
+      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
+      jest.advanceTimersByTime(2000);
+    });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
+
     const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
     const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
     // wait for page to render fully
@@ -281,12 +315,12 @@ describe('When page loads and a user submits a decision with milestones', () => 
     await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
   });
 
-  it('Should ask for confirmation', () => {
-    expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument();
+  it('Should ask for confirmation', async () => {
+    await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
   });
 
   it('Should succeed when user confirms submission', async () => {
-    userEvent.click(screen.getByRole('button', { name: 'OK' }));
+    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'OK' })));
     await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
   });
 

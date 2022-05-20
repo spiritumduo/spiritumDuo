@@ -3,7 +3,7 @@ import { Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
 import { gql, useQuery } from '@apollo/client';
 import edgesToNodes from 'app/pagination';
-
+import LoadingSpinner from 'components/LoadingSpinner';
 import { UserListQuery } from './__generated__/UserListQuery';
 
 export const GET_USER_CONNECTION_QUERY = gql`
@@ -43,6 +43,7 @@ export const UserList = ({ userOnClick }: UserListProps): JSX.Element => {
   );
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [maxFetchedPage, setMaxFetchedPage] = useState<number>(0);
+  const [loadingSpinnerState, setLoadingSpinnerState] = useState<boolean>(false);
   type UserNodeType = UserListQuery['getUserConnection']['edges'][0]['node'];
 
   const isLoading = loading;
@@ -65,9 +66,8 @@ export const UserList = ({ userOnClick }: UserListProps): JSX.Element => {
     }
   };
 
-  return (
+  const pageData = (
     <div>
-      <div>{isLoading ? <h1>Loading!</h1> : undefined}</div>
       <div className="nhsuk-u-visually-hidden" id="pt_todo_list_aria">Patient to-do list</div>
       <div className="nhsuk-u-visually-hidden" id="pt_click_hint_aria">Click to open patient</div>
       <Table responsive role="grid" aria-describedby="pt_todo_list_aria" aria-label="patient list">
@@ -123,5 +123,19 @@ export const UserList = ({ userOnClick }: UserListProps): JSX.Element => {
         activeLinkClassName="bkcolour-nhs-blue text-white paginator-button"
       />
     </div>
+  );
+
+  return (
+    <>
+      <LoadingSpinner
+        loading={ isLoading }
+        setLoadingSpinnerShown={ setLoadingSpinnerState }
+      />
+      {
+        loadingSpinnerState
+          ? ''
+          : pageData
+      }
+    </>
   );
 };

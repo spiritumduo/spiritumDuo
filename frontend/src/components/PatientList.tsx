@@ -57,7 +57,6 @@ const PatientList = (
 
   const patientList = (
     <div>
-      <div>{isLoading ? <h1>Loading!</h1> : '' }</div>
       <div className="nhsuk-u-visually-hidden" id="pt_todo_list_aria">Patient to-do list</div>
       <div className="nhsuk-u-visually-hidden" id="pt_click_hint_aria">Click to open patient</div>
       <Table responsive role="grid" aria-describedby="pt_todo_list_aria" aria-label="patient list">

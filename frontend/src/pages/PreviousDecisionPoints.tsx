@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import './previousdecisionpoints.css';
 import { gql, useQuery } from '@apollo/client';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
 import { PathwayContext } from 'app/context';
 import { ErrorMessage } from 'nhsuk-react-components';
+import LoadingSpinner from 'components/LoadingSpinner';
 
 export interface PreviousDecisionPointsProps {
   hospitalNumber: string;
@@ -45,6 +46,7 @@ export const PREVIOUS_DECISION_POINTS_QUERY = gql`
  */
 const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
+  const [loadingSpinnerState, setLoadingSpinnerState] = useState<boolean>(false);
   const { loading, error, data } = useQuery<previousDecisionPoints>(
     PREVIOUS_DECISION_POINTS_QUERY, {
       variables: {
@@ -55,68 +57,80 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
       },
     },
   );
-  if (loading) return <h1>Loading!</h1>;
 
   const decisions = data?.getPatient?.onPathways?.[0]?.decisionPoints;
-  if (!decisions) return <h1>Patient not on this pathway!</h1>;
+  if (!loading && !decisions) return <h1>Patient not on this pathway!</h1>;
+
+  const pageContents = (
+    <div className="container previous-decision-points-container">
+      { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
+      {
+        decisions?.map((d) => (
+          <div className="row row-cols-3 p-2" key={ d.id }>
+            <div className="col-9">
+              <strong className="row p-1">
+                Decision for {d.decisionType}
+                , {d.addedAt.toLocaleString([], { year: 'numeric', month: 'numeric', day: 'numeric' })}
+                , Dr {d.clinician.firstName}
+                , {d.clinician.lastName}
+              </strong>
+              <div className="row p-1">
+                <p><strong>Clinical History:</strong> {d.clinicHistory}</p>
+              </div>
+              <div className="row p-1">
+                <p><strong>Comorbidities:</strong> {d.comorbidities}</p>
+              </div>
+              {
+                d.milestones?.length !== 0
+                  ? (
+                    <div className="row">
+                      <div className="col" id={ `request-tbl-${d.id}` }>
+                        <b>Requests / referrals made:</b>
+                      </div>
+                      <div className="col" role="table" aria-label="Milestone Requests" aria-describedby={ `request-tbl-${d.id}` }>
+                        <div className="row" role="row">
+                          <div className="col" role="columnheader">
+                            <strong>Milestone</strong>
+                          </div>
+                          <div className="col" role="columnheader">
+                            <strong>Status</strong>
+                          </div>
+                        </div>
+                        {
+                          d.milestones?.map((m) => (
+                            <div key={ `m-id-${m.id}` } className="row" role="row">
+                              <div className="col" role="cell">
+                                {m.milestoneType.name}
+                              </div>
+                              <div className="col" role="cell">
+                                {m.currentState}
+                              </div>
+                            </div>
+                          ))
+                        }
+                      </div>
+                    </div>
+                  )
+                  : null
+              }
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  );
+
   return (
     <div>
-      <div className="container previous-decision-points-container">
-        { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
-        {
-          decisions?.map((d) => (
-            <div className="row row-cols-3 p-2" key={ d.id }>
-              <div className="col-9">
-                <strong className="row p-1">
-                  Decision for {d.decisionType}
-                  , {d.addedAt.toLocaleString([], { year: 'numeric', month: 'numeric', day: 'numeric' })}
-                  , Dr {d.clinician.firstName}
-                  , {d.clinician.lastName}
-                </strong>
-                <div className="row p-1">
-                  <p><strong>Clinical History:</strong> {d.clinicHistory}</p>
-                </div>
-                <div className="row p-1">
-                  <p><strong>Comorbidities:</strong> {d.comorbidities}</p>
-                </div>
-                {
-                  d.milestones?.length !== 0
-                    ? (
-                      <div className="row">
-                        <div className="col" id={ `request-tbl-${d.id}` }>
-                          <b>Requests / referrals made:</b>
-                        </div>
-                        <div className="col" role="table" aria-label="Milestone Requests" aria-describedby={ `request-tbl-${d.id}` }>
-                          <div className="row" role="row">
-                            <div className="col" role="columnheader">
-                              <strong>Milestone</strong>
-                            </div>
-                            <div className="col" role="columnheader">
-                              <strong>Status</strong>
-                            </div>
-                          </div>
-                          {
-                            d.milestones?.map((m) => (
-                              <div key={ `m-id-${m.id}` } className="row" role="row">
-                                <div className="col" role="cell">
-                                  {m.milestoneType.name}
-                                </div>
-                                <div className="col" role="cell">
-                                  {m.currentState}
-                                </div>
-                              </div>
-                            ))
-                          }
-                        </div>
-                      </div>
-                    )
-                    : null
-                }
-              </div>
-            </div>
-          ))
-        }
-      </div>
+      <LoadingSpinner
+        loading={ loading }
+        setLoadingSpinnerShown={ setLoadingSpinnerState }
+      />
+      {
+        loadingSpinnerState
+          ? ''
+          : pageContents
+      }
     </div>
   );
 };

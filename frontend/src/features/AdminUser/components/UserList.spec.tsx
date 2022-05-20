@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
@@ -12,18 +12,25 @@ const { Default } = composeStories(stories);
 describe('When the page loads', () => {
   let mockCallback: jest.Mock<void, [string]>;
   beforeEach(async () => {
+    jest.useFakeTimers();
+    jest.spyOn(global, 'setTimeout');
     mockCallback = jest.fn();
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default userOnClick={ mockCallback } />
-      </MockSdApolloProvider>,
-    );
-    await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
+    await act(async () => {
+      render(
+        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+          <Default userOnClick={ mockCallback } />
+        </MockSdApolloProvider>,
+      );
+      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
+      jest.advanceTimersByTime(2000);
+    });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
   });
 
-  it('Should display users', () => {
+  it('Should display users', async () => {
     // 3 users in mock + header
-    expect(screen.getAllByRole('row').length).toBe(4);
+    await waitFor(() => expect(screen.getAllByRole('row').length).toBe(4));
   });
 
   it('Should fire the callback when a user name is clicked', async () => {
