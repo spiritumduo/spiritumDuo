@@ -205,38 +205,6 @@ def mock_trust_adapter():
     with app.container.trust_adapter_client.override(trust_adapter_mock):
         yield trust_adapter_mock
 
-
-@pytest_asyncio.fixture(scope="function")
-async def context(
-    create_test_database,
-    httpx_test_client,
-    db_start_transaction,
-    mock_trust_adapter,
-    test_pathway,
-    test_user,
-    test_milestone_type,
-    httpx_login_user
-):
-    # At least now this construction is now done here, rather than being scattered across this module
-    cs = ContextStorage()
-    cs.engine = create_test_database
-    cs.client = httpx_test_client
-    conn, tx = db_start_transaction
-    cs.conn = conn
-    cs.tx = tx
-    cs.trust_adapter_mock = mock_trust_adapter
-    cs.PATHWAY = test_pathway
-    user_fixture = test_user
-    cs.USER = user_fixture.user
-    cs.USER_INFO = {
-        "username": user_fixture.user.username,
-        "password": user_fixture.password
-    }
-    cs.MILESTONE_TYPE = test_milestone_type
-    cs.LOGGED_IN_USER = httpx_login_user
-    yield cs
-
-
 @pytest.fixture
 def test_sdpubsub():
     test_sdpubsub = SdPubSub()

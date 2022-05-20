@@ -30,7 +30,10 @@ def get_user_query() -> str:
 # Feature: Test user REST/GQL operations
 # Scenario: a user needs to login
 @pytest.mark.asyncio
-async def test_login_user(context):
+async def test_login_user(
+    test_pathway,
+    httpx_test_client
+):
     """
     When: a user logs in via the REST endpoint
     """
@@ -41,7 +44,7 @@ async def test_login_user(context):
         "department": "Test dummy department",
         "username": "tdummy",
         "password": "tdummy",
-        "default_pathway_id": context.PATHWAY.id
+        "default_pathway_id": test_pathway.id
     }
 
     user: User = await User.create(
@@ -59,10 +62,10 @@ async def test_login_user(context):
 
     await UserPathway.create(
         user_id=user.id,
-        pathway_id=context.PATHWAY.id
+        pathway_id=test_pathway.id
     )
 
-    login_query = await context.client.post(
+    login_query = await httpx_test_client.post(
         url='/rest/login/',
         json=USER_INFO
     )
@@ -99,17 +102,20 @@ async def test_login_user(context):
     assert_that(login_result['user']['pathways'], not_none())
     assert_that(login_result['user']['pathways'][0], not_none())
     assert_that(
-        login_result['user']['pathways'][0]['id'], equal_to(context.PATHWAY.id)
+        login_result['user']['pathways'][0]['id'], equal_to(test_pathway.id)
     )
     assert_that(
         login_result['user']['pathways'][0]['name'],
-        equal_to(context.PATHWAY.name)
+        equal_to(test_pathway.name)
     )
 
 
 # Scenario: a user needs to login but uses weird capitalization
 @pytest.mark.asyncio
-async def test_login_user_weird_caps(context):
+async def test_login_user_weird_caps(
+    test_pathway,
+    httpx_test_client
+):
     """
     When: a user logs in via the REST endpoint
     """
@@ -120,7 +126,7 @@ async def test_login_user_weird_caps(context):
         "department": "Test dummy department",
         "username": "tdummy",
         "password": "tdummy",
-        "default_pathway_id": context.PATHWAY.id
+        "default_pathway_id": test_pathway.id
     }
 
     user: User = await User.create(
@@ -138,10 +144,10 @@ async def test_login_user_weird_caps(context):
 
     await UserPathway.create(
         user_id=user.id,
-        pathway_id=context.PATHWAY.id
+        pathway_id=test_pathway.id
     )
 
-    login_query = await context.client.post(
+    login_query = await httpx_test_client.post(
         url='/rest/login/',
         json={
             "username": "tDuMmY",
@@ -181,11 +187,11 @@ async def test_login_user_weird_caps(context):
     assert_that(login_result['user']['pathways'], not_none())
     assert_that(login_result['user']['pathways'][0], not_none())
     assert_that(
-        login_result['user']['pathways'][0]['id'], equal_to(context.PATHWAY.id)
+        login_result['user']['pathways'][0]['id'], equal_to(test_pathway.id)
     )
     assert_that(
         login_result['user']['pathways'][0]['name'],
-        equal_to(context.PATHWAY.name)
+        equal_to(test_pathway.name)
     )
 
 

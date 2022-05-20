@@ -34,8 +34,9 @@ def pathway_create_mutation() -> str:
 # Feature: Test createPathway GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
 async def test_add_new_pathway(
-    context, pathway_create_permission,
-    pathway_create_mutation, test_milestone_type
+    pathway_create_permission,
+    pathway_create_mutation, test_milestone_type,
+    httpx_test_client, httpx_login_user
 ):
     """
     When: we create a pathway
@@ -44,7 +45,7 @@ async def test_add_new_pathway(
         name="Test pathway"
     )
 
-    create_pathway_query = await context.client.post(
+    create_pathway_query = await httpx_test_client.post(
         url="graphql",
         json={
             "query": pathway_create_mutation,
@@ -87,7 +88,10 @@ async def test_add_new_pathway(
     )
 
 
-async def test_get_pathway(context, pathway_read_permission):
+async def test_get_pathway(
+    httpx_test_client, pathway_read_permission,
+    httpx_login_user
+):
     """
     Given: a pathway exists
     """
@@ -99,7 +103,7 @@ async def test_get_pathway(context, pathway_read_permission):
     When: the gql query is executed to get the pathway
     """
 
-    get_pathway_query = await context.client.post(
+    get_pathway_query = await httpx_test_client.post(
         url="graphql",
         json={
             "query": """
@@ -134,7 +138,10 @@ async def test_get_pathway(context, pathway_read_permission):
 # Feature: Test getPathways GQL mutation
 # Scenario: the GraphQL query for createPathway is executed
 @pytest.mark.asyncio
-async def test_get_pathways(context, pathway_read_permission):
+async def test_get_pathways(
+    pathway_read_permission,
+    httpx_test_client, httpx_login_user
+):
     """
     Given: MilestoneTypes are in the system
     """
@@ -148,7 +155,7 @@ async def test_get_pathways(context, pathway_read_permission):
     When: we run the gql query to get all pathways
     """
 
-    get_pathway_query = await context.client.post(
+    get_pathway_query = await httpx_test_client.post(
         url="graphql",
         json={
             "query": """
@@ -204,5 +211,5 @@ async def test_user_lacks_permission(
     assert_that(res.status_code, equal_to(200))
     assert_that(
         payload['errors'][0]['message'],
-        contains_string("Missing one or many permissions"
-    ))
+        contains_string("Missing one or many permissions")
+    )

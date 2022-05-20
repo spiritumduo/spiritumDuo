@@ -27,14 +27,15 @@ def new_clinician(test_pathway):
 # Scenario: a new user needs to be added into the system
 @pytest.mark.asyncio
 async def test_create_user_correct(
-    context, user_create_permission, new_clinician
+    user_create_permission, new_clinician,
+    httpx_test_client, httpx_login_user
 ):
     """
     When: we create their user account
     """
     NEW_CLINICIAN = new_clinician
 
-    create_user_account = await context.client.post(
+    create_user_account = await httpx_test_client.post(
         url="rest/createuser/",
         json=NEW_CLINICIAN
     )
@@ -52,7 +53,8 @@ async def test_create_user_correct(
 # weird caps for username
 @pytest.mark.asyncio
 async def test_create_user_wierd_caps(
-    context, user_create_permission, new_clinician
+    user_create_permission, new_clinician,
+    httpx_test_client, httpx_login_user
 ):
     """
     When: we create their user account
@@ -61,7 +63,7 @@ async def test_create_user_wierd_caps(
 
     new_clinician['username'] = "JoHn.SmItH123"
 
-    create_user_account = await context.client.post(
+    create_user_account = await httpx_test_client.post(
         url="rest/createuser/",
         json=NEW_CLINICIAN
     )
@@ -87,7 +89,8 @@ async def test_create_user_wierd_caps(
 # username already exists
 @pytest.mark.asyncio
 async def test_create_user_username_preexists(
-    context, user_create_permission, new_clinician
+    user_create_permission, new_clinician,
+    httpx_test_client, httpx_login_user
 ):
     """
     When: we create their user account
@@ -105,7 +108,7 @@ async def test_create_user_username_preexists(
 
     NEW_CLINICIAN = new_clinician
 
-    res = await context.client.post(
+    res = await httpx_test_client.post(
         url="rest/createuser/",
         json=NEW_CLINICIAN
     )

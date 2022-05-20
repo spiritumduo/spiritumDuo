@@ -27,7 +27,11 @@ def get_user_query() -> str:
 
 # Feature: Test user REST/GQL operations
 # Scenario: we need to get a user's information
-async def test_gql_get_user(context, user_read_permission, get_user_query):
+async def test_gql_get_user(
+    user_read_permission, get_user_query,
+    test_pathway, httpx_test_client,
+    httpx_login_user
+):
     """
     When: we run the gql query for getUser
     """
@@ -38,7 +42,7 @@ async def test_gql_get_user(context, user_read_permission, get_user_query):
         "email": "test@test.com",
         "username": "tdummy",
         "password": "tdummy",
-        "default_pathway_id": context.PATHWAY.id
+        "default_pathway_id": test_pathway.id
     }
     USER = await User.create(
         first_name=USER_INFO['first_name'],
@@ -53,7 +57,7 @@ async def test_gql_get_user(context, user_read_permission, get_user_query):
         ).decode('utf-8'),
     )
 
-    get_user_query = await context.client.post(
+    get_user_query = await httpx_test_client.post(
         url="graphql",
         json={
             "query": get_user_query,
@@ -81,11 +85,11 @@ async def test_gql_get_user(context, user_read_permission, get_user_query):
     assert_that(get_user_query['defaultPathway'], not_none())
     assert_that(
         get_user_query['defaultPathway']['id'],
-        equal_to(str(context.PATHWAY.id))
+        equal_to(str(test_pathway.id))
     )
     assert_that(
         get_user_query['defaultPathway']['name'],
-        equal_to(str(context.PATHWAY.name))
+        equal_to(str(test_pathway.name))
     )
 
 

@@ -1,4 +1,3 @@
-import pytest
 from models import Pathway, PathwayMilestoneType
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 

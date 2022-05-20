@@ -28,11 +28,15 @@ def get_patient_on_pathway_query() -> str:
 # Feature: testing getPatientsOnPathway
 # Scenario: the getPatientsOnPathway function is called
 async def test_get_patients_on_pathway(
-        context, patient_read_permission,
+        patient_read_permission,
         on_pathway_read_permission,
-        get_patient_on_pathway_query
+        get_patient_on_pathway_query,
+        mock_trust_adapter,
+        test_pathway, test_user,
+        httpx_test_client,
+        httpx_login_user
 ):
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
     """
     Given: we have patients on a pathway
     """
@@ -72,18 +76,18 @@ async def test_get_patients_on_pathway(
 
     await OnPathway.create(
         patient_id=PATIENT_ONE.id,
-        pathway_id=context.PATHWAY.id,
-        under_care_of_id=context.USER.id
+        pathway_id=test_pathway.id,
+        under_care_of_id=test_user.user.id
     )
     await OnPathway.create(
         patient_id=PATIENT_TWO.id,
-        pathway_id=context.PATHWAY.id,
-        under_care_of_id=context.USER.id
+        pathway_id=test_pathway.id,
+        under_care_of_id=test_user.user.id
     )
     await OnPathway.create(
         patient_id=PATIENT_THREE.id,
-        pathway_id=context.PATHWAY.id,
-        under_care_of_id=context.USER.id
+        pathway_id=test_pathway.id,
+        under_care_of_id=test_user.user.id
     )
 
     async def load_patient(recordId, **kwargs):
@@ -105,19 +109,19 @@ async def test_get_patients_on_pathway(
             retVal.append(PATIENT_THREE_IE)
         return retVal
 
-    context.trust_adapter_mock.load_patient = load_patient
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_patient = load_patient
+    mock_trust_adapter.load_many_patients = load_many_patients
 
     """
     When: we execute the query
     """
 
-    get_patients_on_pathway_result = await context.client.post(
+    get_patients_on_pathway_result = await httpx_test_client.post(
         url="graphql",
         json={
             "query": get_patient_on_pathway_query,
             "variables": {
-                "pathwayId": context.PATHWAY.id
+                "pathwayId": test_pathway.id
             }
         }
     )
@@ -147,10 +151,12 @@ async def test_get_patients_on_pathway(
 # Scenario: the getPatientsOnPathwayConnection function is called
 @pytest.mark.asyncio
 async def test_get_patient_on_pathway_connection(
-    context, patient_read_permission,
-    on_pathway_read_permission
+    patient_read_permission,
+    on_pathway_read_permission,
+    test_pathway, test_user, mock_trust_adapter,
+    httpx_test_client, httpx_login_user,
 ):
-    context.trust_adapter_mock.test_connection.return_value = True
+    mock_trust_adapter.test_connection.return_value = True
     """
     Given: we have patients on a pathway
     """
@@ -190,18 +196,18 @@ async def test_get_patient_on_pathway_connection(
 
     await OnPathway.create(
         patient_id=PATIENT_ONE.id,
-        pathway_id=context.PATHWAY.id,
-        under_care_of_id=context.USER.id
+        pathway_id=test_pathway.id,
+        under_care_of_id=test_user.user.id
     )
     await OnPathway.create(
         patient_id=PATIENT_TWO.id,
-        pathway_id=context.PATHWAY.id,
-        under_care_of_id=context.USER.id
+        pathway_id=test_pathway.id,
+        under_care_of_id=test_user.user.id
     )
     await OnPathway.create(
         patient_id=PATIENT_THREE.id,
-        pathway_id=context.PATHWAY.id,
-        under_care_of_id=context.USER.id
+        pathway_id=test_pathway.id,
+        under_care_of_id=test_user.user.id
     )
 
     async def load_patient(recordId, **kwargs):
@@ -223,14 +229,14 @@ async def test_get_patient_on_pathway_connection(
             retVal.append(PATIENT_THREE_IE)
         return retVal
 
-    context.trust_adapter_mock.load_patient = load_patient
-    context.trust_adapter_mock.load_many_patients = load_many_patients
+    mock_trust_adapter.load_patient = load_patient
+    mock_trust_adapter.load_many_patients = load_many_patients
 
     """
     When: we execute the query
     """
 
-    get_patient_on_pathway_result = await context.client.post(
+    get_patient_on_pathway_result = await httpx_test_client.post(
         url="graphql",
         json={
             "query": """
@@ -253,7 +259,7 @@ async def test_get_patient_on_pathway_connection(
                 }
             """,
             "variables": {
-                "pathwayId": context.PATHWAY.id,
+                "pathwayId": test_pathway.id,
                 "first": 2
             }
         }
@@ -293,7 +299,7 @@ async def test_get_patient_on_pathway_connection(
     Then: we get all the patients on that pathway using a cursor
     """
 
-    get_patient_on_pathway_result_cursor = await context.client.post(
+    get_patient_on_pathway_result_cursor = await httpx_test_client.post(
         url="graphql",
         json={
             "query": """
@@ -318,7 +324,7 @@ async def test_get_patient_on_pathway_connection(
                 }
             """,
             "variables": {
-                "pathwayId": context.PATHWAY.id,
+                "pathwayId": test_pathway.id,
                 "after": patient_list['edges'][1]['cursor'],
                 "first": 2
             }
