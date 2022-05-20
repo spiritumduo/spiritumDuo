@@ -95,9 +95,10 @@ async def test_update_pathway(
     pathwayDb: Pathway = await Pathway.get(PATHWAY.id)
     assert_that(pathwayDb.name, equal_to(NEW_PATHWAY_NAME))
 
-    pathwayMilestoneTypes: List[PathwayMilestoneType] = await PathwayMilestoneType.query.where(
-        PathwayMilestoneType.pathway_id == PATHWAY.id
-    ).gino.all()
+    pathwayMilestoneTypes: List[PathwayMilestoneType] = await \
+        PathwayMilestoneType.query.where(
+            PathwayMilestoneType.pathway_id == PATHWAY.id
+        ).gino.all()
 
     assert_that(len(pathwayMilestoneTypes), equal_to(1))
     assert_that(
