@@ -74,7 +74,7 @@ test('Patient lists should paginate', async () => {
       name: (t) => /next/i.test(t),
     });
     expect(nextLinks.length).toEqual(1);
-    click(nextLinks[0]);
+    await waitFor(() => click(nextLinks[0]));
     await waitFor(() => {
       const links = screen.getAllByRole('row');
       expect(links.length).toBe(6); // 5 patients on second page in mock, plus header
