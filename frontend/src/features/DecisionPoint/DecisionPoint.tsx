@@ -492,7 +492,7 @@ const DecisionPointPage = (
                   }
                 </Col>
                 <Col>
-                  <h5>External Referrals</h5>
+                  <h5>Handover Referrals</h5>
                   {
                     referAndDischargeOptionsElements.length !== 0
                       ? referAndDischargeOptionsElements
