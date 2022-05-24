@@ -12,7 +12,7 @@ import { useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
 
 // PAGES
-import DecisionPointPage from 'pages/DecisionPoint';
+import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 
 // LOCAL

@@ -3,20 +3,18 @@ import { waitFor, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
-import userEvent from '@testing-library/user-event';
-import store from 'app/store';
-import { RootState } from 'app/store';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);
 
 describe('When page loads', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     render(
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
         <Default />
       </MockSdApolloProvider>,
     );
+    await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
   });
 
   it('Should display the last clinical history', async () => {
@@ -37,7 +35,7 @@ describe('When page loads', () => {
 
   it('Should display previous test results', async () => {
     await waitFor(() => {
-      Default.parameters?.milestones.forEach((ms) => {
+      Default.parameters?.milestones.forEach((ms: any) => {
         if (ms.testResult) {
           expect(screen.getAllByRole('cell', {
             name: new RegExp(ms.milestoneType.name, 'i'),

@@ -1,23 +1,19 @@
 /* eslint-disable quotes */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useLayoutEffect, useState } from 'react';
 
 // LIBRARIES
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { Collapse, Container, Row, Col, Button as BootstrapButton } from 'react-bootstrap';
-import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Button, Fieldset, ErrorMessage, ErrorSummary } from 'nhsuk-react-components';
 import * as yup from 'yup';
-import classNames from 'classnames';
 
 // APP
 import { AuthContext, PathwayContext } from 'app/context';
 import { DecisionPointType } from 'types/DecisionPoint';
 import Patient from 'types/Patient';
 import User from 'types/Users';
-import { setIsTabDisabled } from 'components/ModalPatient.slice';
-import { useAppDispatch } from 'app/hooks';
 
 // COMPONENTS
 import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
@@ -25,12 +21,14 @@ import DecisionSubmissionConfirmation from 'components/DecisionSubmissionConfirm
 import PathwayComplete from 'components/PathwayComplete';
 import { Select, Textarea } from 'components/nhs-style';
 
-import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
-
 // GENERATED TYPES
-import { createDecisionPointVariables, createDecisionPoint } from 'pages/__generated__/createDecisionPoint';
-import { GetPatient } from 'pages/__generated__/GetPatient';
-import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
+import { createDecisionPointVariables, createDecisionPoint } from 'features/DecisionPoint/__generated__/createDecisionPoint';
+import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
+import { DecisionType, MilestoneRequestInput } from '../../../__generated__/globalTypes';
+
+// LOCAL COMPONENTS
+import ConfirmNoMilestones from './components/ConfirmNoMilestones';
+import PreviousTestResultsElement from './components/PreviousTestResultsElement';
 
 import './decisionpoint.css';
 
@@ -152,224 +150,6 @@ type DecisionPointPageForm = {
   }[];
 };
 
-interface TestResultData {
-  id: string;
-  key: string;
-  elementId: string;
-  milestoneName: string;
-  description: string;
-  addedAt: Date;
-  forwardDecisionPointId?: string;
-}
-
-const usePreviousTestResults = (data: GetPatient | undefined ) => {
-  interface CollapseState {
-    [elementId: string]: boolean;
-  }
-  const [testResultCollapseStates, setTestResultCollapseStates] = useState<CollapseState>({});
-  const [previousTestResults, setPreviousTestResults] = useState<TestResultData[]>([]);
-
-  useEffect(() => {
-    const testResults = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
-      (ms) => (
-        ms.testResult?.description
-          ? {
-            id: ms.testResult.id,
-            key: `tr-${ms.testResult.id}`,
-            elementId: `tr-href-${ms.testResult.id}`,
-            milestoneName: ms.milestoneType.name,
-            description: ms.testResult?.description,
-            addedAt: ms.testResult.addedAt,
-            forwardDecisionPointId: ms.forwardDecisionPoint?.id,
-          }
-          : []
-      ),
-    );
-    testResults?.sort((a, b) => a.addedAt.valueOf() - b.addedAt.valueOf());
-    const collapseStates: CollapseState = {};
-    testResults?.forEach((tr) => {
-      collapseStates[tr.elementId] = !tr.forwardDecisionPointId;
-    });
-    if (testResults) setPreviousTestResults(testResults);
-    if (collapseStates) setTestResultCollapseStates(collapseStates);
-  }, [data]);
-
-  return { testResultCollapseStates, setTestResultCollapseStates, previousTestResults };
-};
-
-interface ConfirmNoMilestonesProps {
-  confirmFn: () => void;
-  submitFn: () => void;
-  cancelFn: () => void;
-  milestoneResolutions?: string[];
-}
-
-/**
- * Confirmation when user tries to submit without any milestones selected
- * @param {ConfirmNoMilestonesProps} props Props
- * @returns JSX.Element
- */
-const ConfirmNoMilestones = (
-  { confirmFn, submitFn, cancelFn, milestoneResolutions }: ConfirmNoMilestonesProps,
-): JSX.Element => {
-  const [disabledState, setDisabledState] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(setIsTabDisabled(true));
-    return () => {
-      dispatch(setIsTabDisabled(false));
-    };
-  }, [dispatch]);
-  return (
-    <Container>
-      <Row>
-        <strong>No requests selected!</strong>
-        <p>
-          No requests have been selected. Are you sure
-          you want to continue?
-        </p>
-      </Row>
-      <Row>
-        {
-          milestoneResolutions
-            ? (
-              <div>By clicking &apos;Submit&apos; you are acknowledging:
-                <ul>
-                  {
-                    milestoneResolutions?.map((m) => (
-                      <li key={ m }>{m}</li>
-                    ))
-                  }
-                </ul>
-              </div>
-            )
-            : false
-        }
-      </Row>
-      <Button
-        className="float-end w-25 mt-lg-4 ms-4"
-        disabled={ disabledState }
-        onClick={ () => {
-          setDisabledState(true);
-          confirmFn();
-          submitFn();
-        } }
-        secondary
-      >
-        Submit
-      </Button>
-      <Button
-        disabled={ disabledState }
-        onClick={ () => {
-          cancelFn();
-        } }
-        className="float-end w-25 mt-lg-4"
-      >
-        Cancel
-      </Button>
-    </Container>
-  );
-};
-
-interface PreviousTestResultsElementProps {
-  data: GetPatient | undefined;
-}
-
-const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) => {
-  const {
-    testResultCollapseStates,
-    setTestResultCollapseStates,
-    previousTestResults,
-  } = usePreviousTestResults(data);
-
-  const TestResultDataElement = ({ result }: { result: TestResultData }) => (
-    <Row role="row" className={ classNames('my-3', { 'test-new': !result.forwardDecisionPointId }) }>
-      <Col role="cell">
-        {
-          !result.forwardDecisionPointId
-            ? (
-              <>
-                <img src={ newResultImage } alt="New Result" />
-              </>
-            )
-            : false
-        }
-      </Col>
-      <Col role="cell" xs={ 12 } sm={ 11 } xl={ 3 }>
-        <p className="text-left">
-          {result.milestoneName}: <br />
-          {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-        </p>
-      </Col>
-      <Col role="cell" xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
-        {
-          result.description.length < 75
-            ? <>{result.description}</>
-            : (
-              <>
-                {
-                  testResultCollapseStates[result.elementId]
-                    ? result.description.slice(0, 75)
-                    : `${result.description.slice(0, 75)}...`
-                }
-                <Collapse in={ testResultCollapseStates[result.elementId] } className="test-collapse">
-                  <div>
-                    {result.description.slice(75, result.description.length)}
-                  </div>
-                </Collapse>
-              </>
-            )
-      }
-      </Col>
-      <Col role="cell" xs={ 2 } sm={ 2 } xl={ 1 } className="position-relative">
-        {
-          result.description.length < 75
-            ? ''
-            : (
-              <BootstrapButton
-                onClick={ () => {
-                  const newCollapseStates = { ...testResultCollapseStates };
-                  newCollapseStates[
-                    result.elementId
-                  ] = !testResultCollapseStates[result.elementId];
-                  setTestResultCollapseStates(newCollapseStates);
-                } }
-                aria-controls="example-collapse-text"
-                aria-expanded={ testResultCollapseStates[result.elementId] }
-                variant="link"
-                className="p-0 position-absolute"
-                style={ { bottom: '0' } }
-              >
-                {
-                  testResultCollapseStates[result.elementId]
-                    ? <ChevronUp color="black" size="1.5rem" />
-                    : <ChevronDown color="black" size="1.5rem" />
-                }
-              </BootstrapButton>
-            )
-        }
-      </Col>
-    </Row>
-  );
-
-  const elements = previousTestResults?.map((result) => <TestResultDataElement result={ result } key={ `result-data-element-${result.key}` } />);
-
-  return (
-    <div role="table" aria-label="Previous Test Results">
-      <div role="rowgroup" className="visually-hidden">
-        <div role="row">
-          <div role="columnheader">New?</div>
-          <div role="columnheader">Name</div>
-          <div role="columnheader">Description</div>
-        </div>
-      </div>
-      <div role="rowgroup">
-        { elements }
-      </div>
-    </div>
-  );
-};
-
 const DecisionPointPage = (
   { hospitalNumber, decisionType, onPathwayLock }: DecisionPointPageProps,
 ): JSX.Element => {
@@ -426,7 +206,7 @@ const DecisionPointPage = (
 
   const [hasBuiltCheckboxes, updateHasBuiltCheckboxes] = useState<boolean>(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!hasBuiltCheckboxes && data) {
       const fieldProps: DecisionPointPageForm['milestoneRequests'] = data.getMilestoneTypes
         ? data.getMilestoneTypes?.flatMap((milestoneType) => (
@@ -445,7 +225,7 @@ const DecisionPointPage = (
       appendRequestFields(fieldProps);
       updateHasBuiltCheckboxes(true);
     }
-  }, [data, appendRequestFields, hasBuiltCheckboxes]);
+  }, [data, appendRequestFields, hasBuiltCheckboxes, updateHasBuiltCheckboxes]);
 
   // CONFIRM PREVIOUS TEST RESULTS HIDDEN INPUTS
   const {
@@ -459,7 +239,7 @@ const DecisionPointPage = (
   const [
     hasBuiltHiddenConfirmationFields, updateHasBuiltHiddenConfirmationFields,
   ] = useState<boolean>(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!hasBuiltHiddenConfirmationFields && data) {
       const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0]?.milestones?.flatMap(
         (ms) => (
@@ -589,7 +369,13 @@ const DecisionPointPage = (
     const element = (
       <div className="form-check" key={ `ms-check-${field.id}` }>
         <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
-          <input className="form-check-input" type="checkbox" value={ field.milestoneTypeId } { ...register(`milestoneRequests.${index}.checked` as const) } defaultChecked={ false } />
+          <input
+            className="form-check-input"
+            type="checkbox"
+            value={ field.milestoneTypeId }
+            { ...register(`milestoneRequests.${index}.checked` as const) }
+            defaultChecked={ false }
+          />
           { field.name }
         </label>
       </div>
