@@ -70,7 +70,8 @@ const renderError = () => render(
 
 test('Error should display to user', async () => {
   renderError();
-  const { click, type } = userEvent.setup();
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 0)));
+  const { type } = userEvent.setup();
   // const createUserBtn = screen.getByRole('button', { name: /create\s+user/i });
   await waitFor(() => {
     type(screen.getByLabelText(/username/i), 'Username');
