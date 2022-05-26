@@ -60,6 +60,11 @@ export const Default: ComponentStory<typeof CreateRoleTab> = () => {
   return <CreateRoleTab rolePermissions={ rolePermissions } />;
 };
 
+Default.parameters = {
+  rolePermissions: rolePermissions,
+  successfulRoleCreationMock: successfulRoleCreationMock,
+};
+
 export const RoleExistsError: ComponentStory<typeof CreateRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', { status: 409 });
   return <CreateRoleTab rolePermissions={ rolePermissions } />;

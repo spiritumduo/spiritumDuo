@@ -64,6 +64,12 @@ export const Default: ComponentStory<typeof UpdateRoleTab> = () => {
   );
 };
 
+Default.parameters = {
+  roles: roles,
+  rolePermissions: rolePermissions,
+  successfulRoleUpdateMock: successfulRoleUpdateMock,
+};
+
 export const ConflictError: ComponentStory<typeof UpdateRoleTab> = () => {
   fetchMock.restore().mock('end:/rest/updaterole/', { body: conflictingRoleUpdateMock, status: 409 });
   return (
