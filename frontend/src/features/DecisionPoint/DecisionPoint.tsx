@@ -20,6 +20,7 @@ import DecisionSubmissionSuccess from 'components/DecisionSubmissionSuccess';
 import DecisionSubmissionConfirmation from 'components/DecisionSubmissionConfirmation';
 import PathwayComplete from 'components/PathwayComplete';
 import { Select, Textarea } from 'components/nhs-style';
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 // GENERATED TYPES
 import { createDecisionPointVariables, createDecisionPoint } from 'features/DecisionPoint/__generated__/createDecisionPoint';
@@ -31,7 +32,6 @@ import ConfirmNoMilestones from './components/ConfirmNoMilestones';
 import PreviousTestResultsElement from './components/PreviousTestResultsElement';
 
 import './decisionpoint.css';
-import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -159,7 +159,6 @@ const DecisionPointPage = (
   const { currentPathwayId } = useContext(PathwayContext);
   const { user: contextUser } = useContext(AuthContext);
   const user = contextUser as User; // context can be undefined
-  const [loadingSpinnerState, setLoadingSpinnerState] = useState<boolean>(false);
 
   // GET PATIENT DATA QUERY
   const { loading, data, error } = useQuery<GetPatient>(
@@ -210,6 +209,8 @@ const DecisionPointPage = (
 
   useLayoutEffect(() => {
     if (!hasBuiltCheckboxes && data) {
+      updateHasBuiltCheckboxes(true);
+      console.log('building milestone requests!');
       const fieldProps: DecisionPointPageForm['milestoneRequests'] = data.getMilestoneTypes
         ? data.getMilestoneTypes?.flatMap((milestoneType) => (
           !milestoneType.isCheckboxHidden
@@ -225,7 +226,6 @@ const DecisionPointPage = (
         ))
         : [];
       appendRequestFields(fieldProps);
-      updateHasBuiltCheckboxes(true);
     }
   }, [data, appendRequestFields, hasBuiltCheckboxes, updateHasBuiltCheckboxes]);
 
