@@ -1,212 +1,78 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import ModalPatient, { LOCK_ON_PATHWAY_MUTATION } from 'components/ModalPatient';
+import ModalPatient, { GET_PATIENT_CURRENT_PATHWAY_QUERY, LOCK_ON_PATHWAY_MUTATION } from 'components/ModalPatient';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
-import { Default as DecisionPointDefaultStory, Locked as DecisionPointLockedStory } from 'features/DecisionPoint/DecisionPoint.stories';
 import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
+import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionPoint.stories';
+import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 
-const userHasLockMocks = [
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1',
-              firstName: 'Test-John',
-              lastName: 'Test-Doe',
-              username: 'test-john-doe',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // UNLOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-          unlock: true,
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          id: '1',
-          onPathway: {
-            id: '1',
-            lockEndTime: null,
-            lockUser: null,
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-];
-
-const userDoesNotHaveLockMocks = [
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1000',
-              firstName: 'Test-John-2',
-              lastName: 'Test-Doe-2',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1000',
-              firstName: 'Test-John-2',
-              lastName: 'Test-Doe-2',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-  {
-    // LOCK ONPATHWAY
-    request: {
-      query: LOCK_ON_PATHWAY_MUTATION,
-      variables: {
-        input: {
-          onPathwayId: '1',
-        },
-      },
-    },
-    result: {
-      data: {
-        lockOnPathway: {
-          onPathway: {
-            id: '1',
-            lockEndTime: new Date('2030-01-01'),
-            lockUser: {
-              id: '1000',
-              firstName: 'Test-John-2',
-              lastName: 'Test-Doe-2',
-            },
-          },
-          userErrors: null,
-        },
-      },
-    },
-  },
-];
-
-const mockPatient = {
+const patient = {
   id: '1',
-  firstName: 'John',
-  lastName: 'Doe',
+  firstName: 'Bilbo',
+  lastName: 'Baggins',
   hospitalNumber: 'fMRN1234567',
+  dateOfBirth: new Date('1970-06-12'),
+  sex: 'MALE',
+  nationalNumber: 'fNHS12345678',
+};
+
+const userHasLockMocks = {
+  query: LOCK_ON_PATHWAY_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      lockOnPathway: {
+        onPathway: {
+          id: '1',
+          lockEndTime: new Date('2030-01-01'),
+          lockUser: {
+            id: '1',
+            firstName: 'Test-John',
+            lastName: 'Test-Doe',
+            username: 'test-john-doe',
+          },
+        },
+        userErrors: null,
+      },
+    },
+  }),
+};
+
+const userDoesNotHaveLockMocks = {
+  query: LOCK_ON_PATHWAY_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      lockOnPathway: {
+        onPathway: {
+          id: '1',
+          lockEndTime: new Date('2030-01-01'),
+          lockUser: {
+            id: '1000',
+            firstName: 'Not',
+            lastName: 'You',
+            username: 'notyou',
+          },
+        },
+        userErrors: [{
+          field: 'lock_end_time',
+          message: 'A lock is already in place by another user!',
+        }],
+      },
+    },
+  }),
+};
+
+const patientMock = {
+  query: GET_PATIENT_CURRENT_PATHWAY_QUERY,
+  mockFn: () => Promise.resolve({
+    data: {
+      getPatient: {
+        ...patient,
+        onPathways: [{
+          id: '1',
+        }],
+      },
+    },
+  }),
 };
 
 export default {
@@ -224,38 +90,60 @@ export default {
   ],
 } as ComponentMeta<typeof ModalPatient>;
 
-const Template: ComponentStory<typeof ModalPatient> = (args) => <ModalPatient { ...args } />;
+export const Default: ComponentStory<typeof ModalPatient> = () => (
+  <NewMockSdApolloProvider
+    mocks={
+      [
+        patientMock,
+        userHasLockMocks,
+        DecisionPointsStory.parameters?.createDecisionMock,
+        DecisionPointsStory.parameters?.getPatientMock,
+        PreviousDecisionPointsStory.parameters?.getPatientMock,
+      ]
+    }
+  >
+    <ModalPatient
+      hospitalNumber={ patient.hospitalNumber }
+      closeCallback={ () => ({}) }
+    />
+  </NewMockSdApolloProvider>
+);
 
-export const Default = Template.bind({});
 Default.args = {
-  hospitalNumber: mockPatient.hospitalNumber,
+  hospitalNumber: patient.hospitalNumber,
   lock: true,
 };
 
 Default.parameters = {
-  patient: mockPatient,
-  apolloClient: {
-    mocks: [
-      ...userHasLockMocks,
-      ...DecisionPointDefaultStory.parameters?.apolloClient.mocks,
-      ...PreviousDecisionPointsStory.parameters?.apolloClient.mocks,
-    ],
-  },
+  patient: patient,
+  patientMock: patientMock,
+  userHasLockMocks: userHasLockMocks,
 };
 
-export const LockedByOtherUser = Template.bind({});
+export const LockedByOtherUser: ComponentStory<typeof ModalPatient> = () => (
+  <NewMockSdApolloProvider
+    mocks={
+      [
+        userDoesNotHaveLockMocks,
+        patientMock,
+        DecisionPointsStory.parameters?.getPatientMock,
+        PreviousDecisionPointsStory.parameters?.getPatientMock,
+      ]
+    }
+  >
+    <ModalPatient
+      hospitalNumber={ patient.hospitalNumber }
+      closeCallback={ () => ({}) }
+      lock
+    />
+  </NewMockSdApolloProvider>
+);
+
 LockedByOtherUser.args = {
-  hospitalNumber: mockPatient.hospitalNumber,
+  hospitalNumber: patient.hospitalNumber,
   lock: true,
 };
 
 LockedByOtherUser.parameters = {
-  patient: mockPatient,
-  apolloClient: {
-    mocks: [
-      ...userDoesNotHaveLockMocks,
-      ...DecisionPointLockedStory.parameters?.apolloClient.mocks,
-      ...PreviousDecisionPointsStory.parameters?.apolloClient.mocks,
-    ],
-  },
+  patient: patient,
 };
