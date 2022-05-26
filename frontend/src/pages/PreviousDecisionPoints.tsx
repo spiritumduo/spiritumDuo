@@ -1,9 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import './previousdecisionpoints.css';
 import { gql, useQuery } from '@apollo/client';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
 import { PathwayContext } from 'app/context';
 import { ErrorMessage } from 'nhsuk-react-components';
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 export interface PreviousDecisionPointsProps {
   hospitalNumber: string;
@@ -55,12 +56,12 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
       },
     },
   );
-  if (loading) return <h1>Loading!</h1>;
 
   const decisions = data?.getPatient?.onPathways?.[0]?.decisionPoints;
-  if (!decisions) return <h1>Patient not on this pathway!</h1>;
+  if (!loading && !decisions) return <h1>Patient not on this pathway!</h1>;
+
   return (
-    <div>
+    <LoadingSpinner loading={ loading }>
       <div className="container previous-decision-points-container">
         { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
         {
@@ -117,7 +118,7 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
           ))
         }
       </div>
-    </div>
+    </LoadingSpinner>
   );
 };
 
