@@ -44,6 +44,7 @@ export const UserList = ({ userOnClick }: UserListProps): JSX.Element => {
   );
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [maxFetchedPage, setMaxFetchedPage] = useState<number>(0);
+  const [loadingSpinnerState, setLoadingSpinnerState] = useState<boolean>(false);
   type UserNodeType = UserListQuery['getUserConnection']['edges'][0]['node'];
 
   const { nodes, pageCount, pageInfo } = edgesToNodes<UserNodeType>(

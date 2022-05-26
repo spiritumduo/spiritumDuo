@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { waitFor, render, screen, within, act, waitForElementToBeRemoved } from '@testing-library/react';
+import { waitFor, render, screen, within, act } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import '@testing-library/jest-dom';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';

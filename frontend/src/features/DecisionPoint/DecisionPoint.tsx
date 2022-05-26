@@ -210,7 +210,6 @@ const DecisionPointPage = (
   useLayoutEffect(() => {
     if (!hasBuiltCheckboxes && data) {
       updateHasBuiltCheckboxes(true);
-      console.log('building milestone requests!');
       const fieldProps: DecisionPointPageForm['milestoneRequests'] = data.getMilestoneTypes
         ? data.getMilestoneTypes?.flatMap((milestoneType) => (
           !milestoneType.isCheckboxHidden

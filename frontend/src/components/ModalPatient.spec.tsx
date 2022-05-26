@@ -126,6 +126,8 @@ describe('When page loads and user gets the lock', () => {
         new RegExp(`${patient.firstName}\\s${patient.lastName}`, 'i'),
       )).toBeInTheDocument();
     });
+    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+    jest.useRealTimers();
   });
 
   it('Should display the patient\'s record information', async () => {

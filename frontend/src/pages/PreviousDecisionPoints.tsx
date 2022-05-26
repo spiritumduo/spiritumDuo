@@ -96,23 +96,23 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
                               <strong>Status</strong>
                             </div>
                           </div>
-                          {
-                            d.milestones?.map((m) => (
-                              <div key={ `m-id-${m.id}` } className="row" role="row">
-                                <div className="col" role="cell">
-                                  {m.milestoneType.name}
-                                </div>
-                                <div className="col" role="cell">
-                                  {m.currentState}
-                                </div>
-                              </div>
-                            ))
-                          }
                         </div>
+                        {
+                          d.milestones?.map((m) => (
+                            <div key={ `m-id-${m.id}` } className="row" role="row">
+                              <div className="col" role="cell">
+                                {m.milestoneType.name}
+                              </div>
+                              <div className="col" role="cell">
+                                {m.currentState}
+                              </div>
+                            </div>
+                          ))
+                        }
                       </div>
                     )
                     : null
-                }
+                  }
               </div>
             </div>
           ))

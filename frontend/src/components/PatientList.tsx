@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Table } from 'nhsuk-react-components';
 import { LockFill } from 'react-bootstrap-icons';
