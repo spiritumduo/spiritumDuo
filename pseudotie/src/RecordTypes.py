@@ -7,3 +7,8 @@ class TestResultState(enum.Enum):
     WAITING = "WAITING"
     ERROR = "ERROR"
     COMPLETED = "COMPLETED"
+
+
+class Sex(enum.Enum):
+    MALE = "MALE"
+    FEMALE = "FEMALE"
