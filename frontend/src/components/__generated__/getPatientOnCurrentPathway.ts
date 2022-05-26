@@ -17,6 +17,10 @@ export interface getPatientOnCurrentPathway_getPatient {
   id: string;
   firstName: string;
   lastName: string;
+  hospitalNumber: string;
+  nationalNumber: string;
+  sex: string;
+  dateOfBirth: any;
   onPathways: getPatientOnCurrentPathway_getPatient_onPathways[] | null;
 }
 

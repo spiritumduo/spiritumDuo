@@ -3,39 +3,41 @@ import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
-import userEvent from '@testing-library/user-event';
-import store from 'app/store';
-import { RootState } from 'app/store';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);
 
+async function renderDefault() {
+  jest.useFakeTimers();
+  await act(() => {
+    render(<Default />);
+  });
+  act(() => {
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(500);
+  });
+  jest.useRealTimers();
+}
+
 describe('When page loads', () => {
-  beforeEach(async () => {
-    jest.useFakeTimers();
-    jest.spyOn(global, 'setTimeout');
+  it('Should display loading while waiting for data', async () => {
     await act(async () => {
       render(
-        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-          <Default />
-        </MockSdApolloProvider>,
+        <Default />,
       );
-      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
-      jest.advanceTimersByTime(2000);
     });
-    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
-    jest.useRealTimers();
+    expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
   });
-
   it('Should display the last clinical history', async () => {
-    await waitFor(
-      () => expect(
-        (screen.getByRole('textbox', { name: /clinical history/i }) as HTMLTextAreaElement).value,
-      ).toMatch(/clinic history 1/i),
-    );
+    await renderDefault();
+    expect(
+      (screen.getByRole('textbox', { name: /clinical history/i }) as HTMLTextAreaElement).value,
+    ).toMatch(/clinic history 1/i);
   });
 
   it('Should display the last comorbidities', async () => {
+    await renderDefault();
+
     await waitFor(
       () => expect(
         (screen.getByRole('textbox', { name: /co-morbidities/i }) as HTMLInputElement).value,
@@ -44,8 +46,10 @@ describe('When page loads', () => {
   });
 
   it('Should display previous test results', async () => {
+    await renderDefault();
+
     await waitFor(() => {
-      Default.parameters?.milestones.forEach((ms) => {
+      Default.parameters?.milestones.forEach((ms: any) => {
         if (ms.testResult) {
           expect(screen.getAllByRole('cell', {
             name: new RegExp(ms.milestoneType.name, 'i'),
@@ -66,9 +70,9 @@ describe('When page loads', () => {
   });
   */
   it('Should show clinician under care of', async () => {
-    const clinician = Default
-      .parameters?.apolloClient.mocks[0]
-      .result.data.getPatient.onPathways?.[0].underCareOf;
+    await renderDefault();
+
+    const clinician = Default.parameters?.clinician;
     await waitFor(() => {
       expect(screen.getByRole('option', { name: new RegExp(`${clinician.firstName} ${clinician.lastName}`, 'i') }));
     });

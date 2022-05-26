@@ -63,6 +63,12 @@ export const Default: ComponentStory<typeof DeleteRoleTab> = () => {
   );
 };
 
+Default.parameters = {
+  roles: roles,
+  rolePermissions: rolePermissions,
+  successfulRoleDeleteMock: successfulRoleDeleteMock,
+};
+
 const conflictingRoleDeleteMock = {
   error: 'error message from server',
 };

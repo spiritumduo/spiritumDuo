@@ -12,34 +12,33 @@ import * as stories from './HomePage.stories';
 
 const { Default } = composeStories(stories);
 const renderDefault = async () => {
-  jest.useFakeTimers(); // allows us to manipulate setInterval/setTimeout, etc
-  jest.spyOn(global, 'setTimeout');
+  jest.useFakeTimers();
+  render(
+    <Provider store={ store }>
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>
+    </Provider>,
+  );
+  expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
   await act(async () => {
-    render(
-      <Provider store={ store }>
-        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-          <Default />
-        </MockSdApolloProvider>
-      </Provider>,
-    );
-    await jest.advanceTimersByTime(1000);
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(1000);
   });
-  await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
-  jest.useRealTimers(); // cleanup timer changes
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+  jest.useRealTimers();
 };
 
 test('Patient lists should display loading', async () => {
-  await act(async () => {
-    render(
-      <Provider store={ store }>
-        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-          <Default />
-        </MockSdApolloProvider>
-      </Provider>,
-    );
-  });
+  render(
+    <Provider store={ store }>
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>
+    </Provider>,
+  );
   await waitFor(() => {
-    expect(screen.getByText('Loading animation')).toBeInTheDocument();
+    expect(screen.getByText('loading.svg')).toBeInTheDocument();
   });
 });
 

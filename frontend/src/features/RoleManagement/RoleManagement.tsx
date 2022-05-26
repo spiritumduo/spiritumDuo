@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { ErrorMessage } from 'nhsuk-react-components';
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 import { getRoles } from './__generated__/getRoles';
 import { getRolePermissions } from './__generated__/getRolePermissions';
@@ -58,71 +59,73 @@ const RoleManagementTabSet = (): JSX.Element => {
           ? <ErrorMessage>An error has occured: { errorRolePermissions.message } </ErrorMessage>
           : null
       }
-      <TabPanel>
-        <CreateRoleTab
-          disableForm={ loadingRoles || loadingRolePermissions }
-          refetchRoles={ refetchRoles }
-          rolePermissions={
-            dataRolePermissions?.getRolePermissions?.map((rp) => (
-              {
-                name: rp.name,
-              }
-            ))
-          }
-        />
-      </TabPanel>
-      <TabPanel>
-        <UpdateRoleTab
-          disableForm={ loadingRoles || loadingRolePermissions }
-          refetchRoles={ refetchRoles }
-          roles={
-            dataRoles?.getRoles?.map((role) => (
-              {
-                id: role.id,
-                name: role.name,
-                permissions: role.permissions.map((rP) => (
-                  {
-                    name: rP?.name,
-                  }
-                )),
-              }
-            ))
-          }
-          rolePermissions={
-            dataRolePermissions?.getRolePermissions?.map((rp) => (
-              {
-                name: rp.name,
-              }
-            ))
-          }
-        />
-      </TabPanel>
-      <TabPanel>
-        <DeleteRoleTab
-          disableForm={ loadingRoles || loadingRolePermissions }
-          refetchRoles={ refetchRoles }
-          roles={
-            dataRoles?.getRoles?.map((role) => (
-              {
-                id: role.id,
-                name: role.name,
-                permissions: role.permissions.map((rP) => (
-                  {
-                    name: rP?.name,
-                  }
-                )),
-              }
-            ))
-          }
-          rolePermissions={
-            dataRolePermissions?.getRolePermissions?.map((rp) => (
-              {
-                name: rp.name,
-              }
-            ))
-          }
-        />
-      </TabPanel>
+      <LoadingSpinner loading={ loadingRoles || loadingRolePermissions }>
+        <TabPanel>
+          <CreateRoleTab
+            disableForm={ loadingRoles || loadingRolePermissions }
+            refetchRoles={ refetchRoles }
+            rolePermissions={
+              dataRolePermissions?.getRolePermissions?.map((rp) => (
+                {
+                  name: rp.name,
+                }
+              ))
+            }
+          />
+        </TabPanel>
+        <TabPanel>
+          <UpdateRoleTab
+            disableForm={ loadingRoles || loadingRolePermissions }
+            refetchRoles={ refetchRoles }
+            roles={
+              dataRoles?.getRoles?.map((role) => (
+                {
+                  id: role.id,
+                  name: role.name,
+                  permissions: role.permissions.map((rP) => (
+                    {
+                      name: rP?.name,
+                    }
+                  )),
+                }
+              ))
+            }
+            rolePermissions={
+              dataRolePermissions?.getRolePermissions?.map((rp) => (
+                {
+                  name: rp.name,
+                }
+              ))
+            }
+          />
+        </TabPanel>
+        <TabPanel>
+          <DeleteRoleTab
+            disableForm={ loadingRoles || loadingRolePermissions }
+            refetchRoles={ refetchRoles }
+            roles={
+              dataRoles?.getRoles?.map((role) => (
+                {
+                  id: role.id,
+                  name: role.name,
+                  permissions: role.permissions.map((rP) => (
+                    {
+                      name: rP?.name,
+                    }
+                  )),
+                }
+              ))
+            }
+            rolePermissions={
+              dataRolePermissions?.getRolePermissions?.map((rp) => (
+                {
+                  name: rp.name,
+                }
+              ))
+            }
+          />
+        </TabPanel>
+      </LoadingSpinner>
     </Tabs>
   );
 };

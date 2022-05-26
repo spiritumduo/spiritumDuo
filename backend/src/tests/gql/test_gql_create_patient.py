@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime
 from models import Patient
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
-from SdTypes import DecisionTypes, MilestoneState
+from SdTypes import DecisionTypes, MilestoneState, Sex
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 
 
@@ -15,6 +15,7 @@ def patient_create_query() -> str:
             $lastName: String!
             $hospitalNumber: String!
             $nationalNumber: String!
+            $sex: Sex!
             $dateOfBirth: Date!
             $pathwayId: ID!
             $milestoneTypeId: ID!
@@ -24,6 +25,7 @@ def patient_create_query() -> str:
                 lastName: $lastName,
                 hospitalNumber: $hospitalNumber,
                 nationalNumber: $nationalNumber,
+                sex: $sex,
                 dateOfBirth: $dateOfBirth,
                 pathwayId: $pathwayId,
                 milestones: [
@@ -40,6 +42,7 @@ def patient_create_query() -> str:
                     hospitalNumber
                     nationalNumber
                     dateOfBirth
+                    sex
                     onPathways{
                         id
                         patient{
@@ -114,7 +117,8 @@ async def test_add_new_patient_to_system(
         hospital_number=PATIENT.hospital_number,
         national_number=PATIENT.national_number,
         date_of_birth="2000-01-01",
-        communication_method="LETTER"
+        communication_method="LETTER",
+        sex=Sex.MALE
     )
 
     async def load_patient(**kwargs):
@@ -124,7 +128,8 @@ async def test_add_new_patient_to_system(
             hospital_number=PATIENT.hospital_number,
             national_number=PATIENT.national_number,
             date_of_birth=datetime(year=2000, month=1, day=1).date(),
-            communication_method="LETTER"
+            communication_method="LETTER",
+            sex=Sex.MALE
         )
     mock_trust_adapter.load_patient = load_patient
 
@@ -143,7 +148,8 @@ async def test_add_new_patient_to_system(
         hospital_number=PATIENT.hospital_number,
         national_number=PATIENT.national_number,
         date_of_birth=datetime(year=2000, month=1, day=1).date(),
-        communication_method=PATIENT_IE.communication_method
+        communication_method=PATIENT_IE.communication_method,
+        sex=Sex.MALE
     )]
 
     mock_trust_adapter.create_patient.return_value = Patient_IE(
@@ -152,7 +158,8 @@ async def test_add_new_patient_to_system(
         hospital_number=PATIENT.hospital_number,
         national_number=PATIENT.national_number,
         date_of_birth=datetime(year=2000, month=1, day=1).date(),
-        communication_method=PATIENT_IE.communication_method
+        communication_method=PATIENT_IE.communication_method,
+        sex=Sex.MALE
     )
 
     mock_trust_adapter.create_test_result_immediately.return_value = (
@@ -172,6 +179,7 @@ async def test_add_new_patient_to_system(
                 "hospitalNumber": PATIENT_IE.hospital_number,
                 "nationalNumber": PATIENT_IE.national_number,
                 "dateOfBirth": PATIENT_IE.date_of_birth,
+                "sex": PATIENT_IE.sex,
                 "pathwayId": test_pathway.id,
                 "milestoneTypeId": test_milestone_type.id
             }
@@ -213,6 +221,10 @@ async def test_add_new_patient_to_system(
     assert_that(
         patient_record['dateOfBirth'],
         equal_to(PATIENT_IE.date_of_birth)
+    )
+    assert_that(
+        patient_record['sex'],
+        equal_to(PATIENT_IE.sex)
     )
 
     onPathway = patient_record['onPathways'][0]
@@ -288,7 +300,8 @@ async def test_user_lacks_permission(
                 "nationalNumber": "test",
                 "dateOfBirth": datetime.now().isoformat(),
                 "pathwayId": "test",
-                "milestoneTypeId": "test"
+                "milestoneTypeId": "test",
+                "sex": Sex.MALE
             }
         }
     )

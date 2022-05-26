@@ -73,6 +73,7 @@ const renderError = () => render(
 
 test('Error should display to user', async () => {
   renderError();
+  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 0)));
   const { click, type } = userEvent.setup();
   const createUserBtn = screen.getByRole('button', { name: /create\s+user/i });
   await waitFor(() => {

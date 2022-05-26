@@ -137,6 +137,7 @@ type Patient {
 	firstName: String!
 	lastName: String!
     dateOfBirth: Date!
+    sex: String!
 
     onPathways(
         pathwayId: ID,
@@ -250,13 +251,11 @@ type MilestoneType {
 
 type Milestone {
     id: ID!
-
     milestoneType: MilestoneType!
     onPathway: OnPathway!
     decisionPoint: DecisionPoint
     forwardDecisionPoint: DecisionPoint
     testResult: TestResult
-
     addedAt: DateTime!                        # from SD                      
     updatedAt: DateTime!                      # from SD
     currentState: String!                     # from SD
@@ -268,6 +267,12 @@ enum MilestoneState {
   WAITING
   ERROR
   COMPLETED
+}
+
+enum Sex {
+    MALE
+    FEMALE
+    OTHER
 }
 
 #### INPUT TYPES
@@ -319,14 +324,15 @@ input GroupInput{
 }
 
 input PatientInput{
-    firstName:String!
-    lastName:String!
-    communicationMethod:PatientCommunicationMethods
-    hospitalNumber:String!
-    nationalNumber:String!
-    dateOfBirth:Date!
+    firstName: String!
+    lastName: String!
+    communicationMethod: PatientCommunicationMethods
+    hospitalNumber: String!
+    nationalNumber: String!
+    dateOfBirth: Date!
+    sex: Sex!
 
-    pathwayId:ID!
+    pathwayId: ID!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
 

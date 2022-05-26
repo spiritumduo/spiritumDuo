@@ -21,33 +21,6 @@ const patient = {
   lastName: 'Doe',
 };
 
-const milestones = [
-  {
-    id: '1',
-    updatedAt: new Date(2021, 1, 5),
-    currentState: 'COMPLETED',
-    milestoneType: {
-      name: 'Triage',
-    },
-  },
-  {
-    id: '2',
-    updatedAt: new Date(2020, 1, 5),
-    currentState: 'INIT',
-    milestoneType: {
-      name: 'Second',
-    },
-  },
-  {
-    id: '3',
-    updatedAt: new Date(2022, 1, 5),
-    currentState: 'COMPLETED',
-    milestoneType: {
-      name: 'Third Milestone',
-    },
-  },
-];
-
 for (let i = 0; i < 15; ++i) {
   let lockUser = null;
   let lockEndTime = null;
@@ -77,11 +50,23 @@ for (let i = 0; i < 15; ++i) {
     onPathways: [
       {
         id: i.toString(),
-        decisionPoints: [
-          {
-            milestones: milestones,
+        milestone: {
+          id: '3',
+          updatedAt: new Date(2022, 1, 5),
+          forwardDecisionPoint: '1',
+          currentState: 'COMPLETED',
+          milestoneType: {
+            name: 'Third Milestone',
           },
-        ],
+        },
+        outstandingMilestone: {
+          id: '1',
+          updatedAt: new Date(2021, 1, 4),
+          currentState: 'COMPLETED',
+          milestoneType: {
+            name: 'Triage',
+          },
+        },
         updatedAt: new Date(2021, 1, 10),
         lockEndTime: lockEndTime,
         lockUser: lockUser,

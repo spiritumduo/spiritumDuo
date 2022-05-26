@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { ErrorMessage } from 'nhsuk-react-components';
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 import CreatePathwayTab from './tabpages/CreatePathwayTab';
 import UpdatePathwayTab from './tabpages/UpdatePathwayTab';
@@ -62,71 +63,73 @@ const PathwayManagementTabSet = (): JSX.Element => {
           ? <ErrorMessage>An error occured: {errorPathways.message}</ErrorMessage>
           : null
       }
-      <TabPanel>
-        <CreatePathwayTab
-          disableForm={ loadingMilestoneTypes }
-          refetchPathways={ refetchPathways }
-          milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
-            {
-              id: mT.id,
-              name: mT.name,
-              refName: mT.refName,
+      <LoadingSpinner loading={ loadingMilestoneTypes || loadingPathways }>
+        <TabPanel>
+          <CreatePathwayTab
+            disableForm={ loadingMilestoneTypes }
+            refetchPathways={ refetchPathways }
+            milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
+              {
+                id: mT.id,
+                name: mT.name,
+                refName: mT.refName,
+              }
+            )) }
+          />
+        </TabPanel>
+        <TabPanel>
+          <UpdatePathwayTab
+            disableForm={ loadingMilestoneTypes || loadingPathways }
+            refetchPathways={ refetchPathways }
+            milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
+              {
+                id: mT.id,
+                name: mT.name,
+                refName: mT.refName,
+              }
+            )) }
+            pathways={
+              dataPathways?.getPathways?.map((pW) => (
+                pW ? {
+                  id: pW.id,
+                  name: pW.name,
+                  milestoneTypes: pW.milestoneTypes?.map((mT) => ({
+                    id: mT.id,
+                    name: mT.name,
+                    refName: mT.refName,
+                  })),
+                } : null
+              ))
             }
-          )) }
-        />
-      </TabPanel>
-      <TabPanel>
-        <UpdatePathwayTab
-          disableForm={ loadingMilestoneTypes || loadingPathways }
-          refetchPathways={ refetchPathways }
-          milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
-            {
-              id: mT.id,
-              name: mT.name,
-              refName: mT.refName,
+          />
+        </TabPanel>
+        <TabPanel>
+          <DeletePathwayTab
+            disableForm={ loadingMilestoneTypes || loadingPathways }
+            refetchPathways={ refetchPathways }
+            milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
+              {
+                id: mT.id,
+                name: mT.name,
+                refName: mT.refName,
+              }
+            )) }
+            pathways={
+              dataPathways?.getPathways?.map((pW) => (
+                pW ? {
+                  id: pW.id,
+                  name: pW.name,
+                  milestoneTypes: pW.milestoneTypes?.map((mT) => ({
+                    id: mT.id,
+                    name: mT.name,
+                    refName: mT.refName,
+                  })),
+                } : null
+              ))
             }
-          )) }
-          pathways={
-            dataPathways?.getPathways?.map((pW) => (
-              pW ? {
-                id: pW.id,
-                name: pW.name,
-                milestoneTypes: pW.milestoneTypes?.map((mT) => ({
-                  id: mT.id,
-                  name: mT.name,
-                  refName: mT.refName,
-                })),
-              } : null
-            ))
-          }
-        />
-      </TabPanel>
-      <TabPanel>
-        <DeletePathwayTab
-          disableForm={ loadingMilestoneTypes || loadingPathways }
-          refetchPathways={ refetchPathways }
-          milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
-            {
-              id: mT.id,
-              name: mT.name,
-              refName: mT.refName,
-            }
-          )) }
-          pathways={
-            dataPathways?.getPathways?.map((pW) => (
-              pW ? {
-                id: pW.id,
-                name: pW.name,
-                milestoneTypes: pW.milestoneTypes?.map((mT) => ({
-                  id: mT.id,
-                  name: mT.name,
-                  refName: mT.refName,
-                })),
-              } : null
-            ))
-          }
-        />
-      </TabPanel>
+          />
+        </TabPanel>
+      </LoadingSpinner>
     </Tabs>
   );
 };

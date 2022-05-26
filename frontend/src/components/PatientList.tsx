@@ -3,8 +3,8 @@ import ReactPaginate from 'react-paginate';
 import { Table } from 'nhsuk-react-components';
 import { LockFill } from 'react-bootstrap-icons';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import './patientlist.css';
-import LoadingSpinner from './LoadingSpinner';
 /**
  * PatientListUpdateDataFn
  *
@@ -52,10 +52,8 @@ export interface PatientListProps {
  */
 const PatientList = (
   { pageCount, updateData, data, isLoading, onClickCallback }: PatientListProps,
-): JSX.Element => {
-  const [loadingSpinnerState, setLoadingSpinnerState] = useState<boolean>(false);
-
-  const patientList = (
+): JSX.Element => (
+  <LoadingSpinner loading={ isLoading }>
     <div>
       <div className="nhsuk-u-visually-hidden" id="pt_todo_list_aria">Patient to-do list</div>
       <div className="nhsuk-u-visually-hidden" id="pt_click_hint_aria">Click to open patient</div>
@@ -135,7 +133,7 @@ const PatientList = (
         nextLabel="next"
         breakLabel="..."
         breakClassName="break-me"
-        pageCount={ pageCount }
+        pageCount={ Math.ceil(pageCount) }
         marginPagesDisplayed={ 2 }
         pageRangeDisplayed={ 5 }
         onPageChange={ updateData }
@@ -150,21 +148,7 @@ const PatientList = (
         activeLinkClassName="bkcolour-nhs-blue text-white paginator-button"
       />
     </div>
-  );
-
-  return (
-    <>
-      <LoadingSpinner
-        loading={ isLoading }
-        setLoadingSpinnerShown={ setLoadingSpinnerState }
-      />
-      {
-        loadingSpinnerState
-          ? ''
-          : patientList
-      }
-    </>
-  );
-};
+  </LoadingSpinner>
+);
 
 export default PatientList;

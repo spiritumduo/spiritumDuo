@@ -1,4 +1,7 @@
 from .db import db
+from sqlalchemy import Enum
+from RecordTypes import Sex
+
 
 class Patient(db.Model):
     __tablename__ = "tbl_patient"
@@ -10,3 +13,4 @@ class Patient(db.Model):
     first_name = db.Column(db.String(), nullable=False)
     last_name = db.Column(db.String(), nullable=False)
     date_of_birth = db.Column(db.Date(), nullable=False)
+    sex = db.Column(Enum(Sex), nullable=False)

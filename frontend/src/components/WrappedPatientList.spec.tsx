@@ -9,31 +9,20 @@ import * as stories from './WrappedPatientList.stories';
 const { Default } = composeStories(stories);
 const renderDefault = async () => {
   jest.useFakeTimers(); // allows us to manipulate setInterval/setTimeout, etc
-  jest.spyOn(global, 'setTimeout');
+
+  render(
+    <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+      <Default />
+    </MockSdApolloProvider>,
+  );
+  expect(screen.queryByText(/loading.svg/i)).toBeInTheDocument();
+
   await act(async () => {
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>,
-    );
     await jest.advanceTimersByTime(1000);
   });
-  await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
   jest.useRealTimers(); // cleanup timer changes
 };
-
-test('Patient lists should display loading icon', async () => {
-  await act(async () => {
-    await render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>,
-    );
-  });
-  await waitFor(() => {
-    expect(screen.getByText(/loading animation/i)).toBeInTheDocument();
-  });
-});
 
 test('Patient lists should contain patients', async () => {
   const patientsPerPage = Default.args?.patientsToDisplay;
@@ -79,7 +68,7 @@ test('Patient lists should paginate', async () => {
       name: (t) => /next/i.test(t),
     });
     expect(nextLinks.length).toEqual(1);
-    click(nextLinks[0]);
+    await waitFor(() => click(nextLinks[0]));
     await waitFor(() => {
       const links = screen.getAllByRole('row');
       expect(links.length).toBe(6); // 5 patients on second page in mock, plus header

@@ -55,9 +55,14 @@ const successfulRoleUpdateMock: CreateRoleReturnData = {
 };
 
 export const Default: ComponentStory<typeof CreateRoleTab> = () => {
-  fetchMock.restore().mock('end:/rest/createrole/', successfulRoleCreationMock);
+  fetchMock.restore().mock('end:/rest/createrole/', successfulRoleCreationMock, { delay: 1 });
   fetchMock.mock('end:/rest/updaterole/', successfulRoleUpdateMock);
   return <CreateRoleTab rolePermissions={ rolePermissions } />;
+};
+
+Default.parameters = {
+  rolePermissions: rolePermissions,
+  successfulRoleCreationMock: successfulRoleCreationMock,
 };
 
 export const RoleExistsError: ComponentStory<typeof CreateRoleTab> = () => {

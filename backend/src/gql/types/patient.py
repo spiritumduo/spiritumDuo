@@ -63,3 +63,12 @@ async def resolve_date_of_birth(
     record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
         context=info.context, id=obj.hospital_number)
     return record.date_of_birth
+
+
+@PatientObjectType.field("sex")
+async def resolve_sex(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.sex

@@ -5,7 +5,7 @@ import 'nhsuk-frontend/dist/nhsuk.css';
 import React from 'react';
 
 // LIBRARIES
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
@@ -20,7 +20,10 @@ import store from 'app/store';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import './index.css';
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
     <Provider store={ store }>
       <AuthProvider>
@@ -34,8 +37,6 @@ ReactDOM.render(
       </AuthProvider>
     </Provider>
   </React.StrictMode>,
-  // eslint-disable-next-line no-undef
-  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

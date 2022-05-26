@@ -92,7 +92,8 @@ async def get_patient_hospital_id(request: Request, id: str):
             "communication_method": patient.communication_method,
             "first_name": patient.first_name,
             "last_name": patient.last_name,
-            "date_of_birth": patient.date_of_birth
+            "date_of_birth": patient.date_of_birth,
+            "sex": patient.sex
         }
     else:
         return None
@@ -120,7 +121,8 @@ async def post_patient_hospital_id(request: Request, input: List[str]):
                 "communication_method": patient.communication_method,
                 "first_name": patient.first_name,
                 "last_name": patient.last_name,
-                "date_of_birth": patient.date_of_birth
+                "date_of_birth": patient.date_of_birth,
+                "sex": patient.sex
             })
         return res
     else:
@@ -297,6 +299,7 @@ class PatientInput(BaseModel):
     first_name: str
     last_name: str
     date_of_birth: date
+    sex: str
 
 
 @app.post("/debug/patient/")
@@ -316,6 +319,7 @@ async def debug_patient_post(request: Request, input: PatientInput):
             first_name=input.first_name,
             last_name=input.last_name,
             date_of_birth=input.date_of_birth,
+            sex=input.sex,
         )
         return {
             "hospital_number": patient.hospital_number,
@@ -323,7 +327,8 @@ async def debug_patient_post(request: Request, input: PatientInput):
             "communication_method": patient.communication_method,
             "first_name": patient.first_name,
             "last_name": patient.last_name,
-            "date_of_birth": patient.date_of_birth
+            "date_of_birth": patient.date_of_birth,
+            "sex": patient.sex
         }
     except UniqueViolationError:
         return JSONResponse(status_code=409)

@@ -4,6 +4,7 @@ import React, { useContext, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { SummaryList } from 'nhsuk-react-components';
 
 // APP
 import { DecisionPointType } from 'types/DecisionPoint';
@@ -12,7 +13,7 @@ import { useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
 
 // PAGES
-import DecisionPointPage from 'pages/DecisionPoint';
+import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 
 // LOCAL
@@ -51,6 +52,10 @@ export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
       id
       firstName
       lastName
+      hospitalNumber
+      nationalNumber
+      dateOfBirth
+      sex
       onPathways(pathwayId: $pathwayId, includeDischarged: true) {
         id
       }
@@ -133,10 +138,44 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header closeButton>
         <Modal.Title>
-          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName} - ${hospitalNumber}`}
+          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <SummaryList>
+          <SummaryList.Row>
+            <SummaryList.Key>
+              Hospital Number
+            </SummaryList.Key>
+            <SummaryList.Value>
+              {patientData?.getPatient?.hospitalNumber}
+            </SummaryList.Value>
+          </SummaryList.Row>
+          <SummaryList.Row>
+            <SummaryList.Key>
+              National Number
+            </SummaryList.Key>
+            <SummaryList.Value>
+              {patientData?.getPatient?.nationalNumber}
+            </SummaryList.Value>
+          </SummaryList.Row>
+          <SummaryList.Row>
+            <SummaryList.Key>
+              Date of Birth
+            </SummaryList.Key>
+            <SummaryList.Value>
+              {patientData?.getPatient?.dateOfBirth.toLocaleDateString()}
+            </SummaryList.Value>
+          </SummaryList.Row>
+          <SummaryList.Row>
+            <SummaryList.Key>
+              Sex
+            </SummaryList.Key>
+            <SummaryList.Value>
+              {patientData?.getPatient?.sex}
+            </SummaryList.Value>
+          </SummaryList.Row>
+        </SummaryList>
         <Tabs>
           <TabList>
             <Tab disabled={ tabState }>New Decision</Tab>

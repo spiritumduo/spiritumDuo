@@ -3,261 +3,257 @@ import React from 'react';
 
 // LIBRARIES
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
-import { waitFor, render, screen, cleanup } from '@testing-library/react';
+import { waitFor, render, screen, cleanup, act } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
-import { DocumentNode } from '@apollo/client';
 import userEvent from '@testing-library/user-event';
-import { RequestHandler } from 'mock-apollo-client';
+import { Provider } from 'react-redux';
 
 // APP
-import MockSdApolloProvider, { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
+import store from 'app/store';
 
 // COMPONENTS
-import { GET_PATIENT_QUERY } from 'pages/DecisionPoint';
-import { Default as DecisionPointDefaultStory } from 'pages/DecisionPoint.stories';
+import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
+import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionPoint.stories';
 
 // LOCAL IMPORTS
-import { LOCK_ON_PATHWAY_MUTATION, GET_PATIENT_CURRENT_PATHWAY_QUERY } from './ModalPatient';
+import ModalPatient, { LOCK_ON_PATHWAY_MUTATION } from './ModalPatient';
 import * as stories from './ModalPatient.stories';
 
 const { Default } = composeStories(stories);
-const getPatientMock = {
-  query: GET_PATIENT_QUERY,
-  mockFn: () => Promise.resolve(
-    // this is pretty bad, and something we need to clean up in transition away
-    // from MockedProvider
-    DecisionPointDefaultStory.parameters?.apolloClient.mocks[0].result,
-  ),
-};
 
-const getPatientCurrentPathwayMock = {
-  query: GET_PATIENT_CURRENT_PATHWAY_QUERY,
-  mockFn: () => Promise.resolve({
-    data: {
-      getPatient: {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        onPathways: [{
-          id: '1',
-        }],
-      },
-    },
-  }),
-};
+async function renderWithTestMocks() {
+  jest.useFakeTimers();
 
-describe('When page loads and user gets the lock', () => {
-  let mocks: {
-    query: DocumentNode;
-    mockFn: RequestHandler<any, any>;
-  }[];
-  beforeEach( async () => {
-    mocks = [
-      {
-        query: LOCK_ON_PATHWAY_MUTATION,
-        // eslint-disable-next-line arrow-body-style
-        mockFn: jest.fn().mockImplementation(({ input: { unlock } }) => {
-          if (unlock) {
-            return Promise.resolve({
-              data: {
-                lockOnPathway: {
-                  id: '1',
-                  onPathway: {
-                    id: '1',
-                    lockEndTime: null,
-                    lockUser: null,
-                  },
-                  userErrors: null,
-                },
-              },
-            });
-          }
-          return Promise.resolve({
-            data: {
-              lockOnPathway: {
-                onPathway: {
-                  id: '1',
-                  lockEndTime: new Date('2030-01-01'),
-                  lockUser: {
-                    id: '1',
-                    firstName: 'Test-John',
-                    lastName: 'Test-Doe',
-                    username: 'test-john-doe',
-                  },
-                },
-                userErrors: null,
+  const mocks = [
+    {
+      query: LOCK_ON_PATHWAY_MUTATION,
+      mockFn: jest.fn().mockResolvedValue({
+        data: {
+          lockOnPathway: {
+            id: '1',
+            onPathway: {
+              id: '1',
+              lockEndTime: new Date('2030-01-01'),
+              lockUser: {
+                id: '1',
+                firstName: 'John',
+                lastName: 'Tester',
               },
             },
-          });
-        }),
-      },
-      getPatientMock,
-      getPatientCurrentPathwayMock,
-    ];
-    jest.useFakeTimers();
-    jest.spyOn(global, 'setTimeout');
-    await act(async () => {
-      render(
-        <NewMockSdApolloProvider mocks={ mocks }>
-          <Default />
-        </NewMockSdApolloProvider>,
-      );
-      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
-      jest.advanceTimersByTime(2000);
+            userErrors: null,
+          },
+        },
+      }),
+    },
+    Default.parameters?.patientMock,
+    DecisionPointsStory.parameters?.createDecisionMock,
+    DecisionPointsStory.parameters?.getPatientMock,
+    PreviousDecisionPointsStory.parameters?.getPatientMock,
+  ];
+
+  render(
+    <Provider store={ store }>
+      <MockAuthProvider>
+        <MockPathwayProvider>
+          <NewMockSdApolloProvider mocks={ mocks }>
+            <ModalPatient
+              hospitalNumber={ Default.parameters?.patient.hospitalNumber }
+              closeCallback={ () => ({}) }
+              lock
+            />
+          </NewMockSdApolloProvider>
+        </MockPathwayProvider>
+      </MockAuthProvider>
+    </Provider>,
+  );
+  expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+
+  await act(async () => {
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(1000);
+  });
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+
+  jest.useRealTimers();
+  return mocks;
+}
+
+async function renderDefaultNoMilestones() {
+  jest.useFakeTimers();
+  render(<Default />);
+  expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+
+  await act(async () => {
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(1000);
+  });
+
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+
+  jest.useRealTimers();
+
+  const { click, keyboard } = userEvent.setup();
+
+  const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
+  const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
+  // wait for page to render fully
+  await waitFor(() => expect(
+    screen.getByRole('button', { name: 'Submit' }),
+  ).toBeInTheDocument());
+  await waitFor(() => expect(
+    screen.getByLabelText('Clinical history'),
+  ).toBeInTheDocument());
+  await waitFor(() => expect(
+    screen.getByLabelText('Co-morbidities'),
+  ).toBeInTheDocument());
+
+  await act(async () => {
+    await click(screen.getByLabelText('Clinical history'));
+    await keyboard(clinicalHistoryText);
+    await click(screen.getByLabelText('Co-morbidities'));
+    await keyboard(comorbiditiesText);
+  });
+}
+
+describe('When page loads and user gets the lock', () => {
+  it('Should display the patient\'s name', async () => {
+    await renderWithTestMocks();
+    const patient = Default.parameters?.patient;
+    await waitFor(() => {
+      expect(screen.getByText(
+        new RegExp(`${patient.firstName}\\s${patient.lastName}`, 'i'),
+      )).toBeInTheDocument();
     });
     await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
     jest.useRealTimers();
   });
 
-  it('Should display the patient', async () => {
+  it('Should display the patient\'s record information', async () => {
+    await renderWithTestMocks();
     const patient = Default.parameters?.patient;
     await waitFor(() => {
       expect(screen.getByText(
-        new RegExp(`${patient.firstName}\\s${patient.lastName}.+${patient.hospitalNumber}`, 'i'),
+        new RegExp(`${patient.hospitalNumber}`, 'i'),
+      )).toBeInTheDocument();
+      expect(screen.getByText(
+        new RegExp(`${patient.nationalNumber}`, 'i'),
+      )).toBeInTheDocument();
+      expect(screen.getByText(
+        new RegExp(`${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
+      )).toBeInTheDocument();
+      expect(screen.getByText(
+        new RegExp(`${patient.sex}`, 'i'),
       )).toBeInTheDocument();
     });
   });
 
   it('Should display the New Decision tab', async () => {
+    await renderWithTestMocks();
     await waitFor(() => expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument());
   });
 
   it('Should send the lock mutation', async () => {
+    const mocks = await renderWithTestMocks();
     await waitFor(() => expect(mocks[0].mockFn).toBeCalledTimes(1));
   });
 
   it('Should send the unlock mutation once when component unmounted', async () => {
+    const mocks = await renderWithTestMocks();
     cleanup();
-    await waitFor(() => expect(mocks[0].mockFn).toBeCalledTimes(2));
     await waitFor(() => expect(mocks[0].mockFn).toBeCalledWith({
       input: {
-        unlock: true,
         onPathwayId: '1',
+        unlock: true,
       },
     }));
   });
 });
 
 describe('When the page loads and the user does not get the lock', () => {
-  let mocks: {
-    query: DocumentNode;
-    mockFn: RequestHandler<any, any>;
-  }[];
-  beforeEach(async () => {
-    mocks = [
-      {
-        query: LOCK_ON_PATHWAY_MUTATION,
-        mockFn: jest.fn().mockResolvedValue({
-          data: {
-            lockOnPathway: {
-              onPathway: {
-                id: '1',
-                lockEndTime: new Date('2030-01-01'),
-                lockUser: {
-                  id: '1000',
-                  firstName: 'Test-John',
-                  lastName: 'Test-Doe',
-                  username: 'test-john-doe',
-                },
-              },
-              userErrors: null,
-            },
-          },
-        }),
-      },
-      getPatientMock,
-      getPatientCurrentPathwayMock,
-    ];
-    jest.useFakeTimers();
-    jest.spyOn(global, 'setTimeout');
-    await act(async () => {
-      render(
-        <NewMockSdApolloProvider mocks={ mocks }>
-          <Default />
-        </NewMockSdApolloProvider>,
-      );
-      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
-      jest.advanceTimersByTime(2000);
-    });
-    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
-    jest.useRealTimers();
-  });
+  it('Should display the patient', async () => {
+    await renderWithTestMocks();
 
-  it('Should display the patient', () => {
     const patient = Default.parameters?.patient;
     expect(screen.getByText(
-      new RegExp(`${patient.firstName}\\s${patient.lastName}.+${patient.hospitalNumber}`, 'i'),
+      new RegExp(`${patient.firstName}\\s${patient.lastName}`, 'i'),
     )).toBeInTheDocument();
   });
 
   it('Should display the New Decision tab in a locked state', async () => {
+    await renderWithTestMocks();
     await waitFor(() => expect(screen.getByText(/this patient is locked/i)).toBeInTheDocument());
   });
 
   it('Should not send the unlock mutation on unmount', async () => {
-    cleanup();
+    const mocks = await renderWithTestMocks();
     await waitFor(() => expect(mocks[0].mockFn).toBeCalledTimes(1));
-    await waitFor(() => expect(mocks[0].mockFn).toBeCalledWith({
+    cleanup();
+    expect(mocks[0].mockFn).toBeCalledTimes(2);
+    expect(mocks[0].mockFn).toBeCalledWith({
       input: {
         onPathwayId: '1',
       },
-    }));
+    });
   });
 });
 
 describe('When page loads and a user submits a decision without milestones', () => {
-  // let tabState: boolean;
-  beforeEach( async () => {
-    const { click, keyboard } = userEvent.setup();
-
-    jest.useFakeTimers();
-    jest.spyOn(global, 'setTimeout');
-    await act(async () => {
-      render(
-        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-          <Default />
-        </MockSdApolloProvider>,
-      );
-      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
-      jest.advanceTimersByTime(2000);
-    });
-    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
-    jest.useRealTimers();
-
-    const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
-    const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
-    // wait for page to render fully
-    await waitFor(() => expect(
-      screen.getByRole('button', { name: 'Submit' }),
-    ).toBeInTheDocument());
-    await waitFor(() => click(screen.getByLabelText('Clinical history')));
-    await waitFor(() => keyboard(clinicalHistoryText));
-    await waitFor(() => click(screen.getByLabelText('Co-morbidities')));
-    await waitFor(() => keyboard(comorbiditiesText));
-    click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
-  });
-
   it('Should warn the user when they submit', async () => {
+    await renderDefaultNoMilestones();
+    const { click } = userEvent.setup();
+
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
     await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
   });
 
-  it('Should succed when they click submit', async () => {
-    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Submit' })));
+  it('Should succeed when they click submit', async () => {
+    await renderDefaultNoMilestones();
+    const { click } = userEvent.setup();
+
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
+    await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
+
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
     await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Cancel' })));
+    await renderDefaultNoMilestones();
+    const { click } = userEvent.setup();
+
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
+    await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
+
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Cancel' }));
+    });
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
     });
   });
 
   it('Should display test results that have been acknowledged', async () => {
-    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Submit' })));
-    // This is from milestones 6 & 7 in the stories.
+    await renderDefaultNoMilestones();
+    const { click } = userEvent.setup();
+
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
+    await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
+
     await waitFor(() => {
       expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
       expect(screen.getByText(/Lung function/i)).toBeInTheDocument();
@@ -266,6 +262,11 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should disable the tabs', async () => {
+    await renderDefaultNoMilestones();
+    const { click } = userEvent.setup();
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Submit' }));
+    });
     await waitFor(() => {
       expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
@@ -273,72 +274,93 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should re-enable the tabs when the user cancels', async () => {
-    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'Cancel' })));
-    expect(screen.getByRole('tab', { name: /new decision/i })).toBeEnabled();
-    expect(screen.getByRole('tab', { name: /previous decisions/i })).toBeEnabled();
+    await renderDefaultNoMilestones();
+    const { click } = userEvent.setup();
+    await act(() => {
+      click(screen.getByRole('button', { name: 'Close' }));
+    });
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'false');
+      expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'false');
+    });
   });
 });
 
-describe('When page loads and a user submits a decision with milestones', () => {
-  beforeEach( async () => {
-    const { click, keyboard } = userEvent.setup();
-
-    jest.useFakeTimers();
-    jest.spyOn(global, 'setTimeout');
-    await act(async () => {
-      render(
-        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-          <Default />
-        </MockSdApolloProvider>,
-      );
-      await waitFor(() => expect(screen.queryByText(/loading animation/i)).toBeInTheDocument());
-      jest.advanceTimersByTime(2000);
-    });
-    await waitFor(() => expect(screen.queryByText(/loading animation/i)).not.toBeInTheDocument());
-    jest.useRealTimers();
-
-    const clinicalHistoryText = '{Control>}A{/Control}New Clinic History';
-    const comorbiditiesText = '{Control>}A{/Control}New Comorbidities';
-    // wait for page to render fully
-    await waitFor(() => expect(
-      screen.getByRole('button', { name: 'Submit' }),
-    ).toBeInTheDocument());
-    await waitFor(() => click(screen.getByLabelText('Clinical history')));
-    await waitFor(() => keyboard(clinicalHistoryText));
-    await waitFor(() => click(screen.getByLabelText('Co-morbidities')));
-    await waitFor(() => keyboard(comorbiditiesText));
-    await waitFor(() => {
-      const requestCheckboxes = screen.getAllByRole('checkbox');
-      requestCheckboxes.forEach((cb) => click(cb));
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
-    await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
+async function renderDefaultWithMilestones() {
+  const { click, keyboard } = userEvent.setup();
+  jest.useFakeTimers();
+  act(() => {
+    render(<Default />);
+    jest.advanceTimersByTime(500);
   });
+  jest.setSystemTime(Date.now() + 10000);
 
+  // wait for page to render fully
+  await waitFor(() => expect(
+    screen.getByLabelText('Clinical history'),
+  ).toBeInTheDocument());
+
+  await act(() => {
+    click(screen.getByLabelText('Clinical history'));
+    keyboard('{Control>}A{/Control}New Clinic History');
+    click(screen.getByLabelText('Co-morbidities'));
+    keyboard('{Control>}A{/Control}New Comorbidities');
+  });
+  jest.useRealTimers();
+}
+
+describe('When page loads and a user submits a decision with milestones', () => {
   it('Should ask for confirmation', async () => {
+    const { click } = userEvent.setup();
+    await renderDefaultWithMilestones();
+    const requestCheckboxes = screen.getAllByRole('checkbox');
+    requestCheckboxes.forEach(async (cb) => click(cb));
+    await click(screen.getByRole('button', { name: 'Submit' }));
     await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
   });
 
   it('Should succeed when user confirms submission', async () => {
-    await waitFor(() => userEvent.click(screen.getByRole('button', { name: 'OK' })));
+    const { click } = userEvent.setup();
+    await renderDefaultWithMilestones();
+    const requestCheckboxes = screen.getAllByRole('checkbox');
+    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
+    await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
+    await waitFor(() => click(screen.getByRole('button', { name: 'OK' })));
     await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    await waitFor(() => {
-      expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
-    });
+    const { click } = userEvent.setup();
+    await renderDefaultWithMilestones();
+    const requestCheckboxes = screen.getAllByRole('checkbox');
+    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
+    await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
+    await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
+    expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
   });
 
-  it('Should disable the tabs', () => {
+  it('Should disable tabs', async () => {
+    const { click } = userEvent.setup();
+    await renderDefaultWithMilestones();
+    const requestCheckboxes = screen.getAllByRole('checkbox');
+    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
+    await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('Should re-enable the tabs when the user cancels', () => {
-    userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
-    expect(screen.getByRole('tab', { name: /new decision/i })).toBeEnabled();
-    expect(screen.getByRole('tab', { name: /previous decisions/i })).toBeEnabled();
+  it('Should re-enable the tabs when the user cancels', async () => {
+    const { click } = userEvent.setup();
+    await renderDefaultWithMilestones();
+    const requestCheckboxes = screen.getAllByRole('checkbox');
+    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
+    await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
+    await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
+    expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'false');
+    expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'false');
   });
 });
