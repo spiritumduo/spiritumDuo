@@ -4,7 +4,7 @@ import { Button, Col, Collapse, Row } from 'react-bootstrap';
 import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
 
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
-import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
 
 interface TestResultData {
   id: string;
@@ -80,8 +80,8 @@ const TestResultDataElement = ({ result, isCollapsed, onClick }: TestResultDataE
             >
               {
                 isCollapsed
-                  ? <ChevronUp color="black" size="1.5rem" />
-                  : <ChevronDown color="black" size="1.5rem" />
+                  ? <BsChevronUp color="black" size="1.5rem" />
+                  : <BsChevronDown color="black" size="1.5rem" />
               }
             </Button>
           )
