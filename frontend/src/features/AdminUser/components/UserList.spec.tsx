@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import userEvent from '@testing-library/user-event';
@@ -9,24 +9,37 @@ import * as stories from './UserList.stories';
 
 const { Default } = composeStories(stories);
 
-describe('When the page loads', () => {
-  let mockCallback: jest.Mock<void, [string]>;
-  beforeEach(async () => {
-    mockCallback = jest.fn();
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default userOnClick={ mockCallback } />
-      </MockSdApolloProvider>,
-    );
-    await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
+async function renderDefault() {
+  jest.useFakeTimers();
+  const mockCallback = jest.fn();
+  render(
+    <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+      <Default userOnClick={ mockCallback } />
+    </MockSdApolloProvider>,
+  );
+  expect(screen.queryByText(/loading.svg/i)).toBeInTheDocument();
+
+  await act(async () => {
+    jest.advanceTimersByTime(1000);
+    jest.setSystemTime(Date.now() + 10000);
   });
 
-  it('Should display users', () => {
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+  jest.useRealTimers();
+  return mockCallback;
+}
+
+describe('When the page loads', () => {
+  it('Should display users', async () => {
+    await renderDefault();
+
     // 3 users in mock + header
-    expect(screen.getAllByRole('row').length).toBe(4);
+    await waitFor(() => expect(screen.getAllByRole('row').length).toBe(4));
   });
 
   it('Should fire the callback when a user name is clicked', async () => {
+    const mockCallback = await renderDefault();
+
     const { click } = userEvent.setup();
     const buttons = screen.getAllByRole('link', { name: /john\s+doe/i });
     await waitFor(() => buttons.forEach(async (b) => click(b)));
@@ -35,6 +48,8 @@ describe('When the page loads', () => {
   });
 
   it('Should fire the callback when a user row is clicked', async () => {
+    const mockCallback = await renderDefault();
+
     const { click } = userEvent.setup();
     const rows = screen.getAllByRole('row', { name: /john\s+doe/i });
     await waitFor(() => rows.forEach(async (b) => click(b)));

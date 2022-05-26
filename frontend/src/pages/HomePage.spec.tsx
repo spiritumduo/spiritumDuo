@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
-import { waitFor, render, screen, within } from '@testing-library/react';
+import { waitFor, render, screen, within, act, waitForElementToBeRemoved } from '@testing-library/react';
 import { composeStories } from '@storybook/testing-react';
 import '@testing-library/jest-dom';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
@@ -12,6 +12,7 @@ import * as stories from './HomePage.stories';
 
 const { Default } = composeStories(stories);
 const renderDefault = async () => {
+  jest.useFakeTimers();
   render(
     <Provider store={ store }>
       <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
@@ -19,19 +20,25 @@ const renderDefault = async () => {
       </MockSdApolloProvider>
     </Provider>,
   );
-  await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
+  expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+  await act(async () => {
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(1000);
+  });
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+  jest.useRealTimers();
 };
 
 test('Patient lists should display loading', async () => {
+  render(
+    <Provider store={ store }>
+      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
+        <Default />
+      </MockSdApolloProvider>
+    </Provider>,
+  );
   await waitFor(() => {
-    render(
-      <Provider store={ store }>
-        <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-          <Default />
-        </MockSdApolloProvider>
-      </Provider>,
-    );
-    expect(screen.getByText('Loading!')).toBeInTheDocument();
+    expect(screen.getByText('loading.svg')).toBeInTheDocument();
   });
 });
 

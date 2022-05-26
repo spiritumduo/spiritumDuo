@@ -1,5 +1,5 @@
 import React from 'react';
-import { waitFor, render, screen } from '@testing-library/react';
+import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
@@ -7,25 +7,37 @@ import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);
 
-describe('When page loads', () => {
-  beforeEach(async () => {
-    render(
-      <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
-        <Default />
-      </MockSdApolloProvider>,
-    );
-    await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
+async function renderDefault() {
+  jest.useFakeTimers();
+  await act(() => {
+    render(<Default />);
   });
+  act(() => {
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(500);
+  });
+  jest.useRealTimers();
+}
 
+describe('When page loads', () => {
+  it('Should display loading while waiting for data', async () => {
+    await act(async () => {
+      render(
+        <Default />,
+      );
+    });
+    expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+  });
   it('Should display the last clinical history', async () => {
-    await waitFor(
-      () => expect(
-        (screen.getByRole('textbox', { name: /clinical history/i }) as HTMLTextAreaElement).value,
-      ).toMatch(/clinic history 1/i),
-    );
+    await renderDefault();
+    expect(
+      (screen.getByRole('textbox', { name: /clinical history/i }) as HTMLTextAreaElement).value,
+    ).toMatch(/clinic history 1/i);
   });
 
   it('Should display the last comorbidities', async () => {
+    await renderDefault();
+
     await waitFor(
       () => expect(
         (screen.getByRole('textbox', { name: /co-morbidities/i }) as HTMLInputElement).value,
@@ -34,6 +46,8 @@ describe('When page loads', () => {
   });
 
   it('Should display previous test results', async () => {
+    await renderDefault();
+
     await waitFor(() => {
       Default.parameters?.milestones.forEach((ms: any) => {
         if (ms.testResult) {
@@ -56,9 +70,9 @@ describe('When page loads', () => {
   });
   */
   it('Should show clinician under care of', async () => {
-    const clinician = Default
-      .parameters?.apolloClient.mocks[0]
-      .result.data.getPatient.onPathways?.[0].underCareOf;
+    await renderDefault();
+
+    const clinician = Default.parameters?.clinician;
     await waitFor(() => {
       expect(screen.getByRole('option', { name: new RegExp(`${clinician.firstName} ${clinician.lastName}`, 'i') }));
     });
