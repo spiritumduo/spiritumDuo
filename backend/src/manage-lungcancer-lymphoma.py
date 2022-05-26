@@ -22,7 +22,7 @@ from api import app
 from faker import Faker
 from random import randint, getrandbits
 from datetime import date
-from SdTypes import MilestoneState, Permissions
+from SdTypes import MilestoneState, Permissions, Sex
 from itsdangerous import TimestampSigner
 from trustadapter.trustadapter import (
     Patient_IE,
@@ -464,16 +464,22 @@ async def insert_demo_data():
                 sd_patient: Patient = await Patient.create(
                     hospital_number=hospital_number,
                     national_number=national_number
-                )
+                    )
+                sex = Sex.MALE if randint(0, 1) == 0 else Sex.FEMALE
+                if sex == Sex.MALE:
+                    first_name = faker.first_name_male()
+                else:
+                    first_name = faker.first_name_female()
 
                 await PseudoTrustAdapter().create_patient(
                     patient=Patient_IE(
-                        first_name=faker.first_name(),
+                        first_name=first_name,
                         last_name=faker.last_name(),
                         hospital_number=hospital_number,
                         national_number=national_number,
                         date_of_birth=date_of_birth,
-                        communication_method="LETTER"
+                        communication_method="LETTER",
+                        sex=sex
                     ),
                     auth_token=SESSION_COOKIE
                 )
