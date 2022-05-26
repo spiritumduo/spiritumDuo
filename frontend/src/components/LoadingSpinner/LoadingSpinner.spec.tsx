@@ -10,36 +10,43 @@ test('Should not display when loading prop is false', async () => {
   act(() => {
     render(<Default loading={ false } />);
   });
-  expect(screen.queryByText(/Loading animation/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/loading finished/i)).toBeInTheDocument();
 });
 
 test('Should display when loading prop is true', async () => {
+  jest.useFakeTimers();
   act(() => {
     render(<Default loading />);
   });
-  expect(screen.getByText(/Loading animation/i)).toBeInTheDocument();
+  expect(screen.getByText(/loading/i)).toBeInTheDocument();
+
+  act(() => {
+    jest.setSystemTime(Date.now() + 10000);
+  });
+  expect(screen.getByText(/loading/i)).toBeInTheDocument();
+  jest.useRealTimers();
 });
 
 test('Should display when loading prop is true then when loading false disappear after 500ms', async () => {
   jest.useFakeTimers(); // allows us to manipulate setInterval/setTimeout, etc
-  jest.spyOn(global, 'setTimeout');
+
+  let rerender: any;
+  await act(async () => {
+    const { rerender: _rerender } = render(<Default loading />); // initial loading as true
+    rerender = _rerender;
+  });
+  expect(screen.getByText(/loading/i)).toBeInTheDocument(); // checks delay works
+
+  rerender(<Default loading={ false } />);
+
+  expect(screen.getByText(/loading/i)).toBeInTheDocument(); // checks delay works
+
+  jest.setSystemTime(Date.now() + 1000);
 
   await act(async () => {
-    const { rerender } = render(<Default loading />); // initial loading as true
-    rerender(<Default loading={ false } />); // rerender does not replace comp, lets us update props
+    jest.advanceTimersByTime(500);
   });
-  await waitFor(() => expect(screen.getByText(/Loading animation/i)).toBeInTheDocument()); // checks delay works
+  jest.useRealTimers();
 
-  await act(async () => {
-    await jest.advanceTimersByTime(250); // wait 250ms to further check if delay works
-  });
-  await waitFor(() => expect(screen.getByText(/Loading animation/i)).toBeInTheDocument()); // check animation still on screen
-
-  await act(async () => {
-    await jest.advanceTimersByTime(250);
-    // advance 250ms further (500ms, animation should not be present)
-  });
-  expect(screen.queryByText(/Loading animation/i)).not.toBeInTheDocument(); // check timer not displayed
-
-  jest.useRealTimers(); // cleanup timer changes
+  expect(screen.queryByText(/loading finished/i)).toBeInTheDocument(); // checks delay works
 });
