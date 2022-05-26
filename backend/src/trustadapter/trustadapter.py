@@ -15,6 +15,7 @@ class Patient_IE:
     national_number: str = None
     communication_method: str = None
     date_of_birth: date = None
+    sex: str = None
 
 
 @dataclass
@@ -230,6 +231,7 @@ class PseudoTrustAdapter(TrustAdapter):
             "first_name": patient.first_name,
             "last_name": patient.last_name,
             "date_of_birth": patient.date_of_birth.isoformat(),
+            "sex": patient.sex
         }
         patientRecord = await httpRequest(
             HTTPRequestType.POST,
@@ -251,6 +253,7 @@ class PseudoTrustAdapter(TrustAdapter):
             national_number=patientRecord['national_number'],
             communication_method=patientRecord['communication_method'],
             date_of_birth=patientRecord['date_of_birth'],
+            sex=patientRecord['sex']
         )
 
     async def load_patient(
@@ -273,7 +276,8 @@ class PseudoTrustAdapter(TrustAdapter):
             hospital_number=patientRecord['hospital_number'],
             national_number=patientRecord['national_number'],
             communication_method=patientRecord['communication_method'],
-            date_of_birth=date.fromisoformat(patientRecord['date_of_birth'])
+            date_of_birth=date.fromisoformat(patientRecord['date_of_birth']),
+            sex=patientRecord['sex']
         )
 
     async def load_many_patients(
@@ -300,7 +304,8 @@ class PseudoTrustAdapter(TrustAdapter):
                     communication_method=patientRecord['communication_method'],
                     date_of_birth=date.fromisoformat(
                         patientRecord['date_of_birth']
-                    )
+                    ),
+                    sex=patientRecord['sex']
                 )
             )
         return patientObjectList

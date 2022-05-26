@@ -21,6 +21,12 @@ class MilestoneState(str, Enum):
 
 
 @unique
+class Sex(str, Enum):
+    MALE = "MALE"
+    FEMALE = "FEMALE"
+
+
+@unique
 class Permissions(str, Enum):
     # LOGGED IN USER
     AUTHENTICATED = "AUTHENTICATED"
