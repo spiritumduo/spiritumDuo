@@ -11,13 +11,13 @@ import DeletePathwayTab, { DELETE_PATHWAY_MUTATION } from './DeletePathwayTab';
 const milestoneTypes = [
   {
     id: '1',
-    name: 'TEST_PERMISSION_ONE',
-    refName: 'ref_TEST_PERMISSION_ONE',
+    name: 'TEST_MILESTONE_TYPE_ONE',
+    refName: 'ref_TEST_MILESTONE_TYPE_ONE',
   },
   {
     id: '2',
-    name: 'TEST_PERMISSION_TWO',
-    refName: 'ref_TEST_PERMISSION_TWO',
+    name: 'TEST_MILESTONE_TYPE_TWO',
+    refName: 'ref_TEST_MILESTONE_TYPE_TWO',
   },
 ];
 
@@ -28,8 +28,8 @@ const pathways = [
     milestoneTypes: [
       {
         id: '1',
-        name: 'TEST_PERMISSION_ONE',
-        refName: 'ref_TEST_PERMISSION_ONE',
+        name: 'TEST_MILESTONE_TYPE_ONE',
+        refName: 'ref_TEST_MILESTONE_TYPE_ONE',
       },
     ],
   },

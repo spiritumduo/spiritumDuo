@@ -19,34 +19,36 @@ describe('When page loads', () => {
   });
 
   it('Should display role permission checkboxes', async () => {
-    const { click } = userEvent.setup();
-
+    const { click, selectOptions } = userEvent.setup();
+    const select = screen.getByRole('combobox', { name: /Select existing role/i });
     await waitFor(() => {
-      click(screen.getByText('Select...'));
+      expect(screen.getByRole('option', { name: 'Role 1' }));
+    });
+    selectOptions(select, ['1']);
+    await waitFor(() => {
       expect(
-        screen.getByLabelText('TEST_PERMISSION_ONE'),
-      );
-      expect(
-        screen.getByLabelText('TEST_PERMISSION_TWO'),
+        screen.getByText('TEST_PERMISSION_ONE'),
       );
     });
   });
 });
 
 test('Role dropdown fills inputs with existing data', async () => {
+  const { click, selectOptions } = userEvent.setup();
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
-  const select = screen.getByLabelText('Select existing role');
+  const select = screen.getByRole('combobox', { name: /Select existing role/i });
   await waitFor(() => {
     expect(screen.getByRole('option', { name: 'Role 1' }));
   });
-  userEvent.selectOptions(select, ['1']);
+  selectOptions(select, ['1']);
+
+  click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE')).toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO')).not.toBeChecked();
+    expect(screen.getByText('TEST_PERMISSION_ONE'));
   });
 });
 
@@ -56,25 +58,21 @@ test('Role dropdown clears inputs when set to default value', async () => {
       <Default />
     </MockSdApolloProvider>,
   );
-  const select = screen.getByLabelText('Select existing role');
+  const select = screen.getByRole('combobox', { name: /Select existing role/i });
+
   await waitFor(() => {
     expect(screen.getByRole('option', { name: 'Role 1' }));
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE')).not.toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO')).not.toBeChecked();
   });
-
   userEvent.selectOptions(select, ['1']);
 
   await waitFor(() => {
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE')).toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO')).not.toBeChecked();
+    screen.getByText('TEST_PERMISSION_ONE');
   });
 
   userEvent.selectOptions(select, ['-1']);
 
   await waitFor(() => {
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE')).not.toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO')).not.toBeChecked();
+    expect(screen.queryByText('TEST_PERMISSION_ONE')).not.toBeInTheDocument();
   });
 });
 

@@ -138,7 +138,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header closeButton>
         <Modal.Title>
-          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}, ${patientData?.getPatient?.hospitalNumber}, ${patientData?.getPatient?.nationalNumber},  ${patientData?.getPatient?.dateOfBirth.toLocaleDateString()}`}
+          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}, ${patientData?.getPatient?.hospitalNumber}, ${patientData?.getPatient?.nationalNumber}, ${patientData?.getPatient?.dateOfBirth.toLocaleDateString()}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
