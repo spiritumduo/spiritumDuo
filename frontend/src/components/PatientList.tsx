@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Table } from 'nhsuk-react-components';
-import { LockFill } from 'react-bootstrap-icons';
+import { BsLockFill } from 'react-icons/bs';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import './patientlist.css';
@@ -71,10 +71,10 @@ const PatientList = (
         <Table.Body>
           { data.map((p) => {
             const lockIconElement = p.isOnPathwayLockedByOther
-              ? <LockFill role="img" aria-label="lock icon" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+              ? <BsLockFill role="img" aria-label="lock icon" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
               : <></>;
             const lockIconElementResponsive = p.isOnPathwayLockedByOther
-              ? <LockFill role="img" aria-label="lock icon responsive" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+              ? <BsLockFill role="img" aria-label="lock icon responsive" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
               : <></>;
             const lockIconTooltipElement = p.isOnPathwayLockedByOther
               ? (

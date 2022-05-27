@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FormControl, PopoverProps } from 'react-bootstrap';
 import classNames from 'classnames';
-import { ChevronDown } from 'react-bootstrap-icons';
+import { BsChevronDown } from 'react-icons/bs';
 
 import './filtermenu.css';
 import SdSelectContext from 'components/SdSelect/SdSelectContext';
@@ -30,7 +30,7 @@ export const FilterToggle = React.forwardRef<
           onClick={ onClick }
         >
           <span className="nhsuk-u-visually-hidden">Toggle menu</span>
-          <ChevronDown />
+          <BsChevronDown />
         </button>
       </div>
     );

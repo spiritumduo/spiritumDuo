@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Header, SearchIcon, Container } from 'nhsuk-react-components';
-import { ThreeDots } from 'react-bootstrap-icons';
+import { BsThreeDots } from 'react-icons/bs';
 
 import User from 'types/Users';
-import PathwayOption from 'types/PathwayOption';
 import PathwaySelector from 'components/PathwaySelector';
 import sdInvertedImage from 'static/i/sd_inverted.png';
 import SearchBar from 'features/SearchBar';
@@ -39,7 +38,7 @@ const SdHeader = ({
           onClick={ () => setNavbarState(!navbarState) }
           disabled={ !hasPathways }
         >
-          <ThreeDots />
+          <BsThreeDots />
         </button>
         <button
           type="button"
