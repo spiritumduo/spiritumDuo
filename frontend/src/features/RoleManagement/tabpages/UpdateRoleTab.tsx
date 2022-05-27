@@ -231,7 +231,7 @@ const UpdateRoleTab = (
                   { label: permission.label, value: permission.label, checked: false }
                 )) }
               />
-            )}
+            ) }
           />
         </Fieldset>
         <Fieldset

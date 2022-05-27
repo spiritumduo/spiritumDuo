@@ -19,7 +19,10 @@ describe('When page loads', () => {
   });
 
   it('Should display role permission checkboxes', async () => {
+    const { click } = userEvent.setup();
+
     await waitFor(() => {
+      click(screen.getByText('Select...'));
       expect(
         screen.getByLabelText('TEST_PERMISSION_ONE'),
       );

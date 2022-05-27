@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { ApolloQueryResult, gql, OperationVariables, useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
-
 import { Input } from 'components/nhs-style';
 import { createPathway } from 'features/PathwayManagement/tabpages/__generated__/createPathway';
 import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
+
+import Select from 'react-select';
 
 export const CREATE_PATHWAY_MUTATION = gql`
 mutation createPathway($input: PathwayInput!){
@@ -33,16 +34,17 @@ mutation createPathway($input: PathwayInput!){
 type CreatePathwayForm = {
   name: string;
   milestoneTypes: {
-    milestoneTypeId: string;
-    name: string;
-    refName: string;
-    checked: boolean;
+    label: string;
+    value: string;
   }[];
 };
 
 export interface CreatePathwayInputs {
   name: string;
-  milestoneTypes: { id: string, name: string; refName: string; checked: boolean; }[];
+  milestoneTypes: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export interface CreatePathwayTabProps {
@@ -69,11 +71,11 @@ const CreatePathwayTab = (
   const onSubmit = (
     mutation: typeof createPathwayFunc, values: CreatePathwayForm,
   ) => {
-    const selectedMilestoneTypes = values.milestoneTypes?.filter(
-      (mT) => (mT.checked !== false || null),
-    ).map((mT) => ({
-      id: mT.checked as unknown as string,
-    }));
+    const selectedMilestoneTypes: Array<{id: string}> = [];
+    values.milestoneTypes.forEach((mT) => {
+      selectedMilestoneTypes.push( { id: mT.value } );
+    });
+
     mutation({
       variables: {
         input: {
@@ -122,10 +124,8 @@ const CreatePathwayTab = (
       const fieldProps: CreatePathwayForm['milestoneTypes'] = milestoneTypes
         ? milestoneTypes.flatMap((mT) => (
           {
-            milestoneTypeId: mT.id,
-            name: mT.name,
-            refName: mT.refName,
-            checked: false,
+            label: `${mT.name} (${mT.refName})`,
+            value: mT.id,
           }
         ))
         : [];
@@ -163,23 +163,23 @@ const CreatePathwayTab = (
         </Fieldset>
         <Fieldset disabled={ disableForm || mutationLoading || showModal }>
           <Fieldset.Legend>Milestone types</Fieldset.Legend>
-          {
-            milestoneTypeFields.map((mT, index) => (
-              <div className="form-check" key={ `milestoneTypes.${mT.name}.checked` }>
-                <label className="form-check-label pull-right" htmlFor={ `milestoneTypes.${index}.checked` }>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={ mT.milestoneTypeId }
-                    id={ `milestoneTypes.${index}.checked` }
-                    { ...register(`milestoneTypes.${index}.checked` as const) }
-                    defaultChecked={ false }
-                  />
-                  { mT.name } ({ mT.refName })
-                </label>
-              </div>
-            ))
-          }
+          <Controller
+            name="milestoneTypes"
+            control={ control }
+            render={ ({ field }) => (
+              <Select
+                className="mb-4"
+                isMulti
+                isClearable
+                onBlur={ field.onBlur }
+                onChange={ field.onChange }
+                ref={ field.ref }
+                options={ milestoneTypeFields?.map((mT) => (
+                  { label: mT.label, value: mT.value }
+                )) }
+              />
+            ) }
+          />
         </Fieldset>
         <Fieldset disabled={ disableForm || mutationLoading || showModal }>
           <Button className="float-end">Create pathway</Button>
