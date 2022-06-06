@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { waitFor, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -19,12 +18,14 @@ describe('When page loads', () => {
   });
 
   it('Should display milestone type checkboxes', async () => {
+    const { click } = userEvent.setup();
     await waitFor(() => {
+      click(screen.getByText('Select...'));
       expect(
-        screen.getByLabelText('Test milestone type 1 (ref test milestone type 1)'),
+        screen.getByText('Test milestone type 1 (ref test milestone type 1)'),
       );
       expect(
-        screen.getByLabelText('Test milestone type 2 (ref test milestone type 2)'),
+        screen.getByText('Test milestone type 2 (ref test milestone type 2)'),
       );
     });
   });

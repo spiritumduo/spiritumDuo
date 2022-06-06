@@ -18,64 +18,60 @@ describe('When page loads', () => {
     );
   });
 
-  it('Should display pathway permission checkboxes', async () => {
+  it('Should display pathways in the dropdown', async () => {
+    const { click } = userEvent.setup();
+    click(screen.getByRole('combobox', { name: /Select existing pathway/i }));
     await waitFor(() => {
-      expect(
-        screen.getByLabelText('TEST_PERMISSION_ONE (ref_TEST_PERMISSION_ONE)'),
-      );
-      expect(
-        screen.getByLabelText('TEST_PERMISSION_TWO (ref_TEST_PERMISSION_TWO)'),
-      );
+      expect(screen.getByRole('option', { name: 'pathway one' }));
     });
   });
 });
 
-test('Pathway dropdown fills inputs with existing data', async () => {
+test('Role dropdown fills inputs with existing data', async () => {
+  const { click, selectOptions } = userEvent.setup();
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
-  const select = screen.getByLabelText('Select existing pathway');
+  const select = screen.getByRole('combobox', { name: /Select existing pathway/i });
   await waitFor(() => {
     expect(screen.getByRole('option', { name: 'pathway one' }));
   });
-  userEvent.selectOptions(select, ['1']);
+  selectOptions(select, ['1']);
+
+  click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE (ref_TEST_PERMISSION_ONE)')).toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO (ref_TEST_PERMISSION_TWO)')).not.toBeChecked();
+    expect(screen.getByText('TEST_MILESTONE_TYPE_ONE'));
   });
 });
 
-test('Pathway dropdown clears inputs when set to default value', async () => {
+test('Role dropdown clears inputs when set to default value', async () => {
+  const { click, selectOptions } = userEvent.setup();
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
-  const select = screen.getByLabelText('Select existing pathway');
+  const select = screen.getByRole('combobox', { name: /Select existing pathway/i });
   await waitFor(() => {
     expect(screen.getByRole('option', { name: 'pathway one' }));
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE (ref_TEST_PERMISSION_ONE)')).not.toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO (ref_TEST_PERMISSION_TWO)')).not.toBeChecked();
   });
+  selectOptions(select, ['1']);
 
-  userEvent.selectOptions(select, ['1']);
+  click(screen.getByText('Select...'));
+  await waitFor(() => {
+    expect(screen.getByText('TEST_MILESTONE_TYPE_ONE'));
+  });
+  selectOptions(select, ['-1']);
 
   await waitFor(() => {
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE (ref_TEST_PERMISSION_ONE)')).toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO (ref_TEST_PERMISSION_TWO)')).not.toBeChecked();
-  });
-
-  userEvent.selectOptions(select, ['-1']);
-
-  await waitFor(() => {
-    expect(screen.getByLabelText('TEST_PERMISSION_ONE (ref_TEST_PERMISSION_ONE)')).not.toBeChecked();
-    expect(screen.getByLabelText('TEST_PERMISSION_TWO (ref_TEST_PERMISSION_TWO)')).not.toBeChecked();
+    expect(screen.queryByText('TEST_MILESTONE_TYPE_ONE')).not.toBeInTheDocument();
+    expect(screen.queryByText('TEST_MILESTONE_TYPE_TWO')).not.toBeInTheDocument();
   });
 });
 
-// DEFAULT
+// // DEFAULT
 test('Modal displays message pathway deleted', async () => {
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>

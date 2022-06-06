@@ -34,19 +34,8 @@ test('Create user should require username and password', async () => {
 
 test('Selected roles should be empty to start with', async () => {
   await renderDefault();
-  const selectedRoles = await within(
-    screen.getByRole('listbox', { name: /roles/i }),
-  ).queryAllByText(/role/i);
-  expect(selectedRoles.length).toBe(0);
+  expect(screen.queryByText(/first role/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/second role/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/third role/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/fourth role/i)).not.toBeInTheDocument();
 });
-
-/**
- * Figure out how to make popper appear in test dom to make this work
-test('Roles should appear in dropdown', async () => {
-  await renderDefault();
-  const { click } = userEvent.setup();
-  const toggleButton = screen.getByRole('button', { name: /toggle\smenu/i });
-  await waitFor(() => click(toggleButton));
-  expect(screen.getByRole('textbox', { name: /filter\s+menu/i })).toBeInTheDocument();
-});
- */

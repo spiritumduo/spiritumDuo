@@ -1,26 +1,32 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
-import { Input, Select } from 'components//nhs-style';
+import { Input, Select as NHSSelect } from 'components/nhs-style';
+import Select from 'react-select';
+
 import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
 type UpdateRoleForm = {
   name: string;
   roleIndex: string;
   permissions: {
-    name: string;
-    checked: boolean;
+    label: string;
+    value: string;
   }[];
 };
 
 export interface UpdateRoleInputs {
   name: string;
   roleIndex: string;
-  permissions: { name: string; checked: boolean; }[];
+  permissions: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export type UpdateRoleReturnData = {
@@ -55,9 +61,8 @@ export function useUpdateRoleSubmit(
       const { location } = window;
       const uriPrefix = `${location.protocol}//${location.host}`;
 
-      const listOfPermissions = variables.permissions.filter(
-        (perm) => (perm.checked !== false || null),
-      ).map((value) => (value.name));
+      const listOfPermissions: Array<string> = [];
+      variables.permissions.forEach((perm) => listOfPermissions.push(perm.label));
 
       const updateResponse = await window.fetch(`${uriPrefix}/api/rest/updaterole/`, {
         method: 'POST',
@@ -111,6 +116,7 @@ const UpdateRoleTab = (
   { disableForm, refetchRoles, roles, rolePermissions }: UpdateRoleTabProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [permissionFields, setPermissionFields] = useState<{label: string, value: string}[]>();
 
   const [
     loading,
@@ -125,11 +131,6 @@ const UpdateRoleTab = (
     name: yup.string().required('Role name is a required field'),
   }).required();
 
-  const [
-    permissionCheckboxesOrganised,
-    setPermissionCheckboxesOrganised,
-  ] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -139,63 +140,42 @@ const UpdateRoleTab = (
     control,
   } = useForm<UpdateRoleForm>({ resolver: yupResolver(newRoleSchema) });
 
-  const {
-    fields: permissionFields,
-    append: appendPermissionFields,
-  } = useFieldArray({
-    name: 'permissions',
-    control: control,
-  });
+  useEffect(() => {
+    setPermissionFields(rolePermissions
+      ? rolePermissions.flatMap((rolePermission) => (
+        {
+          label: rolePermission.name,
+          value: rolePermission.name,
+        }
+      ))
+      : []);
+  }, [rolePermissions, setPermissionFields]);
 
   useEffect(() => {
-    if (!permissionCheckboxesOrganised && rolePermissions) {
-      const fieldProps: UpdateRoleForm['permissions'] = rolePermissions
-        ? rolePermissions.flatMap((rolePermission) => (
-          {
-            name: rolePermission.name,
-            checked: false,
-          }
-        ))
-        : [];
-      appendPermissionFields(fieldProps);
-      setPermissionCheckboxesOrganised(true);
-    }
-  }, [
-    rolePermissions,
-    appendPermissionFields,
-    permissionCheckboxesOrganised,
-    setPermissionCheckboxesOrganised,
-  ]);
-
-  useEffect(() => {
-    permissionFields?.forEach((permission, index) => {
-      setValue(`permissions.${index}.checked`, false);
-    });
-
     setValue('name', '');
+    setValue('permissions', []);
 
     if (selectedRole !== '-1' && selectedRole) {
-      permissionFields?.forEach((permission, index) => {
-        setValue(`permissions.${index}.checked`, false);
-      });
-
       const permissionSet = roles?.filter(
         (role) => (role.id === selectedRole),
       )?.[0];
+
+      const listOfPermissions: Array<{label: string, value: string}> = [];
 
       if (permissionSet) {
         setValue('name', permissionSet.name);
         permissionSet.permissions.forEach((rolePermission) => {
           if (rolePermission) {
-            permissionFields.find((permission, index) => (
-              permission.name === rolePermission.name
-              && setValue(`permissions.${index}.checked`, true)
+            permissionFields?.find((permission) => (
+              permission.label === rolePermission.name
+              && listOfPermissions.push({ label: permission.label, value: permission.label })
             ));
           }
         });
       }
+      setValue('permissions', listOfPermissions);
     }
-  }, [rolePermissions, roles, permissionFields, selectedRole, setValue]);
+  }, [permissionFields, roles, selectedRole, setValue]);
 
   return (
     <>
@@ -210,7 +190,7 @@ const UpdateRoleTab = (
             disableForm || loading || showModal
           }
         >
-          <Select
+          <NHSSelect
             className="col-12"
             label="Select existing role"
             { ...register('roleIndex') }
@@ -225,7 +205,7 @@ const UpdateRoleTab = (
                 <option key={ role.id } value={ role.id }>{ role.name }</option>
               ))
             }
-          </Select>
+          </NHSSelect>
         </Fieldset>
         <Fieldset
           disabled={
@@ -235,23 +215,24 @@ const UpdateRoleTab = (
         >
           <Input role="textbox" id="name" label="Role name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
           <Fieldset.Legend>Role permissions</Fieldset.Legend>
-          {
-            permissionFields?.map((permission, index) => (
-              <div className="form-check" key={ `permissions.${permission.name}.checked` }>
-                <label className="form-check-label pull-right" htmlFor={ `permissions.${index}.checked` }>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={ permission.name }
-                    id={ `permissions.${index}.checked` }
-                    { ...register(`permissions.${index}.checked` as const) }
-                    defaultChecked={ false }
-                  />
-                  { permission.name }
-                </label>
-              </div>
-            ))
-          }
+          <Controller
+            name="permissions"
+            control={ control }
+            render={ ({ field }) => (
+              <Select
+                className="mb-4"
+                isMulti
+                isClearable
+                onBlur={ field.onBlur }
+                onChange={ field.onChange }
+                ref={ field.ref }
+                value={ field.value }
+                options={ permissionFields?.map((permission) => (
+                  { label: permission.label, value: permission.label, checked: false }
+                )) }
+              />
+            ) }
+          />
         </Fieldset>
         <Fieldset
           disabled={

@@ -6,11 +6,11 @@ This week was spent familiarising ourselves with the technologies that we were a
 
 ### 25th-29th October 2021
 
-This week I worked on GraphQL and investigated how other projects had implemented it. I made a start on a new backend using Django to replace the old backend (Django too, but we felt it would be easier to start afresh). This involved creating a new GraphQL schema and bringing its implementation up to scratch with what was required for the frontend. I also spent some time correcting the NGINX configuration due to an issue around the use of SSL certificates, as well as correcting the global docker compose configuration (to start frontend and backend services). 
+This week I worked on GraphQL and investigated how other projects had implemented it. I made a start on a new backend using Django to replace the old backend (Django too, but we felt it would be easier to start afresh). This involved creating a new GraphQL schema and bringing its implementation up to scratch with what was required for the frontend. I also spent some time correcting the NGINX configuration due to an issue around the use of SSL certificates, as well as correcting the global docker compose configuration (to start frontend and backend services).
 
 ### 1st-5th November 2021
 
-This week we worked to develop data access objects (DAOs). This was done to simplify getting data from the database and from external sources (eventually hospital/trust systems for patient records). This implementation was rolled out for all data models. I worked to create a modular GraphQL design so managing a large implementation would be easier (large projects tend to get messy and become a pain to update). 
+This week we worked to develop data access objects (DAOs). This was done to simplify getting data from the database and from external sources (eventually hospital/trust systems for patient records). This implementation was rolled out for all data models. I worked to create a modular GraphQL design so managing a large implementation would be easier (large projects tend to get messy and become a pain to update).
 
 ### 8th-12th November 2021
 
@@ -18,11 +18,11 @@ This week I continued to develop DAOs for the data models and integrate them wit
 
 ### 15th-19th November 2021
 
-This week we had an issue with the GraphQL library we had chosen (Graphene) due to its syncronous nature. To use dataloaders (for batching and caching queries) the library should ideally be asyncronous. This week was spent migrating from Graphene to Ariadne - an asyncronous library. This involved updating all resolvers and mutation handlers, creating a new organisation structure, and creating dataloaders. 
+This week we had an issue with the GraphQL library we had chosen (Graphene) due to its syncronous nature. To use dataloaders (for batching and caching queries) the library should ideally be asyncronous. This week was spent migrating from Graphene to Ariadne - an asyncronous library. This involved updating all resolvers and mutation handlers, creating a new organisation structure, and creating dataloaders.
 
 ### 22nd-26th November 2021
 
-This week I designed the implementation for decision points and redesigned the patient resolvers so all data from a patient can be pulled from one query, whereas before you would have to request test results, decision points, pathways, etc individually. This is done as GraphQL allows a client to request the information it needs unlike a RESTful API. I further developed some dataloaders to allow for searching. 
+This week I designed the implementation for decision points and redesigned the patient resolvers so all data from a patient can be pulled from one query, whereas before you would have to request test results, decision points, pathways, etc individually. This is done as GraphQL allows a client to request the information it needs unlike a RESTful API. I further developed some dataloaders to allow for searching.
 
 ### 29th November-3rd December 2021
 
@@ -50,11 +50,11 @@ I had meetings with NHSx (now NHS England and Improvement) to discuss our applic
 
 ### 17th-21st January 2022
 
-This week we started on the development of a fake trust system. Most trusts have a server called a TIE (trust integration engine), since we don't yet have access to their development environment we've decided the best way to continue is develop our own that mimicks (mocks) the same behaviours as the real TIE. I also had the privelege of observing a multi-disciplinary team meeting (MDT) wherein patient care plans are discussed, and an outpatient lung cancer clinic. These were to help us see how the clinicians interact with the various IT systems, and to help us better understand the problems at hand. This week we also started working in week long sprints - although not proper sprints with a scrum master and daily standup. We effectively devise a list of what we want to be done by the end of the week and review how it worked at the end of the week. 
+This week we started on the development of a fake trust system. Most trusts have a server called a TIE (trust integration engine), since we don't yet have access to their development environment we've decided the best way to continue is develop our own that mimicks (mocks) the same behaviours as the real TIE. I also had the privelege of observing a multi-disciplinary team meeting (MDT) wherein patient care plans are discussed, and an outpatient lung cancer clinic. These were to help us see how the clinicians interact with the various IT systems, and to help us better understand the problems at hand. This week we also started working in week long sprints - although not proper sprints with a scrum master and daily standup. We effectively devise a list of what we want to be done by the end of the week and review how it worked at the end of the week.
 
 ### 24th-28th January 2022
 
-This week, we were working on developing tests and a mocking framework for the adapter between our software and our fake-TIE (pseudotie hereon in). Development continued on our pseudotie. 
+This week, we were working on developing tests and a mocking framework for the adapter between our software and our fake-TIE (pseudotie hereon in). Development continued on our pseudotie.
 
 ### 31st January-4th February 2022
 
@@ -70,7 +70,7 @@ This week was spent tweaking the UI and fixing bugs. On Thursday, I attended a s
 
 ### 21st-24th February 2022
 
-I spent this week working on the backend testing suite, as well as working with the information manager of OUH's clinical haemotology department to develop comprehensive build instructions. 
+I spent this week working on the backend testing suite, as well as working with the information manager of OUH's clinical haemotology department to develop comprehensive build instructions.
 
 ### 28th Feburary-4th March 2022
 
@@ -90,16 +90,15 @@ This week I refactored a lot of the backend with flake8 (a linter). This just en
 
 ### 28th March - 1st April 2022
 
-This week was a continuation of patient locking. In the grand scheme of things it's a large - and quite important - function to get right, there are just a lot of edge cases and considerations. I also worked to ensure that the pseudotie persistently stores test result return times, meaning that we could run a small scale simulation wherein test results are returning in hours or days, as opposed to just a few minutes. 
+This week was a continuation of patient locking. In the grand scheme of things it's a large - and quite important - function to get right, there are just a lot of edge cases and considerations. I also worked to ensure that the pseudotie persistently stores test result return times, meaning that we could run a small scale simulation wherein test results are returning in hours or days, as opposed to just a few minutes.
 
 ### 4th - 8th April 2022
 
-This week I updated some of the documentation and looked into automated document generation software. After reading comparisons I ended up choosing to use Doxygen for our Python backend, and directing others to the storybook for frontend documentation - this seems to be common practice. I also did some more work on the installation instructions. To finish the week I worked on adding GraphQL subscriptions to the patient list on the home page, making it so it updates whenever the state of a patient changes. This involved me learning about GQL subscriptions and Apollo's implementation of them. 
-
+This week I updated some of the documentation and looked into automated document generation software. After reading comparisons I ended up choosing to use Doxygen for our Python backend, and directing others to the storybook for frontend documentation - this seems to be common practice. I also did some more work on the installation instructions. To finish the week I worked on adding GraphQL subscriptions to the patient list on the home page, making it so it updates whenever the state of a patient changes. This involved me learning about GQL subscriptions and Apollo's implementation of them.
 
 ### 11th - 15th April 2022
 
-This week I designed and implemented an administration page for pathway management - creating, updating and deleting pathways without having to manually edit the database. 
+This week I designed and implemented an administration page for pathway management - creating, updating and deleting pathways without having to manually edit the database.
 
 ### 18th - 22nd April 2022
 
@@ -107,18 +106,22 @@ Annual leave
 
 ### 25th - 29th April 2022
 
-This week I was working on the administration interface for role management. This involved creating new graphql queries and adapting the frontend as appropriate, as well as creating new RESTful endpoints on the backend. 
+This week I was working on the administration interface for role management. This involved creating new graphql queries and adapting the frontend as appropriate, as well as creating new RESTful endpoints on the backend.
 
 ### 2nd - 6th May 2022
 
-This week was a continuation of the last, working on the administration interface. I had to learn how Jest (frontend React testing library) worked wrt asynchrony and awaiting events. I also diagnosed and corrected an issue wherein our staging server would not upgrade enum definitions on the postgres database. I chose to remove the database volume on the CD workflow to circumvent this. In a production environment, we'll have to edit the migrations manually - to be expected using Alembic. 
+This week was a continuation of the last, working on the administration interface. I had to learn how Jest (frontend React testing library) worked wrt asynchrony and awaiting events. I also diagnosed and corrected an issue wherein our staging server would not upgrade enum definitions on the postgres database. I chose to remove the database volume on the CD workflow to circumvent this. In a production environment, we'll have to edit the migrations manually - to be expected using Alembic.
 
 ### 9th - 13th May 2022
 
 This week I was tasked with adding mechanisms to give users access to pathways so they can take part in multiple pathways. This was a much bigger task than I expected. Backend modifications to this was minimal since permissions for this is a separate story (it's a very large task that will involve the development of a DAO layer). Frontend modifications, I had a lot to learn. I learnt about React contexts and how they should be used. This week was a hit to my confidence as I struggled more than I thought I would. I also had to discard some of my initial work on the backend as it was - rightly pointed out - a massive anti-pattern (adding authorization to dataloaders) so I lost about a day's worth of work. A learning experience if nothing else. Wrt the frontend, a large part of my issue stemmed from moving pathways from their own separate object onto the user object. This required large changes to both our user/auth and pathway contexts
 
-I also added the ability to assign a user pathways on the user management tab in administration. 
+I also added the ability to assign a user pathways on the user management tab in administration.
 
 ### 16th - 20th May 2022
 
 I spent this week tidying up what we have completed so far. Coming into this placement I had much to learn, and so some of my work to the start had to be updated following proper and more efficient methods. For example, I updated some of our backend tests to use Pytest fixtures correctly. Futhermore, I was able to identify issues in our workflow. For example, the 'manage' scripts were often not updated completly inline with recent changes. Identifying this means I can ensure that these scripts are updated in a timely fashion inline with changes.
+
+### 23rd - 27th May 2022
+
+I spent this week making minor changes to frontend and backend to faciltiate for a patient's sex and to display it alongside the patient's date of birth. I also investigated a few different frontend component libraries to find a suitable multi-select dropdown menu. I tried three and found one that works very well, so I have implemented that and updated all appropriate frontend tests. As this was inline with updates to React 18 I had to find what changed in the testing library to update previous tests I had written before this migration.

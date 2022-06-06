@@ -18,58 +18,59 @@ describe('When page loads', () => {
     );
   });
 
-  it('Should display milestone type checkboxes', async () => {
+  it('Should display pathways in the dropdown', async () => {
+    const { click } = userEvent.setup();
+    click(screen.getByRole('combobox', { name: /Select existing pathway/i }));
     await waitFor(() => {
-      expect(
-        screen.getByLabelText('Test milestone type 1 (ref test milestone type 1)'),
-      );
-      expect(
-        screen.getByLabelText('Test milestone type 2 (ref test milestone type 2)'),
-      );
+      expect(screen.getByRole('option', { name: 'pathway one' }));
     });
   });
 });
 
 test('Role dropdown fills inputs with existing data', async () => {
+  const { click, selectOptions } = userEvent.setup();
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
-  const select = screen.getByLabelText('Select existing pathway');
+  const select = screen.getByRole('combobox', { name: /Select existing pathway/i });
   await waitFor(() => {
     expect(screen.getByRole('option', { name: 'pathway one' }));
   });
-  userEvent.selectOptions(select, ['1']);
+  selectOptions(select, ['1']);
+
+  click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect((screen.getByRole('textbox', { name: 'Pathway name' }) as HTMLInputElement).value).toMatch(/pathway one/i);
-    expect(screen.getByLabelText('Test milestone type 1 (ref test milestone type 1)')).toBeChecked();
-    expect(screen.getByLabelText('Test milestone type 2 (ref test milestone type 2)')).not.toBeChecked();
+    expect(screen.getByText('Test milestone type 1'));
   });
 });
 
 test('Role dropdown clears inputs when set to default value', async () => {
+  const { click, selectOptions } = userEvent.setup();
   render(
     <MockSdApolloProvider mocks={ Default.parameters?.apolloClient.mocks }>
       <Default />
     </MockSdApolloProvider>,
   );
-  const select = screen.getByLabelText('Select existing pathway');
+  const select = screen.getByRole('combobox', { name: /Select existing pathway/i });
   await waitFor(() => {
     expect(screen.getByRole('option', { name: 'pathway one' }));
   });
-  userEvent.selectOptions(select, ['1']);
+  selectOptions(select, ['1']);
 
   userEvent.type(screen.getByRole('textbox', { name: 'Pathway name' }), 'Test data go brrr');
-  userEvent.click(screen.getByLabelText('Test milestone type 1 (ref test milestone type 1)'));
-  userEvent.click(screen.getByLabelText('Test milestone type 2 (ref test milestone type 2)'));
 
-  userEvent.selectOptions(select, ['-1']);
+  click(screen.getByText('Select...'));
+  await waitFor(() => {
+    expect(screen.getByText('Test milestone type 1'));
+  });
+  selectOptions(select, ['-1']);
 
   await waitFor(() => {
     expect((screen.getByRole('textbox', { name: 'Pathway name' }) as HTMLInputElement).value).toBe('');
-    expect(screen.getByLabelText('Test milestone type 1 (ref test milestone type 1)')).not.toBeChecked();
-    expect(screen.getByLabelText('Test milestone type 2 (ref test milestone type 2)')).not.toBeChecked();
+    expect(screen.queryByText('Test milestone type 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test milestone type 2')).not.toBeInTheDocument();
   });
 });
 

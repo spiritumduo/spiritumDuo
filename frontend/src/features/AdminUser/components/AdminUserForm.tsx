@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 
 // LIBRARIES
 import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, ErrorMessage, Fieldset, SummaryList, Form } from 'nhsuk-react-components';
 import { Row, Col, Modal } from 'react-bootstrap';
 import { Input, CheckboxBox } from 'components/nhs-style';
 import { gql } from '@apollo/client';
+import Select from 'react-select';
 
 // APP
 import useRESTSubmit from 'app/hooks/rest-submit';
 import User from 'types/Users';
 import Role from 'types/Role';
 
-import SdSelect from 'components/SdSelect/SdSelect';
-import CheckboxOption from 'components/SdSelect/CheckboxOption';
 import './adminuserform.css';
 import PathwayOption from 'types/PathwayOption';
 
@@ -83,6 +82,19 @@ export interface UserFormInput {
   lastName: string;
   department: string;
   isActive: boolean;
+  roles: {label: string, value: string}[];
+  pathways: {label: string, value: string}[];
+}
+
+export interface UserRestInput {
+  id?: string;
+  username?: string;
+  password?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  department: string;
+  isActive: boolean;
   roles: string[];
   pathways: string[];
 }
@@ -100,7 +112,9 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  const [loading, error, data, createUser] = useRESTSubmit<UserReturnData, UserFormInput>(url);
+  const [loading, error, data, createUser] = useRESTSubmit<
+    UserReturnData, UserRestInput
+  >(url);
 
   const initSchema = {
     email: yup.string().required('Email is a required field'),
@@ -109,8 +123,6 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
     username: yup.string().required('Username is a required field'),
     department: yup.string().required('Department is a required field'),
     isActive: yup.boolean().required(),
-    roles: yup.array().of(yup.string()),
-    pathways: yup.array().of(yup.string()),
   };
 
   const schema = editUser
@@ -131,7 +143,9 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
     handleSubmit,
     formState: { errors },
     getValues,
+    setValue,
     reset,
+    control,
   } = useForm<UserFormInput>({ resolver: yupResolver(newUserInputSchema) });
 
   // We do this here to silence warnings from React about controlled vs uncontrolled components.
@@ -151,14 +165,36 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
   useEffect(() => {
     if (data?.user) setShowModal(true);
   }, [data]);
-  const currentRoles = new Set(editUser?.roles.map((r) => r.id));
-  const currentPathways = new Set(editUser?.pathways.map((p) => p.id));
+
+  useEffect(() => {
+    if (editUser?.pathways) {
+      setValue('pathways', editUser.pathways.map((pW) => ({ label: pW.name, value: pW.id })));
+      setValue('roles', editUser.roles.map((r) => ({ label: r.name, value: r.id })));
+    }
+  }, [editUser?.pathways, editUser?.roles, setValue]);
+
   return (
     <>
       <Form
         onSubmit={ handleSubmit( () => {
-          const values = getValues();
-          createUser(values);
+          const formValues: UserFormInput = getValues();
+          const selectedPathways = formValues.pathways?.map((pW) => (pW.value));
+          const selectedRoles = formValues.roles?.map((r) => (r.value));
+
+          const restValues: UserRestInput = {
+            id: formValues.id,
+            username: formValues.username,
+            password: formValues.password,
+            email: formValues.email,
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            department: formValues.department,
+            isActive: formValues.isActive,
+            roles: selectedRoles,
+            pathways: selectedPathways,
+          };
+
+          createUser(restValues);
         } ) }
       >
         {
@@ -222,29 +258,53 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
               />
             </Col>
           </Row>
-          <Row xs="3" md="2" className="admin-user-flex">
-            <SdSelect label="Roles" { ...register('roles') }>
-              {roles?.map((r) => (
-                <CheckboxOption
-                  key={ r.id }
-                  value={ r.id }
-                  label={ r.name }
-                  defaultChecked={ currentRoles.has(r.id) }
-                />
-              ))}
-            </SdSelect>
+          <Row xs="12" md="12" className="admin-user-flex">
+            <label htmlFor="roles">
+              Roles
+              <Controller
+                name="roles"
+                control={ control }
+                render={ ({ field }) => (
+                  <Select
+                    aria-label="roles"
+                    className="mb-4"
+                    isMulti
+                    isClearable
+                    onBlur={ field.onBlur }
+                    onChange={ field.onChange }
+                    ref={ field.ref }
+                    value={ field.value }
+                    options={ roles?.map((pW) => (
+                      { label: pW.name, value: pW.id }
+                    )) }
+                  />
+                ) }
+              />
+            </label>
           </Row>
-          <Row xs="3" md="2" className="admin-user-flex">
-            <SdSelect label="Pathways" { ...register('pathways') }>
-              {pathways?.map((p) => (
-                <CheckboxOption
-                  key={ p.id }
-                  value={ p.id }
-                  label={ p.name }
-                  defaultChecked={ currentPathways.has(p.id) }
-                />
-              ))}
-            </SdSelect>
+          <Row xs="12" md="12" className="admin-user-flex">
+            <label htmlFor="pathways">
+              Pathways
+              <Controller
+                name="pathways"
+                control={ control }
+                render={ ({ field }) => (
+                  <Select
+                    aria-label="pathways"
+                    className="mb-4"
+                    isMulti
+                    isClearable
+                    onBlur={ field.onBlur }
+                    onChange={ field.onChange }
+                    ref={ field.ref }
+                    value={ field.value }
+                    options={ pathways?.map((pW) => (
+                      { label: pW.name, value: pW.id }
+                    )) }
+                  />
+                ) }
+              />
+            </label>
           </Row>
           <Row xs="1" md="2" className="admin-user-flex">
             <Col>

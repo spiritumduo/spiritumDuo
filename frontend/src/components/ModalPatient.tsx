@@ -138,44 +138,10 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header closeButton>
         <Modal.Title>
-          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}`}
+          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}, ${patientData?.getPatient?.hospitalNumber}, ${patientData?.getPatient?.nationalNumber}, ${patientData?.getPatient?.dateOfBirth.toLocaleDateString()}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <SummaryList>
-          <SummaryList.Row>
-            <SummaryList.Key>
-              Hospital Number
-            </SummaryList.Key>
-            <SummaryList.Value>
-              {patientData?.getPatient?.hospitalNumber}
-            </SummaryList.Value>
-          </SummaryList.Row>
-          <SummaryList.Row>
-            <SummaryList.Key>
-              National Number
-            </SummaryList.Key>
-            <SummaryList.Value>
-              {patientData?.getPatient?.nationalNumber}
-            </SummaryList.Value>
-          </SummaryList.Row>
-          <SummaryList.Row>
-            <SummaryList.Key>
-              Date of Birth
-            </SummaryList.Key>
-            <SummaryList.Value>
-              {patientData?.getPatient?.dateOfBirth.toLocaleDateString()}
-            </SummaryList.Value>
-          </SummaryList.Row>
-          <SummaryList.Row>
-            <SummaryList.Key>
-              Sex
-            </SummaryList.Key>
-            <SummaryList.Value>
-              {patientData?.getPatient?.sex}
-            </SummaryList.Value>
-          </SummaryList.Row>
-        </SummaryList>
         <Tabs>
           <TabList>
             <Tab disabled={ tabState }>New Decision</Tab>

@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, Controller, FieldValues } from 'react-hook-form';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
-
+import Select from 'react-select';
 import { Input } from 'components/nhs-style';
 import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
 type CreateRoleForm = {
   name: string;
   permissions: {
-    name: string;
-    checked: boolean;
+    label: string;
+    value: string;
   }[];
 };
 
 export interface CreateRoleInputs {
   name: string;
-  permissions: { name: string; checked: boolean; }[];
+  permissions: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export type CreateRoleReturnData = {
@@ -71,9 +74,8 @@ export function useCreateRoleSubmit(
       }
       const decodedCreateResponse: CreateRoleReturnData = await createResponse.json();
 
-      const listOfPermissions = variables.permissions.filter(
-        (perm) => (perm.checked !== false || null),
-      ).map((value) => (value.checked as unknown as string));
+      const listOfPermissions: Array<string> = [];
+      variables.permissions.forEach((perm) => listOfPermissions.push(perm.label));
 
       const updateBody = JSON.stringify({
         id: decodedCreateResponse.id,
@@ -154,8 +156,8 @@ const CreateRoleTab = (
       const fieldProps: CreateRoleForm['permissions'] = rolePermissions
         ? rolePermissions.flatMap((rolePermission) => (
           {
-            name: rolePermission.name,
-            checked: false,
+            label: rolePermission.name,
+            value: rolePermission.name,
           }
         ))
         : [];
@@ -182,23 +184,23 @@ const CreateRoleTab = (
         </Fieldset>
         <Fieldset disabled={ disableForm }>
           <Fieldset.Legend>Role permissions</Fieldset.Legend>
-          {
-            permissionFields?.map((permission, index) => (
-              <div className="form-check" key={ `permissions.${permission.name}.checked` }>
-                <label className="form-check-label pull-right" htmlFor={ `permissions.${index}.checked` }>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={ permission.name }
-                    id={ `permissions.${index}.checked` }
-                    { ...register(`permissions.${index}.checked` as const) }
-                    defaultChecked={ false }
-                  />
-                  { permission.name }
-                </label>
-              </div>
-            ))
-          }
+          <Controller
+            name="permissions"
+            control={ control }
+            render={ ({ field }) => (
+              <Select
+                className="mb-4"
+                isMulti
+                isClearable
+                onBlur={ field.onBlur }
+                onChange={ field.onChange }
+                ref={ field.ref }
+                options={ permissionFields?.map((permission) => (
+                  { label: permission.label, value: permission.label }
+                )) }
+              />
+            ) }
+          />
         </Fieldset>
         <Fieldset disabled={ disableForm || loading }>
           <Button className="float-end">Create role</Button>

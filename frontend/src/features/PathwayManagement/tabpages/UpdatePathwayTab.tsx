@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { ApolloQueryResult, gql, OperationVariables, useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 
-import { Input, Select } from 'components/nhs-style';
+import { Input, Select as NHSSelect } from 'components/nhs-style';
 import { updatePathway } from 'features/PathwayManagement/tabpages/__generated__/updatePathway';
 import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
+
+import Select from 'react-select';
 
 export const UPDATE_PATHWAY_MUTATION = gql`
 mutation updatePathway($input: UpdatePathwayInput!){
@@ -34,16 +36,17 @@ type UpdatePathwayForm = {
   pathwayIndex: string;
   name: string;
   milestoneTypes: {
-    milestoneTypeId: string;
-    name: string;
-    refName: string;
-    checked: boolean;
+    label: string;
+    value: string;
   }[];
 };
 
 export interface UpdatePathwayInputs {
   name: string;
-  milestoneTypes: { id: string, name: string; refName: string; checked: boolean; }[];
+  milestoneTypes: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export interface UpdatePathwayTabProps {
@@ -70,6 +73,9 @@ const UpdatePathwayTab = (
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedPathway, setSelectedPathway] = useState<string>('-1');
+  const [milestoneTypeFields, setMilestoneTypeFields] = useState<
+    {label: string, value: string}[]
+  >();
 
   const [updatePathwayFunc, {
     data: mutationData, loading: mutationLoading, error: mutationError,
@@ -78,11 +84,10 @@ const UpdatePathwayTab = (
   const onSubmit = (
     mutation: typeof updatePathwayFunc, values: UpdatePathwayForm,
   ) => {
-    const selectedMilestoneTypes = values.milestoneTypes?.filter(
-      (mT) => (mT.checked !== false || null),
-    ).map((mT) => ({
-      id: mT.milestoneTypeId as unknown as string,
-    }));
+    const selectedMilestoneTypes: Array<{id: string}> = [];
+    values.milestoneTypes.forEach((mT) => {
+      selectedMilestoneTypes.push( { id: mT.value } );
+    });
 
     mutation({
       variables: {
@@ -108,10 +113,6 @@ const UpdatePathwayTab = (
     name: yup.string().required('Pathway name is a required field'),
   }).required();
 
-  const [
-    checkboxesOrganised,
-    setCheckboxesOrganised,
-  ] = useState(false);
   const {
     register,
     handleSubmit,
@@ -121,63 +122,40 @@ const UpdatePathwayTab = (
     control,
   } = useForm<UpdatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
 
-  const {
-    fields: milestoneTypeFields,
-    append: appendMilestoneTypeFields,
-  } = useFieldArray({
-    name: 'milestoneTypes',
-    control: control,
-  });
+  useEffect(() => {
+    setMilestoneTypeFields(milestoneTypes
+      ? milestoneTypes.flatMap((mT) => (
+        {
+          label: mT.name,
+          value: mT.id,
+        }
+      ))
+      : []);
+  }, [milestoneTypes, setMilestoneTypeFields]);
 
   useEffect(() => {
-    if (!checkboxesOrganised && milestoneTypes) {
-      const fieldProps: UpdatePathwayForm['milestoneTypes'] = milestoneTypes
-        ? milestoneTypes.flatMap((mT) => (
-          {
-            milestoneTypeId: mT.id,
-            name: mT.name,
-            refName: mT.refName,
-            checked: false,
-          }
-        ))
-        : [];
-      appendMilestoneTypeFields(fieldProps);
-      setCheckboxesOrganised(true);
-    }
-  }, [
-    milestoneTypes,
-    appendMilestoneTypeFields,
-    checkboxesOrganised,
-    setCheckboxesOrganised,
-  ]);
-
-  useEffect(() => {
-    milestoneTypeFields?.forEach((mT, index) => {
-      setValue(`milestoneTypes.${index}.checked`, false);
-    });
-
     setValue('name', '');
+    setValue('milestoneTypes', []);
 
     if (selectedPathway !== '-1' && selectedPathway) {
-      milestoneTypeFields?.forEach((mT, index) => {
-        setValue(`milestoneTypes.${index}.checked`, false);
-      });
-
       const currPathway = pathways?.filter(
         (pathway) => (pathway?.id === selectedPathway),
       )?.[0];
+
+      const listOfMilestoneTypes: Array<{label: string, value: string}> = [];
 
       if (currPathway) {
         setValue('name', currPathway.name);
         currPathway?.milestoneTypes?.forEach((milestoneType) => {
           if (milestoneType) {
-            milestoneTypeFields.find((mT, index) => (
-              mT.name === milestoneType.name
-              && setValue(`milestoneTypes.${index}.checked`, true)
+            milestoneTypeFields?.find((mT) => (
+              mT.value === milestoneType.id
+              && listOfMilestoneTypes.push({ label: mT.label, value: mT.value })
             ));
           }
         });
       }
+      setValue('milestoneTypes', listOfMilestoneTypes);
     }
   }, [pathways, milestoneTypeFields, selectedPathway, setValue]);
 
@@ -205,9 +183,10 @@ const UpdatePathwayTab = (
             mutationLoading || showModal || disableForm
           }
         >
-          <Select
+          <NHSSelect
             className="col-12"
             label="Select existing pathway"
+            // eslint-disable-next-line react/jsx-props-no-spreading
             { ...register('pathwayIndex') }
             onChange={ (
               (e: { currentTarget: { value: React.SetStateAction<string> } }) => {
@@ -221,7 +200,7 @@ const UpdatePathwayTab = (
                   : null
               ))
             }
-          </Select>
+          </NHSSelect>
         </Fieldset>
 
         <Fieldset
@@ -239,23 +218,24 @@ const UpdatePathwayTab = (
           }
         >
           <Fieldset.Legend>Milestone types</Fieldset.Legend>
-          {
-            milestoneTypeFields.map((mT, index) => (
-              <div className="form-check" key={ `milestoneTypes.${mT.name}.checked` }>
-                <label className="form-check-label pull-right" htmlFor={ `milestoneTypes.${index}.checked` }>
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value={ mT.milestoneTypeId }
-                    id={ `milestoneTypes.${index}.checked` }
-                    { ...register(`milestoneTypes.${index}.checked` as const) }
-                    defaultChecked={ false }
-                  />
-                  { mT.name } ({ mT.refName })
-                </label>
-              </div>
-            ))
-          }
+          <Controller
+            name="milestoneTypes"
+            control={ control }
+            render={ ({ field }) => (
+              <Select
+                className="mb-4"
+                isMulti
+                isClearable
+                onBlur={ field.onBlur }
+                onChange={ field.onChange }
+                ref={ field.ref }
+                value={ field.value }
+                options={ milestoneTypeFields?.map((mT) => (
+                  { label: mT.label, value: mT.value }
+                )) }
+              />
+            ) }
+          />
         </Fieldset>
         <Fieldset
           disabled={
