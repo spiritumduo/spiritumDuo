@@ -7,35 +7,38 @@
 // GraphQL query operation: getPatientWithReferrals
 // ====================================================
 
-export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones_milestoneType {
+export interface getPatientWithReferrals_getPatient_onPathways_milestones_milestoneType {
   __typename: "MilestoneType";
+  id: string;
   name: string;
 }
 
-export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones {
+export interface getPatientWithReferrals_getPatient_onPathways_milestones_forwardDecisionPoint {
+  __typename: "DecisionPoint";
+  id: string;
+  addedAt: any;
+}
+
+export interface getPatientWithReferrals_getPatient_onPathways_milestones {
   __typename: "Milestone";
   id: string;
-  milestoneType: getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones_milestoneType;
+  milestoneType: getPatientWithReferrals_getPatient_onPathways_milestones_milestoneType;
   addedAt: any;
   updatedAt: any;
   currentState: string;
-}
-
-export interface getPatientWithReferrals_getPatient_onPathways_decisionPoints {
-  __typename: "DecisionPoint";
-  id: string;
-  milestones: getPatientWithReferrals_getPatient_onPathways_decisionPoints_milestones[] | null;
+  forwardDecisionPoint: getPatientWithReferrals_getPatient_onPathways_milestones_forwardDecisionPoint | null;
 }
 
 export interface getPatientWithReferrals_getPatient_onPathways {
   __typename: "OnPathway";
   id: string;
   referredAt: any;
-  decisionPoints: getPatientWithReferrals_getPatient_onPathways_decisionPoints[] | null;
+  milestones: getPatientWithReferrals_getPatient_onPathways_milestones[] | null;
 }
 
 export interface getPatientWithReferrals_getPatient {
   __typename: "Patient";
+  id: string;
   firstName: string;
   lastName: string;
   dateOfBirth: any;
