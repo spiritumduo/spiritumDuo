@@ -116,7 +116,7 @@ type TooltipData = {
 
 type BarStackHorizontalProps = {
   data: PatientData[];
-  maxDays?: number;
+  maxDays: number;
   showName: boolean;
   width: number;
   height: number;
@@ -163,6 +163,8 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
     const rightTextWidth = scaleXMax !== 0
       ? xMax * 0.2
       : 100;
+
+    const tickValues = [0, maxDays / 4, maxDays / 2, maxDays * 0.75, maxDays];
 
     const dayScale = useMemo(() => {
       const dayScaleMax = maxDays || Math.max(
@@ -339,7 +341,7 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
                 ? (
                   <AxisTop
                     numTicks={ 4 }
-                    tickValues={ [0, 35, 70] }
+                    tickValues={ tickValues }
                     hideAxisLine
                     top={ margin.top - 2 }
                     scale={ dayScale }
