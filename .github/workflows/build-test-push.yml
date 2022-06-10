@@ -88,6 +88,9 @@ jobs:
           -e TRUST_ADAPTER_NAME=${{ secrets.TRUST_ADAPTER_NAME }}
           -e UPDATE_ENDPOINT_KEY=${{ secrets.UPDATE_ENDPOINT_KEY }}
           -e DECISION_POINT_LOCKOUT_DURATION=${{ secrets.DECISION_POINT_LOCKOUT_DURATION }}
+          -e EXCHANGE_USER_EMAIL=${{ secrets.EXCHANGE_USER_EMAIL }}
+          -e EXCHANGE_USER_PASSWORD=${{ secrets.EXCHANGE_USER_PASSWORD }}
+          -e EXCHANGE_SERVER_ADDRESS=${{ secrets.EXCHANGE_SERVER_ADDRESS }}
           staging-test test
       -
         name: Build and push using primary dockerfile
