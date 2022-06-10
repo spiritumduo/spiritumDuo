@@ -145,9 +145,24 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
       [margin.left, margin.right, width],
     );
     // Proportion of x axis to use for scale / leave for right pill
-    const scaleXMax = useMemo(() => (xMax > 750 ? xMax * 0.85 : 0), [xMax]);
+    const scaleXMax = useMemo(() => (xMax > 500 ? xMax * 0.85 : 0), [xMax]);
     // magic number to stay in proportion
-    const yMax = useMemo(() => xMax / 10, [xMax]);
+    const yMax = useMemo(() => (scaleXMax !== 0 ? xMax / 10 : 100), [xMax, scaleXMax]);
+
+    const rightPillX = scaleXMax + (scaleXMax * 0.01);
+    const rightPillWidth = scaleXMax !== 0
+      ? scaleXMax * 0.175
+      : 200;
+
+    const rightTextX = scaleXMax !== 0
+      ? scaleXMax + (scaleXMax * 0.0475)
+      : 100;
+    const rightTextXOffset = scaleXMax !== 0
+      ? (scaleXMax * 0.1) / 2
+      : 0;
+    const rightTextWidth = scaleXMax !== 0
+      ? scaleXMax * 0.115
+      : 100;
 
     const dayScale = useMemo(() => {
       const dayScaleMax = maxDays || Math.max(
@@ -261,9 +276,9 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
                             height={ b.height * 1.5 }
                             y={ b.y - (b.height / 2) }
                             rx={ barCornerCurve }
-                            x={ scaleXMax + (scaleXMax * 0.01) }
+                            x={ rightPillX }
                             fill={ patientColourScale(lastPeriod.type) }
-                            width={ scaleXMax !== 0 ? scaleXMax * 0.175 : 100 }
+                            width={ rightPillWidth }
                           />
                           {/* Right pill text */}
                           <Text
@@ -272,10 +287,10 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
                             scaleToFit
                             fontSize="`1.5rem"
                             y={ b.y - (b.height / 2) }
-                            x={ scaleXMax !== 0 ? scaleXMax + (scaleXMax * 0.0475) : 50 }
+                            x={ rightTextX }
                             dy={ b.height / 1.5 }
-                            dx={ scaleXMax !== 0 ? (scaleXMax * 0.1) / 2 : 0 }
-                            width={ scaleXMax !== 0 ? scaleXMax * 0.115 : 100 }
+                            dx={ rightTextXOffset }
+                            width={ rightTextWidth }
                           >
                             {pillText}
                           </Text>
