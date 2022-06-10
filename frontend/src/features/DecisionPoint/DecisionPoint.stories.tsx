@@ -179,7 +179,7 @@ const GET_PATIENT_MOCK = {
   mockFn: () => Promise.resolve({
     data: {
       getPatient: {
-        id: '1',
+        id: '2',
         hospitalNumber: 'fMRN1234567',
         communicationMethod: 'LETTER',
         firstName: 'Michael',
