@@ -110,7 +110,16 @@ const apolloMock: {
             {
               __typename: 'Milestone',
               id: '7',
-              milestoneType: { __typename: 'MilestoneType', id: '6', name: 'CT-Thorax' },
+              milestoneType: { __typename: 'MilestoneType', id: '7', name: 'CT-Thorax' },
+              addedAt: new Date('2021-09-10'),
+              updatedAt: new Date('2021-09-10'),
+              currentState: MilestoneState.WAITING,
+              forwardDecisionPoint: null,
+            },
+            {
+              __typename: 'Milestone',
+              id: '8',
+              milestoneType: { __typename: 'MilestoneType', id: '8', name: 'Bloods' },
               addedAt: new Date('2021-09-10'),
               updatedAt: new Date('2021-09-10'),
               currentState: MilestoneState.WAITING,
