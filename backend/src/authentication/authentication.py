@@ -50,6 +50,7 @@ class SDUser(BaseUser):
         lastName: str = None,
         department: str = None,
         default_pathway_id: int = None,
+        email: str = None,
         isAdmin: bool = None
         # TODO: make all either camelcase or snakecase
     ) -> None:
@@ -60,6 +61,7 @@ class SDUser(BaseUser):
         self.department = department
         self.default_pathway_id = default_pathway_id
         self.isAdmin = isAdmin
+        self.email = email
 
     @property
     def is_authenticated(self) -> bool:
@@ -105,6 +107,7 @@ class SDAuthentication(AuthenticationBackend):
                         lastName=user.last_name,
                         department=user.department,
                         default_pathway_id=user.default_pathway_id,
+                        email=user.email,
                     )
                     async with db.acquire(reuse=False) as conn:
                         query = RolePermission.outerjoin(Role)\
