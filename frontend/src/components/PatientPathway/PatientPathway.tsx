@@ -203,7 +203,7 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
     return width < 10 ? null : (
       <div>
         <svg width={ width } height={ height }>
-          <rect width={ width } height={ height } fill={ background } />
+          <rect width={ width } height={ height } fill="white" />
           <Group top={ margin.top } left={ margin.left }>
             <BarStackHorizontal<PatientData, string>
               value={ (d, k) => d.periods[k]?.duration }
