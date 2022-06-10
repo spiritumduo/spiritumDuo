@@ -55,6 +55,7 @@ type Mutation {
     deletePathway(id: ID!): DeletePayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
     lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
+    submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
 }
 
 type Subscription {
@@ -82,29 +83,32 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
+type SubmitFeedbackPayload {
+    success: Boolean!
+}
 type DeletePayload {
     success: Boolean
     userErrors: [UserError!]
 }
 
 type AddPatientPayload {
-    patient:Patient
-    userErrors:[UserError!]
+    patient: Patient
+    userErrors: [UserError!]
 }
 
 type AddPathwayPayload {
-    pathway:Pathway
-    userErrors:[UserError!]
+    pathway: Pathway
+    userErrors: [UserError!]
 }
 
 type AddDecisionPointPayload {
-    decisionPoint:DecisionPoint
-    userErrors:[UserError!]    
+    decisionPoint: DecisionPoint
+    userErrors: [UserError!]    
 }
 
 type LockOnPathwayPayload {
     onPathway: OnPathway
-    userErrors:[UserError!]
+    userErrors: [UserError!]
 }
 
 #### DATA TYPES
@@ -113,6 +117,7 @@ type Role {
     name: String!
     permissions: [RolePermission]!
 }
+
 type RolePermission {
     name: String!
 }
@@ -279,6 +284,11 @@ enum Sex {
 input TestResultInput{
     milestoneId: ID!
     description: String!
+}
+
+input FeedbackInput {
+    screenshotBase64: String!
+    feedback: String!
 }
 
 input AddUserToGroupInput{
