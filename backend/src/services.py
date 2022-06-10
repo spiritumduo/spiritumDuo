@@ -1,11 +1,14 @@
 import logging
 from typing import Optional, List, Any
+from exchangelib import Message
 
 from trustadapter import TrustAdapter
 from sdpubsub import SdPubSub
 from trustadapter.trustadapter import (
     Patient_IE, TestResult_IE, TestResultRequest_IE
 )
+from email_adapter import EmailAdapter
+
 
 
 class BaseService:
@@ -13,6 +16,16 @@ class BaseService:
         self.logger = logging.getLogger(
             f"{__name__}.{self.__class__.__name__}",
         )
+
+
+class EmailService(BaseService):
+    def __init__(self, email_client: EmailAdapter):
+        if email_client is None:
+            raise Exception("No email client supplied")
+        self._email_client = email_client
+        super().__init__()
+    async def send_email(self, message: Message):
+        return self._email_client.send_email(message)
 
 
 class PubSubService(BaseService):

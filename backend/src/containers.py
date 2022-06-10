@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 import sdpubsub
 import services
 import trustadapter
+import email_adapter
 from config import config as SDConfig
 
 
@@ -13,6 +14,7 @@ class SDContainer(containers.DeclarativeContainer):
             "gql.mutation.create_decision_point",
             "gql.mutation.lock_on_pathway",
             "gql.mutation.create_decision_point",
+            "gql.mutation.submit_feedback",
             "gql.query",
             "gql.query.patient_search",
             "gql.subscription.milestone_resolved",
@@ -20,16 +22,19 @@ class SDContainer(containers.DeclarativeContainer):
             "rest.update_test_result",
         ]
     )
+
     config = providers.Configuration()
     config.from_dict(SDConfig)
 
     trust_adapter = trustadapter.PseudoTrustAdapter
     pubsub = sdpubsub.SdPubSub
+    email = email_adapter.EmailAdapter
 
     # Gateways
 
     trust_adapter_client = providers.Singleton(trust_adapter)
     pubsub_client = providers.Singleton(pubsub)
+    email_client = providers.Singleton(email)
 
     # Services
 
@@ -40,4 +45,8 @@ class SDContainer(containers.DeclarativeContainer):
     pubsub_service = providers.Factory(
         services.PubSubService,
         pubsub_client=pubsub_client
+    )
+    email_service = providers.Factory(
+        services.EmailService,
+        email_client=email_client
     )
