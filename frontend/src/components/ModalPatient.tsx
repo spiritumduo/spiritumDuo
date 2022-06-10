@@ -15,6 +15,7 @@ import { RootState } from 'app/store';
 // PAGES
 import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
+import PatientPathway from 'components/PatientPathway/PatientPathway';
 
 // LOCAL
 import { lockOnPathway } from './__generated__/lockOnPathway';
@@ -133,12 +134,19 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
       lockUser: onPathway.lockUser,
     }
     : undefined;
-
+  const currentPatient = patientData?.getPatient;
   return (
     <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header closeButton>
         <Modal.Title>
-          {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}, ${patientData?.getPatient?.hospitalNumber}, ${patientData?.getPatient?.nationalNumber}, ${patientData?.getPatient?.dateOfBirth.toLocaleDateString()}`}
+          <div style={ { } }>
+            <div>
+              {`${currentPatient?.firstName} ${currentPatient?.lastName}, ${currentPatient?.hospitalNumber}, ${currentPatient?.nationalNumber}, ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
+            </div>
+            <div className="" style={ { width: '100%', height: '4.5rem', display: 'block' } }>
+              <PatientPathway hospitalNumber={ hospitalNumber } />
+            </div>
+          </div>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
