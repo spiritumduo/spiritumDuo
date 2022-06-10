@@ -37,6 +37,8 @@ const tooltipStyles = {
   zIndex: 4,
 };
 
+const defaultMargin = { top: 20, left: 20, right: 20, bottom: 20 };
+
 // Helper functions
 const getPatientName = (d: PatientData): string => d.name;
 const getDatePortionString = (date: Date): string => date.toISOString().split('T', 1)[0];
@@ -121,8 +123,6 @@ type BarStackHorizontalProps = {
   margin?: { top: number; right: number; bottom: number; left: number };
 };
 
-const defaultMargin = { top: 20, left: 20, right: 20, bottom: 20 };
-
 const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
   ({
     data,
@@ -145,23 +145,23 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
       [margin.left, margin.right, width],
     );
     // Proportion of x axis to use for scale / leave for right pill
-    const scaleXMax = useMemo(() => (xMax > 500 ? xMax * 0.85 : 0), [xMax]);
+    const scaleXMax = useMemo(() => (xMax > 500 ? xMax * 0.80 : 0), [xMax]);
     // magic number to stay in proportion
     const yMax = useMemo(() => (scaleXMax !== 0 ? xMax / 10 : 100), [xMax, scaleXMax]);
 
     const rightPillX = scaleXMax + (scaleXMax * 0.01);
     const rightPillWidth = scaleXMax !== 0
-      ? scaleXMax * 0.175
+      ? xMax * 0.2
       : 200;
 
     const rightTextX = scaleXMax !== 0
-      ? scaleXMax + (scaleXMax * 0.0475)
+      ? xMax * 0.8
       : 100;
     const rightTextXOffset = scaleXMax !== 0
-      ? (scaleXMax * 0.1) / 2
+      ? rightPillWidth / 2
       : 0;
     const rightTextWidth = scaleXMax !== 0
-      ? scaleXMax * 0.115
+      ? xMax * 0.2
       : 100;
 
     const dayScale = useMemo(() => {
@@ -232,12 +232,18 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
                       switch (lastPeriod.type) {
                         case 'request': {
                           const p = lastPeriod as RequestPeriod;
-                          pillText = `Awaiting ${p.requests[0]}`;
+                          const plusText = p.requests.length > 1
+                            ? `+${p.requests.length - 1}`
+                            : '';
+                          pillText = `Awaiting ${p.requests[0]} ${plusText}`;
                           break;
                         }
                         case 'result': {
                           const p = lastPeriod as ResultPeriod;
-                          pillText = `Awaiting ${p.results[0]} Acknowledgement`;
+                          const plusText = p.results.length > 1
+                            ? `+${p.results.length - 1}`
+                            : '';
+                          pillText = `Awaiting ${p.results[0]} Acknowledgement ${plusText}`;
                           break;
                         }
                         default:
@@ -284,9 +290,8 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
                           <Text
                             fill="white"
                             textAnchor="middle"
-                            scaleToFit
-                            fontSize="`1.5rem"
-                            y={ b.y - (b.height / 2) }
+                            fontSize="0.75rem"
+                            y={ b.y }
                             x={ rightTextX }
                             dy={ b.height / 1.5 }
                             dx={ rightTextXOffset }
@@ -534,8 +539,6 @@ const PatientPathway = (
     }
     return undefined;
   }, [data]);
-
-  console.log(showName);
 
   if (patientData) {
     return (
