@@ -31,6 +31,12 @@ export enum PatientCommunicationMethods {
   MOBILE = "MOBILE",
 }
 
+export enum Sex {
+  FEMALE = "FEMALE",
+  MALE = "MALE",
+  OTHER = "OTHER",
+}
+
 export interface DecisionPointInput {
   onPathwayId: string;
   decisionType: DecisionType;
@@ -38,6 +44,11 @@ export interface DecisionPointInput {
   comorbidities?: string | null;
   milestoneRequests?: MilestoneRequestInput[] | null;
   milestoneResolutions?: string[] | null;
+}
+
+export interface FeedbackInput {
+  screenshotBase64: string;
+  feedback: string;
 }
 
 export interface LockOnPathwayInput {
@@ -66,6 +77,7 @@ export interface PatientInput {
   hospitalNumber: string;
   nationalNumber: string;
   dateOfBirth: any;
+  sex: Sex;
   pathwayId: string;
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
