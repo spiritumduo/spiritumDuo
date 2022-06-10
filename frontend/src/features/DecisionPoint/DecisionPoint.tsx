@@ -25,7 +25,7 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 // GENERATED TYPES
 import { createDecisionPointVariables, createDecisionPoint } from 'features/DecisionPoint/__generated__/createDecisionPoint';
 import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
-import { DecisionType, MilestoneRequestInput } from '../../../__generated__/globalTypes';
+import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
 
 // LOCAL COMPONENTS
 import ConfirmNoMilestones from './components/ConfirmNoMilestones';
