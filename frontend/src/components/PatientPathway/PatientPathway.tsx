@@ -34,6 +34,7 @@ const tooltipStyles = {
   minWidth: 60,
   backgroundColor: 'rgba(0,0,0,0.9)',
   color: 'white',
+  zIndex: 4,
 };
 
 // Helper functions
