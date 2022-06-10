@@ -18,3 +18,4 @@ Faker==11.3.0
 httpx==0.21.3
 dependency-injector==4.37.0
 pyisemail==1.4.0
+exchangelib==4.7.3
