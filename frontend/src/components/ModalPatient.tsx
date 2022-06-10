@@ -1,10 +1,11 @@
+/* eslint-disable max-len */
 import React, { useContext, useEffect } from 'react';
 
 // LIBRARIES
 import { Modal } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { gql, useQuery, useMutation } from '@apollo/client';
-import { SummaryList } from 'nhsuk-react-components';
+import { BsX } from 'react-icons/bs';
 
 // APP
 import { DecisionPointType } from 'types/DecisionPoint';
@@ -135,11 +136,21 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     : undefined;
 
   return (
-    <Modal size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
-      <Modal.Header closeButton>
+    <Modal container={ document.getElementById('root') } size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
+      <Modal.Header>
         <Modal.Title>
           {`${patientData?.getPatient?.firstName} ${patientData?.getPatient?.lastName}, ${patientData?.getPatient?.hospitalNumber}, ${patientData?.getPatient?.nationalNumber}, ${patientData?.getPatient?.dateOfBirth.toLocaleDateString()}`}
         </Modal.Title>
+        <button
+          type="button"
+          className="bg-transparent"
+          name="Close"
+          style={ { border: 'none' } }
+          onClick={ () => closeCallback() }
+        >
+          <p className="nhsuk-u-visually-hidden">Close</p>
+          <BsX size="2rem" />
+        </button>
       </Modal.Header>
       <Modal.Body>
         <Tabs>

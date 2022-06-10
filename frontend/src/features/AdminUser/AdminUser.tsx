@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import { AdminUserCreate } from 'features/AdminUser/AdminUserCreate';
 import { AdminUserUpdate } from 'features/AdminUser/AdminUserUpdate';
 import { UserList } from 'features/AdminUser/components/UserList';
+import { BsX } from 'react-icons/bs';
 
 // eslint-disable-next-line import/prefer-default-export
 export const AdminUser = (): JSX.Element => {
@@ -38,10 +39,18 @@ export const AdminUser = (): JSX.Element => {
         selectedUserId
           ? (
             <Modal show onHide={ closeCallback }>
-              <Modal.Header closeButton>
+              <Modal.Header>
                 <Modal.Title>
                   Edit User
                 </Modal.Title>
+                <button
+                  type="button"
+                  className="bg-transparent"
+                  style={ { border: 'none' } }
+                  onClick={ () => closeCallback() }
+                >
+                  <BsX size="2rem" />
+                </button>
               </Modal.Header>
               <Modal.Body>
                 <AdminUserUpdate updateUserId={ selectedUserId } />
