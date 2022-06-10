@@ -333,7 +333,10 @@ const PathwayVisualisation = withTooltip<BarStackHorizontalProps, TooltipData>(
               scaleXMax !== 0
                 ? (
                   <AxisTop
-                    top={ 0 }
+                    numTicks={ 4 }
+                    tickValues={ [0, 35, 70] }
+                    hideAxisLine
+                    top={ margin.top - 2 }
                     scale={ dayScale }
                     stroke={ purple3 }
                     tickStroke={ purple3 }
