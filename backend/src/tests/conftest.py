@@ -34,6 +34,7 @@ from models import (
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
+from email_adapter import EmailAdapter
 
 
 class ContextStorage:
@@ -210,6 +211,12 @@ def test_sdpubsub():
     test_sdpubsub = SdPubSub()
     with app.container.pubsub_client.override(test_sdpubsub):
         yield test_sdpubsub
+
+@pytest.fixture
+def email_adapter():
+    test_email_adapter = EmailAdapter()
+    with app.container.email_client.override(test_email_adapter):
+        yield test_email_adapter
 
 
 # PERMISSION FIXTURES
