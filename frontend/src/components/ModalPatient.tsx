@@ -4,7 +4,6 @@ import React, { useContext, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { gql, useQuery, useMutation } from '@apollo/client';
-import { SummaryList } from 'nhsuk-react-components';
 
 // APP
 import { DecisionPointType } from 'types/DecisionPoint';
@@ -140,10 +139,10 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
       <Modal.Header closeButton>
         <Modal.Title>
           <div style={ { } }>
-            <div>
-              {`${currentPatient?.firstName} ${currentPatient?.lastName}, ${currentPatient?.hospitalNumber}, ${currentPatient?.nationalNumber}, ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
+            <div style={ { whiteSpace: 'pre' } }>
+              {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${currentPatient?.hospitalNumber},    ${currentPatient?.nationalNumber},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
             </div>
-            <div className="" style={ { width: '100%', height: '4.5rem', display: 'block' } }>
+            <div className="" style={ { width: '100%', height: '5rem', display: 'block' } }>
               <PatientPathway hospitalNumber={ hospitalNumber } />
             </div>
           </div>
