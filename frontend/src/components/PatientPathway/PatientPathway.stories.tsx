@@ -7,7 +7,6 @@ import MockDate from 'test/mocks/mockDate';
 
 import { DocumentNode } from 'graphql';
 import { RequestHandler } from 'mock-apollo-client';
-import { useEffect } from '@storybook/addons';
 import { getPatientWithReferrals } from './__generated__/getPatientWithReferrals';
 import { MilestoneState } from '../../__generated__/globalTypes';
 
@@ -144,6 +143,10 @@ export const Default = Template.bind({});
 Default.args = {
   hospitalNumber: 'fMRN1234567',
   showName: true,
+};
+
+Default.parameters = {
+  mocks: apolloMock,
 };
 
 export const WithoutName = Template.bind({});
