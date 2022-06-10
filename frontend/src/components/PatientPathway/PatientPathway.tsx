@@ -8,7 +8,7 @@ import { AxisTop } from '@visx/axis';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { withTooltip, Tooltip, defaultStyles } from '@visx/tooltip';
 import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
-import { ParentSizeModern } from '@visx/responsive';
+import { ParentSize } from '@visx/responsive';
 
 import { getPatientWithReferrals } from './__generated__/getPatientWithReferrals';
 import { MilestoneState } from '../../__generated__/globalTypes';
@@ -544,7 +544,7 @@ const PatientPathway = (
 
   if (patientData) {
     return (
-      <ParentSizeModern debounceTime={ 0 }>
+      <ParentSize debounceTime={ 0 }>
         {({ width: parentWidth, height: parentHeight }) => (
           <PathwayVisualisation
             showName={ showName || false }
@@ -554,7 +554,7 @@ const PatientPathway = (
             height={ parentHeight }
           />
         )}
-      </ParentSizeModern>
+      </ParentSize>
     );
   }
   return <h1>Loading!</h1>;
