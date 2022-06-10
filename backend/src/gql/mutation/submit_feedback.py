@@ -16,12 +16,9 @@ from dependency_injector.wiring import Provide, inject
 @inject
 async def resolve_submit_feedback(
     obj=None, info: GraphQLResolveInfo = None, input: dict = None,
-    email_adapter: EmailAdapter = Provide[SDContainer.email_service]
+    email_service: EmailAdapter = Provide[SDContainer.email_service]
 ) -> bool:
-    credentials: Credentials = Credentials(config['EXCHANGE_USER_EMAIL'], config['EXCHANGE_USER_PASSWORD'])
-    server_configuration: Configuration = Configuration(credentials, config['EXCHANGE_SERVER_ADDRESS'])
-    account: Account = Account(config['EXCHANGE_USER_EMAIL'], access_type=DELEGATE, config=server_configuration)
-
+    
     # this might look a bit funky, encoding this image this way
     # afaik exchangelib doesn't really do embedding images via b64
     # what I've had to do here is strip the 'header' (for lack of a better word)
@@ -40,15 +37,7 @@ async def resolve_submit_feedback(
         content_id="feedback_image.png"
     )
 
-    message: Message = Message(
-        account=account,
-        to_recipients=[config['EXCHANGE_USER_EMAIL']],
-        subject="User feedback recieved",
-    )
-
-    message.attach(feedback_image)
-
-    message.body=HTMLBody(
+    message_body=HTMLBody(
         f"""
         <html>
             <body>
@@ -67,6 +56,15 @@ async def resolve_submit_feedback(
         """
     )
 
-    await email_adapter.send_email(message)
+    # await email_service.send_email(message)
+    await email_service.send_email(
+        recipients=[config['EXCHANGE_USER_EMAIL']],
+        subject="User feedback received",
+        body=message_body,
+        attachments=[feedback_image]
+    )
+
+
+    # recipied, subject, body, attachments
 
     return {"success": True}

@@ -213,7 +213,7 @@ def test_sdpubsub():
         yield test_sdpubsub
 
 @pytest.fixture
-def email_adapter():
+def test_email_adapter():
     test_email_adapter = EmailAdapter()
     with app.container.email_client.override(test_email_adapter):
         yield test_email_adapter

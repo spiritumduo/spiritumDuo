@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Union
 from exchangelib import Message
 
 from trustadapter import TrustAdapter
@@ -8,7 +8,7 @@ from trustadapter.trustadapter import (
     Patient_IE, TestResult_IE, TestResultRequest_IE
 )
 from email_adapter import EmailAdapter
-
+from exchangelib import FileAttachment, Message, HTMLBody
 
 
 class BaseService:
@@ -24,8 +24,20 @@ class EmailService(BaseService):
             raise Exception("No email client supplied")
         self._email_client = email_client
         super().__init__()
-    async def send_email(self, message: Message):
-        return self._email_client.send_email(message)
+
+    async def send_email(
+        self,
+        recipients: List[str] = None,
+        subject: str = None,
+        body: Union[str, HTMLBody] = None,
+        attachments: List[FileAttachment] = None
+    ):
+        return self._email_client.send_email(
+            recipients=recipients,
+            subject=subject,
+            body=body,
+            attachments=attachments
+        )
 
 
 class PubSubService(BaseService):

@@ -1,14 +1,18 @@
 import json
 from hamcrest import equal_to, assert_that
+import pytest
 
 
 # Feat: test submitFeedback GQL mutation
 # Scen: the GraphQL query for submitFeedback is executed
+@pytest.mark.asyncio
 async def test_submit_feedback(
     httpx_test_client, httpx_login_user,
-    email_adapter
+    test_email_adapter
 ):
-    email_adapter.send_email = lambda x: True
+    def send_email(**kwargs):
+        return True
+    test_email_adapter.send_email = send_email
 
     res = await httpx_test_client.post(
         url="graphql",
