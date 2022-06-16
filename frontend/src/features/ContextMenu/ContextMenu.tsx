@@ -1,5 +1,5 @@
 import { Button, ErrorMessage } from 'nhsuk-react-components';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Modal } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -37,6 +37,7 @@ const ContextMenu = ({ takeScreenshotFn }: ContextMenuProps): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [screenshotBase64, setScreenshotB64] = useState<string>('');
   const [showConfirmationDialog, setShowConfirmationDialog] = useState<boolean>(false);
+  const cursorIcon = useRef<HTMLDivElement | null>(null);
 
   const schema = yup.object({
     screenshotBase64: yup.string().required(),
@@ -52,9 +53,22 @@ const ContextMenu = ({ takeScreenshotFn }: ContextMenuProps): JSX.Element => {
   } = useForm<FeedbackInput>({ resolver: yupResolver(schema) });
 
   async function handleFeedbackMenu() {
+    if (cursorIcon.current?.style) {
+      cursorIcon.current.style.visibility = 'visible';
+      cursorIcon.current.style.left = `${anchorPoint.x - 20}px`;
+      cursorIcon.current.style.top = `${anchorPoint.y - 20}px`;
+    }
+
     await setContextMenuShown(false);
+
     const image = await takeScreenshotFn();
-    setScreenshotB64(image);
+
+    await setScreenshotB64(image);
+
+    if (cursorIcon.current?.style.visibility) {
+      cursorIcon.current.style.visibility = 'hidden';
+    }
+
     setShowModal(true);
   }
 
@@ -149,6 +163,20 @@ const ContextMenu = ({ takeScreenshotFn }: ContextMenuProps): JSX.Element => {
 
   return (
     <>
+      <div
+        ref={ cursorIcon }
+        className="position-absolute"
+        style={
+          {
+            visibility: 'hidden',
+            height: '50px',
+            width: '50px',
+            backgroundColor: 'red',
+            borderRadius: '100%',
+            opacity: '50%',
+          }
+        }
+      />
       {
         isContextMenuShown
           ? (
