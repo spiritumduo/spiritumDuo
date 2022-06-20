@@ -37,7 +37,7 @@ from base64 import b64encode
 from typing import Dict, List
 from bcrypt import hashpw, gensalt
 
-faker = Faker()
+faker = Faker(['en_GB'])
 app.container = SDContainer()
 
 NUMBER_OF_PATHWAYS = 5
@@ -479,7 +479,16 @@ async def insert_demo_data():
                         national_number=national_number,
                         date_of_birth=date_of_birth,
                         communication_method="LETTER",
-                        sex=sex
+                        sex=sex,
+                        occupation=faker.job(),
+                        telephone_number=faker.phone_number(),
+                        address={
+                            "line": f"{randint(1,1000)} {faker.street_name()}",
+                            "city": faker.city(),
+                            "district": faker.county(),
+                            "postal_code": faker.postcode(),
+                            "country": "England",
+                        }
                     ),
                     auth_token=SESSION_COOKIE
                 )

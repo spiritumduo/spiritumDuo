@@ -134,6 +134,15 @@ type Pathway {
     milestoneTypes: [MilestoneType!]
 }
 
+type Address {
+    id: ID!
+    line: String!
+    city: String!
+    district: String!
+    postalCode: String!
+    country: String!
+}
+
 type Patient {
 	id: ID!
 	hospitalNumber: String!
@@ -143,6 +152,9 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
     sex: String!
+    occupation: String!
+    telephoneNumber: String
+    address: Address!
 
     onPathways(
         pathwayId: ID,

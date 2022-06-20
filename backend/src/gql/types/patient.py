@@ -72,3 +72,30 @@ async def resolve_sex(
     record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
         context=info.context, id=obj.hospital_number)
     return record.sex
+
+
+@PatientObjectType.field("occupation")
+async def resolve_occupation(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.occupation
+
+
+@PatientObjectType.field("telephoneNumber")
+async def resolve_telephone_number(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.telephone_number
+
+
+@PatientObjectType.field("address")
+async def resolve_address(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.address
