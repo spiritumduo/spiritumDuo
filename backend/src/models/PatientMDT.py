@@ -1,11 +1,16 @@
+from sqlalchemy import UniqueConstraint
 from models import db
 from sqlalchemy.sql.expression import func
 
 
 class PatientMDT(db.Model):
     __tablename__ = "tbl_patient_mdt"
-
-    id = db.Column(db.Integer(), primary_key=True)
+    __table_args__ = (
+        UniqueConstraint(
+            "mdt_id",
+            "patient_id"
+        )
+    )
     mdt_id = db.Column(
         db.Integer(),
         db.ForeignKey('tbl_mdt.id'),
@@ -21,11 +26,7 @@ class PatientMDT(db.Model):
         db.ForeignKey('tbl_user.id'),
         nullable=False
     )
-    created_at = db.Column(
-        db.DateTime(),
-        server_default=func.now(),
-        nullable=False)
-    planned_at = db.Column(
+    added_at = db.Column(
         db.DateTime(),
         server_default=func.now(),
         nullable=False)

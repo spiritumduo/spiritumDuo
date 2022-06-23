@@ -1,10 +1,12 @@
+from typing import List
 from ariadne.objects import ObjectType
 from dataloaders import (
     UserByIdLoader,
     PathwayByIdLoader
 )
 from graphql.type import GraphQLResolveInfo
-from models import MDT
+from models import MDT, Patient, PatientMDT
+from models.db import db
 
 MDTObjectType = ObjectType("MDT")
 
@@ -29,3 +31,16 @@ async def resolve_mdt_pathway(
         context=info.context,
         id=obj.pathway_id
     )
+
+
+@MDTObjectType.field("patients")
+async def resolve_mdt_patients(
+    obj: MDT = None,
+    info: GraphQLResolveInfo = None,
+):
+    async with db.acquire(reuse=False) as conn:
+        patients: List[Patient] = await conn.all(
+            Patient.join(PatientMDT).select()
+            .where(PatientMDT.mdt_id == obj.id)
+        )
+        return patients
