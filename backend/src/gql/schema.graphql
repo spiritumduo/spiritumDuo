@@ -67,6 +67,8 @@ type Mutation {
     submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
     createMdt(input:MdtInput!): MdtPayload!
     updateMdt(input:UpdateMdtInput!): MdtPayload!
+    deleteMdt(id: ID!): DeletePayload!
+
 }
 
 type Subscription {
@@ -137,6 +139,7 @@ type MDT {
     plannedAt: Date!
     updatedAt: Date!
     location: String!
+    patients: [Patient]!
 }
 
 type Role {
