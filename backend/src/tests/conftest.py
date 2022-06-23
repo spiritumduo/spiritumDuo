@@ -1,4 +1,5 @@
 # It's very important this happens first
+import datetime
 from starlette.config import environ
 
 
@@ -28,7 +29,8 @@ from models import (
     Patient,
     OnPathway,
     PathwayMilestoneType,
-    UserPathway
+    UserPathway,
+    MDT
 )
 
 from api import app
@@ -174,6 +176,20 @@ async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role
 
 
 @pytest.fixture
+async def test_mdt(test_user: UserFixture, test_pathway: Pathway):
+    mdt_info = {
+        "planned_at": datetime.date(3000, 1, 1),
+        "location": "In a cabin in the woods",
+        "pathway_id": test_pathway.id
+    }
+    mdt = await MDT.create(
+        **mdt_info,
+        creator_user_id=test_user.user.id
+    )
+    return mdt
+
+
+@pytest.fixture
 async def httpx_login_user(test_user: UserFixture, httpx_test_client) -> Response:
     client = httpx_test_client
     user_fixture = test_user
@@ -206,11 +222,13 @@ def mock_trust_adapter():
     with app.container.trust_adapter_client.override(trust_adapter_mock):
         yield trust_adapter_mock
 
+
 @pytest.fixture
 def test_sdpubsub():
     test_sdpubsub = SdPubSub()
     with app.container.pubsub_client.override(test_sdpubsub):
         yield test_sdpubsub
+
 
 @pytest.fixture
 def test_email_adapter():
@@ -410,4 +428,21 @@ async def user_update_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.USER_UPDATE
+    ).create()
+
+
+## MDT
+@pytest.fixture
+async def mdt_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def mdt_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_UPDATE
     ).create()
