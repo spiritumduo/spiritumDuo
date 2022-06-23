@@ -42,6 +42,9 @@ export const GET_MDT_CONNECTION_QUERY = gql`
             firstName
             lastName
           }
+          patients{
+            id
+          }
           createdAt
           plannedAt
           updatedAt
@@ -80,7 +83,7 @@ const MDTPage = (): JSX.Element => {
     data?.getMdtConnection, currentPage, 10,
   );
 
-  let tableElements: { id: string; plannedAt: Date; location: string; }[] = [];
+  let tableElements: { id: string; plannedAt: Date; location: string; numPatients: number; }[] = [];
 
   if (nodes) {
     tableElements = nodes.flatMap((node) => {
@@ -89,6 +92,7 @@ const MDTPage = (): JSX.Element => {
         id: node.id,
         plannedAt: node.plannedAt,
         location: node.location,
+        numPatients: node.patients.length,
       };
     });
   }
@@ -123,7 +127,7 @@ const MDTPage = (): JSX.Element => {
                       <Table.Cell>{new Date(element.plannedAt).toLocaleDateString()}</Table.Cell>
                       <Table.Cell>TODO: clinicians present</Table.Cell>
                       <Table.Cell>{element.location}</Table.Cell>
-                      <Table.Cell>TODO: number of patients</Table.Cell>
+                      <Table.Cell>{element.numPatients}</Table.Cell>
                     </Table.Row>
                   ))
                 }

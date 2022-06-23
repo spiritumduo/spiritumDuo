@@ -27,11 +27,17 @@ export interface getMdtConnectionQuery_getMdtConnection_edges_node_creator {
   lastName: string;
 }
 
+export interface getMdtConnectionQuery_getMdtConnection_edges_node_patients {
+  __typename: "Patient";
+  id: string;
+}
+
 export interface getMdtConnectionQuery_getMdtConnection_edges_node {
   __typename: "MDT";
   id: string;
   pathway: getMdtConnectionQuery_getMdtConnection_edges_node_pathway;
   creator: getMdtConnectionQuery_getMdtConnection_edges_node_creator;
+  patients: (getMdtConnectionQuery_getMdtConnection_edges_node_patients | null)[];
   createdAt: any;
   plannedAt: any;
   updatedAt: any;
