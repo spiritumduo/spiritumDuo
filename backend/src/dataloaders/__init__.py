@@ -6,3 +6,4 @@ from .on_pathway import OnPathwayByIdLoader, OnPathwaysByPatient
 from .milestone import MilestoneByDecisionPointLoader, MilestoneByOnPathwayIdLoader
 from .milestone_type import MilestoneTypeLoader, MilestoneTypeLoaderByPathwayId
 from .test_result import TestResultByReferenceIdFromIELoader
+from .mdt import MdtByIdLoader
