@@ -12,6 +12,7 @@ import { DecisionPointType } from 'types/DecisionPoint';
 import { AuthContext, PathwayContext } from 'app/context';
 import { useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
+import { Button, Card, Checkboxes, Container, Select, SummaryList, Table, Textarea } from 'nhsuk-react-components';
 
 // PAGES
 import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
@@ -165,6 +166,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
           <TabList>
             <Tab disabled={ tabState }>New Decision</Tab>
             <Tab disabled={ tabState }>Previous Decisions</Tab>
+            <Tab disabled={ tabState }>MDT</Tab>
             <Tab disabled>Messages</Tab>
             <Tab disabled>Notes</Tab>
           </TabList>
@@ -177,6 +179,50 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
           </TabPanel>
           <TabPanel>
             <PreviousDecisionPoints hospitalNumber={ hospitalNumber } />
+          </TabPanel>
+          <TabPanel>
+            {/* MDT panel */}
+            <div className="col-12 col-lg-5 d-inline-block">
+              <Select className="w-100" label="Add patient to MDT">
+                <Select.Option>Date goes here</Select.Option>
+              </Select>
+              <Button secondary className="float-end">Add</Button>
+            </div>
+            <div className="col-12 col-lg-5 offset-lg-2 d-inline-block">
+              <Select className="w-100" label="Remove patient from MDT">
+                <Select.Option>Date goes here</Select.Option>
+              </Select>
+              <Button secondary className="float-end">Remove</Button>
+            </div>
+            <Table>
+              <Table.Head>
+                <Table.Cell>MDT date</Table.Cell>
+                <Table.Cell>Who added pt to MDT</Table.Cell>
+                <Table.Cell>Review reason</Table.Cell>
+                <Table.Cell>MDT outcome</Table.Cell>
+                <Table.Cell>Action</Table.Cell>
+              </Table.Head>
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell>01/01/2020</Table.Cell>
+                  <Table.Cell>Dr. Doctor Doctor</Table.Cell>
+                  <Table.Cell>The thing do be doing a thing tho</Table.Cell>
+                  <Table.Cell>Do the do with the thing</Table.Cell>
+                  <Table.Cell>
+                    <Checkboxes><Checkboxes.Box>&nbsp;</Checkboxes.Box></Checkboxes>
+                  </Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>06/02/2020</Table.Cell>
+                  <Table.Cell>Dr. Doctor Doctor</Table.Cell>
+                  <Table.Cell>The other thing do be doing other thing things</Table.Cell>
+                  <Table.Cell>Do do be do be do</Table.Cell>
+                  <Table.Cell>
+                    <Checkboxes><Checkboxes.Box>&nbsp;</Checkboxes.Box></Checkboxes>
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
           </TabPanel>
           <TabPanel>
             test message
