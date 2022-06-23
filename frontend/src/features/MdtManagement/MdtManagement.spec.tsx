@@ -124,3 +124,67 @@ test('valid inputs should show success page', async () => {
     expect(screen.getByText(/test location/i));
   });
 });
+
+// DELETE MDT
+
+test('the date selector should show when clicking input element', async () => {
+  render(<Default />);
+
+  const { click } = userEvent.setup();
+  click(screen.getByRole('tab', { name: /delete mdt/i }));
+  await waitFor(() => expect(screen.getByRole('button', { name: /delete/i })));
+
+  expect(
+    screen.getByLabelText(/select mdt/i),
+  );
+  await click(screen.getByLabelText(/select mdt/i));
+  await waitFor(() => {
+    expect(screen.getByText(/23/));
+  });
+});
+
+test('selecting a date should autofill fields', async () => {
+  render(<Default />);
+
+  const { click } = userEvent.setup();
+  click(screen.getByRole('tab', { name: /delete mdt/i }));
+  await waitFor(() => expect(screen.getByRole('button', { name: /delete/i })));
+
+  expect(
+    screen.getByLabelText(/select mdt/i),
+  );
+  await click(screen.getByLabelText(/select mdt/i));
+  await waitFor(async () => expect(screen.getByText('15')));
+  await click(screen.getByText('15'));
+
+  await waitFor(() => {
+    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
+    expect((screen.getByLabelText(/creator/i) as HTMLInputElement).value).toMatch(/test user/i);
+  });
+});
+
+test('valid inputs should show success page', async () => {
+  render(<Default />);
+
+  const { click } = userEvent.setup();
+  click(screen.getByRole('tab', { name: /delete mdt/i }));
+  await waitFor(() => expect(screen.getByRole('button', { name: /delete/i })));
+
+  expect(
+    screen.getByLabelText(/select mdt/i),
+  );
+  await click(screen.getByLabelText(/select mdt/i));
+  await waitFor(async () => expect(screen.getByText('15')));
+  await click(screen.getByText('15'));
+
+  await waitFor(() => {
+    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
+    expect((screen.getByLabelText(/creator/i) as HTMLInputElement).value).toMatch(/test user/i);
+  });
+
+  await click(screen.getByRole('button', { name: /delete/i }));
+
+  await waitFor(() => {
+    expect(screen.getByText(/success/i));
+  });
+});

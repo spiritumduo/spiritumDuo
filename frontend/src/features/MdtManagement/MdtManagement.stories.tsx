@@ -8,6 +8,7 @@ import MdtManagement from './MdtManagement';
 import { CREATE_MDT_MUTATION } from './tabpages/CreateMdtTab';
 import { GET_MDT_QUERY, UPDATE_MDT_MUTATION } from './tabpages/UpdateMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
+import { GET_MDT_QUERY as GET_MDT_QUERY_DELETE, DELETE_MDT_MUTATION } from './tabpages/DeleteMdtTab';
 
 const mdt = {
   id: '1',
@@ -65,6 +66,11 @@ const successfulUpdateMutation = {
   userErrors: null,
 };
 
+const successfulDeleteMutation = {
+  success: true,
+  userErrors: null,
+};
+
 export default {
   title: 'Tab Pages/MDT Management/Default',
   component: MdtManagement,
@@ -108,6 +114,22 @@ export const Default: ComponentStory<typeof MdtManagement> = () => (
         mockFn: () => Promise.resolve({
           data: {
             updateMdt: successfulUpdateMutation,
+          },
+        }),
+      },
+      {
+        query: GET_MDT_QUERY_DELETE,
+        mockFn: () => Promise.resolve({
+          data: {
+            getMdt: mdt,
+          },
+        }),
+      },
+      {
+        query: DELETE_MDT_MUTATION,
+        mockFn: () => Promise.resolve({
+          data: {
+            deleteMdt: successfulDeleteMutation,
           },
         }),
       }]

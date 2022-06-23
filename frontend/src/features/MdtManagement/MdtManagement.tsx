@@ -5,6 +5,7 @@ import { BsX } from 'react-icons/bs';
 
 import CreateMdtTab from './tabpages/CreateMdtTab';
 import UpdateMdtTab from './tabpages/UpdateMdtTab';
+import DeleteMdtTab from './tabpages/DeleteMdtTab';
 
 interface MDTPageProps{
   showModal: boolean
@@ -32,12 +33,16 @@ const MDTPage = ({ showModal, setShowModal }: MDTPageProps): JSX.Element => (
           <TabList>
             <Tab>Create MDT</Tab>
             <Tab>Update MDT</Tab>
+            <Tab>Delete MDT</Tab>
           </TabList>
           <TabPanel>
             <CreateMdtTab />
           </TabPanel>
           <TabPanel>
             <UpdateMdtTab />
+          </TabPanel>
+          <TabPanel>
+            <DeleteMdtTab />
           </TabPanel>
         </Tabs>
       </Modal.Body>
