@@ -16,6 +16,7 @@ type Query {
     getMilestoneTypes(pathwayId: ID): [MilestoneType!]
     getRolePermissions: [RolePermission!]
     getRoles: [Role!]!
+    getMdt(pathwayId: ID!, plannedAt: Date!): MDT
 
     """
     getPatentOnPathwayConnection:
@@ -56,6 +57,8 @@ type Mutation {
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
     lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
     submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
+    createMdt(input:MdtInput!): MdtPayload!
+    updateMdt(input:UpdateMdtInput!): MdtPayload!
 }
 
 type Subscription {
@@ -83,9 +86,15 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
+type MdtPayload{
+    mdt: MDT
+    userErrors: [UserError!]
+}
+
 type SubmitFeedbackPayload {
     success: Boolean!
 }
+
 type DeletePayload {
     success: Boolean
     userErrors: [UserError!]
@@ -112,6 +121,16 @@ type LockOnPathwayPayload {
 }
 
 #### DATA TYPES
+type MDT {
+    id: ID!
+    creator: User!
+    pathway: Pathway!
+    createdAt: Date!
+    plannedAt: Date!
+    updatedAt: Date!
+    location: String!
+}
+
 type Role {
     id: ID!
     name: String!
@@ -293,6 +312,17 @@ enum Sex {
 }
 
 #### INPUT TYPES
+input MdtInput{
+    pathwayId: ID!
+    plannedAt: Date!
+    location: String!
+}
+input UpdateMdtInput{
+    id: ID!
+    plannedAt: Date!
+    location: String!
+}
+
 input TestResultInput{
     milestoneId: ID!
     description: String!

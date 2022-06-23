@@ -15,7 +15,8 @@ from .role_permission import RolePermissionObjectType
 from .role import RoleObjectType
 from .milestone_type import MilestoneTypeType
 from .delete_payload import DeletePayloadObjectType
-
+from .mdt_payload import MdtPayloadObjectType
+from .mdt import MDTObjectType
 object_types_list = [
     PatientObjectType,
     PathwayObjectType,
@@ -34,4 +35,6 @@ object_types_list = [
     RoleObjectType,
     MilestoneTypeType,
     DeletePayloadObjectType,
+    MdtPayloadObjectType,
+    MDTObjectType
 ]
