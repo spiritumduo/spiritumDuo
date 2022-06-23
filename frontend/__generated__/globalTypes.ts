@@ -56,6 +56,12 @@ export interface LockOnPathwayInput {
   unlock?: boolean | null;
 }
 
+export interface MdtInput {
+  pathwayId: string;
+  plannedAt: any;
+  location: string;
+}
+
 export interface MilestoneRequestInput {
   milestoneTypeId: string;
   currentState?: MilestoneState | null;
@@ -82,6 +88,12 @@ export interface PatientInput {
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
   milestones?: (MilestoneRequestInput | null)[] | null;
+}
+
+export interface UpdateMdtInput {
+  id: string;
+  plannedAt: any;
+  location: string;
 }
 
 export interface UpdatePathwayInput {
