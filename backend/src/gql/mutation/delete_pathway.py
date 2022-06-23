@@ -23,6 +23,10 @@ async def resolve_delete_pathway(
                 PathwayMilestoneType.pathway_id == int(id)
             ).gino.status()
             pathway: Pathway = await Pathway.get(int(id))
+            if not pathway:
+                userErrors.addError(
+                    "id", "A pathway with this ID does not exist")
+                return userErrors
             await pathway.delete()
             return True
         except ForeignKeyViolationError:
