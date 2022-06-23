@@ -16,7 +16,8 @@ async def get_mdt_connection(
 ):
     validate_parameters(first, after, last, before)
     mdt_list: List[MDT] = await MDT.query.where(
-        MDT.pathway_id == int(pathwayId)).gino.all()
+        MDT.pathway_id == int(pathwayId)
+    ).order_by(MDT.planned_at.asc()).gino.all()
 
     for mdt in mdt_list:
         MdtByIdLoader.prime(mdt.id, mdt, context=info.context)
