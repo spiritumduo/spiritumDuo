@@ -12,4 +12,6 @@ from .patient_search import query
 from .get_role_permissions import query
 from .get_roles import query
 from .get_mdt import query
+from .get_mdt_connection import query
+
 type_list = [query]
