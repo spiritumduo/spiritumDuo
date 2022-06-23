@@ -14,6 +14,8 @@ import AdministrationPage from 'pages/Administration';
 import { Button, Container, ErrorSummary } from 'nhsuk-react-components';
 
 import './App.css';
+import MDTPage from 'pages/MDT';
+import MDTPatientPage from 'pages/MDTPatient';
 
 const LoggedInRoutes = () => (
   <PageLayout>
@@ -34,6 +36,14 @@ const LoggedInRoutes = () => (
         <Route
           path="/patients/all"
           element={ <HomePage patientsPerPage={ 20 } allPatients /> }
+        />
+        <Route
+          path="/mdt"
+          element={ <MDTPage /> }
+        />
+        <Route
+          path="/mdt/patient"
+          element={ <MDTPatientPage /> }
         />
       </Routes>
     </RequirePathways>
