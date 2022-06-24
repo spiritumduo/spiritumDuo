@@ -32,12 +32,18 @@ export interface getMdtConnectionQuery_getMdtConnection_edges_node_patients {
   id: string;
 }
 
+export interface getMdtConnectionQuery_getMdtConnection_edges_node_clinicians {
+  __typename: "User";
+  id: string;
+}
+
 export interface getMdtConnectionQuery_getMdtConnection_edges_node {
   __typename: "MDT";
   id: string;
   pathway: getMdtConnectionQuery_getMdtConnection_edges_node_pathway;
   creator: getMdtConnectionQuery_getMdtConnection_edges_node_creator;
   patients: (getMdtConnectionQuery_getMdtConnection_edges_node_patients | null)[];
+  clinicians: (getMdtConnectionQuery_getMdtConnection_edges_node_clinicians | null)[];
   createdAt: any;
   plannedAt: any;
   updatedAt: any;
