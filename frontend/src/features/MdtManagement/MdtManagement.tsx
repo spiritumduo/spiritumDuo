@@ -7,12 +7,12 @@ import CreateMdtTab from './tabpages/CreateMdtTab';
 import UpdateMdtTab from './tabpages/UpdateMdtTab';
 import DeleteMdtTab from './tabpages/DeleteMdtTab';
 
-interface MDTPageProps{
+interface MDTListPageProps{
   showModal: boolean
   setShowModal: ((arg0: boolean) => void)
 }
 
-const MDTPage = ({ showModal, setShowModal }: MDTPageProps): JSX.Element => (
+const MDTListPage = ({ showModal, setShowModal }: MDTListPageProps): JSX.Element => (
   <>
     <Modal size="lg" show={ showModal } setShow={ setShowModal } onHide={ () => setShowModal(false) }>
       <Modal.Header>
@@ -50,4 +50,4 @@ const MDTPage = ({ showModal, setShowModal }: MDTPageProps): JSX.Element => (
   </>
 );
 
-export default MDTPage;
+export default MDTListPage;
