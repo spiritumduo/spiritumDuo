@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
-
-import { Button, Container, ErrorMessage, Table } from 'nhsuk-react-components';
+import { Breadcrumb, Button, Container, ErrorMessage, Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 import '../components/patientlist.css';
 import MdtManagement from 'features/MdtManagement/MdtManagement';
@@ -10,17 +11,17 @@ import { gql, useQuery } from '@apollo/client';
 import { PathwayContext } from 'app/context';
 import edgesToNodes from 'app/pagination';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
-import { getMdtConnectionQuery } from './__generated__/getMdtConnectionQuery';
+import { getPatientsOnMdtConnectionQuery } from './__generated__/getPatientsOnMdtConnectionQuery';
 
-export const GET_MDT_CONNECTION_QUERY = gql`
-  query getMdtConnectionQuery(
-    $first: Int, $after: String, $pathwayId: ID!
+export const GET_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
+  query getPatientsOnMdtConnectionQuery(
+    $first: Int, $after: String, $id: ID!
   ) {
-    getMdtConnection(
-      first: $first, after: $after, pathwayId: $pathwayId
+    getPatientsOnMdtConnection(
+      first: $first, after: $after, id: $id
     ) @connection(
-        key: "getMdtConnection",
-        filter: ["pathwayId"]
+        key: "getPatientsOnMdtConnection",
+        filter: ["id"]
         )
       {
       totalCount
@@ -32,35 +33,23 @@ export const GET_MDT_CONNECTION_QUERY = gql`
         cursor
         node {
           id
-          pathway{
-            id
-            name
-          }
-          creator{
-            id
-            username
-            firstName
-            lastName
-          }
-          patients{
-            id
-          }
-          createdAt
-          plannedAt
-          updatedAt
-          location
+          firstName
+          lastName
+          hospitalNumber
+          nationalNumber
+          dateOfBirth
         }
       }
     }
   }
 `;
 
-const useGetMdtConnectionQuery = (
-  pathwayId: string, first: number, after?: string,
-) => useQuery<getMdtConnectionQuery>(
-  GET_MDT_CONNECTION_QUERY, {
+const useGetPatientsOnMdtConnection = (
+  id: string, first: number, after?: string,
+) => useQuery<getPatientsOnMdtConnectionQuery>(
+  GET_PATIENTS_ON_MDT_CONNECTION_QUERY, {
     variables: {
-      pathwayId: pathwayId,
+      id: id,
       first: first,
       after: after,
     },
@@ -68,74 +57,80 @@ const useGetMdtConnectionQuery = (
 );
 
 const MDTPage = (): JSX.Element => {
-  const [showManageMdtModal, setShowManageMdtModal] = useState<boolean>(false);
-  const { currentPathwayId } = useContext(PathwayContext);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const { mdtId } = useParams();
+  const navigate = useNavigate();
+  if (!mdtId) {
+    navigate('/mdt');
+  }
+
   const {
     loading,
     error,
     data,
     fetchMore,
-  } = useGetMdtConnectionQuery(currentPathwayId ? currentPathwayId?.toString() : '0', 10);
+  } = useGetPatientsOnMdtConnection(mdtId || '0', 10);
 
-  const { nodes, pageCount, pageInfo } = edgesToNodes<getMdtConnectionQuery['getMdtConnection']['edges'][0]['node']>(
-    data?.getMdtConnection, currentPage, 10,
+  const { nodes, pageCount, pageInfo } = edgesToNodes<getPatientsOnMdtConnectionQuery['getPatientsOnMdtConnection']['edges'][0]['node']>(
+    data?.getPatientsOnMdtConnection, currentPage, 10,
   );
 
-  let tableElements: { id: string; plannedAt: Date; location: string; numPatients: number; }[] = [];
+  let tableElements: {
+    id: string; firstName: string; lastName: string;
+    hospitalNumber: string; nationalNumber: string;
+    dateOfBirth: Date;
+  }[] = [];
 
   if (nodes) {
     tableElements = nodes.flatMap((node) => {
       if (!node) return [];
       return {
         id: node.id,
-        plannedAt: node.plannedAt,
-        location: node.location,
-        numPatients: node.patients.length,
+        firstName: node.firstName,
+        lastName: node.lastName,
+        hospitalNumber: node.hospitalNumber,
+        nationalNumber: node.nationalNumber,
+        dateOfBirth: node.dateOfBirth,
       };
     });
   }
+
   return (
     <Container>
-      <MdtManagement showModal={ showManageMdtModal } setShowModal={ setShowManageMdtModal } />
-      <Button className="my-3" onClick={ () => setShowManageMdtModal(true) }>Manage MDTs</Button>
-      <Tabs>
-        <TabList>
-          <Tab>MDT by date</Tab>
-        </TabList>
-        <TabPanel>
-          <LoadingSpinner loading={ loading }>
+      <Breadcrumb style={ { backgroundColor: 'transparent' } }>
+        <Breadcrumb.Item href="../mdt">MDT list</Breadcrumb.Item>
+        <Breadcrumb.Item href="">Patient list</Breadcrumb.Item>
+      </Breadcrumb>
+      <LoadingSpinner loading={ loading }>
+        {
+          error
+            ? <ErrorMessage>{error.message}</ErrorMessage>
+            : ''
+        }
+        <Table responsive role="grid" aria-describedby="pt_todo_list_aria" aria-label="patient list">
+          <Table.Head>
+            <Table.Row>
+              <Table.Cell>Name</Table.Cell>
+              <Table.Cell>Patient number</Table.Cell>
+              <Table.Cell>National number</Table.Cell>
+              <Table.Cell>Date of birth</Table.Cell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {
-              error
-                ? <ErrorMessage>{error.message}</ErrorMessage>
-                : ''
-            }
-            <Table responsive role="grid" aria-describedby="pt_todo_list_aria" aria-label="patient list">
-              <Table.Head>
-                <Table.Row>
-                  <Table.Cell>Date</Table.Cell>
-                  <Table.Cell>Clinicians present</Table.Cell>
-                  <Table.Cell>Location</Table.Cell>
-                  <Table.Cell>Number of patients</Table.Cell>
+              tableElements.map((element) => (
+                <Table.Row key={ element.id } className="active" onClick={ () => navigate(`/mdt/${mdtId}/${element.id}`) }>
+                  <Table.Cell>{`${element.firstName} ${element.lastName}`}</Table.Cell>
+                  <Table.Cell>{element.hospitalNumber}</Table.Cell>
+                  <Table.Cell>{element.nationalNumber}</Table.Cell>
+                  <Table.Cell>{new Date(element.dateOfBirth).toLocaleDateString()}</Table.Cell>
                 </Table.Row>
-              </Table.Head>
-              <Table.Body>
-                {
-                  tableElements.map((element) => (
-                    <Table.Row key={ element.id } className="active">
-                      <Table.Cell>{new Date(element.plannedAt).toLocaleDateString()}</Table.Cell>
-                      <Table.Cell>TODO: clinicians present</Table.Cell>
-                      <Table.Cell>{element.location}</Table.Cell>
-                      <Table.Cell>{element.numPatients}</Table.Cell>
-                    </Table.Row>
-                  ))
-                }
-              </Table.Body>
-            </Table>
-          </LoadingSpinner>
-        </TabPanel>
-      </Tabs>
+              ))
+            }
+          </Table.Body>
+        </Table>
+      </LoadingSpinner>
       <br />
       <ReactPaginate
         previousLabel="previous"
