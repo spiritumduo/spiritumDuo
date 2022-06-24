@@ -140,6 +140,7 @@ type MDT {
     updatedAt: Date!
     location: String!
     patients: [Patient]!
+    clinicians: [User]!
 }
 
 type Role {
