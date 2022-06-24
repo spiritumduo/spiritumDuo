@@ -6,7 +6,7 @@ from graphql.type import GraphQLResolveInfo
 from SdTypes import Permissions
 from models import MDT
 from .query_type import query
-
+from models.db import db
 
 @query.field("getMdtConnection")
 @needsAuthorization([Permissions.MDT_READ])
@@ -15,9 +15,19 @@ async def get_mdt_connection(
     after=None, last=None, before=None, pathwayId=None
 ):
     validate_parameters(first, after, last, before)
-    mdt_list: List[MDT] = await MDT.query.where(
-        MDT.pathway_id == int(pathwayId)
-    ).order_by(MDT.planned_at.asc()).gino.all()
+
+    async with db.acquire(reuse=False) as conn:
+        mdt_list: List[MDT] = await conn.all(
+            MDT.query.where(
+                MDT.pathway_id == int(pathwayId)
+            ).order_by(MDT.planned_at.asc())
+            .execution_options(loader=MDT)
+        )
+        
+    # mdt_list: List[MDT] = await MDT.query.where(
+    #     MDT.pathway_id == int(pathwayId)
+    # ).order_by(MDT.planned_at.asc())\
+    #     .execution_options(loader=MDT).gino.all()
 
     for mdt in mdt_list:
         MdtByIdLoader.prime(mdt.id, mdt, context=info.context)
