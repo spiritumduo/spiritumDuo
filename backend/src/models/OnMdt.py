@@ -3,13 +3,17 @@ from models import db
 from sqlalchemy.sql.expression import func
 
 
-class PatientMDT(db.Model):
-    __tablename__ = "tbl_patient_mdt"
+class OnMdt(db.Model):
+    __tablename__ = "tbl_on_mdt"
     __table_args__ = (
         UniqueConstraint(
             "mdt_id",
             "patient_id"
         )
+    )
+    id = db.Column(
+        db.Integer(),
+        primary_key=True
     )
     mdt_id = db.Column(
         db.Integer(),

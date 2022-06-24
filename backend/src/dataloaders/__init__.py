@@ -7,3 +7,4 @@ from .milestone import MilestoneByDecisionPointLoader, MilestoneByOnPathwayIdLoa
 from .milestone_type import MilestoneTypeLoader, MilestoneTypeLoaderByPathwayId
 from .test_result import TestResultByReferenceIdFromIELoader
 from .mdt import MdtByIdLoader
+from .on_mdt import OnMdtByIdLoader
