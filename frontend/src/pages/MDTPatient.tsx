@@ -1,42 +1,98 @@
+import { gql, useQuery } from '@apollo/client';
 import { CheckboxBox, Input } from 'components/nhs-style';
-import { Card, Checkboxes, Container, Select, SummaryList, Table, Textarea } from 'nhsuk-react-components';
+import { Breadcrumb, Card, Checkboxes, Container, ErrorMessage, Select, SummaryList, Table, Textarea } from 'nhsuk-react-components';
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import { getPatientForMdt } from './__generated__/getPatientForMdt';
+
+const GET_PATIENT_QUERY = gql`
+  query getPatientForMdt($id: ID!, $mdtId: ID!){
+    getPatient(id: $id){
+      id
+      firstName
+      lastName
+      hospitalNumber
+      nationalNumber
+      telephoneNumber
+      occupation
+      sex
+      dateOfBirth
+      communicationMethod
+      address{
+        line
+        city
+        district
+        postalCode
+        country
+      }
+      onMdts(id: $mdtId){
+        id
+      }
+    }
+  }
+`;
 
 const MDTPatientPage = (): JSX.Element => {
-  console.log('test');
+  const { patientId, mdtId } = useParams();
+
+  console.log(mdtId, patientId);
+
+  const { loading, error, data } = useQuery<getPatientForMdt>(
+    GET_PATIENT_QUERY, {
+      variables: {
+        id: patientId,
+        mdtId: mdtId,
+      },
+    },
+  );
+
+  if (!data?.getPatient?.onMdts?.[0]) {
+    return (
+      <Container className="my-4">
+        <ErrorMessage>ERROR: this patient does not exist on this MDT</ErrorMessage>
+      </Container>
+    );
+  }
+
   return (
     <Container>
+      <Breadcrumb style={ { backgroundColor: 'transparent' } }>
+        <Breadcrumb.Item href="../../mdt">MDT list</Breadcrumb.Item>
+        <Breadcrumb.Item href={ `../${mdtId}` }>Patient list</Breadcrumb.Item>
+        <Breadcrumb.Item href="">Patient</Breadcrumb.Item>
+      </Breadcrumb>
       <div className="col-12 col-lg-6 d-inline-block">
         <SummaryList className="my-2">
           <SummaryList.Row>
             <SummaryList.Key>First name</SummaryList.Key>
-            <SummaryList.Value>John</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.firstName}</SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Last name</SummaryList.Key>
-            <SummaryList.Value>Doe</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.lastName}</SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Hospital number</SummaryList.Key>
-            <SummaryList.Value>fMRN123456</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.hospitalNumber}</SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>National number</SummaryList.Key>
-            <SummaryList.Value>fNHS12345678</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.nationalNumber}</SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Address</SummaryList.Key>
             <SummaryList.Value>
-              64 Zoo Lane<br />
-              Neverland<br />
-              Nevershire<br />
-              ZO0 7NE
+              {data?.getPatient?.address.line}<br />
+              {data?.getPatient?.address.city}<br />
+              {data?.getPatient?.address.district}<br />
+              {data?.getPatient?.address.postalCode}<br />
+              {data?.getPatient?.address.country}
             </SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Telephone number</SummaryList.Key>
-            <SummaryList.Value>01234 567890</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.telephoneNumber}</SummaryList.Value>
           </SummaryList.Row>
         </SummaryList>
       </div>
@@ -44,11 +100,11 @@ const MDTPatientPage = (): JSX.Element => {
         <SummaryList className="my-2">
           <SummaryList.Row>
             <SummaryList.Key>Occupation</SummaryList.Key>
-            <SummaryList.Value>Professional Thing Do-er</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.occupation}</SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Communication preference</SummaryList.Key>
-            <SummaryList.Value>Pigeon mail</SummaryList.Value>
+            <SummaryList.Value>{data?.getPatient?.communicationMethod}</SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Send patient information video</SummaryList.Key>
