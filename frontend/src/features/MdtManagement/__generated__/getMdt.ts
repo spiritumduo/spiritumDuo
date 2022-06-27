@@ -21,11 +21,20 @@ export interface getMdt_getMdt_creator {
   lastName: string;
 }
 
+export interface getMdt_getMdt_clinicians {
+  __typename: "User";
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+}
+
 export interface getMdt_getMdt {
   __typename: "MDT";
   id: string;
   pathway: getMdt_getMdt_pathway;
   creator: getMdt_getMdt_creator;
+  clinicians: (getMdt_getMdt_clinicians | null)[];
   createdAt: any;
   plannedAt: any;
   updatedAt: any;

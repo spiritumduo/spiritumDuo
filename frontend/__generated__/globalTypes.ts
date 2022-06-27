@@ -94,6 +94,7 @@ export interface UpdateMdtInput {
   id: string;
   plannedAt: any;
   location: string;
+  users: (string | null)[];
 }
 
 export interface UpdatePathwayInput {
