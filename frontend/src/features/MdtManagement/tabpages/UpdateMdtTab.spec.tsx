@@ -13,6 +13,7 @@ test('form inputs should be filled automatically', async () => {
   await waitFor(() => {
     expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
     expect((screen.getByLabelText(/date/i) as HTMLInputElement).value).toMatch('01/01/2022');
+    expect(screen.getByText(/test dummy \(tdummy\)/i)).toBeInTheDocument();
   });
 });
 

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { Button, ErrorMessage, Form, Label, SummaryList } from 'nhsuk-react-components';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm, useFieldArray } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import * as yup from 'yup';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/nhs-style';
 import MDT from 'types/MDT';
+import Select from 'react-select';
+import { PathwayContext } from 'app/context';
 
 import { updateMdt } from './__generated__/updateMdt';
+import { getUsersOnPathway } from './__generated__/getUsersOnPathway';
 
 export const UPDATE_MDT_MUTATION = gql`
   mutation updateMdt($input: UpdateMdtInput!){
@@ -37,22 +40,42 @@ export const UPDATE_MDT_MUTATION = gql`
   }
 `;
 
+export const GET_USERS = gql`
+  query getUsersOnPathway($pathwayId: ID!){
+    getUsers(pathwayId: $pathwayId){
+      id
+      username
+      firstName
+      lastName
+    }
+  }
+`;
+
 type UpdateMdtForm = {
   plannedAt: Date;
   id: string;
   location: string;
+  users: {
+    label: string;
+    value: string;
+  }[];
 };
 
 export interface UpdateMdtInputs {
   plannedAt: Date;
   id: string;
   location: string;
+  users: {
+    label: string;
+    value: string;
+  }[];
 }
 
 const updateMdtFormSchema = yup.object({
   plannedAt: yup.date().required('A date is required'),
   location: yup.string().required('A location is required'),
   id: yup.string().required(),
+  users: yup.array().required(),
 });
 
 interface UpdateMdtTabProps{
@@ -62,7 +85,11 @@ interface UpdateMdtTabProps{
 
 const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Element => {
   const [newDate, setNewDate] = useState<Date>();
+  const [userFields, setUserFields] = useState<
+    { label: string, value: string }[]
+  >();
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const { currentPathwayId } = useContext(PathwayContext);
 
   const {
     register,
@@ -70,13 +97,33 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
     formState: { errors: formErrors },
     getValues,
     setValue,
+    control,
   } = useForm<UpdateMdtForm>({ resolver: yupResolver(updateMdtFormSchema) });
+
+  const { loading, data, error } = useQuery<getUsersOnPathway>(GET_USERS, { variables: {
+    pathwayId: currentPathwayId,
+  } });
+
+  useEffect(() => {
+    setUserFields(data?.getUsers
+      ? data.getUsers.flatMap((user) => (
+        {
+          label: `${user?.firstName} ${user?.lastName} (${user?.username})`,
+          value: user?.id || '0',
+        }
+      ))
+      : []);
+  }, [data?.getUsers, setUserFields]);
 
   const [
     updateMdtMutation, { data: updateData, error: updateError, loading: updateLoading },
   ] = useMutation<updateMdt>(UPDATE_MDT_MUTATION);
 
   const submitFormFn = (values: UpdateMdtInputs) => {
+    const selectedUsers: Array<string> = [];
+    values.users.forEach((user) => {
+      selectedUsers.push( user.value );
+    });
     updateMdtMutation({
       variables: {
         input: {
@@ -89,6 +136,7 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
           ),
           id: values.id,
           location: values.location,
+          users: selectedUsers,
         },
       },
     });
@@ -101,6 +149,18 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
     setValue('plannedAt', new Date(mdt.plannedAt));
     setNewDate(new Date(mdt.plannedAt));
     setValue('location', mdt.location);
+
+    const users: {label: string, value: string}[] = [];
+
+    mdt.clinicians.forEach((user) => {
+      if (!user) return;
+      users.push({
+        label: `${user.firstName} ${user.lastName} (${user.username})`,
+        value: user.id,
+      });
+    });
+
+    setValue('users', users);
   }, [mdt, setValue]);
 
   if (updateData?.updateMdt?.mdt?.id && showConfirmation) {
@@ -176,6 +236,28 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
             label="Location"
             { ...register('location') }
           />
+        </div>
+        <div className="col-12 col-lg-5 d-inline-block">
+          <Label>
+            Staff present
+            <Controller
+              name="users"
+              control={ control }
+              render={ ({ field }) => (
+                <Select
+                  className="mb-4"
+                  isMulti
+                  onBlur={ field.onBlur }
+                  onChange={ field.onChange }
+                  ref={ field.ref }
+                  value={ field.value }
+                  options={ userFields?.map((user) => (
+                    { label: user.label, value: user.value }
+                  )) }
+                />
+              ) }
+            />
+          </Label>
         </div>
         <br />
         <Button className="mt-4 mb-0 float-end" disabled={ updateLoading }>Update</Button>

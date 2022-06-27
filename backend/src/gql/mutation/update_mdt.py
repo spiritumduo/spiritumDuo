@@ -17,5 +17,6 @@ async def resolve_update_mdt(
         context=info.context,
         id=input['id'],
         plannedAt=input['plannedAt'],
-        location=input['location']
+        location=input['location'],
+        users=input['users']
     )

@@ -9,7 +9,7 @@ const { Default } = composeStories(stories);
 
 // update mdt
 
-test('selecting a date should autofill fields', async () => {
+test('details should be autofilled', async () => {
   render(<Default />);
 
   const { click } = userEvent.setup();
@@ -27,6 +27,7 @@ test('selecting a date should autofill fields', async () => {
   await waitFor(() => {
     expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
     expect((screen.getByLabelText(/Date/) as HTMLInputElement).value).toMatch('01/01/2022');
+    expect(screen.getByText(/test dummy \(tdummy\)/i)).toBeInTheDocument();
   });
 });
 

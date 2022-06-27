@@ -1,8 +1,14 @@
 from datetime import datetime
 import json
 import pytest
-from models import MDT
-from hamcrest import assert_that, equal_to, not_none, contains_string
+from models import MDT, User, UserMDT
+from hamcrest import (
+    assert_that,
+    equal_to,
+    not_none,
+    contains_string,
+    has_length
+)
 
 
 @pytest.fixture
@@ -12,12 +18,13 @@ def mdt_update_mutation() -> str:
             $plannedAt: Date!
             $location: String!
             $id: ID!
-
+            $users: [ID]!
         ){
             updateMdt(input: {
                 plannedAt: $plannedAt
                 location: $location
                 id: $id
+                users: $users
             }){
                 mdt{
                     id
@@ -28,6 +35,9 @@ def mdt_update_mutation() -> str:
                     creator{
                         id
                         username
+                    }
+                    clinicians{
+                        id
                     }
                     createdAt
                     plannedAt
@@ -49,8 +59,30 @@ async def test_update_mdt(
     mdt_update_permission,
     mdt_update_mutation,
     httpx_test_client, httpx_login_user,
-    test_mdt: MDT
+    test_mdt: MDT, test_user
 ):
+    USER_INFO = {
+        "first_name": "Test",
+        "last_name": "User",
+        "department": "Test dummy department",
+        "email": "test@test.com",
+        "username": "tdummy",
+        "password": "tdummy",
+    }
+    _USER = await User.create(
+        first_name=USER_INFO['first_name'],
+        last_name=USER_INFO['last_name'],
+        department=USER_INFO['department'],
+        email=USER_INFO['email'],
+        username=USER_INFO['username'],
+        password='encrypt me lol'
+    )
+
+    await UserMDT.create(
+        mdt_id=test_mdt.id,
+        user_id=_USER.id
+    )
+
     """
     When: we update an MDT
     """
@@ -66,7 +98,8 @@ async def test_update_mdt(
             "variables": {
                 "id": test_mdt.id,
                 "location": _MDT.location,
-                "plannedAt": _MDT.planned_at
+                "plannedAt": _MDT.planned_at,
+                "users": [test_user.user.id]
             }
         }
     )
@@ -95,6 +128,14 @@ async def test_update_mdt(
         query['mdt']['plannedAt'],
         equal_to(_MDT.planned_at)
     )
+    assert_that(
+        query['mdt']['clinicians'][0]['id'],
+        equal_to(str(test_user.user.id))
+    )
+    assert_that(
+        query['mdt']['clinicians'],
+        has_length(1)
+    )
 
     updated_mdt: MDT = await MDT.get(int(query['mdt']['id']))
     assert_that(
@@ -121,7 +162,8 @@ async def test_user_lacks_permission(
             "variables": {
                 "plannedAt": "3000-01-01T00:00:00",
                 "location": "test",
-                "id": "42"
+                "id": "42",
+                "users": [],
             }
         }
     )

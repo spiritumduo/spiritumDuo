@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import UpdateMdtTab, { UPDATE_MDT_MUTATION } from './UpdateMdtTab';
+import UpdateMdtTab, { UPDATE_MDT_MUTATION, GET_USERS } from './UpdateMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const mdt = {
@@ -23,6 +23,12 @@ const mdt = {
   plannedAt: new Date('2022-01-01T00:00:00'),
   updatedAt: new Date('2000-01-01T00:00:00'),
   location: 'test location',
+  clinicians: [{
+    id: '1',
+    firstName: 'Test',
+    lastName: 'Dummy',
+    username: 'tdummy',
+  }],
 };
 
 const successfulMutation = {
@@ -81,6 +87,18 @@ export const Default: ComponentStory<typeof UpdateMdtTab> = () => (
             updateMdt: successfulMutation,
           },
         }),
+      }, {
+        query: GET_USERS,
+        mockFn: () => Promise.resolve({
+          data: {
+            getUsers: [{
+              id: '1',
+              firstName: 'Test',
+              lastName: 'Dummy',
+              username: 'tdummy',
+            }],
+          },
+        }),
       }]
     }
   >
@@ -96,6 +114,18 @@ export const MdtAlreadyExists: ComponentStory<typeof UpdateMdtTab> = () => (
         mockFn: () => Promise.resolve({
           data: {
             updateMdt: errorMutation,
+          },
+        }),
+      }, {
+        query: GET_USERS,
+        mockFn: () => Promise.resolve({
+          data: {
+            getUsers: [{
+              id: '1',
+              firstName: 'Test',
+              lastName: 'Dummy',
+              username: 'tdummy',
+            }],
           },
         }),
       }]

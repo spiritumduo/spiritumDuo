@@ -370,6 +370,7 @@ input UpdateMdtInput{
     id: ID!
     plannedAt: Date!
     location: String!
+    users: [ID]!
 }
 
 input TestResultInput{

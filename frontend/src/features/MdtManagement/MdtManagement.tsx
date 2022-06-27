@@ -24,6 +24,12 @@ export const GET_MDT_QUERY = gql`
         firstName
         lastName
       }
+      clinicians{
+        id
+        firstName
+        lastName
+        username
+      }
       createdAt
       plannedAt
       updatedAt

@@ -5,7 +5,7 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import MdtManagement, { GET_MDT_QUERY } from './MdtManagement';
-import { UPDATE_MDT_MUTATION } from './tabpages/UpdateMdtTab';
+import { UPDATE_MDT_MUTATION, GET_USERS } from './tabpages/UpdateMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
 import { DELETE_MDT_MUTATION } from './tabpages/DeleteMdtTab';
 
@@ -25,6 +25,12 @@ const mdt = {
   plannedAt: '2022-01-01T00:00:00',
   updatedAt: '2000-01-01T00:00:00',
   location: 'test location',
+  clinicians: [{
+    id: '1',
+    firstName: 'Test',
+    lastName: 'Dummy',
+    username: 'tdummy',
+  }],
 };
 
 const successfulUpdateMutation = {
@@ -42,6 +48,7 @@ const successfulUpdateMutation = {
     plannedAt: '3000-01-01T00:00:00',
     updatedAt: '3000-01-01T00:00:00',
     location: 'test location',
+    clinicians: [],
   },
   userErrors: null,
 };
@@ -94,6 +101,18 @@ export const Default: ComponentStory<typeof MdtManagement> = () => (
         mockFn: () => Promise.resolve({
           data: {
             deleteMdt: successfulDeleteMutation,
+          },
+        }),
+      }, {
+        query: GET_USERS,
+        mockFn: () => Promise.resolve({
+          data: {
+            getUsers: [{
+              id: '1',
+              firstName: 'Test',
+              lastName: 'Dummy',
+              username: 'tdummy',
+            }],
           },
         }),
       }]

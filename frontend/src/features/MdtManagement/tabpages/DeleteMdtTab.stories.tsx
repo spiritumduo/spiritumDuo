@@ -23,6 +23,7 @@ const mdt = {
   plannedAt: new Date('2022-01-01T00:00:00'),
   updatedAt: new Date('2000-01-01T00:00:00'),
   location: 'test location',
+  clinicians: [],
 };
 
 const successfulMutation = {
