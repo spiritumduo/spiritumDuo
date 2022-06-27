@@ -182,25 +182,13 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
           </TabPanel>
           <TabPanel>
             {/* MDT panel */}
-            <div className="col-12 col-lg-5 d-inline-block">
-              <Select className="w-100" label="Add patient to MDT">
-                <Select.Option>Date goes here</Select.Option>
-              </Select>
-              <Button secondary className="float-end">Add</Button>
-            </div>
-            <div className="col-12 col-lg-5 offset-lg-2 d-inline-block">
-              <Select className="w-100" label="Remove patient from MDT">
-                <Select.Option>Date goes here</Select.Option>
-              </Select>
-              <Button secondary className="float-end">Remove</Button>
-            </div>
             <Table>
               <Table.Head>
-                <Table.Cell>MDT date</Table.Cell>
-                <Table.Cell>Who added pt to MDT</Table.Cell>
+                <Table.Cell>Date</Table.Cell>
+                <Table.Cell>Requested by</Table.Cell>
                 <Table.Cell>Review reason</Table.Cell>
-                <Table.Cell>MDT outcome</Table.Cell>
-                <Table.Cell>Action</Table.Cell>
+                <Table.Cell>Outcome</Table.Cell>
+                <Table.Cell>Actioned</Table.Cell>
               </Table.Head>
               <Table.Body>
                 <Table.Row>

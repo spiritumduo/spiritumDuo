@@ -1,14 +1,11 @@
-import React, { useContext, useState } from 'react';
-import { Breadcrumb, Button, Container, ErrorMessage, Table } from 'nhsuk-react-components';
+import React, { useState } from 'react';
+import { Breadcrumb, Container, ErrorMessage, Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
 
 import '../components/patientlist.css';
-import MdtManagement from 'features/MdtManagement/MdtManagement';
 import { gql, useQuery } from '@apollo/client';
-import { PathwayContext } from 'app/context';
 import edgesToNodes from 'app/pagination';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import { getPatientsOnMdtConnectionQuery } from './__generated__/getPatientsOnMdtConnectionQuery';
@@ -99,7 +96,7 @@ const MDTPage = (): JSX.Element => {
   return (
     <Container>
       <Breadcrumb style={ { backgroundColor: 'transparent' } }>
-        <Breadcrumb.Item href="../mdt">MDT list</Breadcrumb.Item>
+        <Breadcrumb.Item href="../mdt">MDTs</Breadcrumb.Item>
         <Breadcrumb.Item href="">Patient list</Breadcrumb.Item>
       </Breadcrumb>
       <LoadingSpinner loading={ loading }>
@@ -120,7 +117,7 @@ const MDTPage = (): JSX.Element => {
           <Table.Body>
             {
               tableElements.map((element) => (
-                <Table.Row key={ element.id } className="active" onClick={ () => navigate(`/mdt/${mdtId}/${element.id}`) }>
+                <Table.Row key={ element.id } className="active" onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>
                   <Table.Cell>{`${element.firstName} ${element.lastName}`}</Table.Cell>
                   <Table.Cell>{element.hospitalNumber}</Table.Cell>
                   <Table.Cell>{element.nationalNumber}</Table.Cell>

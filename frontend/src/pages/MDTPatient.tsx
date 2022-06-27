@@ -58,7 +58,7 @@ const MDTPatientPage = (): JSX.Element => {
   return (
     <Container>
       <Breadcrumb style={ { backgroundColor: 'transparent' } }>
-        <Breadcrumb.Item href="../../mdt">MDT list</Breadcrumb.Item>
+        <Breadcrumb.Item href="../../mdt">MDTs</Breadcrumb.Item>
         <Breadcrumb.Item href={ `../${mdtId}` }>Patient list</Breadcrumb.Item>
         <Breadcrumb.Item href="">Patient</Breadcrumb.Item>
       </Breadcrumb>
