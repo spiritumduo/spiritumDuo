@@ -21,7 +21,6 @@ async def get_mdt_connection(
             MDT.query.where(
                 MDT.pathway_id == int(pathwayId)
             ).order_by(MDT.planned_at.asc())
-            .execution_options(loader=MDT)
         )
         
     # mdt_list: List[MDT] = await MDT.query.where(

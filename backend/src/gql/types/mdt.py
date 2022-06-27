@@ -42,6 +42,7 @@ async def resolve_mdt_patients(
         patients: List[Patient] = await conn.all(
             Patient.join(OnMdt).select()
             .where(OnMdt.mdt_id == obj.id)
+            .execution_options(loader=Patient)
         )
         return patients
 
