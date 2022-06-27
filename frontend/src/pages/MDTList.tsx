@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useContext, useState } from 'react';
 import { Breadcrumb, Button, Container, ErrorMessage, Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
@@ -5,6 +6,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { useNavigate } from 'react-router';
 
 import '../components/patientlist.css';
+import CreateMdtModal from 'features/CreateMdtModal/CreateMdtModal';
 import MdtManagement from 'features/MdtManagement/MdtManagement';
 import { gql, useQuery } from '@apollo/client';
 import { PathwayContext } from 'app/context';
@@ -73,6 +75,8 @@ const useGetMdtConnectionQuery = (
 const MDTListPage = (): JSX.Element => {
   const navigate = useNavigate();
   const [showManageMdtModal, setShowManageMdtModal] = useState<boolean>(false);
+  const [selectedMdtId, setSelectedMdtId] = useState<string>('');
+  const [showCreateMdtModal, setShowCreateMdtModal] = useState<boolean>(false);
   const { currentPathwayId } = useContext(PathwayContext);
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -81,6 +85,7 @@ const MDTListPage = (): JSX.Element => {
     error,
     data,
     fetchMore,
+    refetch,
   } = useGetMdtConnectionQuery(currentPathwayId ? currentPathwayId?.toString() : '0', 10);
 
   const { nodes, pageCount, pageInfo } = edgesToNodes<getMdtConnectionQuery['getMdtConnection']['edges'][0]['node']>(
@@ -108,10 +113,11 @@ const MDTListPage = (): JSX.Element => {
   return (
     <Container>
       <Breadcrumb style={ { backgroundColor: 'transparent' } }>
-        <Breadcrumb.Item href="">MDT list</Breadcrumb.Item>
+        <Breadcrumb.Item href="">MDTs</Breadcrumb.Item>
       </Breadcrumb>
-      <MdtManagement showModal={ showManageMdtModal } setShowModal={ setShowManageMdtModal } />
-      <Button className="my-3" onClick={ () => setShowManageMdtModal(true) }>Manage MDTs</Button>
+      <CreateMdtModal showModal={ showCreateMdtModal } setShowModal={ setShowCreateMdtModal } refetch={ refetch } />
+      <MdtManagement showModal={ showManageMdtModal } setShowModal={ setShowManageMdtModal } mdtId={ selectedMdtId } refetch={ refetch } />
+      <Button secondary className="my-3" onClick={ () => setShowCreateMdtModal(true) }>Create MDT</Button>
       <Tabs>
         <TabList>
           <Tab>MDT by date</Tab>
@@ -130,16 +136,32 @@ const MDTListPage = (): JSX.Element => {
                   <Table.Cell>Clinicians present</Table.Cell>
                   <Table.Cell>Location</Table.Cell>
                   <Table.Cell>Number of patients</Table.Cell>
+                  <Table.Cell>&nbsp;</Table.Cell>
                 </Table.Row>
               </Table.Head>
               <Table.Body>
                 {
                   tableElements.map((element) => (
-                    <Table.Row key={ element.id } className="active" onClick={ () => navigate(`/mdt/${element.id}`) }>
-                      <Table.Cell>{new Date(element.plannedAt).toLocaleDateString()}</Table.Cell>
-                      <Table.Cell>{element.numClinicians}</Table.Cell>
-                      <Table.Cell>{element.location}</Table.Cell>
-                      <Table.Cell>{element.numPatients}</Table.Cell>
+                    <Table.Row key={ element.id } className="active">
+                      <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{new Date(element.plannedAt).toLocaleDateString()}</Table.Cell>
+                      <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{element.numClinicians}</Table.Cell>
+                      <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{element.location}</Table.Cell>
+                      <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{element.numPatients}</Table.Cell>
+                      <Table.Cell onClick={ () => { setSelectedMdtId(element.id); setShowManageMdtModal(true); } }>
+                        <button
+                          type="button"
+                          style={ {
+                            background: 'none',
+                            border: 'none',
+                            padding: '0',
+                            color: '#069',
+                            textDecoration: 'underline',
+                            cursor: 'pointer',
+                          } }
+                        >
+                          Edit
+                        </button>
+                      </Table.Cell>
                     </Table.Row>
                   ))
                 }
