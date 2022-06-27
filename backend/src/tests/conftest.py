@@ -30,7 +30,8 @@ from models import (
     OnPathway,
     PathwayMilestoneType,
     UserPathway,
-    MDT
+    MDT,
+    OnMdt
 )
 
 from api import app
@@ -110,7 +111,7 @@ async def test_role(db_start_transaction) -> Role:
 
 
 @pytest.fixture
-async def test_patients(db_start_transaction) -> List[Role]:
+async def test_patients(db_start_transaction) -> List[Patient]:
     patients = []
     for i in range(1, 11):
         p = await Patient.create(
@@ -187,6 +188,21 @@ async def test_mdt(test_user: UserFixture, test_pathway: Pathway):
         creator_user_id=test_user.user.id
     )
     return mdt
+
+
+@pytest.fixture
+async def test_on_mdts(
+    test_user: UserFixture, test_mdt: MDT,
+    test_patients: List[Patient]
+):
+    on_mdts: List[OnMdt] = []
+    for pt in test_patients:
+        on_mdts.append(await OnMdt.create(
+            mdt_id=test_mdt.id,
+            patient_id=pt.id,
+            user_id=test_user.user.id
+        ))
+    return on_mdts
 
 
 @pytest.fixture
@@ -431,7 +447,7 @@ async def user_update_permission(test_role) -> RolePermission:
     ).create()
 
 
-## MDT
+# MDT
 @pytest.fixture
 async def mdt_create_permission(test_role) -> RolePermission:
     return await RolePermission(
@@ -446,3 +462,11 @@ async def mdt_update_permission(test_role) -> RolePermission:
         role_id=test_role.id,
         permission=Permissions.MDT_UPDATE
     ).create()
+
+@pytest.fixture
+async def mdt_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_READ
+    ).create()
+
