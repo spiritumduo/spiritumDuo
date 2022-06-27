@@ -133,3 +133,11 @@ Annual leave, bank holidays
 ## 6th - 10th June 2022
 
 This week I finished hwat I was doing my last working week by implementing the multi - select dropdown menu on the user administration pages. Once this was done I started work on a user feedback feature. Right clicking anywhere on the page will show a context menu where a user can send feedback. This is specifically implemented to avoid showing when right clicking on context elements because of copy and paste API limitations. The new clipboard API is not supported on all browsers, and the old API is deprecated so I chose not to go down this route and show the default controls on input elements (clipboard handled by browser/operating system).
+
+## 13th - 17th June 2022
+
+I spent this week catching up with administrative tasks that have built up over the course of my placement, working on coursework, etc.
+
+## 20th - 24th June 2022
+
+I spent this week working on the MDT functionality of the project. An MDT (multi-disciplinary team meeting) is a meeting wherein clinicians from different specialities discuss patients, appropriate care plans, and results. The aim is to be able to provide MDT management and recording in our project. This is an initial iteration and will largely change by the time we're happy with it. It's quite a big task so I'm happy to be trying to tackle it. I'll likely be taking some of, if not wholly, next week to continue working on this. There are a few implementation issues and technicalities I've had to work out, for example if there *could* be more than one MDT in a week.
