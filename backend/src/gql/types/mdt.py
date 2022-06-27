@@ -5,7 +5,7 @@ from dataloaders import (
     PathwayByIdLoader
 )
 from graphql.type import GraphQLResolveInfo
-from models import MDT, Patient, OnMdt, User, ClinicianMDT
+from models import MDT, Patient, OnMdt, User, UserMDT
 from models.db import db
 
 MDTObjectType = ObjectType("MDT")
@@ -54,7 +54,8 @@ async def resolve_mdt_clinicians(
 ):
     async with db.acquire(reuse=False) as conn:
         clinicians: List[User] = await conn.all(
-            User.join(ClinicianMDT).select()
-            .where(ClinicianMDT.mdt_id == obj.id)
+            User.join(UserMDT).select()
+            .where(UserMDT.mdt_id == obj.id)
+            .execution_options(loader=User)
         )
         return clinicians

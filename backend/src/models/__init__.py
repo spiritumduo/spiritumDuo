@@ -15,4 +15,4 @@ from .PathwayMilestoneType import PathwayMilestoneType
 from .UserPathway import UserPathway
 from .MDT import MDT
 from .OnMdt import OnMdt
-from .ClinicianMDT import ClinicianMDT
+from .UserMDT import UserMDT

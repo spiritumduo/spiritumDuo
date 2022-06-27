@@ -39,7 +39,7 @@ const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps)
 
   const modalCloseCallback = () => {
     dispatch(setModalPatientHospitalNumber(undefined));
-    // navigate('/');
+    navigate('/');
   };
 
   const onSelect = useCallback((index: number) => {
