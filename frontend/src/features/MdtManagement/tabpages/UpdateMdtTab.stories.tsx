@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import UpdateMdtTab, { GET_MDT_QUERY, UPDATE_MDT_MUTATION } from './UpdateMdtTab';
+import UpdateMdtTab, { UPDATE_MDT_MUTATION } from './UpdateMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const mdt = {
@@ -19,9 +19,9 @@ const mdt = {
     firstName: 'test',
     lastName: 'user',
   },
-  createdAt: '2000-01-01T00:00:00',
-  plannedAt: '2022-01-01T00:00:00',
-  updatedAt: '2000-01-01T00:00:00',
+  createdAt: new Date('2000-01-01T00:00:00'),
+  plannedAt: new Date('2022-01-01T00:00:00'),
+  updatedAt: new Date('2000-01-01T00:00:00'),
   location: 'test location',
 };
 
@@ -75,14 +75,6 @@ export const Default: ComponentStory<typeof UpdateMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
-        query: GET_MDT_QUERY,
-        mockFn: () => Promise.resolve({
-          data: {
-            getMdt: mdt,
-          },
-        }),
-      },
-      {
         query: UPDATE_MDT_MUTATION,
         mockFn: () => Promise.resolve({
           data: {
@@ -92,7 +84,7 @@ export const Default: ComponentStory<typeof UpdateMdtTab> = () => (
       }]
     }
   >
-    <UpdateMdtTab />
+    <UpdateMdtTab mdt={ mdt } successCallback={ () => ({}) } />
   </NewMockSdApolloProvider>
 );
 
@@ -100,14 +92,6 @@ export const MdtAlreadyExists: ComponentStory<typeof UpdateMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
-        query: GET_MDT_QUERY,
-        mockFn: () => Promise.resolve({
-          data: {
-            getMdt: mdt,
-          },
-        }),
-      },
-      {
         query: UPDATE_MDT_MUTATION,
         mockFn: () => Promise.resolve({
           data: {
@@ -117,6 +101,6 @@ export const MdtAlreadyExists: ComponentStory<typeof UpdateMdtTab> = () => (
       }]
     }
   >
-    <UpdateMdtTab />
+    <UpdateMdtTab mdt={ mdt } successCallback={ () => ({}) } />
   </NewMockSdApolloProvider>
 );

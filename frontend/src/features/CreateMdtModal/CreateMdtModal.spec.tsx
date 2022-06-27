@@ -3,7 +3,7 @@ import { waitFor, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { composeStories } from '@storybook/testing-react';
-import * as stories from './CreateMdtTab.stories';
+import * as stories from './CreateMdtModal.stories';
 
 const { Default, MdtAlreadyExists } = composeStories(stories);
 

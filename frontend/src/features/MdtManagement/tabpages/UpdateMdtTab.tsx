@@ -1,39 +1,15 @@
-/* eslint-disable max-len */
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Button, ErrorMessage, Form, Label, SummaryList } from 'nhsuk-react-components';
 import { useForm } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import * as yup from 'yup';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/nhs-style';
+import MDT from 'types/MDT';
 
-import { PathwayContext } from 'app/context';
-import { getMdtForUpdate } from './__generated__/getMdtForUpdate';
 import { updateMdt } from './__generated__/updateMdt';
-
-export const GET_MDT_QUERY = gql`
-  query getMdtForUpdate($pathwayId: ID!, $plannedAt: Date!){
-    getMdt(pathwayId: $pathwayId, plannedAt: $plannedAt){
-      id
-      pathway{
-        id
-        name
-      }
-      creator{
-        id
-        username
-        firstName
-        lastName
-      }
-      createdAt
-      plannedAt
-      updatedAt
-      location
-    }
-  }
-`;
 
 export const UPDATE_MDT_MUTATION = gql`
   mutation updateMdt($input: UpdateMdtInput!){
@@ -79,10 +55,13 @@ const updateMdtFormSchema = yup.object({
   id: yup.string().required(),
 });
 
-const UpdateMdtTabPage = (): JSX.Element => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+interface UpdateMdtTabProps{
+  mdt: MDT;
+  successCallback: () => void;
+}
+
+const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Element => {
   const [newDate, setNewDate] = useState<Date>();
-  const { currentPathwayId } = useContext(PathwayContext);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
   const {
@@ -93,13 +72,6 @@ const UpdateMdtTabPage = (): JSX.Element => {
     setValue,
   } = useForm<UpdateMdtForm>({ resolver: yupResolver(updateMdtFormSchema) });
 
-  const { data, loading, error } = useQuery<getMdtForUpdate>(GET_MDT_QUERY, {
-    variables: {
-      pathwayId: currentPathwayId,
-      plannedAt: selectedDate,
-    },
-  });
-
   const [
     updateMdtMutation, { data: updateData, error: updateError, loading: updateLoading },
   ] = useMutation<updateMdt>(UPDATE_MDT_MUTATION);
@@ -108,7 +80,13 @@ const UpdateMdtTabPage = (): JSX.Element => {
     updateMdtMutation({
       variables: {
         input: {
-          plannedAt: new Date(Date.UTC(values.plannedAt.getFullYear(), values.plannedAt.getMonth(), values.plannedAt.getDate())),
+          plannedAt: new Date(
+            Date.UTC(
+              values.plannedAt.getFullYear(),
+              values.plannedAt.getMonth(),
+              values.plannedAt.getDate(),
+            ),
+          ),
           id: values.id,
           location: values.location,
         },
@@ -116,19 +94,14 @@ const UpdateMdtTabPage = (): JSX.Element => {
     });
   };
 
-  useEffect(() => {
-    if (data?.getMdt?.id) {
-      setValue('location', data.getMdt.location);
-      setNewDate(new Date(data.getMdt.plannedAt));
-      setValue('plannedAt', new Date(data.getMdt.plannedAt));
-      setValue('id', data.getMdt.id);
-    } else {
-      setNewDate(undefined);
-      setValue('location', '');
-    }
-  }, [setNewDate, setValue, data]);
-
   const datePickerFormControl = register('plannedAt');
+
+  useEffect(() => {
+    setValue('id', mdt.id);
+    setValue('plannedAt', new Date(mdt.plannedAt));
+    setNewDate(new Date(mdt.plannedAt));
+    setValue('location', mdt.location);
+  }, [mdt, setValue]);
 
   if (updateData?.updateMdt?.mdt?.id && showConfirmation) {
     return (
@@ -148,18 +121,13 @@ const UpdateMdtTabPage = (): JSX.Element => {
             <SummaryList.Value>{ updateData?.updateMdt?.mdt?.location }</SummaryList.Value>
           </SummaryList.Row>
         </SummaryList>
-        <Button className="mt-0 mb-0 float-end" onClick={ () => setShowConfirmation(false) }>Back</Button>
+        <Button className="mt-0 mb-0 float-end" onClick={ () => { successCallback(); setShowConfirmation(false); } }>Close</Button>
       </>
     );
   }
 
   return (
     <>
-      {
-        error?.message
-          ? <ErrorMessage><strong>GraphQL error:&nbsp;</strong>{ error.message }</ErrorMessage>
-          : ''
-      }
       {
         updateError
           ? <ErrorMessage>{ updateError.message }</ErrorMessage>
@@ -182,23 +150,12 @@ const UpdateMdtTabPage = (): JSX.Element => {
       }
       <Form
         onSubmit={ handleSubmit(() => { submitFormFn(getValues()); setShowConfirmation(true); }) }
-        disabled={ loading || updateLoading }
+        disabled={ updateLoading }
       >
-        <input type="hidden" value={ data?.getMdt?.id } { ...register('id') } />
+        <input type="hidden" value={ mdt?.id } { ...register('id') } />
         <div className="col-12 col-lg-5 d-inline-block">
           <Label>
-            Select MDT
-            <DatePicker
-              selected={ selectedDate }
-              className="nhsuk-input"
-              dateFormat="dd/MM/yyyy"
-              onChange={ (date: Date) => { setSelectedDate(date); } }
-            />
-          </Label>
-        </div>
-        <div className="col-12 col-lg-5 d-inline-block offset-lg-2">
-          <Label>
-            Update Date of MDT
+            Date
             <DatePicker
               selected={ newDate }
               className="nhsuk-input"
@@ -206,7 +163,7 @@ const UpdateMdtTabPage = (): JSX.Element => {
               onChange={ (date: Date) => { setValue('plannedAt', date); setNewDate(date); } }
               onBlur={ datePickerFormControl.onBlur }
               disabled={
-                datePickerFormControl.disabled || loading || !data?.getMdt?.id || updateLoading
+                datePickerFormControl.disabled || updateLoading
               }
               ref={ datePickerFormControl.ref }
               name={ datePickerFormControl.name }
@@ -214,26 +171,14 @@ const UpdateMdtTabPage = (): JSX.Element => {
             />
           </Label>
         </div>
-        <div className="col-12 col-lg-5 d-inline-block">
+        <div className="col-12 col-lg-5 d-inline-block offset-lg-2">
           <Input
             label="Location"
             { ...register('location') }
-            disabled={ !data?.getMdt?.id }
-          />
-        </div>
-        <div className="col-12 col-lg-5 d-inline-block offset-lg-2">
-          <Input
-            label="Creator (read-only)"
-            disabled
-            value={
-              data?.getMdt
-                ? `${data?.getMdt?.creator?.firstName} ${data?.getMdt?.creator?.lastName} (${data?.getMdt?.creator?.username})`
-                : ''
-            }
           />
         </div>
         <br />
-        <Button className="mt-4 mb-0 float-end" disabled={ loading || updateLoading }>Update</Button>
+        <Button className="mt-4 mb-0 float-end" disabled={ updateLoading }>Update</Button>
       </Form>
     </>
   );

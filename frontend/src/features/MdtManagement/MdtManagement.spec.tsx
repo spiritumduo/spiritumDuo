@@ -7,92 +7,26 @@ import * as stories from './MdtManagement.stories';
 
 const { Default } = composeStories(stories);
 
-test('the date selector should show when clicking input element', async () => {
-  render(<Default />);
-
-  const { click } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /create mdt/i }));
-
-  expect(
-    screen.getByLabelText(/date of mdt/i),
-  );
-  await click(screen.getByLabelText(/date of mdt/i));
-  await waitFor(() => {
-    expect(screen.getByText(/23/));
-  });
-  await click(screen.getByText(/23/));
-});
-
-test('not selecting date or inputting location should show errors', async () => {
-  render(<Default />);
-
-  const { click } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /create mdt/i }));
-
-  expect(screen.getByLabelText(/date of mdt/i));
-  expect(screen.getByLabelText(/location/i));
-
-  await click(screen.getByRole('button', { name: /create/i }));
-  await waitFor(() => {
-    expect(screen.getByText(/a date is required/i));
-    expect(screen.getByText(/a location is required/i));
-  });
-});
-
-test('valid inputs should show success page', async () => {
-  render(<Default />);
-
-  const { click, type } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /create mdt/i }));
-
-  expect(
-    screen.getByLabelText(/date of mdt/i),
-  );
-  await click(screen.getByLabelText(/date of mdt/i));
-  await waitFor(() => {
-    expect(screen.getByText(/23/));
-  });
-  await click(screen.getByText(/23/));
-  await type(screen.getByLabelText(/location/i), 'test location');
-  await click(screen.getByRole('button', { name: /create/i }));
-
-  await waitFor(() => {
-    expect(screen.getByText(/success/i));
-    expect(screen.getByText(/test pathway/i));
-    expect(screen.getByText(/3000-01-01t00:00:00/i));
-    expect(screen.getByText(/test location/i));
-  });
-});
-
 // update mdt
-
-test('the date selector should show when clicking input element', async () => {
-  render(<Default />);
-
-  const { click } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /update mdt/i }));
-  await waitFor(() => expect(screen.getByLabelText(/select mdt/i)));
-  await click(screen.getByLabelText(/date of mdt/i));
-  await waitFor(() => {
-    expect(screen.getByText(/23/));
-  });
-});
 
 test('selecting a date should autofill fields', async () => {
   render(<Default />);
 
   const { click } = userEvent.setup();
+
+  await waitFor(() => {
+    expect(screen.getByRole('tab', { name: /update mdt/i }));
+  });
+
   click(screen.getByRole('tab', { name: /update mdt/i }));
 
-  await waitFor(() => expect(screen.getByLabelText(/select mdt/i)));
-  await click(screen.getByLabelText(/select mdt/i));
-  await waitFor(async () => expect(screen.getByText('15')));
-  await click(screen.getByText('15'));
+  await waitFor(() => {
+    expect(screen.getByText(/update mdt/i)).toHaveAttribute('aria-selected', 'true');
+  });
 
   await waitFor(() => {
     expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
-    expect((screen.getByLabelText(/update date of mdt/i) as HTMLInputElement).value).toMatch('01/01/2022');
-    expect((screen.getByLabelText(/creator/i) as HTMLInputElement).value).toMatch(/test user/i);
+    expect((screen.getByLabelText(/Date/) as HTMLInputElement).value).toMatch('01/01/2022');
   });
 });
 
@@ -100,18 +34,20 @@ test('valid inputs should show success page', async () => {
   render(<Default />);
 
   const { click, type } = userEvent.setup();
+
+  await waitFor(() => {
+    expect(screen.getByRole('tab', { name: /update mdt/i }));
+  });
+
   click(screen.getByRole('tab', { name: /update mdt/i }));
 
-  await waitFor(() => expect(screen.getByLabelText(/select mdt/i)));
-
-  await click(screen.getByLabelText(/select mdt/i));
-  await waitFor(async () => expect(screen.getByText('15')));
-  await click(screen.getByText('15'));
+  await waitFor(() => {
+    expect(screen.getByText(/update mdt/i)).toHaveAttribute('aria-selected', 'true');
+  });
 
   await waitFor(() => {
     expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
-    expect((screen.getByLabelText(/update date of mdt/i) as HTMLInputElement).value).toMatch('01/01/2022');
-    expect((screen.getByLabelText(/creator/i) as HTMLInputElement).value).toMatch(/test user/i);
+    expect((screen.getByLabelText(/Date/) as HTMLInputElement).value).toMatch('01/01/2022');
   });
 
   await type(screen.getByLabelText(/location/i), 'new test location');
@@ -125,61 +61,21 @@ test('valid inputs should show success page', async () => {
   });
 });
 
-// DELETE MDT
-
-test('the date selector should show when clicking input element', async () => {
-  render(<Default />);
-
-  const { click } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /delete mdt/i }));
-  await waitFor(() => expect(screen.getByRole('button', { name: /delete/i })));
-
-  expect(
-    screen.getByLabelText(/select mdt/i),
-  );
-  await click(screen.getByLabelText(/select mdt/i));
-  await waitFor(() => {
-    expect(screen.getByText(/23/));
-  });
-});
-
-test('selecting a date should autofill fields', async () => {
-  render(<Default />);
-
-  const { click } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /delete mdt/i }));
-  await waitFor(() => expect(screen.getByRole('button', { name: /delete/i })));
-
-  expect(
-    screen.getByLabelText(/select mdt/i),
-  );
-  await click(screen.getByLabelText(/select mdt/i));
-  await waitFor(async () => expect(screen.getByText('15')));
-  await click(screen.getByText('15'));
-
-  await waitFor(() => {
-    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
-    expect((screen.getByLabelText(/creator/i) as HTMLInputElement).value).toMatch(/test user/i);
-  });
-});
+// delete mdt
 
 test('valid inputs should show success page', async () => {
   render(<Default />);
 
   const { click } = userEvent.setup();
-  click(screen.getByRole('tab', { name: /delete mdt/i }));
-  await waitFor(() => expect(screen.getByRole('button', { name: /delete/i })));
-
-  expect(
-    screen.getByLabelText(/select mdt/i),
-  );
-  await click(screen.getByLabelText(/select mdt/i));
-  await waitFor(async () => expect(screen.getByText('15')));
-  await click(screen.getByText('15'));
 
   await waitFor(() => {
-    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
-    expect((screen.getByLabelText(/creator/i) as HTMLInputElement).value).toMatch(/test user/i);
+    expect(screen.getByRole('tab', { name: /delete mdt/i }));
+  });
+
+  click(screen.getByRole('tab', { name: /delete mdt/i }));
+
+  await waitFor(() => {
+    expect(screen.getByText(/delete mdt/i)).toHaveAttribute('aria-selected', 'true');
   });
 
   await click(screen.getByRole('button', { name: /delete/i }));

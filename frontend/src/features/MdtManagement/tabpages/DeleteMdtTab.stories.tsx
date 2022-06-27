@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import DeleteMdtTab, { GET_MDT_QUERY, DELETE_MDT_MUTATION } from './DeleteMdtTab';
+import DeleteMdtTab, { DELETE_MDT_MUTATION } from './DeleteMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const mdt = {
@@ -19,9 +19,9 @@ const mdt = {
     firstName: 'test',
     lastName: 'user',
   },
-  createdAt: '2000-01-01T00:00:00',
-  plannedAt: '2022-01-01T00:00:00',
-  updatedAt: '2000-01-01T00:00:00',
+  createdAt: new Date('2000-01-01T00:00:00'),
+  plannedAt: new Date('2022-01-01T00:00:00'),
+  updatedAt: new Date('2000-01-01T00:00:00'),
   location: 'test location',
 };
 
@@ -61,14 +61,6 @@ export const Default: ComponentStory<typeof DeleteMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
-        query: GET_MDT_QUERY,
-        mockFn: () => Promise.resolve({
-          data: {
-            getMdt: mdt,
-          },
-        }),
-      },
-      {
         query: DELETE_MDT_MUTATION,
         mockFn: () => Promise.resolve({
           data: {
@@ -78,22 +70,14 @@ export const Default: ComponentStory<typeof DeleteMdtTab> = () => (
       }]
     }
   >
-    <DeleteMdtTab />
+    <DeleteMdtTab mdt={ mdt } successCallback={ () => ({}) } />
   </NewMockSdApolloProvider>
 );
 
-export const MdtAlreadyExists: ComponentStory<typeof DeleteMdtTab> = () => (
+export const MdtHasRelations: ComponentStory<typeof DeleteMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
-        query: GET_MDT_QUERY,
-        mockFn: () => Promise.resolve({
-          data: {
-            getMdt: mdt,
-          },
-        }),
-      },
-      {
         query: DELETE_MDT_MUTATION,
         mockFn: () => Promise.resolve({
           data: {
@@ -103,6 +87,6 @@ export const MdtAlreadyExists: ComponentStory<typeof DeleteMdtTab> = () => (
       }]
     }
   >
-    <DeleteMdtTab />
+    <DeleteMdtTab mdt={ mdt } successCallback={ () => ({}) } />
   </NewMockSdApolloProvider>
 );

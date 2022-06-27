@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import CreateMdtTab, { CREATE_MDT_MUTATION } from './CreateMdtTab';
+import CreateMdtModal, { CREATE_MDT_MUTATION } from './CreateMdtModal';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const successfulMutation = {
@@ -36,7 +36,7 @@ const errorMutation = {
 
 export default {
   title: 'Tab Pages/MDT Management/Create MDT Tab',
-  component: CreateMdtTab,
+  component: CreateMdtModal,
   decorators: [
     (Story) => {
       cache.reset();
@@ -51,9 +51,9 @@ export default {
       );
     },
   ],
-} as ComponentMeta<typeof CreateMdtTab>;
+} as ComponentMeta<typeof CreateMdtModal>;
 
-export const Default: ComponentStory<typeof CreateMdtTab> = () => (
+export const Default: ComponentStory<typeof CreateMdtModal> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
@@ -66,11 +66,14 @@ export const Default: ComponentStory<typeof CreateMdtTab> = () => (
       }]
     }
   >
-    <CreateMdtTab />
+    <CreateMdtModal
+      setShowModal={ () => ({}) }
+      showModal
+    />
   </NewMockSdApolloProvider>
 );
 
-export const MdtAlreadyExists: ComponentStory<typeof CreateMdtTab> = () => (
+export const MdtAlreadyExists: ComponentStory<typeof CreateMdtModal> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
@@ -83,6 +86,9 @@ export const MdtAlreadyExists: ComponentStory<typeof CreateMdtTab> = () => (
       }]
     }
   >
-    <CreateMdtTab />
+    <CreateMdtModal
+      setShowModal={ () => ({}) }
+      showModal
+    />
   </NewMockSdApolloProvider>
 );

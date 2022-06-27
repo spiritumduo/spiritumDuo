@@ -4,11 +4,10 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import MdtManagement from './MdtManagement';
-import { CREATE_MDT_MUTATION } from './tabpages/CreateMdtTab';
-import { GET_MDT_QUERY, UPDATE_MDT_MUTATION } from './tabpages/UpdateMdtTab';
+import MdtManagement, { GET_MDT_QUERY } from './MdtManagement';
+import { UPDATE_MDT_MUTATION } from './tabpages/UpdateMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
-import { GET_MDT_QUERY as GET_MDT_QUERY_DELETE, DELETE_MDT_MUTATION } from './tabpages/DeleteMdtTab';
+import { DELETE_MDT_MUTATION } from './tabpages/DeleteMdtTab';
 
 const mdt = {
   id: '1',
@@ -26,25 +25,6 @@ const mdt = {
   plannedAt: '2022-01-01T00:00:00',
   updatedAt: '2000-01-01T00:00:00',
   location: 'test location',
-};
-
-const successfulCreateMutation = {
-  mdt: {
-    id: '1',
-    pathway: {
-      id: '1',
-      name: 'test pathway',
-    },
-    creator: {
-      id: '1',
-      username: 'test username',
-    },
-    createdAt: '3000-01-01T00:00:00',
-    plannedAt: '3000-01-01T00:00:00',
-    updatedAt: '3000-01-01T00:00:00',
-    location: 'new test location',
-  },
-  userErrors: null,
 };
 
 const successfulUpdateMutation = {
@@ -94,14 +74,6 @@ export const Default: ComponentStory<typeof MdtManagement> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
-        query: CREATE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            createMdt: successfulCreateMutation,
-          },
-        }),
-      },
-      {
         query: GET_MDT_QUERY,
         mockFn: () => Promise.resolve({
           data: {
@@ -118,14 +90,6 @@ export const Default: ComponentStory<typeof MdtManagement> = () => (
         }),
       },
       {
-        query: GET_MDT_QUERY_DELETE,
-        mockFn: () => Promise.resolve({
-          data: {
-            getMdt: mdt,
-          },
-        }),
-      },
-      {
         query: DELETE_MDT_MUTATION,
         mockFn: () => Promise.resolve({
           data: {
@@ -138,6 +102,7 @@ export const Default: ComponentStory<typeof MdtManagement> = () => (
     <MdtManagement
       showModal
       setShowModal={ () => ({}) }
+      mdtId="42"
     />
   </NewMockSdApolloProvider>
 );
