@@ -142,19 +142,9 @@ async def CreateDecisionPoint(
                     requestInput['milestoneTypeId']
                 )
             testResultRequest = TestResultRequest_IE()
-            testResultRequest.added_at = datetime.now()
-            testResultRequest.updated_at = datetime.now()
-            testResultRequest.type_id = requestInput['milestoneTypeId']
+                testResultRequest.type_id = milestone_type.id
             testResultRequest.hospital_number = patient.hospital_number
             testResultRequest.pathway_name = pathway.name
-
-            # TODO: batch these
-            if "currentState" in requestInput:
-                testResultRequest.current_state = requestInput['currentState']
-            if "addedAt" in requestInput:
-                testResultRequest.added_at = requestInput['addedAt']
-            if "updatedAt" in requestInput:
-                testResultRequest.updated_at = requestInput['updatedAt']
 
             testResult = await trust_adapter.create_test_result(
                 testResultRequest,
@@ -166,8 +156,6 @@ async def CreateDecisionPoint(
                 decision_point_id=int(_decisionPoint.id),
                 milestone_type_id=int(testResultRequest.type_id),
                 test_result_reference_id=str(testResult.id),
-                added_at=testResultRequest.added_at,
-                updated_at=testResultRequest.updated_at
             ).create()
 
             milestone_type = await MilestoneType.get(
