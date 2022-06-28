@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import React, { useContext, useLayoutEffect, useState } from 'react';
+import React, { useContext, useLayoutEffect, useState, useEffect } from 'react';
 
 // LIBRARIES
 import { gql, useMutation, useQuery } from '@apollo/client';
@@ -12,7 +12,6 @@ import * as yup from 'yup';
 // APP
 import { AuthContext, PathwayContext } from 'app/context';
 import { DecisionPointType } from 'types/DecisionPoint';
-import Patient from 'types/Patient';
 import User from 'types/Users';
 
 // COMPONENTS
@@ -32,6 +31,7 @@ import ConfirmNoMilestones from './components/ConfirmNoMilestones';
 import PreviousTestResultsElement from './components/PreviousTestResultsElement';
 
 import './decisionpoint.css';
+import { getMdts } from './__generated__/getMdts';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -102,6 +102,7 @@ export const GET_PATIENT_QUERY = gql`
         isDischarge
         isCheckboxHidden
         isTestRequest
+        isMdt
       }
     }
 `;
@@ -128,6 +129,15 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
   }
 `;
 
+export const GET_MDTS = gql`
+  query getMdts($pathwayId: ID!){
+    getMdts(pathwayId: $pathwayId){
+      id
+      plannedAt
+    }
+  }
+`;
+
 type DecisionPointPageForm = {
   patientId: number;
   clinicianId: number;
@@ -144,11 +154,15 @@ type DecisionPointPageForm = {
     checked: boolean;
     discharge: boolean;
     isTestRequest: boolean;
+    isMdt: boolean;
   }[];
   milestoneResolutions?: {
     id: string;
     name: string;
   }[];
+  mdtSessionId: string;
+  mdtReason: string;
+  mdtSelected: boolean;
 };
 
 const DecisionPointPage = (
@@ -158,6 +172,7 @@ const DecisionPointPage = (
   // CONTEXT
   const { currentPathwayId } = useContext(PathwayContext);
   const { user: contextUser } = useContext(AuthContext);
+  const [showMdtDetails, setShowMdtDetails] = useState<boolean>(true);
   const user = contextUser as User; // context can be undefined
 
   // GET PATIENT DATA QUERY
@@ -167,6 +182,15 @@ const DecisionPointPage = (
         hospitalNumber: hospitalNumber,
         pathwayId: currentPathwayId,
         includeDischarged: true,
+      },
+    },
+  );
+
+  // GET MDTS QUERY
+  const { loading: mdtLoading, data: mdtData, error: mdtError } = useQuery<getMdts>(
+    GET_MDTS, {
+      variables: {
+        pathwayId: currentPathwayId,
       },
     },
   );
@@ -187,13 +211,25 @@ const DecisionPointPage = (
     comorbidities: yup.string().required('Comorbidities are required'),
     patientId: yup.number().required().positive().integer(),
     onPathwayId: yup.number().required().positive().integer(),
+    mdtSelected: yup.boolean(),
+    mdtSessionId: yup.number().when('mdtSelected', {
+      is: true,
+      then: yup.number().required().integer().positive('A valid entry must be selected'),
+    }),
+    mdtReason: yup.string().when('mdtSelected', {
+      is: true,
+      then: yup.string().required('A reason is required'),
+    }),
   });
+
   const {
     register,
     handleSubmit,
     formState: { errors: formErrors },
     getValues,
     control,
+    watch,
+    setValue,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
   // REQUEST CHECKBOXES
@@ -204,6 +240,20 @@ const DecisionPointPage = (
     name: 'milestoneRequests',
     control: control,
   });
+
+  useEffect(() => {
+    // Form watch using callback, monitors + yeets callback when any value in form changes
+    const sub = watch((value) => {
+      const filteredOptions = value?.milestoneRequests?.filter((mRQ) => mRQ?.checked && mRQ?.isMdt);
+      const isMdtChecked = (filteredOptions && filteredOptions.length > 0) || false;
+      setShowMdtDetails(isMdtChecked);
+    });
+    return () => sub.unsubscribe();
+  }, [watch]);
+
+  useEffect(() => {
+    setValue('mdtSelected', showMdtDetails);
+  }, [setShowMdtDetails, setValue, showMdtDetails]);
 
   const [hasBuiltCheckboxes, updateHasBuiltCheckboxes] = useState<boolean>(false);
 
@@ -220,6 +270,7 @@ const DecisionPointPage = (
               checked: false,
               discharge: milestoneType.isDischarge,
               isTestRequest: milestoneType.isTestRequest,
+              isMdt: milestoneType.isMdt,
             }
             : []
         ))
@@ -294,6 +345,13 @@ const DecisionPointPage = (
     if (!confirmNoRequests && !isConfirmed) {
       setRequestConfirmation(milestoneRequests.length);
     } else {
+      let addPatientToMdt = null;
+      if (values.mdtSelected) {
+        addPatientToMdt = {
+          id: values.mdtSessionId,
+          referralReason: values.mdtReason,
+        };
+      }
       const variables: createDecisionPointVariables = {
         input: {
           onPathwayId: values.onPathwayId,
@@ -302,6 +360,7 @@ const DecisionPointPage = (
           decisionType: values.decisionType,
           milestoneRequests: milestoneRequests,
           milestoneResolutions: values.milestoneResolutions?.map((mr) => mr.id),
+          mdt: addPatientToMdt,
         },
       };
       mutation({ variables: variables });
@@ -384,7 +443,7 @@ const DecisionPointPage = (
   });
 
   return (
-    <LoadingSpinner loading={ loading }>
+    <LoadingSpinner loading={ loading || mdtLoading }>
       <Container fluid>
         <ErrorSummary className="sd-dp-errormessage" aria-labelledby="error-summary-title" role="alert" hidden={ onPathwayLock === undefined }>
           <ErrorSummary.Title id="error-summary-title">
@@ -496,6 +555,48 @@ const DecisionPointPage = (
           </Fieldset>
           <p>{ mutateLoading ? 'Submitting...' : '' }</p>
           { mutateError ? <ErrorMessage> {mutateError?.message} </ErrorMessage> : false }
+          {
+            showMdtDetails
+              ? (
+                <div className="row">
+                  <hr />
+                  { mdtError ? <ErrorMessage> {mdtError?.message} </ErrorMessage> : false }
+                  {
+                    formErrors.mdtSessionId
+                      ? <ErrorMessage> {formErrors.mdtSessionId?.message} </ErrorMessage>
+                      : false
+                  }
+                  {
+                    formErrors.mdtReason
+                      ? <ErrorMessage> {formErrors.mdtReason?.message} </ErrorMessage>
+                      : false
+                  }
+                  <div className="col-12 col-md-5 d-inline-block">
+                    <Select label="MDT session" className="w-100" { ...register('mdtSessionId') }>
+                      <option value="-1">Select MDT</option>
+                      {
+                        mdtData?.getMdts.map((mdt) => (
+                          mdt
+                            ? (
+                              <option
+                                key={ mdt.id }
+                                value={ mdt.id }
+                              >
+                                { mdt.plannedAt }
+                              </option>
+                            )
+                            : ''
+                        ))
+                      }
+                    </Select>
+                  </div>
+                  <div className="col-12 col-md-5 offset-md-2 d-inline-block">
+                    <Textarea label="Referral reason" { ...register('mdtReason') } />
+                  </div>
+                </div>
+              )
+              : ''
+          }
           <div>
             <Button
               type="submit"
