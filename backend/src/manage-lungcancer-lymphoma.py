@@ -13,7 +13,10 @@ from models import (
     Role,
     RolePermission, UserRole,
     PathwayMilestoneType,
-    UserPathway
+    UserPathway,
+    MDT,
+    OnMdt,
+    UserMDT
 )
 from containers import SDContainer
 from asyncpg.exceptions import UndefinedTableError
@@ -27,7 +30,6 @@ from itsdangerous import TimestampSigner
 from trustadapter.trustadapter import (
     Patient_IE,
     TestResult_IE,
-    TestResultRequest_IE,
     TestResultRequestImmediately_IE,
     TrustIntegrationCommunicationError,
     PseudoTrustAdapter
@@ -86,6 +88,24 @@ async def clear_existing_data():
     )
 
     print("Clearing existing data from local database")
+
+    try:
+        await OnMdt.delete.gino.status()
+        print("Table `OnMdt` deleted")
+    except UndefinedTableError:
+        print("Table `OnMdt` not found. Continuing")
+
+    try:
+        await UserMDT.delete.gino.status()
+        print("Table `UserMDT` deleted")
+    except UndefinedTableError:
+        print("Table `UserMDT` not found. Continuing")
+
+    try:
+        await MDT.delete.gino.status()
+        print("Table `MDT` deleted")
+    except UndefinedTableError:
+        print("Table `MDT` not found. Continuing")
 
     try:
         await UserRole.delete.gino.status()
