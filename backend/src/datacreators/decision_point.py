@@ -3,7 +3,8 @@ from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
     MilestoneTypeLoaderByPathwayId,
-    PathwayByIdLoader
+    PathwayByIdLoader,
+    MilestoneTypeLoader
 )
 from models import (
     DecisionPoint,
@@ -11,7 +12,9 @@ from models import (
     OnPathway,
     MilestoneType,
     Patient,
-    UserPathway
+    UserPathway,
+    OnMdt,
+    MDT
 )
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -41,6 +44,15 @@ class MilestoneTypeIdNotOnPathway(Exception):
     """
 
 
+class DecisionPointMdtMismatchException(Exception):
+    """
+    This is raised when an MDT is added using the `createDecisionPoint`
+    mutation, however the MDT specified is not on the same pathway
+    as the decision point's OnPathway object. If this is triggered, it
+    could indicate tampering.
+    """
+
+
 @inject
 async def CreateDecisionPoint(
     context: dict = None,
@@ -52,6 +64,7 @@ async def CreateDecisionPoint(
     added_at: datetime = None,
     milestone_resolutions: List[int] = None,
     milestone_requests: List[Dict[str, int]] = None,
+    mdt: Dict[str, str] = None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     """
@@ -109,6 +122,20 @@ async def CreateDecisionPoint(
     if on_pathway.lock_user_id != clinician_id:
         raise UserDoesNotOwnLock()
 
+    if mdt:
+        mdt_obj: MDT = await MDT.get(int(mdt['id']))
+
+        if mdt_obj.pathway_id != on_pathway.pathway_id:
+            raise DecisionPointMdtMismatchException()
+
+        # TODO: check if pt already has onmdt
+
+        await OnMdt.create(
+            mdt_id=mdt_obj.id,
+            patient_id=on_pathway.patient_id,
+            user_id=context['request']['user'].id
+        )
+
     decision_point_details = {
         "on_pathway_id": on_pathway_id,
         "clinician_id": clinician_id,
@@ -127,6 +154,7 @@ async def CreateDecisionPoint(
         context=context,
         id=int(on_pathway.patient_id)
     )
+
     if milestone_requests is not None:
         pathwayId: int = on_pathway.pathway_id
 
@@ -136,36 +164,38 @@ async def CreateDecisionPoint(
         validMilestoneTypeIds = [str(mT.id) for mT in validMilestoneTypes]
 
         for requestInput in milestone_requests:
-            if str(requestInput['milestoneTypeId']) not\
-                    in validMilestoneTypeIds:
-                raise MilestoneTypeIdNotOnPathway(
-                    requestInput['milestoneTypeId']
-                )
-            testResultRequest = TestResultRequest_IE()
+            milestone_type: MilestoneType = await MilestoneTypeLoader.load_from_id(
+                context, str(requestInput['milestoneTypeId']))
+
+            if str(milestone_type.id) not in validMilestoneTypeIds:
+                raise MilestoneTypeIdNotOnPathway(milestone_type.id)
+
+            if not milestone_type.is_mdt:
+                testResultRequest = TestResultRequest_IE()
                 testResultRequest.type_id = milestone_type.id
-            testResultRequest.hospital_number = patient.hospital_number
-            testResultRequest.pathway_name = pathway.name
+                testResultRequest.hospital_number = patient.hospital_number
+                testResultRequest.pathway_name = pathway.name
 
-            testResult = await trust_adapter.create_test_result(
-                testResultRequest,
-                auth_token=context['request'].cookies['SDSESSION']
-            )
+                testResult = await trust_adapter.create_test_result(
+                    testResultRequest,
+                    auth_token=context['request'].cookies['SDSESSION']
+                )
 
-            await Milestone(
-                on_pathway_id=int(_decisionPoint.on_pathway_id),
-                decision_point_id=int(_decisionPoint.id),
-                milestone_type_id=int(testResultRequest.type_id),
-                test_result_reference_id=str(testResult.id),
-            ).create()
+                await Milestone(
+                    on_pathway_id=int(_decisionPoint.on_pathway_id),
+                    decision_point_id=int(_decisionPoint.id),
+                    milestone_type_id=int(testResultRequest.type_id),
+                    test_result_reference_id=str(testResult.id),
+                ).create()
 
-            milestone_type = await MilestoneType.get(
-                int(testResultRequest.type_id)
-            )
-            if milestone_type.is_discharge:
-                await OnPathway.update\
-                    .where(OnPathway.id == on_pathway_id)\
-                    .values(is_discharged=True)\
-                    .gino.scalar()
+                milestone_type = await MilestoneType.get(
+                    int(testResultRequest.type_id)
+                )
+                if milestone_type.is_discharge:
+                    await OnPathway.update\
+                        .where(OnPathway.id == on_pathway_id)\
+                        .values(is_discharged=True)\
+                        .gino.scalar()
 
     if milestone_resolutions is not None:
         for milestoneId in milestone_resolutions:

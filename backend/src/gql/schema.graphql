@@ -399,6 +399,11 @@ input MilestoneTypeInput{
     id: ID!
 }
 
+input AddPatientToMdtInput{
+    id: ID!
+    referralReason: String!
+}
+
 input DecisionPointInput{
     onPathwayId: ID!
     decisionType: DecisionType!
@@ -406,6 +411,7 @@ input DecisionPointInput{
     comorbidities: String
     milestoneRequests: [MilestoneRequestInput!]
     milestoneResolutions: [ID!]
+    mdt: AddPatientToMdtInput
 }
 input LockOnPathwayInput{
     onPathwayId: ID!
