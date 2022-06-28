@@ -50,6 +50,7 @@ async function renderWithTestMocks() {
     Default.parameters?.patientMock,
     DecisionPointsStory.parameters?.createDecisionMock,
     DecisionPointsStory.parameters?.getPatientMock,
+    DecisionPointsStory.parameters?.getMdtsMock,
     PreviousDecisionPointsStory.parameters?.getPatientMock,
   ];
 

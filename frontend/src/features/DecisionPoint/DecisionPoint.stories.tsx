@@ -7,7 +7,14 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { cache } from 'app/cache';
-import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY } from './DecisionPoint';
+import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, GET_MDTS } from './DecisionPoint';
+
+const mdts = [
+  {
+    id: '1',
+    plannedAt: '3000-01-01T00:12:00',
+  },
+];
 
 const patientHospitalNumber = 'fMRN1234567';
 const milestoneTypes = [
@@ -17,6 +24,7 @@ const milestoneTypes = [
     isDischarge: false,
     isCheckboxHidden: false,
     isTestRequest: true,
+    isMdt: false,
   },
   {
     id: '2',
@@ -24,6 +32,7 @@ const milestoneTypes = [
     isDischarge: false,
     isCheckboxHidden: false,
     isTestRequest: true,
+    isMdt: false,
   },
   {
     id: '3',
@@ -31,6 +40,7 @@ const milestoneTypes = [
     isDischarge: false,
     isCheckboxHidden: false,
     isTestRequest: false,
+    isMdt: false,
   },
   {
     id: '4',
@@ -38,6 +48,7 @@ const milestoneTypes = [
     isDischarge: false,
     isCheckboxHidden: false,
     isTestRequest: false,
+    isMdt: false,
   },
   {
     id: '5',
@@ -45,6 +56,15 @@ const milestoneTypes = [
     isDischarge: false,
     isCheckboxHidden: false,
     isTestRequest: true,
+    isMdt: false,
+  },
+  {
+    id: '6',
+    name: 'Add to MDT',
+    isMdt: true,
+    isDischarge: false,
+    isCheckboxHidden: false,
+    isTestRequest: false,
   },
 ];
 
@@ -230,9 +250,19 @@ const GET_PATIENT_MOCK = {
   }),
 };
 
+const GET_MDTS_MOCK = {
+  query: GET_MDTS,
+  mockFn: () => Promise.resolve({
+    data: {
+      getMdts: mdts,
+    },
+  }),
+};
+
 const apolloMocks = [
   CREATE_DECISION_MOCK,
   GET_PATIENT_MOCK,
+  GET_MDTS_MOCK,
 ];
 
 export default {
@@ -271,6 +301,7 @@ Default.parameters = {
   createDecisionMock: CREATE_DECISION_MOCK,
   getPatientMock: GET_PATIENT_MOCK,
   clinician: clinician,
+  getMdtsMock: GET_MDTS_MOCK,
 };
 
 Locked.args = {

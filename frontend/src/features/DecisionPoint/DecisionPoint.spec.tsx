@@ -2,7 +2,7 @@ import React from 'react';
 import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
-import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
+import userEvent from '@testing-library/user-event';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);
@@ -77,4 +77,30 @@ describe('When page loads', () => {
       expect(screen.getByRole('option', { name: new RegExp(`${clinician.firstName} ${clinician.lastName}`, 'i') }));
     });
   });
+
+  /*
+    I think this needs some kind of snapshot testing, I can't get the checkbox to click on it.
+    I can get the checkbox label, but because RHF sets the name as
+    {milestoneRequest.1.checked} or whatever get by name doesn't work.
+  */
+
+  // it('Clicking `Add to MDT` should show dropdown and textarea', async () => {
+  //   await renderDefault();
+
+  //   const { click } = userEvent.setup();
+
+  //   await waitFor(() => {
+  //     expect(screen.getByText('Add to MDT')).toBeInTheDocument();
+  //   });
+
+  //   expect(screen.queryByText(/mdt session/i)).not.toBeInTheDocument();
+  //   expect(screen.queryByText(/referral reason/i)).not.toBeInTheDocument();
+
+  //   await click(screen.getByRole('checkbox', { name: /add\s+to\s+mdt/i }));
+
+  //   await waitFor(() => {
+  //     expect(screen.getByLabelText(/mdt session/i)).toBeInTheDocument();
+  //     expect(screen.getByLabelText(/referral reason/i)).toBeInTheDocument();
+  //   });
+  // });
 });

@@ -100,6 +100,7 @@ export const Default: ComponentStory<typeof ModalPatient> = () => (
         ...PatientPathwayDefault.parameters?.mocks,
         DecisionPointsStory.parameters?.createDecisionMock,
         DecisionPointsStory.parameters?.getPatientMock,
+        DecisionPointsStory.parameters?.getMdtsMock,
         PreviousDecisionPointsStory.parameters?.getPatientMock,
       ]
     }
@@ -130,6 +131,7 @@ export const LockedByOtherUser: ComponentStory<typeof ModalPatient> = () => (
         patientMock,
         DecisionPointsStory.parameters?.getPatientMock,
         PreviousDecisionPointsStory.parameters?.getPatientMock,
+        DecisionPointsStory.parameters?.getMdtsMock,
       ]
     }
   >
