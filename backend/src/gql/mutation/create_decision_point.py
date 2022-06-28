@@ -29,6 +29,10 @@ async def resolve_create_decision(
     if "milestoneRequests" in input:
         decision_point_details['milestone_requests'] = \
             input['milestoneRequests']
+    if "mdt" in input:
+        decision_point_details['mdt'] = input['mdt']
+
+    on_pathway: OnPathway = await OnPathway.get(int(input['onPathwayId']))
 
     decision_point: DecisionPoint = await CreateDecisionPoint(
         **decision_point_details
@@ -36,7 +40,7 @@ async def resolve_create_decision(
 
     await pub.publish(
         'on-pathway-updated',
-        await OnPathway.get(int(input["onPathwayId"]))
+        on_pathway
     )
 
     return decision_point

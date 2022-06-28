@@ -236,6 +236,12 @@ async def insert_demo_data():
             name="CT chest",
             ref_name="Computed tomography of chest (procedure)",
             is_test_request=True
+        ),
+        "mdt": await MilestoneType.create(
+            name="Refer to MDT",
+            ref_name="Multidisciplinary meeting (procedure)",
+            is_test_request=False,
+            is_mdt=True
         )
     }
 
@@ -270,16 +276,12 @@ async def insert_demo_data():
         await MilestoneType.create(
             name="Refer to palliation",
             ref_name="ref Palliation",
-            is_discharge=True
+            is_discharge=Tru
         ),
         await MilestoneType.create(
             name="Discharge",
             ref_name="ref Discharge",
             is_discharge=True
-        ),
-        await MilestoneType.create(
-            name="Add to MDT",
-            ref_name="Assessment by multidisciplinary team (procedure)"
         ),
         await MilestoneType.create(
             name="Book clinic appointment",

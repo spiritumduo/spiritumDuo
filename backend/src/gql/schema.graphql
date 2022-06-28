@@ -330,6 +330,7 @@ type MilestoneType {
     isDischarge: Boolean!
     isCheckboxHidden: Boolean!
     isTestRequest: Boolean!
+    isMdt: Boolean!
     pathways: [Pathway!]
 }
 
