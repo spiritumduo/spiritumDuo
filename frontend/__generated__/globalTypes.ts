@@ -37,6 +37,11 @@ export enum Sex {
   OTHER = "OTHER",
 }
 
+export interface AddPatientToMdtInput {
+  id: string;
+  referralReason: string;
+}
+
 export interface DecisionPointInput {
   onPathwayId: string;
   decisionType: DecisionType;
@@ -44,6 +49,7 @@ export interface DecisionPointInput {
   comorbidities?: string | null;
   milestoneRequests?: MilestoneRequestInput[] | null;
   milestoneResolutions?: string[] | null;
+  mdt?: AddPatientToMdtInput | null;
 }
 
 export interface FeedbackInput {
