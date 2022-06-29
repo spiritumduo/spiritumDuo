@@ -8,16 +8,16 @@ import '../components/patientlist.css';
 import { gql, useQuery } from '@apollo/client';
 import edgesToNodes from 'app/pagination';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
-import { getPatientsOnMdtConnectionQuery } from './__generated__/getPatientsOnMdtConnectionQuery';
+import { getOnMdtConnectionQuery } from './__generated__/getOnMdtConnectionQuery';
 
-export const GET_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
-  query getPatientsOnMdtConnectionQuery(
+export const GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
+  query getOnMdtConnectionQuery(
     $first: Int, $after: String, $id: ID!
   ) {
-    getPatientsOnMdtConnection(
-      first: $first, after: $after, id: $id
+    getOnMdtConnection(
+      first: $first, after: $after, mdtId: $id
     ) @connection(
-        key: "getPatientsOnMdtConnection",
+        key: "getOnMdtConnection",
         filter: ["id"]
         )
       {
@@ -30,21 +30,25 @@ export const GET_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
         cursor
         node {
           id
-          firstName
-          lastName
-          hospitalNumber
-          nationalNumber
-          dateOfBirth
+          reason
+          patient{
+              id
+              firstName
+              lastName
+              hospitalNumber
+              nationalNumber
+              dateOfBirth
+            }
         }
       }
     }
   }
 `;
 
-const useGetPatientsOnMdtConnection = (
+const useGetOnMdtConnectionQuery = (
   id: string, first: number, after?: string,
-) => useQuery<getPatientsOnMdtConnectionQuery>(
-  GET_PATIENTS_ON_MDT_CONNECTION_QUERY, {
+) => useQuery<getOnMdtConnectionQuery>(
+  GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY, {
     variables: {
       id: id,
       first: first,
@@ -67,28 +71,29 @@ const MDTPage = (): JSX.Element => {
     error,
     data,
     fetchMore,
-  } = useGetPatientsOnMdtConnection(mdtId || '0', 10);
+  } = useGetOnMdtConnectionQuery(mdtId || '0', 10);
 
-  const { nodes, pageCount, pageInfo } = edgesToNodes<getPatientsOnMdtConnectionQuery['getPatientsOnMdtConnection']['edges'][0]['node']>(
-    data?.getPatientsOnMdtConnection, currentPage, 10,
+  const { nodes, pageCount, pageInfo } = edgesToNodes<getOnMdtConnectionQuery['getOnMdtConnection']['edges'][0]['node']>(
+    data?.getOnMdtConnection, currentPage, 10,
   );
 
   let tableElements: {
     id: string; firstName: string; lastName: string;
     hospitalNumber: string; nationalNumber: string;
-    dateOfBirth: Date;
+    dateOfBirth: Date; mdtReason: string;
   }[] = [];
 
   if (nodes) {
     tableElements = nodes.flatMap((node) => {
       if (!node) return [];
       return {
-        id: node.id,
-        firstName: node.firstName,
-        lastName: node.lastName,
-        hospitalNumber: node.hospitalNumber,
-        nationalNumber: node.nationalNumber,
-        dateOfBirth: node.dateOfBirth,
+        id: node.patient.id,
+        firstName: node.patient.firstName,
+        lastName: node.patient.lastName,
+        hospitalNumber: node.patient.hospitalNumber,
+        nationalNumber: node.patient.nationalNumber,
+        dateOfBirth: node.patient.dateOfBirth,
+        mdtReason: node.reason,
       };
     });
   }
@@ -112,6 +117,7 @@ const MDTPage = (): JSX.Element => {
               <Table.Cell>Patient number</Table.Cell>
               <Table.Cell>National number</Table.Cell>
               <Table.Cell>Date of birth</Table.Cell>
+              <Table.Cell>Reason added</Table.Cell>
             </Table.Row>
           </Table.Head>
           <Table.Body>
@@ -122,6 +128,7 @@ const MDTPage = (): JSX.Element => {
                   <Table.Cell>{element.hospitalNumber}</Table.Cell>
                   <Table.Cell>{element.nationalNumber}</Table.Cell>
                   <Table.Cell>{new Date(element.dateOfBirth).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell>{element.mdtReason}</Table.Cell>
                 </Table.Row>
               ))
             }
