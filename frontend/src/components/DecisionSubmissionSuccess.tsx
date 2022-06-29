@@ -10,10 +10,11 @@ export interface DecisionSubmissionSuccessProps {
     name: string;
   }[];
   milestoneResolutions?: string[];
+  onClose: (() => void);
 }
 
 const DecisionSubmissionSuccess = (
-  { milestones, milestoneResolutions }: DecisionSubmissionSuccessProps,
+  { milestones, milestoneResolutions, onClose }: DecisionSubmissionSuccessProps,
 ): JSX.Element => {
   const milestonesElement: JSX.Element[] | undefined = milestones?.map(
     (m) => (<li key={ m.id }>{m.name}</li>),
@@ -63,7 +64,7 @@ const DecisionSubmissionSuccess = (
               receive confirmation of any requests shortly.
             </p>
           </div>
-          <Button className="float-end mt-lg-4" href="/app/">
+          <Button className="float-end mt-lg-4" onClick={ () => onClose() }>
             OK
           </Button>
         </div>
