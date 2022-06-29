@@ -15,7 +15,6 @@ import { Button, Container, ErrorSummary } from 'nhsuk-react-components';
 
 import './App.css';
 import MDTListPage from 'pages/MDTList';
-import MDTPatientPage from 'pages/MDTPatient';
 import MDTPage from 'pages/MDT';
 
 const LoggedInRoutes = () => (
@@ -45,10 +44,6 @@ const LoggedInRoutes = () => (
         <Route
           path="/mdt/:mdtId"
           element={ <MDTPage /> }
-        />
-        <Route
-          path="/mdt/:mdtId/:patientId"
-          element={ <MDTPatientPage /> }
         />
       </Routes>
     </RequirePathways>
