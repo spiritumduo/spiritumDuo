@@ -56,13 +56,13 @@ type Query {
         pathwayId: ID!
     ): MdtConnection!,
 
-    getPatientsOnMdtConnection(
+    getOnMdtConnection(
         first: Int
         after: String
         last: Int
         before: String
-        id: ID!
-    ): PatientsOnMdtConnection!,
+        mdtId: ID!
+    ): OnMdtConnection!,
 
     patientSearch(query: String!, pathwayId: ID!): [Patient!]!
 }
@@ -248,10 +248,15 @@ type MdtConnection {
     edges: [MdtEdge!]!
 }
 
-type PatientsOnMdtConnection {
+type OnMdtEdge {
+    node: OnMdt!
+    cursor: String!
+}
+
+type OnMdtConnection {
     totalCount: Int!
     pageInfo: PageInfo!
-    edges: [PatientEdge!]!
+    edges: [OnMdtEdge!]!
 }
 
 type Group {
@@ -266,6 +271,7 @@ type OnMdt{
     mdt: MDT!
     clinician: User!
     addedAt: Date!
+    reason: String!
 }
 
 type OnPathway {
