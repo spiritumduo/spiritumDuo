@@ -707,7 +707,7 @@
             "deprecationReason": null
           },
           {
-            "name": "getPatientsOnMdtConnection",
+            "name": "getOnMdtConnection",
             "description": null,
             "args": [
               {
@@ -759,7 +759,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "id",
+                "name": "mdtId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -780,7 +780,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PatientsOnMdtConnection",
+                "name": "OnMdtConnection",
                 "ofType": null
               }
             },
@@ -2882,7 +2882,51 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PatientsOnMdtConnection",
+        "name": "OnMdtEdge",
+        "description": null,
+        "specifiedByUrl": null,
+        "fields": [
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "OnMdt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "OnMdtConnection",
         "description": null,
         "specifiedByUrl": null,
         "fields": [
@@ -2933,7 +2977,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PatientEdge",
+                    "name": "OnMdtEdge",
                     "ofType": null
                   }
                 }
@@ -3088,6 +3132,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Date",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "reason",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
