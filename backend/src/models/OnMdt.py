@@ -34,3 +34,6 @@ class OnMdt(db.Model):
         db.DateTime(),
         server_default=func.now(),
         nullable=False)
+    reason = db.Column(
+        db.String(),
+        nullable=False)
