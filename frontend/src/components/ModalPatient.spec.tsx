@@ -140,18 +140,6 @@ describe('When page loads and user gets the lock', () => {
       expect(screen.getByText(
         new RegExp(`${patient.firstName} ${patient.lastName}, ${patient.hospitalNumber}, ${patient.nationalNumber}, ${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
       )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.hospitalNumber}`, 'i'),
-      // )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.nationalNumber}`, 'i'),
-      // )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
-      // )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.sex}`, 'i'),
-      // )).toBeInTheDocument();
     });
   });
 
@@ -293,7 +281,7 @@ describe('When page loads and a user submits a decision without milestones', () 
 });
 
 async function renderDefaultWithMilestones() {
-  const { click, keyboard } = userEvent.setup();
+  const { click, keyboard, selectOptions } = userEvent.setup();
   jest.useFakeTimers();
   act(() => {
     render(<Default />);
@@ -312,24 +300,56 @@ async function renderDefaultWithMilestones() {
     click(screen.getByLabelText('Co-morbidities'));
     keyboard('{Control>}A{/Control}New Comorbidities');
   });
+
   jest.useRealTimers();
 }
 
 describe('When page loads and a user submits a decision with milestones', () => {
   it('Should ask for confirmation', async () => {
-    const { click } = userEvent.setup();
+    const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    requestCheckboxes.forEach(async (cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/referral reason/i));
+    });
+
+    await click(screen.getByLabelText(/referral reason/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
+
+    await waitFor(() => {
+      expect(screen.getByText(/submit these requests\?/i)).toBeInTheDocument();
+    });
   });
 
   it('Should succeed when user confirms submission', async () => {
-    const { click } = userEvent.setup();
+    const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/referral reason/i));
+    });
+
+    await click(screen.getByLabelText(/referral reason/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     await waitFor(() => click(screen.getByRole('button', { name: 'OK' })));
@@ -337,10 +357,24 @@ describe('When page loads and a user submits a decision with milestones', () => 
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    const { click } = userEvent.setup();
+    const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/referral reason/i));
+    });
+
+    await click(screen.getByLabelText(/referral reason/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
@@ -348,10 +382,24 @@ describe('When page loads and a user submits a decision with milestones', () => 
   });
 
   it('Should disable tabs', async () => {
-    const { click } = userEvent.setup();
+    const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/referral reason/i));
+    });
+
+    await click(screen.getByLabelText(/referral reason/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
@@ -359,10 +407,24 @@ describe('When page loads and a user submits a decision with milestones', () => 
   });
 
   it('Should re-enable the tabs when the user cancels', async () => {
-    const { click } = userEvent.setup();
+    const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/referral reason/i));
+    });
+
+    await click(screen.getByLabelText(/referral reason/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));

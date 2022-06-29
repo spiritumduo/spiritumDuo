@@ -78,29 +78,23 @@ describe('When page loads', () => {
     });
   });
 
-  /*
-    I think this needs some kind of snapshot testing, I can't get the checkbox to click on it.
-    I can get the checkbox label, but because RHF sets the name as
-    {milestoneRequest.1.checked} or whatever get by name doesn't work.
-  */
+  it('Clicking `Add to MDT` should show dropdown and textarea', async () => {
+    await renderDefault();
 
-  // it('Clicking `Add to MDT` should show dropdown and textarea', async () => {
-  //   await renderDefault();
+    const { click } = userEvent.setup();
 
-  //   const { click } = userEvent.setup();
+    expect(screen.queryByText(/mdt session/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/referral reason/i)).not.toBeInTheDocument();
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Add to MDT')).toBeInTheDocument();
-  //   });
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
 
-  //   expect(screen.queryByText(/mdt session/i)).not.toBeInTheDocument();
-  //   expect(screen.queryByText(/referral reason/i)).not.toBeInTheDocument();
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
 
-  //   await click(screen.getByRole('checkbox', { name: /add\s+to\s+mdt/i }));
-
-  //   await waitFor(() => {
-  //     expect(screen.getByLabelText(/mdt session/i)).toBeInTheDocument();
-  //     expect(screen.getByLabelText(/referral reason/i)).toBeInTheDocument();
-  //   });
-  // });
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/referral reason/i)).toBeInTheDocument();
+    });
+  });
 });
