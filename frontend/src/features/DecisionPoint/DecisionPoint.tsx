@@ -174,7 +174,7 @@ const DecisionPointPage = (
   const { user: contextUser } = useContext(AuthContext);
   const [showMdtDetails, setShowMdtDetails] = useState<boolean>(true);
   const user = contextUser as User; // context can be undefined
-
+  const [showServerConfirmation, setShowServerConfirmation] = useState<boolean>(false);
   // GET PATIENT DATA QUERY
   const { loading, data, error } = useQuery<GetPatient>(
     GET_PATIENT_QUERY, {
@@ -203,7 +203,6 @@ const DecisionPointPage = (
   const isSubmitted = mutateData?.createDecisionPoint?.decisionPoint?.id !== undefined;
 
   // FORM HOOK & VALIDATION
-  const [confirmNoRequests, setConfirmNoRequests] = useState<boolean>(false);
   const [requestConfirmation, setRequestConfirmation] = useState<number | boolean>(false);
   const newDecisionPointSchema = yup.object({
     decisionType: yup.mixed().oneOf([Object.keys(DecisionPointType)]).required(),
@@ -314,22 +313,6 @@ const DecisionPointPage = (
     return <h1>Patient not on this pathway!</h1>;
   }
 
-  if (isSubmitted) {
-    const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
-      id: ms.id,
-      name: ms.milestoneType.name,
-      isDischarge: ms.milestoneType.isDischarge,
-    }));
-    return _milestones?.find((ms) => ms.isDischarge)
-      ? <PathwayComplete />
-      : (
-        <DecisionSubmissionSuccess
-          milestones={ _milestones }
-          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-        />
-      );
-  }
-
   // FORM SUBMISSION
   const onSubmitFn = (
     mutation: typeof createDecision, values: DecisionPointPageForm, isConfirmed = false,
@@ -342,7 +325,7 @@ const DecisionPointPage = (
       milestoneTypeId: m.checked as unknown as string,
     }));
 
-    if (!confirmNoRequests && !isConfirmed) {
+    if (!isConfirmed) {
       setRequestConfirmation(milestoneRequests.length);
     } else {
       let addPatientToMdt = null;
@@ -366,44 +349,59 @@ const DecisionPointPage = (
       mutation({ variables: variables });
     }
   };
-
-  // CONFIRM SUBMISSION DIALOGUES
-  if (requestConfirmation !== false) {
-    // NO REQUESTS SELECTED
-    if (requestConfirmation === 0 || requestConfirmation === true) {
+  if (requestConfirmation !== null) {
+    if (requestConfirmation === true || requestConfirmation === 0) {
       return (
         <ConfirmNoMilestones
-          confirmFn={ () => setConfirmNoRequests(true) }
+          confirmFn={ () => setRequestConfirmation(false) }
           cancelFn={ () => {
             setRequestConfirmation(false);
           } }
           submitFn={ () => {
-            setConfirmNoRequests(true);
             onSubmitFn(createDecision, getValues(), true);
+            setRequestConfirmation(false);
+            setShowServerConfirmation(true);
           } }
           milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
         />
       );
     }
-    // REQUESTS SELECTED
-    const milestones = getValues()
-      .milestoneRequests
-      .filter((m) => m.checked)
-      .map((m) => ({ id: m.milestoneTypeId, name: m.name }));
-    return (
-      <DecisionSubmissionConfirmation
-        cancelCallback={ () => {
-          setRequestConfirmation(false);
-        } }
-        okCallback={ () => {
-          setConfirmNoRequests(true);
-          onSubmitFn(createDecision, getValues(), true);
-        } }
-        milestones={ milestones }
-        milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-      />
-    );
+    if (requestConfirmation > 0) {
+      const milestones = getValues()?.milestoneRequests?.filter(
+        (m) => m.checked,
+      ).map((m) => ({ id: m.milestoneTypeId, name: m.name }));
+      return (
+        <DecisionSubmissionConfirmation
+          cancelCallback={ () => {
+            setRequestConfirmation(false);
+          } }
+          okCallback={ () => {
+            onSubmitFn(createDecision, getValues(), true);
+            setRequestConfirmation(false);
+            setShowServerConfirmation(true);
+          } }
+          milestones={ milestones }
+          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+        />
+      );
+    }
   }
+  if (showServerConfirmation && !mutateData?.createDecisionPoint?.userErrors) {
+    const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
+      id: ms.id,
+      name: ms.milestoneType.name,
+      isDischarge: ms.milestoneType.isDischarge,
+    }));
+    return _milestones?.find((ms) => ms.isDischarge)
+      ? <PathwayComplete />
+      : (
+        <DecisionSubmissionSuccess
+          milestones={ _milestones }
+          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+          onClose={ () => setShowServerConfirmation(false) }
+        />
+      );
+  } if (showServerConfirmation) setShowServerConfirmation(false);
 
   // IF PATIENT HAS PRIOR DECISION
   const previousDecisionPoint = data?.getPatient?.onPathways?.[0]?.decisionPoints
@@ -450,6 +448,13 @@ const DecisionPointPage = (
             This patient is locked by { `${onPathwayLock?.lockUser.firstName} ${onPathwayLock?.lockUser.lastName}` }
           </ErrorSummary.Title>
         </ErrorSummary>
+        {
+          mutateData?.createDecisionPoint?.userErrors
+            ? mutateData?.createDecisionPoint?.userErrors?.map(
+              (uE) => <ErrorMessage key={ uE.field }> {uE.message} </ErrorMessage>,
+            )
+            : ''
+        }
         <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
           <input type="hidden" value={ data?.getPatient?.id } { ...register('patientId', { required: true }) } />
           <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
