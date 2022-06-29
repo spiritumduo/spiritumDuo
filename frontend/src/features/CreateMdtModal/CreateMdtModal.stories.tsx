@@ -34,6 +34,15 @@ const errorMutation = {
   }],
 };
 
+const successfulCreateMock = {
+  query: CREATE_MDT_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      createMdt: successfulMutation,
+    },
+  }),
+}
+
 export default {
   title: 'Tab Pages/MDT Management/Create MDT Tab',
   component: CreateMdtModal,
@@ -56,14 +65,7 @@ export default {
 export const Default: ComponentStory<typeof CreateMdtModal> = () => (
   <NewMockSdApolloProvider
     mocks={
-      [{
-        query: CREATE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            createMdt: successfulMutation,
-          },
-        }),
-      }]
+      [successfulCreateMock]
     }
   >
     <CreateMdtModal
@@ -72,6 +74,10 @@ export const Default: ComponentStory<typeof CreateMdtModal> = () => (
     />
   </NewMockSdApolloProvider>
 );
+
+Default.parameters = {
+  mocks: [successfulCreateMock],
+};
 
 export const MdtAlreadyExists: ComponentStory<typeof CreateMdtModal> = () => (
   <NewMockSdApolloProvider

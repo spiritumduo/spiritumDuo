@@ -58,6 +58,43 @@ const successfulDeleteMutation = {
   userErrors: null,
 };
 
+const mocks = [{
+  query: GET_MDT_QUERY,
+  mockFn: () => Promise.resolve({
+    data: {
+      getMdt: mdt,
+    },
+  }),
+},
+{
+  query: UPDATE_MDT_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      updateMdt: successfulUpdateMutation,
+    },
+  }),
+},
+{
+  query: DELETE_MDT_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      deleteMdt: successfulDeleteMutation,
+    },
+  }),
+}, {
+  query: GET_USERS,
+  mockFn: () => Promise.resolve({
+    data: {
+      getUsers: [{
+        id: '1',
+        firstName: 'Test',
+        lastName: 'Dummy',
+        username: 'tdummy',
+      }],
+    },
+  }),
+}];
+
 export default {
   title: 'Tab Pages/MDT Management/Default',
   component: MdtManagement,
@@ -79,44 +116,7 @@ export default {
 
 export const Default: ComponentStory<typeof MdtManagement> = () => (
   <NewMockSdApolloProvider
-    mocks={
-      [{
-        query: GET_MDT_QUERY,
-        mockFn: () => Promise.resolve({
-          data: {
-            getMdt: mdt,
-          },
-        }),
-      },
-      {
-        query: UPDATE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            updateMdt: successfulUpdateMutation,
-          },
-        }),
-      },
-      {
-        query: DELETE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            deleteMdt: successfulDeleteMutation,
-          },
-        }),
-      }, {
-        query: GET_USERS,
-        mockFn: () => Promise.resolve({
-          data: {
-            getUsers: [{
-              id: '1',
-              firstName: 'Test',
-              lastName: 'Dummy',
-              username: 'tdummy',
-            }],
-          },
-        }),
-      }]
-    }
+    mocks={ mocks }
   >
     <MdtManagement
       showModal
@@ -125,3 +125,7 @@ export const Default: ComponentStory<typeof MdtManagement> = () => (
     />
   </NewMockSdApolloProvider>
 );
+
+Default.parameters = {
+  mocks: mocks,
+};

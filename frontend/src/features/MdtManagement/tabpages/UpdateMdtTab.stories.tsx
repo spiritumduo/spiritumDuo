@@ -58,6 +58,29 @@ const errorMutation = {
   }],
 };
 
+const successfulUpdateMock = {
+  query: UPDATE_MDT_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      updateMdt: successfulMutation,
+    },
+  }),
+};
+
+const getUsersMock = {
+  query: GET_USERS,
+  mockFn: () => Promise.resolve({
+    data: {
+      getUsers: [{
+        id: '1',
+        firstName: 'Test',
+        lastName: 'Dummy',
+        username: 'tdummy',
+      }],
+    },
+  }),
+};
+
 export default {
   title: 'Tab Pages/MDT Management/Update MDT Tab',
   component: UpdateMdtTab,
@@ -80,31 +103,16 @@ export default {
 export const Default: ComponentStory<typeof UpdateMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
-      [{
-        query: UPDATE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            updateMdt: successfulMutation,
-          },
-        }),
-      }, {
-        query: GET_USERS,
-        mockFn: () => Promise.resolve({
-          data: {
-            getUsers: [{
-              id: '1',
-              firstName: 'Test',
-              lastName: 'Dummy',
-              username: 'tdummy',
-            }],
-          },
-        }),
-      }]
+      [successfulUpdateMock, getUsersMock]
     }
   >
     <UpdateMdtTab mdt={ mdt } successCallback={ () => ({}) } />
   </NewMockSdApolloProvider>
 );
+
+Default.parameters = {
+  mocks: [successfulUpdateMock, getUsersMock],
+};
 
 export const MdtAlreadyExists: ComponentStory<typeof UpdateMdtTab> = () => (
   <NewMockSdApolloProvider

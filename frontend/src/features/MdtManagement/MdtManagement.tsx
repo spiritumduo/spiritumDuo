@@ -14,16 +14,6 @@ export const GET_MDT_QUERY = gql`
   query getMdt($id: ID!){
     getMdt(id: $id){
       id
-      pathway{
-        id
-        name
-      }
-      creator{
-        id
-        username
-        firstName
-        lastName
-      }
       clinicians{
         id
         firstName

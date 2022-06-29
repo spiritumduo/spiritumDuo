@@ -39,6 +39,15 @@ const errorMutation = {
   }],
 };
 
+const successfulDeleteMock = {
+  query: DELETE_MDT_MUTATION,
+  mockFn: () => Promise.resolve({
+    data: {
+      deleteMdt: successfulMutation,
+    },
+  }),
+};
+
 export default {
   title: 'Tab Pages/MDT Management/Delete MDT Tab',
   component: DeleteMdtTab,
@@ -61,19 +70,18 @@ export default {
 export const Default: ComponentStory<typeof DeleteMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
-      [{
-        query: DELETE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            deleteMdt: successfulMutation,
-          },
-        }),
-      }]
+      [
+        successfulDeleteMock,
+      ]
     }
   >
     <DeleteMdtTab mdt={ mdt } successCallback={ () => ({}) } />
   </NewMockSdApolloProvider>
 );
+
+Default.parameters = {
+  mocks: [successfulDeleteMock],
+};
 
 export const MdtHasRelations: ComponentStory<typeof DeleteMdtTab> = () => (
   <NewMockSdApolloProvider
