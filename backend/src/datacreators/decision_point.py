@@ -1,4 +1,6 @@
 from ctypes import Union
+from asyncpg import UniqueViolationError
+
 from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
@@ -23,6 +25,7 @@ from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from datetime import datetime
 from common import (
+    DataCreatorInputErrors,
     ReferencedItemDoesNotExistError,
     UserDoesNotHavePathwayPermission
 )
@@ -65,7 +68,8 @@ async def CreateDecisionPoint(
     milestone_resolutions: List[int] = None,
     milestone_requests: List[Dict[str, int]] = None,
     mdt: Dict[str, str] = None,
-    trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
+
+    trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service],
 ):
     """
     Creates a decision point object in local and external databases
@@ -90,6 +94,7 @@ async def CreateDecisionPoint(
     Returns:
         DecisionPoint: newly created decision point object
     """
+    errors = DataCreatorInputErrors()
 
     await trust_adapter.test_connection(
         auth_token=context['request'].cookies['SDSESSION']
@@ -128,13 +133,19 @@ async def CreateDecisionPoint(
         if mdt_obj.pathway_id != on_pathway.pathway_id:
             raise DecisionPointMdtMismatchException()
 
-        # TODO: check if pt already has onmdt
-
-        await OnMdt.create(
-            mdt_id=mdt_obj.id,
-            patient_id=on_pathway.patient_id,
-            user_id=context['request']['user'].id
-        )
+        try:
+            await OnMdt.create(
+                mdt_id=mdt_obj.id,
+                patient_id=on_pathway.patient_id,
+                user_id=context['request']['user'].id,
+                reason=mdt['referralReason']
+            )
+        except UniqueViolationError:
+            errors.addError(
+                'mdt',
+                'This patient is already on the MDT specified'
+            )
+            return errors
 
     decision_point_details = {
         "on_pathway_id": on_pathway_id,
