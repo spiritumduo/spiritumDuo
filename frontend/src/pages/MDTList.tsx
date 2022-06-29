@@ -34,16 +34,6 @@ export const GET_MDT_CONNECTION_QUERY = gql`
         cursor
         node {
           id
-          pathway{
-            id
-            name
-          }
-          creator{
-            id
-            username
-            firstName
-            lastName
-          }
           patients{
             id
           }
