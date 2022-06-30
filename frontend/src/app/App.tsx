@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable react/jsx-props-no-spreading */
 // APP IMPORTS
 import React, { useContext, useEffect } from 'react';
@@ -11,7 +10,7 @@ import HomePage from 'pages/HomePage';
 import LoginPage from 'pages/Login';
 import PageLayout from 'components/PageLayout';
 import AdministrationPage from 'pages/Administration';
-import { Button, Container, ErrorSummary } from 'nhsuk-react-components';
+import { Container, ErrorSummary } from 'nhsuk-react-components';
 
 import './App.css';
 import MDTListPage from 'pages/MDTList';
@@ -106,7 +105,9 @@ const RequirePathways = ({ children, location }: React.ComponentPropsWithRef<any
           <ErrorSummary.Title>This user account has no access to pathways</ErrorSummary.Title>
           <ErrorSummary.Body>
             <ErrorSummary.List>
-              <ErrorSummary.Item>The current logged in user does not have access to any pathways.</ErrorSummary.Item>
+              <ErrorSummary.Item>
+                The current logged in user does not have access to any pathways.
+              </ErrorSummary.Item>
               <ErrorSummary.Item>Please contact a system administrator.</ErrorSummary.Item>
             </ErrorSummary.List>
           </ErrorSummary.Body>

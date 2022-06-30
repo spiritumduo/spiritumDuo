@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { useContext, useEffect } from 'react';
 
 // LIBRARIES
