@@ -18,6 +18,7 @@ from .delete_payload import DeletePayloadObjectType
 from .mdt_payload import MdtPayloadObjectType
 from .mdt import MDTObjectType
 from .on_mdt import OnMdtObjectType
+from .on_mdt_payload import OnMdtPayloadObjectType
 
 object_types_list = [
     PatientObjectType,
@@ -39,5 +40,6 @@ object_types_list = [
     DeletePayloadObjectType,
     MdtPayloadObjectType,
     MDTObjectType,
-    OnMdtObjectType
+    OnMdtObjectType,
+    OnMdtPayloadObjectType
 ]

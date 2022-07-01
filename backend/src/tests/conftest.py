@@ -200,7 +200,8 @@ async def test_on_mdts(
         on_mdts.append(await OnMdt.create(
             mdt_id=test_mdt.id,
             patient_id=pt.id,
-            user_id=test_user.user.id
+            user_id=test_user.user.id,
+            reason="test reason"
         ))
     return on_mdts
 
@@ -463,6 +464,7 @@ async def mdt_update_permission(test_role) -> RolePermission:
         permission=Permissions.MDT_UPDATE
     ).create()
 
+
 @pytest.fixture
 async def mdt_read_permission(test_role) -> RolePermission:
     return await RolePermission(
@@ -470,3 +472,35 @@ async def mdt_read_permission(test_role) -> RolePermission:
         permission=Permissions.MDT_READ
     ).create()
 
+
+# ONMDT
+@pytest.fixture
+async def on_mdt_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def on_mdt_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_UPDATE
+    ).create()
+
+
+@pytest.fixture
+async def on_mdt_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_READ
+    ).create()
+
+
+@pytest.fixture
+async def on_mdt_delete_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_DELETE
+    ).create()

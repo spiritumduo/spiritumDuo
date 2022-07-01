@@ -78,6 +78,8 @@ type Mutation {
     createMdt(input:MdtInput!): MdtPayload!
     updateMdt(input:UpdateMdtInput!): MdtPayload!
     deleteMdt(id: ID!): DeletePayload!
+    updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
+    deleteOnMdt(id: ID!): DeletePayload!
 }
 
 type Subscription {
@@ -107,6 +109,11 @@ enum DecisionType{
 #### RETURN TYPES
 type MdtPayload{
     mdt: MDT
+    userErrors: [UserError!]
+}
+
+type OnMdtPayload{
+    onMdt: OnMdt
     userErrors: [UserError!]
 }
 
@@ -369,6 +376,10 @@ enum Sex {
 }
 
 #### INPUT TYPES
+input UpdateOnMdtInput{
+    id: ID!
+    reason: String!
+}
 input MdtInput{
     pathwayId: ID!
     plannedAt: Date!
