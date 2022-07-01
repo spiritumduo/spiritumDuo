@@ -9,7 +9,11 @@ from SdTypes import Permissions
 
 
 @mutation.field("createDecisionPoint")
-@needsAuthorization([Permissions.DECISION_CREATE, Permissions.MILESTONE_CREATE])
+@needsAuthorization([
+    Permissions.DECISION_CREATE,
+    Permissions.MILESTONE_CREATE,
+    Permissions.ON_MDT_CREATE
+])
 @inject
 async def resolve_create_decision(
     obj=None, info: GraphQLResolveInfo = None, input: dict = None,

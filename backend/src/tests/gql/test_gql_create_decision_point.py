@@ -87,7 +87,8 @@ async def test_add_decision_point_to_patient(
     decision_create_permission,
     milestone_create_permission, decision_query,
     test_pathway, test_milestone_type,
-    httpx_test_client, httpx_login_user
+    httpx_test_client, httpx_login_user,
+    on_mdt_create_permission
 ):
     """
     When: we run the GraphQL mutation to add the decision point and milestones
