@@ -9,10 +9,10 @@ from hamcrest import (
 )
 
 
-# Feature: testing getPatientsOnMdtConnection
-# Scenario: the getPatientsOnMdtConnection function is called
+# Feature: testing getOnMdtConnection
+# Scenario: the getOnMdtConnection function is called
 @pytest.mark.asyncio
-async def test_get_pt_on_mdt_connection(
+async def test_get_on_mdt_connection(
     mdt_read_permission, patient_read_permission,
     httpx_test_client, httpx_login_user,
     test_on_mdts: List[OnMdt], test_mdt: MDT
@@ -26,12 +26,12 @@ async def test_get_pt_on_mdt_connection(
         url="graphql",
         json={
             "query": """
-                query getPatientsOnMdtConnection(
-                    $id: ID!,
+                query getOnMdtConnection(
+                    $mdtId: ID!,
                     $first: Int!
                 ){
-                    getPatientsOnMdtConnection(
-                        id: $id,
+                    getOnMdtConnection(
+                        mdtId: $mdtId,
                         first: $first
                     ){
                         totalCount
@@ -45,7 +45,7 @@ async def test_get_pt_on_mdt_connection(
                 }
             """,
             "variables": {
-                "id": test_mdt.id,
+                "mdtId": test_mdt.id,
                 "first": 9
             }
         }
@@ -58,12 +58,12 @@ async def test_get_pt_on_mdt_connection(
     assert_that(
         json.loads(
             get_mdt_conn_query.text
-        )['data']['getPatientsOnMdtConnection'],
+        )['data']['getOnMdtConnection'],
         not_none()
     )
     mdt_list = json.loads(
         get_mdt_conn_query.text
-    )['data']['getPatientsOnMdtConnection']
+    )['data']['getOnMdtConnection']
 
     """
     Then: we get one mdt on the pathway
@@ -81,13 +81,13 @@ async def test_get_pt_on_mdt_connection(
         url="graphql",
         json={
             "query": """
-                query getPatientsOnMdtConnection(
-                    $id: ID!,
+                query getOnMdtConnection(
+                    $mdtId: ID!,
                     $first: Int!
                     $after: String!
                 ){
-                    getPatientsOnMdtConnection(
-                        id: $id,
+                    getOnMdtConnection(
+                        mdtId: $mdtId,
                         after: $after,
                         first: $first
                     ){
@@ -102,7 +102,7 @@ async def test_get_pt_on_mdt_connection(
                 }
             """,
             "variables": {
-                "id": test_mdt.id,
+                "mdtId": test_mdt.id,
                 "after": mdt_list['edges'][8]['cursor'],
                 "first": 2
             }
@@ -116,12 +116,12 @@ async def test_get_pt_on_mdt_connection(
     assert_that(
         json.loads(
             get_mdt_conn_query_cursor.text
-        )['data']['getPatientsOnMdtConnection'],
+        )['data']['getOnMdtConnection'],
         not_none()
     )
     patient_list_cursor = json.loads(
         get_mdt_conn_query_cursor.text
-    )['data']['getPatientsOnMdtConnection']
+    )['data']['getOnMdtConnection']
 
     """
     Then: we get all the second mdt on that pathway
@@ -146,13 +146,13 @@ async def test_user_lacks_permission(
         path="/graphql",
         json={
             "query": """
-                query getPatientsOnMdtConnection(
-                    $id: ID!,
+                query getOnMdtConnection(
+                    $mdtId: ID!,
                     $first: Int!
                     $after: String!
                 ){
-                    getPatientsOnMdtConnection(
-                        id: $id,
+                    getOnMdtConnection(
+                        mdtId: $mdtId,
                         after: $after,
                         first: $first
                     ){
@@ -167,7 +167,7 @@ async def test_user_lacks_permission(
                 }
                 """,
             "variables": {
-                "id": "42",
+                "mdtId": "42",
                 "first": 12,
                 "after": "something"
             }
