@@ -152,7 +152,7 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
 
     const users: {label: string, value: string}[] = [];
 
-    mdt.clinicians.forEach((user) => {
+    mdt.clinicians?.forEach((user) => {
       if (!user) return;
       users.push({
         label: `${user.firstName} ${user.lastName} (${user.username})`,
