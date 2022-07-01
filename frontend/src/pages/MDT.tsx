@@ -8,6 +8,7 @@ import '../components/patientlist.css';
 import { gql, useQuery } from '@apollo/client';
 import edgesToNodes from 'app/pagination';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
+import PatientOnMdtManagement from 'features/PatientOnMdtManagement/PatientOnMdtManagement';
 import { getOnMdtConnectionQuery } from './__generated__/getOnMdtConnectionQuery';
 
 export const GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
@@ -57,10 +58,17 @@ const useGetOnMdtConnectionQuery = (
   },
 );
 
+interface OnMdtElement {
+  id: string; onMdtId: string; firstName: string; lastName: string;
+  hospitalNumber: string; nationalNumber: string;
+  dateOfBirth: Date; mdtReason: string;
+}
+
 const MDTPage = (): JSX.Element => {
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const { mdtId } = useParams();
+  const [selectedOnMdt, setSelectedOnMdt] = useState<OnMdtElement | null>(null);
   const navigate = useNavigate();
   if (!mdtId) {
     navigate('/mdt');
@@ -71,23 +79,21 @@ const MDTPage = (): JSX.Element => {
     error,
     data,
     fetchMore,
+    refetch,
   } = useGetOnMdtConnectionQuery(mdtId || '0', 10);
 
   const { nodes, pageCount, pageInfo } = edgesToNodes<getOnMdtConnectionQuery['getOnMdtConnection']['edges'][0]['node']>(
     data?.getOnMdtConnection, currentPage, 10,
   );
 
-  let tableElements: {
-    id: string; firstName: string; lastName: string;
-    hospitalNumber: string; nationalNumber: string;
-    dateOfBirth: Date; mdtReason: string;
-  }[] = [];
+  let tableElements: OnMdtElement[] = [];
 
   if (nodes) {
     tableElements = nodes.flatMap((node) => {
       if (!node) return [];
       return {
         id: node.patient.id,
+        onMdtId: node.id,
         firstName: node.patient.firstName,
         lastName: node.patient.lastName,
         hospitalNumber: node.patient.hospitalNumber,
@@ -104,6 +110,11 @@ const MDTPage = (): JSX.Element => {
         <Breadcrumb.Item href="../mdt">MDTs</Breadcrumb.Item>
         <Breadcrumb.Item href="">Patient list</Breadcrumb.Item>
       </Breadcrumb>
+      <PatientOnMdtManagement
+        onMdt={ selectedOnMdt }
+        closeCallback={ () => setSelectedOnMdt(null) }
+        refetch={ () => refetch() }
+      />
       <LoadingSpinner loading={ loading }>
         {
           error
@@ -118,17 +129,37 @@ const MDTPage = (): JSX.Element => {
               <Table.Cell>National number</Table.Cell>
               <Table.Cell>Date of birth</Table.Cell>
               <Table.Cell>Reason added</Table.Cell>
+              <Table.Cell>&nbsp;</Table.Cell>
             </Table.Row>
           </Table.Head>
           <Table.Body>
             {
               tableElements.map((element) => (
-                <Table.Row key={ element.id } className="active" onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>
-                  <Table.Cell>{`${element.firstName} ${element.lastName}`}</Table.Cell>
-                  <Table.Cell>{element.hospitalNumber}</Table.Cell>
-                  <Table.Cell>{element.nationalNumber}</Table.Cell>
-                  <Table.Cell>{new Date(element.dateOfBirth).toLocaleDateString()}</Table.Cell>
-                  <Table.Cell>{element.mdtReason}</Table.Cell>
+                <Table.Row key={ element.id } className="active">
+                  <Table.Cell onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>{`${element.firstName} ${element.lastName}`}</Table.Cell>
+                  <Table.Cell onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>{element.hospitalNumber}</Table.Cell>
+                  <Table.Cell onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>{element.nationalNumber}</Table.Cell>
+                  <Table.Cell onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>{new Date(element.dateOfBirth).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }>{element.mdtReason}</Table.Cell>
+                  <Table.Cell
+                    onClick={ () => {
+                      setSelectedOnMdt(element);
+                    } }
+                  >
+                    <button
+                      type="button"
+                      style={ {
+                        background: 'none',
+                        border: 'none',
+                        padding: '0',
+                        color: '#069',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                      } }
+                    >
+                      Edit
+                    </button>
+                  </Table.Cell>
                 </Table.Row>
               ))
             }

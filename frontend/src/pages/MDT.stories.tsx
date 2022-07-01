@@ -3,7 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { MockPathwayProvider } from 'test/mocks/mockContext';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-
+import { Default as DefaultPatientOnMdtManagement } from 'features/PatientOnMdtManagement/PatientOnMdtManagement.stories';
 import MDTPage, { GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY } from './MDT';
 
 const itemsPerPage = 9;
@@ -78,6 +78,7 @@ export const Default: ComponentStory<typeof MDTPage> = () => (
             },
           }),
         },
+        ...DefaultPatientOnMdtManagement.parameters?.mocks,
       ]
     }
   >
