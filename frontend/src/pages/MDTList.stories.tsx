@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockPathwayProvider } from 'test/mocks/mockContext';
 
 import { Default as MdtManagementStory } from 'features/MdtManagement/MdtManagement.stories'
-import { Default as CreateMdtTabStory } from 'features/CreateMdtModal/CreateMdtModal.stories'
+import { Default as CreateMdtTabStory } from 'features/MdtManagement/CreateMdtModal/CreateMdtModal.stories'
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 
 import MDTListPage, { GET_MDT_CONNECTION_QUERY } from './MDTList';

@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React, { useContext, useState } from 'react';
 import { Breadcrumb, Button, Container, ErrorMessage, Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
@@ -6,7 +5,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { useNavigate } from 'react-router';
 
 import '../components/patientlist.css';
-import CreateMdtModal from 'features/CreateMdtModal/CreateMdtModal';
+import CreateMdtModal from 'features/MdtManagement/CreateMdtModal/CreateMdtModal';
 import MdtManagement from 'features/MdtManagement/MdtManagement';
 import { gql, useQuery } from '@apollo/client';
 import { PathwayContext } from 'app/context';
@@ -105,8 +104,17 @@ const MDTListPage = (): JSX.Element => {
       <Breadcrumb style={ { backgroundColor: 'transparent' } }>
         <Breadcrumb.Item href="">MDTs</Breadcrumb.Item>
       </Breadcrumb>
-      <CreateMdtModal showModal={ showCreateMdtModal } setShowModal={ setShowCreateMdtModal } refetch={ refetch } />
-      <MdtManagement showModal={ showManageMdtModal } setShowModal={ setShowManageMdtModal } mdtId={ selectedMdtId } refetch={ refetch } />
+      <CreateMdtModal
+        showModal={ showCreateMdtModal }
+        setShowModal={ setShowCreateMdtModal }
+        refetch={ refetch }
+      />
+      <MdtManagement
+        showModal={ showManageMdtModal }
+        setShowModal={ setShowManageMdtModal }
+        mdtId={ selectedMdtId }
+        refetch={ refetch }
+      />
       <Button secondary className="my-3" onClick={ () => setShowCreateMdtModal(true) }>Create MDT</Button>
       <Tabs>
         <TabList>
@@ -137,7 +145,12 @@ const MDTListPage = (): JSX.Element => {
                       <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{element.numClinicians}</Table.Cell>
                       <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{element.location}</Table.Cell>
                       <Table.Cell onClick={ () => navigate(`/mdt/${element.id}`) }>{element.numPatients}</Table.Cell>
-                      <Table.Cell onClick={ () => { setSelectedMdtId(element.id); setShowManageMdtModal(true); } }>
+                      <Table.Cell
+                        onClick={ () => {
+                          setSelectedMdtId(element.id);
+                          setShowManageMdtModal(true);
+                        } }
+                      >
                         <button
                           type="button"
                           style={ {
