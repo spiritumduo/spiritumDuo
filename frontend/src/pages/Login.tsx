@@ -40,7 +40,7 @@ export function useLoginSubmit(): LoginSubmitHook {
     try {
       const { location } = window;
       const uriPrefix = `${location.protocol}//${location.host}`;
-      const response = await window.fetch(`${uriPrefix}/api/rest/login`, {
+      const response = await window.fetch(`${uriPrefix}/api/rest/login/`, {
         method: 'POST',
         headers: {
           'content-type': 'application/json;charset=UTF-8',
