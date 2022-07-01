@@ -7,20 +7,6 @@
 // GraphQL query operation: getMdt
 // ====================================================
 
-export interface getMdt_getMdt_pathway {
-  __typename: "Pathway";
-  id: string;
-  name: string;
-}
-
-export interface getMdt_getMdt_creator {
-  __typename: "User";
-  id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-}
-
 export interface getMdt_getMdt_clinicians {
   __typename: "User";
   id: string;
@@ -32,8 +18,6 @@ export interface getMdt_getMdt_clinicians {
 export interface getMdt_getMdt {
   __typename: "MDT";
   id: string;
-  pathway: getMdt_getMdt_pathway;
-  creator: getMdt_getMdt_creator;
   clinicians: (getMdt_getMdt_clinicians | null)[];
   createdAt: any;
   plannedAt: any;

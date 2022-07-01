@@ -13,20 +13,6 @@ export interface getMdtConnectionQuery_getMdtConnection_pageInfo {
   endCursor: string;
 }
 
-export interface getMdtConnectionQuery_getMdtConnection_edges_node_pathway {
-  __typename: "Pathway";
-  id: string;
-  name: string;
-}
-
-export interface getMdtConnectionQuery_getMdtConnection_edges_node_creator {
-  __typename: "User";
-  id: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-}
-
 export interface getMdtConnectionQuery_getMdtConnection_edges_node_patients {
   __typename: "Patient";
   id: string;
@@ -40,8 +26,6 @@ export interface getMdtConnectionQuery_getMdtConnection_edges_node_clinicians {
 export interface getMdtConnectionQuery_getMdtConnection_edges_node {
   __typename: "MDT";
   id: string;
-  pathway: getMdtConnectionQuery_getMdtConnection_edges_node_pathway;
-  creator: getMdtConnectionQuery_getMdtConnection_edges_node_creator;
   patients: (getMdtConnectionQuery_getMdtConnection_edges_node_patients | null)[];
   clinicians: (getMdtConnectionQuery_getMdtConnection_edges_node_clinicians | null)[];
   createdAt: any;

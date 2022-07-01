@@ -103,6 +103,11 @@ export interface UpdateMdtInput {
   users: (string | null)[];
 }
 
+export interface UpdateOnMdtInput {
+  id: string;
+  reason: string;
+}
+
 export interface UpdatePathwayInput {
   id: string;
   name: string;
