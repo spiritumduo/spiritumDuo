@@ -1,0 +1,5336 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`It should render Default correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="212"
+        width="900"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="212"
+          width="900"
+        />
+        <g
+          class="visx-group"
+          transform="translate(5, 35)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="87.5"
+              width="900"
+              x="0"
+              y="-14"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="21"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="35"
+              rx="0.7%"
+              width="720"
+              y="21"
+            />
+            <rect
+              fill="#99C7EB"
+              height="52.5"
+              rx="0.7%"
+              width="166.5"
+              x="727.2"
+              y="3.5"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="90"
+              y="23.333333333333332"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="720"
+                y="21"
+              >
+                <tspan
+                  dy="0em"
+                  x="720"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="87.5"
+              width="900"
+              x="0"
+              y="89"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="124"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="35"
+              rx="0.7%"
+              width="720"
+              y="124"
+            />
+            <rect
+              fill="#99C7EB"
+              height="52.5"
+              rx="0.7%"
+              width="166.5"
+              x="727.2"
+              y="106.5"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="90"
+              y="23.333333333333332"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="720"
+                y="124"
+              >
+                <tspan
+                  dy="0em"
+                  x="720"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="35"
+            rx="0.7%"
+            width="41"
+            x="0"
+            y="21"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="10"
+            x="0"
+            y="124"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="10"
+            x="41"
+            y="21"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="21"
+            x="10"
+            y="124"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="72"
+            x="51"
+            y="21"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="31"
+            x="31"
+            y="124"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="42"
+            x="123"
+            y="21"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="72"
+            x="62"
+            y="124"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="51"
+            x="165"
+            y="21"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="113"
+            x="134"
+            y="124"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="10"
+            x="216"
+            y="21"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="35"
+            rx="0.7%"
+            width="0"
+            x="247"
+            y="124"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="83"
+            x="226"
+            y="21"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="35"
+            rx="0.7%"
+            width="0"
+            x="247"
+            y="124"
+          />
+          <g
+            class="visx-group visx-axis visx-axis-top"
+            transform="translate(0, -14)"
+          >
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="0"
+                x2="0"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="0"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="0"
+                  >
+                    0
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="180"
+                x2="180"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="180"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="180"
+                  >
+                    18
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="360"
+                x2="360"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="360"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="360"
+                  >
+                    35
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="540"
+                x2="540"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="540"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="540"
+                  >
+                    53
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="720"
+                x2="720"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="720"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="720"
+                  >
+                    70
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`It should render Medium correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="332"
+        width="600"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="332"
+          width="600"
+        />
+        <g
+          class="visx-group"
+          transform="translate(5, 35)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="145"
+              width="600"
+              x="0"
+              y="-23"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="35"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="58"
+              rx="0.7%"
+              width="0"
+              y="35"
+            />
+            <rect
+              fill="#99C7EB"
+              height="58"
+              rx="0.7%"
+              width="270"
+              x="0"
+              y="35"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="38.666666666666664"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="135"
+                y="35"
+              >
+                <tspan
+                  dy="0em"
+                  x="135"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="145"
+              width="600"
+              x="0"
+              y="149"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="207"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="58"
+              rx="0.7%"
+              width="0"
+              y="207"
+            />
+            <rect
+              fill="#99C7EB"
+              height="58"
+              rx="0.7%"
+              width="270"
+              x="0"
+              y="207"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="38.666666666666664"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="135"
+                y="207"
+              >
+                <tspan
+                  dy="0em"
+                  x="135"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`It should render MediumWithNationalNumber correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="332"
+        width="600"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="332"
+          width="600"
+        />
+        <g
+          class="visx-group"
+          transform="translate(5, 35)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="145"
+              width="600"
+              x="0"
+              y="-23"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="35"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="58"
+              rx="0.7%"
+              width="0"
+              y="35"
+            />
+            <rect
+              fill="#99C7EB"
+              height="58"
+              rx="0.7%"
+              width="270"
+              x="0"
+              y="35"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="38.666666666666664"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="135"
+                y="35"
+              >
+                <tspan
+                  dy="0em"
+                  x="135"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="145"
+              width="600"
+              x="0"
+              y="149"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="207"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="58"
+              rx="0.7%"
+              width="0"
+              y="207"
+            />
+            <rect
+              fill="#99C7EB"
+              height="58"
+              rx="0.7%"
+              width="270"
+              x="0"
+              y="207"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="38.666666666666664"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="135"
+                y="207"
+              >
+                <tspan
+                  dy="0em"
+                  x="135"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`It should render Small correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="432"
+        width="320"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="432"
+          width="320"
+        />
+        <g
+          class="visx-group"
+          transform="translate(5, 35)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="195"
+              width="320"
+              x="0"
+              y="-31"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="47"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="78"
+              rx="0.7%"
+              width="0"
+              y="47"
+            />
+            <rect
+              fill="#99C7EB"
+              height="78"
+              rx="0.7%"
+              width="144"
+              x="0"
+              y="67"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="72"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="72"
+                y="47"
+              >
+                <tspan
+                  dy="0em"
+                  x="72"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="195"
+              width="320"
+              x="0"
+              y="198"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="276"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="78"
+              rx="0.7%"
+              width="0"
+              y="276"
+            />
+            <rect
+              fill="#99C7EB"
+              height="78"
+              rx="0.7%"
+              width="144"
+              x="0"
+              y="296"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="72"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="72"
+                y="276"
+              >
+                <tspan
+                  dy="0em"
+                  x="72"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`It should render SmallWithNationalNumber correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="432"
+        width="300"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="432"
+          width="300"
+        />
+        <g
+          class="visx-group"
+          transform="translate(5, 35)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="195"
+              width="300"
+              x="0"
+              y="-31"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="25"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="47"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="78"
+              rx="0.7%"
+              width="0"
+              y="47"
+            />
+            <rect
+              fill="#99C7EB"
+              height="78"
+              rx="0.7%"
+              width="135"
+              x="0"
+              y="87"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="92"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="67.5"
+                y="47"
+              >
+                <tspan
+                  dy="0em"
+                  x="67.5"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="195"
+              width="300"
+              x="0"
+              y="198"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="25"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="276"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="78"
+              rx="0.7%"
+              width="0"
+              y="276"
+            />
+            <rect
+              fill="#99C7EB"
+              height="78"
+              rx="0.7%"
+              width="135"
+              x="0"
+              y="316"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="92"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="67.5"
+                y="276"
+              >
+                <tspan
+                  dy="0em"
+                  x="67.5"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#005EB8"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+          <rect
+            fill="#99C7EB"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="47"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="78"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="276"
+          />
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`It should render WithNationalNumber correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="212"
+        width="900"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="212"
+          width="900"
+        />
+        <g
+          class="visx-group"
+          transform="translate(5, 35)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="87.5"
+              width="900"
+              x="0"
+              y="-14"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="21"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="35"
+              rx="0.7%"
+              width="720"
+              y="21"
+            />
+            <rect
+              fill="#99C7EB"
+              height="52.5"
+              rx="0.7%"
+              width="166.5"
+              x="727.2"
+              y="3.5"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="90"
+              y="23.333333333333332"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="720"
+                y="21"
+              >
+                <tspan
+                  dy="0em"
+                  x="720"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="87.5"
+              width="900"
+              x="0"
+              y="89"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="124"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="35"
+              rx="0.7%"
+              width="720"
+              y="124"
+            />
+            <rect
+              fill="#99C7EB"
+              height="52.5"
+              rx="0.7%"
+              width="166.5"
+              x="727.2"
+              y="106.5"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="90"
+              y="23.333333333333332"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="720"
+                y="124"
+              >
+                <tspan
+                  dy="0em"
+                  x="720"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="35"
+            rx="0.7%"
+            width="41"
+            x="0"
+            y="21"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="10"
+            x="0"
+            y="124"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="10"
+            x="41"
+            y="21"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="21"
+            x="10"
+            y="124"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="72"
+            x="51"
+            y="21"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="31"
+            x="31"
+            y="124"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="42"
+            x="123"
+            y="21"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="72"
+            x="62"
+            y="124"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="51"
+            x="165"
+            y="21"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="113"
+            x="134"
+            y="124"
+          />
+          <rect
+            fill="#005EB8"
+            height="35"
+            rx="0.7%"
+            width="10"
+            x="216"
+            y="21"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="35"
+            rx="0.7%"
+            width="0"
+            x="247"
+            y="124"
+          />
+          <rect
+            fill="#99C7EB"
+            height="35"
+            rx="0.7%"
+            width="83"
+            x="226"
+            y="21"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="35"
+            rx="0.7%"
+            width="0"
+            x="247"
+            y="124"
+          />
+          <g
+            class="visx-group visx-axis visx-axis-top"
+            transform="translate(0, -14)"
+          >
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="0"
+                x2="0"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="0"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="0"
+                  >
+                    0
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="180"
+                x2="180"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="180"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="180"
+                  >
+                    18
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="360"
+                x2="360"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="360"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="360"
+                  >
+                    35
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="540"
+                x2="540"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="540"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="540"
+                  >
+                    53
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+            <g
+              class="visx-group visx-axis-tick"
+              transform="translate(0, 0)"
+            >
+              <line
+                class="visx-line"
+                fill="transparent"
+                shape-rendering="crispEdges"
+                stroke="#a44afe"
+                stroke-linecap="square"
+                stroke-width="1"
+                x1="720"
+                x2="720"
+                y1="0"
+                y2="-8"
+              />
+              <svg
+                font-size="18"
+                style="overflow: visible;"
+                x="0"
+                y="-5"
+              >
+                <text
+                  fill="#a44afe"
+                  font-size="18"
+                  text-anchor="middle"
+                  transform=""
+                  x="720"
+                  y="-8"
+                >
+                  <tspan
+                    dy="0em"
+                    x="720"
+                  >
+                    70
+                  </tspan>
+                </text>
+              </svg>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`It should render correctly 1`] = `
+<div>
+  <div
+    style="position: relative; width: inherit; height: inherit;"
+  >
+    <div>
+      <div
+        class="visually-hidden"
+        id="pathway-visualisation-desc"
+      >
+        Patient Pathway Visualisation
+      </div>
+      <svg
+        aria-describedby="pathway-visualisation-desc"
+        aria-details="accessible-table"
+        height="350"
+        width="750"
+      >
+        <rect
+          fill="#f1f4f5"
+          height="350"
+          width="750"
+        />
+        <g
+          class="visx-group"
+          transform="translate(20, 30)"
+        >
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="145"
+              width="750"
+              x="-20"
+              y="-23"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="35"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  John Doe, fMRN1234567, 1/1/1980
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="58"
+              rx="0.7%"
+              width="0"
+              y="35"
+            />
+            <rect
+              fill="#99C7EB"
+              height="58"
+              rx="0.7%"
+              width="337.5"
+              x="0"
+              y="35"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="38.666666666666664"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="168.75"
+                y="35"
+              >
+                <tspan
+                  dy="0em"
+                  x="168.75"
+                >
+                  Awaiting Fifth Request +2
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <g
+            class="visx-group"
+            transform="translate(0, 0)"
+          >
+            <rect
+              fill="white"
+              height="145"
+              width="750"
+              x="-20"
+              y="149"
+            />
+            <svg
+              font-size="1.5rem"
+              style="overflow: visible;"
+              x="0"
+              y="-5"
+            >
+              <text
+                font-size="1.5rem"
+                font-weight="650"
+                text-anchor="start"
+                transform=""
+                y="207"
+              >
+                <tspan
+                  dy="0em"
+                  x="0"
+                >
+                  Jane Doe, fMRN7654321, 6/1/1970
+                </tspan>
+              </text>
+            </svg>
+            <rect
+              fill="#D8DDE0"
+              height="58"
+              rx="0.7%"
+              width="0"
+              y="207"
+            />
+            <rect
+              fill="#99C7EB"
+              height="58"
+              rx="0.7%"
+              width="337.5"
+              x="0"
+              y="207"
+            />
+            <svg
+              font-size="1rem"
+              style="overflow: visible;"
+              x="0"
+              y="38.666666666666664"
+            >
+              <text
+                fill="white"
+                font-size="1rem"
+                text-anchor="middle"
+                transform=""
+                x="168.75"
+                y="207"
+              >
+                <tspan
+                  dy="0em"
+                  x="168.75"
+                >
+                  Awaiting Fourth Request +1
+                </tspan>
+              </text>
+            </svg>
+          </g>
+          <rect
+            fill="#FF2D00"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#005EB8"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+          <rect
+            fill="#99C7EB"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="35"
+          />
+          <rect
+            fill="#F1F4F5"
+            height="58"
+            rx="0.7%"
+            width="0"
+            x="0"
+            y="207"
+          />
+        </g>
+      </svg>
+      <div
+        class="visually-hidden"
+        id="accessible-table"
+      >
+        <table
+          aria-label="Pathway Table"
+        >
+          <thead>
+            <tr>
+              <th
+                id="tname"
+                rowspan="2"
+                scope="col"
+              >
+                Name
+              </th>
+              <th
+                id="thosp"
+                rowspan="2"
+                scope="col"
+              >
+                Hospital Number
+              </th>
+              <th
+                id="tdob"
+                rowspan="2"
+                scope="col"
+              >
+                Date Of Birth
+              </th>
+              <th
+                colspan="4"
+                scope="colgroup"
+                style="text-align: center;"
+              >
+                Periods
+              </th>
+            </tr>
+            <tr>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Period Type
+              </th>
+              <th
+                id="pt"
+                scope="colgroup"
+              >
+                Duration
+              </th>
+              <th
+                id="preq"
+                scope="colgroup"
+              >
+                Outstanding Requests
+              </th>
+              <th
+                id="pres"
+                scope="colgroup"
+              >
+                Awaiting Results
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-1"
+                role="rowheader"
+                rowspan="7"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  John Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-1"
+              >
+                fMRN1234567
+              </td>
+              <td
+                headers="tdob rowname-1"
+              >
+                1/1/1980
+              </td>
+              <td
+                headers="pt"
+              >
+                Stalled
+              </td>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fifth Request
+                 
+                <br />
+                Sixth Request
+                 
+                <br />
+                Seventh Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <th
+                headers="tname"
+                id="rowname-2"
+                role="rowheader"
+                rowspan="5"
+                scope="rowgroup"
+              >
+                <button
+                  role="link"
+                  tabindex="0"
+                  type="button"
+                >
+                  Jane Doe
+                </button>
+              </th>
+              <td
+                headers="thosp rowname-2"
+              >
+                fMRN7654321
+              </td>
+              <td
+                headers="tdob rowname-2"
+              >
+                6/1/1970
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+                Third Request
+                 
+                <br />
+                Fourth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Decision
+              </td>
+              <td />
+              <td>
+                First Request
+                 
+                <br />
+                Second Request
+                 
+                <br />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                -
+              </td>
+              <td>
+                -
+              </td>
+              <td
+                headers="pt"
+              >
+                Awaiting Result
+              </td>
+              <td>
+                Fourth Request
+                 
+                <br />
+                Fifth Request
+                 
+                <br />
+              </td>
+              <td>
+                -
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+`;

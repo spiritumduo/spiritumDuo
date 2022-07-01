@@ -261,8 +261,8 @@ describe('When page loads and a user submits a decision without milestones', () 
 
     await waitFor(() => {
       expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
-      expect(screen.getByText(/Lung function/i)).toBeInTheDocument();
-      expect(screen.getByText(/pet-ct/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Lung function/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/pet-ct/i).length).toBeGreaterThan(0);
     });
   });
 

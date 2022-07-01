@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from 'react';
 
 // LIBRARIES
-import { Modal } from 'react-bootstrap';
+import { Modal, Container, Col, Row } from 'react-bootstrap';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { BsX } from 'react-icons/bs';
@@ -16,7 +16,7 @@ import { RootState } from 'app/store';
 // PAGES
 import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
-import PatientPathway from 'components/PatientPathway/PatientPathway';
+import PatientPathway from 'features/PatientPathway/PatientPathway';
 
 // LOCAL
 import { lockOnPathway } from './__generated__/lockOnPathway';
@@ -140,25 +140,29 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     <Modal container={ document.getElementById('root') } size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header>
         <Modal.Title className="w-100">
-          <div style={ { } }>
-            <div style={ { whiteSpace: 'pre' } }>
-              {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${currentPatient?.hospitalNumber},    ${currentPatient?.nationalNumber},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
-            </div>
-            <div className="" style={ { width: '100%', height: '6rem', display: 'block' } }>
-              <PatientPathway hospitalNumber={ hospitalNumber } />
-            </div>
-          </div>
+          <Container>
+            <Row>
+              <Col xs="11">
+                <div className="visually-hidden">
+                  {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${currentPatient?.hospitalNumber},    ${currentPatient?.nationalNumber},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
+                </div>
+                <PatientPathway hospitalNumber={ hospitalNumber } maxDays={ 80 } showName showNationalNumber />
+              </Col>
+              <Col xs="1">
+                <button
+                  type="button"
+                  className="bg-transparent"
+                  name="Close"
+                  style={ { border: 'none' } }
+                  onClick={ () => closeCallback() }
+                >
+                  <span className="nhsuk-u-visually-hidden">Close</span>
+                  <BsX size="2rem" />
+                </button>
+              </Col>
+            </Row>
+          </Container>
         </Modal.Title>
-        <button
-          type="button"
-          className="bg-transparent"
-          name="Close"
-          style={ { border: 'none' } }
-          onClick={ () => closeCallback() }
-        >
-          <p className="nhsuk-u-visually-hidden">Close</p>
-          <BsX size="2rem" />
-        </button>
       </Modal.Header>
       <Modal.Body>
         <Tabs>

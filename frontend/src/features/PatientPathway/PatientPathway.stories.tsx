@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import PatientPathway, { GET_PATIENT_WITH_REFERRALS_QUERY } from 'components/PatientPathway/PatientPathway';
+import PatientPathway, { GET_PATIENT_WITH_REFERRALS_QUERY } from 'features/PatientPathway/PatientPathway';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import MockDate from 'test/mocks/mockDate';
 
@@ -24,6 +24,7 @@ const apolloMock: {
         lastName: 'Doe',
         dateOfBirth: new Date('1970-10-10'),
         hospitalNumber: 'fMRN1234567',
+        nationalNumber: 'fNHS1234567890',
         onPathways: [{
           __typename: 'OnPathway',
           id: '1',
@@ -133,7 +134,7 @@ const apolloMock: {
 }];
 
 export default {
-  title: 'Components/PatientPathway',
+  title: 'Features/PatientPathway',
   component: PatientPathway,
   decorators: [(Story) => (
     <MockDate date="2021-09-20">

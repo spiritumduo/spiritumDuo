@@ -5,7 +5,7 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
 import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionPoint.stories';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import { Default as PatientPathwayDefault } from 'components/PatientPathway/PatientPathway.stories';
+import { Default as PatientPathwayDefault } from 'features/PatientPathway/PatientPathway.stories';
 
 const patient = {
   id: '1',
