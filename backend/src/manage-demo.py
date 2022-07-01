@@ -276,7 +276,7 @@ async def insert_demo_data():
         await MilestoneType.create(
             name="Refer to palliation",
             ref_name="ref Palliation",
-            is_discharge=Tru
+            is_discharge=True
         ),
         await MilestoneType.create(
             name="Discharge",
