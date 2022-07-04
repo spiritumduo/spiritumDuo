@@ -21,7 +21,7 @@ import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionP
 import ModalPatient, { LOCK_ON_PATHWAY_MUTATION } from './ModalPatient';
 import * as stories from './ModalPatient.stories';
 
-const { Default } = composeStories(stories);
+const { Default, LoadedViaMdtWorkflow } = composeStories(stories);
 
 async function renderWithTestMocks() {
   jest.useFakeTimers();
@@ -116,6 +116,10 @@ async function renderDefaultNoMilestones() {
     await click(screen.getByLabelText('Co-morbidities'));
     await keyboard(comorbiditiesText);
   });
+}
+
+async function renderViaMdtWorkflow() {
+  render(<LoadedViaMdtWorkflow />);
 }
 
 describe('When page loads and user gets the lock', () => {
@@ -430,5 +434,25 @@ describe('When page loads and a user submits a decision with milestones', () => 
     await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
     expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'false');
     expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'false');
+  });
+});
+
+test('Opening the modal when MDT workflow dispatch is set should start on MDT page', async () => {
+  await renderViaMdtWorkflow();
+
+  await waitFor(() => {
+    expect(screen.getByRole('tab', { name: /mdt/i })).toBeInTheDocument();
+  });
+  await waitFor(() => {
+    expect(screen.getByRole('tab', { name: /mdt/i })).toHaveAttribute('aria-selected', 'true');
+  });
+});
+
+test('Opening the modal when MDT workflow dispatch is set should show breadcrumb', async () => {
+  await renderViaMdtWorkflow();
+
+  await waitFor(() => {
+    expect(screen.getByText(/mdts/i)).toBeInTheDocument();
+    expect(screen.getByText(/patient list/i)).toBeInTheDocument();
   });
 });
