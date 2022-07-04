@@ -119,7 +119,10 @@ const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtP
   return (
     <Modal show={ !!onMdt } onHide={ () => closeCallback() }>
       <Modal.Header>
-        <Modal.Title>MDT Management</Modal.Title>
+        <Modal.Title>
+          MDT Management -&nbsp;
+          { `${onMdt?.firstName} ${onMdt?.lastName}, ${onMdt?.hospitalNumber}, ${onMdt?.nationalNumber}` }
+        </Modal.Title>
         <button
           type="button"
           className="bg-transparent"
@@ -137,24 +140,6 @@ const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtP
             <Tab disabled={ showConfirmation }>Update</Tab>
             <Tab disabled={ showConfirmation }>Delete</Tab>
           </TabList>
-          <SummaryList>
-            <SummaryList.Row>
-              <SummaryList.Key>First name</SummaryList.Key>
-              <SummaryList.Value>{onMdt?.firstName}</SummaryList.Value>
-            </SummaryList.Row>
-            <SummaryList.Row>
-              <SummaryList.Key>Last name</SummaryList.Key>
-              <SummaryList.Value>{onMdt?.lastName}</SummaryList.Value>
-            </SummaryList.Row>
-            <SummaryList.Row>
-              <SummaryList.Key>Hospital number</SummaryList.Key>
-              <SummaryList.Value>{onMdt?.hospitalNumber}</SummaryList.Value>
-            </SummaryList.Row>
-            <SummaryList.Row>
-              <SummaryList.Key>National number</SummaryList.Key>
-              <SummaryList.Value>{onMdt?.nationalNumber}</SummaryList.Value>
-            </SummaryList.Row>
-          </SummaryList>
           <TabPanel>
             {
               updateError?.message
