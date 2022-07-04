@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Container, ErrorMessage, Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-
+import { useAppDispatch } from 'app/hooks';
+import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
 import '../components/patientlist.css';
 import { gql, useQuery } from '@apollo/client';
 import edgesToNodes from 'app/pagination';
@@ -70,6 +71,8 @@ const MDTPage = (): JSX.Element => {
   const { mdtId } = useParams();
   const [selectedOnMdt, setSelectedOnMdt] = useState<OnMdtElement | null>(null);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  dispatch(setOnMdtWorkflow( mdtId ));
   if (!mdtId) {
     navigate('/mdt');
   }
