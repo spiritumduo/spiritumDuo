@@ -138,7 +138,7 @@ async def CreateDecisionPoint(
                 mdt_id=mdt_obj.id,
                 patient_id=on_pathway.patient_id,
                 user_id=context['request']['user'].id,
-                reason=mdt['referralReason']
+                reason=mdt['reason']
             )
         except UniqueViolationError:
             errors.addError(

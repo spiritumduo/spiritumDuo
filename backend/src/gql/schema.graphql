@@ -418,7 +418,7 @@ input MilestoneTypeInput{
 
 input AddPatientToMdtInput{
     id: ID!
-    referralReason: String!
+    reason: String!
 }
 
 input DecisionPointInput{

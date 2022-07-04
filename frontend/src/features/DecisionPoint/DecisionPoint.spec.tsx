@@ -84,7 +84,7 @@ describe('When page loads', () => {
     const { click } = userEvent.setup();
 
     expect(screen.queryByText(/mdt session/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/referral reason/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/reason/i)).not.toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
@@ -94,7 +94,7 @@ describe('When page loads', () => {
 
     await waitFor(() => {
       expect(screen.getByLabelText(/mdt session/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/referral reason/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/reason/i)).toBeInTheDocument();
     });
   });
 });

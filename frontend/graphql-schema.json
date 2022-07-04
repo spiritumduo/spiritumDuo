@@ -4763,7 +4763,7 @@
             "deprecationReason": null
           },
           {
-            "name": "referralReason",
+            "name": "reason",
             "description": null,
             "type": {
               "kind": "NON_NULL",

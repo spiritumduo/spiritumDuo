@@ -332,7 +332,7 @@ const DecisionPointPage = (
       if (values.mdtSelected) {
         addPatientToMdt = {
           id: values.mdtSessionId,
-          referralReason: values.mdtReason,
+          reason: values.mdtReason,
         };
       }
       const variables: createDecisionPointVariables = {

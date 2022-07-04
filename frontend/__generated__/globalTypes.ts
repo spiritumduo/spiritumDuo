@@ -39,7 +39,7 @@ export enum Sex {
 
 export interface AddPatientToMdtInput {
   id: string;
-  referralReason: string;
+  reason: string;
 }
 
 export interface DecisionPointInput {

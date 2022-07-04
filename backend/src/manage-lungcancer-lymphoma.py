@@ -238,9 +238,8 @@ async def insert_demo_data():
             is_test_request=True
         ),
         "mdt": await MilestoneType.create(
-            name="Refer to MDT",
+            name="Add to MDT",
             ref_name="Multidisciplinary meeting (procedure)",
-            is_test_request=False,
             is_mdt=True
         )
     }
