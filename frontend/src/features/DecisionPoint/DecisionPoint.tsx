@@ -44,6 +44,7 @@ export interface DecisionPointPageProps {
     };
     lockEndTime: Date;
   }
+  closeCallback?: () => void;
 }
 
 export const GET_PATIENT_QUERY = gql`
@@ -166,7 +167,7 @@ type DecisionPointPageForm = {
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType, onPathwayLock }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, onPathwayLock, closeCallback }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
@@ -398,7 +399,10 @@ const DecisionPointPage = (
         <DecisionSubmissionSuccess
           milestones={ _milestones }
           milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-          onClose={ () => setShowServerConfirmation(false) }
+          onClose={ () => {
+            setShowServerConfirmation(false);
+            if (closeCallback) closeCallback();
+          } }
         />
       );
   } if (showServerConfirmation) setShowServerConfirmation(false);
@@ -596,7 +600,7 @@ const DecisionPointPage = (
                     </Select>
                   </div>
                   <div className="col-12 col-md-5 offset-md-2 d-inline-block">
-                    <Textarea label="Referral reason" { ...register('mdtReason') } />
+                    <Textarea label="Discussion points" { ...register('mdtReason') } />
                   </div>
                 </div>
               )

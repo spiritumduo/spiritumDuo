@@ -317,10 +317,10 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
     await waitFor(() => {
       expect(screen.getByLabelText(/mdt session/i));
-      expect(screen.getByLabelText(/referral reason/i));
+      expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/referral reason/i));
+    await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
     selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
 
@@ -343,10 +343,10 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
     await waitFor(() => {
       expect(screen.getByLabelText(/mdt session/i));
-      expect(screen.getByLabelText(/referral reason/i));
+      expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/referral reason/i));
+    await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
     selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
 
@@ -368,10 +368,10 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
     await waitFor(() => {
       expect(screen.getByLabelText(/mdt session/i));
-      expect(screen.getByLabelText(/referral reason/i));
+      expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/referral reason/i));
+    await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
     selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
 
@@ -393,10 +393,10 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
     await waitFor(() => {
       expect(screen.getByLabelText(/mdt session/i));
-      expect(screen.getByLabelText(/referral reason/i));
+      expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/referral reason/i));
+    await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
     selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
 
@@ -418,10 +418,10 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
     await waitFor(() => {
       expect(screen.getByLabelText(/mdt session/i));
-      expect(screen.getByLabelText(/referral reason/i));
+      expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/referral reason/i));
+    await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
     selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
 

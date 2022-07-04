@@ -174,6 +174,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
               hospitalNumber={ hospitalNumber }
               decisionType={ DecisionPointType.CLINIC }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
+              closeCallback={ () => closeCallback() }
             />
           </TabPanel>
           <TabPanel>
