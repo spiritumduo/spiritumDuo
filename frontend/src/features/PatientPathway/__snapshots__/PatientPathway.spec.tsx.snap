@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`It should render Default correctly 1`] = `
+<div>
+  <div
+    style="width: 95vw; height: 500px;"
+  >
+    <h1>
+      Loading!
+    </h1>
+  </div>
+</div>
+`;
