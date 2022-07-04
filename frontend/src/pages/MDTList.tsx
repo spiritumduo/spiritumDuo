@@ -162,7 +162,7 @@ const MDTListPage = (): JSX.Element => {
                             cursor: 'pointer',
                           } }
                         >
-                          Edit
+                          edit
                         </button>
                       </Table.Cell>
                     </Table.Row>
