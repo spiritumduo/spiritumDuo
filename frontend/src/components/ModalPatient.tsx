@@ -173,11 +173,20 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
         {
           onMdtWorkflow
             ? (
-              <Breadcrumb>
-                <Breadcrumb.Item href="/app/mdt">MDTs</Breadcrumb.Item>
-                <Breadcrumb.Item href={ `/app/mdt/${onMdtWorkflow}` }>Patient list</Breadcrumb.Item>
-                <Breadcrumb.Item href="#">Patient</Breadcrumb.Item>
-              </Breadcrumb>
+              <nav className="nhsuk-breadcrumb" aria-label="Breadcrumb">
+                <ol className="nhsuk-breadcrumb__list">
+                  <li className="nhsuk-breadcrumb__item">
+                    <a className="nhsuk-breadcrumb__link" href="/app/mdt">MDTs</a>
+                  </li>
+                  <li className="nhsuk-breadcrumb__item">
+                    <a className="nhsuk-breadcrumb__link" href="/app/mdt/1">Patient list</a>
+                  </li>
+                  <li className="nhsuk-breadcrumb__item">
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                    <a className="nhsuk-breadcrumb__link" href="#">Patient</a>
+                  </li>
+                </ol>
+              </nav>
             ) : ''
         }
         <Tabs onSelect={ (index) => setCurrentTab(index) } selectedIndex={ currentTab }>
