@@ -174,7 +174,9 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Date Planned</SummaryList.Key>
-            <SummaryList.Value>{ updateData?.updateMdt?.mdt?.plannedAt }</SummaryList.Value>
+            <SummaryList.Value>
+              { new Date(updateData?.updateMdt?.mdt?.plannedAt).toLocaleDateString() }
+            </SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Location</SummaryList.Key>

@@ -127,7 +127,9 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
             </SummaryList.Row>
             <SummaryList.Row>
               <SummaryList.Key>Date Planned</SummaryList.Key>
-              <SummaryList.Value>{ data?.createMdt?.mdt?.plannedAt }</SummaryList.Value>
+              <SummaryList.Value>
+                { new Date(data?.createMdt?.mdt?.plannedAt).toLocaleDateString() }
+              </SummaryList.Value>
             </SummaryList.Row>
             <SummaryList.Row>
               <SummaryList.Key>Location</SummaryList.Key>
