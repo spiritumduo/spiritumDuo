@@ -591,7 +591,7 @@ const DecisionPointPage = (
                                 key={ mdt.id }
                                 value={ mdt.id }
                               >
-                                { mdt.plannedAt }
+                                { new Date(mdt.plannedAt).toLocaleDateString() }
                               </option>
                             )
                             : ''
