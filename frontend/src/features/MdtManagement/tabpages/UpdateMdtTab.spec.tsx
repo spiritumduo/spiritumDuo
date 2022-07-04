@@ -33,7 +33,7 @@ test('valid inputs should show success page', async () => {
   await waitFor(() => {
     expect(screen.getByText(/success/i));
     expect(screen.getByText(/test pathway/i));
-    expect(screen.getByText(/1\/1\/3000/i));
+    expect(screen.getByText(new Date('01/01/3000').toLocaleDateString()));
     expect(screen.getByText(/test location/i));
   });
 });

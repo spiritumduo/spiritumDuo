@@ -43,7 +43,7 @@ describe('When the page loads', () => {
       expect(screen.getByText('First Last (1)')).toBeInTheDocument();
       expect(screen.getByText('fMRN0000001')).toBeInTheDocument();
       expect(screen.getByText('fNHS0000001')).toBeInTheDocument();
-      expect(screen.getByText('1/1/2000')).toBeInTheDocument();
+      expect(screen.getByText(new Date('01/01/2000').toLocaleDateString())).toBeInTheDocument();
       expect(screen.getByText('reason goes here (1)')).toBeInTheDocument();
     });
   });
