@@ -57,7 +57,7 @@ test('valid inputs should show success page', async () => {
   await waitFor(() => {
     expect(screen.getByText(/success/i));
     expect(screen.getByText(/test pathway/i));
-    expect(screen.getByText(/3000-01-01t00:00:00/i));
+    expect(screen.getByText(/1\/1\/3000/i));
     expect(screen.getByText(/test location/i));
   });
 });

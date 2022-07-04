@@ -25,6 +25,7 @@ test('on load it autofills information', async () => {
 
   await waitFor(() => {
     expect((screen.getByLabelText(/reason added to mdt/i) as HTMLInputElement).value).toMatch(/test reason/i);
+    expect((screen.getByText(/test patient, fmrn123456, fnhs12345678/i))).toBeInTheDocument();
   });
 });
 
