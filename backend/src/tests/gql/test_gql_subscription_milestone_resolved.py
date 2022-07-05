@@ -9,12 +9,12 @@ from ariadne.asgi import (
 
 
 @pytest.fixture
-def milestone_resolved_query() -> dict:
+def clinical_request_resolved_query() -> dict:
     return {
         "type": GQL_START,
         "payload": {
-            "query": """subscription milestoneResolved {
-                    milestoneResolved {
+            "query": """subscription clinicalRequestResolved {
+                    clinicalRequestResolved {
                         id
                     }
                 }"""
@@ -36,15 +36,15 @@ async def subscription_ws(login_user: Response, test_client):
         yield ws
 
 
-async def test_milestone_resolved(
+async def test_clinical_request_resolved(
         subscription_ws, test_sdpubsub,
-        milestone_read_permission,
-        milestone_resolved_query
+        clinical_request_read_permission,
+        clinical_request_resolved_query
 ):
     """
-    It should return the milestone with a valid user
+    It should return the clinical_request with a valid user
     """
-    await subscription_ws.send_json(milestone_resolved_query)
+    await subscription_ws.send_json(clinical_request_resolved_query)
     TEST_MILESTONE = {
         "id": '1'
     }
@@ -52,21 +52,21 @@ async def test_milestone_resolved(
     await asyncio.sleep(0.01)  # advance the event loop
     asyncio.create_task(
         test_sdpubsub.publish(
-            "milestone-resolutions",
+            "clinicalRequest-resolutions",
             TEST_MILESTONE
         )
     )
     res = await receive_task
     assert_that(
-        res['payload']['data']['milestoneResolved'],
+        res['payload']['data']['clinicalRequestResolved'],
         equal_to(TEST_MILESTONE)
     )
 
 
-async def test_milestone_resolved_invalid_permissions(
-    subscription_ws, milestone_resolved_query
+async def test_clinical_request_resolved_invalid_permissions(
+    subscription_ws, clinical_request_resolved_query
 ):
-    await subscription_ws.send_json(milestone_resolved_query)
+    await subscription_ws.send_json(clinical_request_resolved_query)
     res = await subscription_ws.receive_json()
     assert_that(
         res['payload']['message'],

@@ -33,9 +33,9 @@ it('Should display the page with previous decision points', async () => {
     decisionPoints.forEach((dp: any) => {
       expect(screen.getByText(new RegExp(dp.clinicHistory))).toBeInTheDocument();
       expect(screen.getByText(new RegExp(dp.comorbidities))).toBeInTheDocument();
-      dp.milestones?.forEach((m: any) => {
+      dp.clinicalRequests?.forEach((m: any) => {
         expect(
-          screen.getAllByRole('row', { name: new RegExp(`${m.milestoneType.name}\\s${m.currentState}`, 'i') }).length,
+          screen.getAllByRole('row', { name: new RegExp(`${m.clinicalRequestType.name}\\s${m.currentState}`, 'i') }).length,
         ).toBeGreaterThan(0);
       });
     });

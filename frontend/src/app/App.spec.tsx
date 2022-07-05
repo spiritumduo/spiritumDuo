@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 // we want fetchMock to prevent any accidental logins, even though we
 // don't test login here
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

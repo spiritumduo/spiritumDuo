@@ -7,15 +7,15 @@ import { setIsTabDisabled } from 'components/ModalPatient.slice';
 export interface DecisionSubmissionConfirmationProps {
   cancelCallback: () => void;
   okCallback: () => void;
-  milestones?: {
+  clinicalRequests?: {
     id: string;
     name: string;
   }[];
-  milestoneResolutions?: string[];
+  clinicalRequestResolutions?: string[];
 }
 
 const DecisionSubmissionConfirmation = (
-  { milestones, milestoneResolutions,
+  { clinicalRequests, clinicalRequestResolutions,
     cancelCallback, okCallback }: DecisionSubmissionConfirmationProps,
 ): JSX.Element => {
   const [disabledState, setDisabledState] = useState<boolean>(false);
@@ -31,13 +31,13 @@ const DecisionSubmissionConfirmation = (
       <div>
         <h2>Submit these requests?</h2>
         {
-          milestones
+          clinicalRequests
             ? (
               <>
                 <strong>Requests:</strong>
                 <ul>
                   {
-                    milestones?.map((m) => (
+                    clinicalRequests?.map((m) => (
                       <li key={ m.id }>{m.name}</li>
                     ))
                   }
@@ -47,12 +47,12 @@ const DecisionSubmissionConfirmation = (
             : ''
         }
         {
-          milestoneResolutions
+          clinicalRequestResolutions
             ? (
               <div>By clicking &apos;OK&apos; you are acknowledging:
                 <ul>
                   {
-                    milestoneResolutions?.map((m, index) => (
+                    clinicalRequestResolutions?.map((m, index) => (
                       // eslint-disable-next-line react/no-array-index-key
                       <li key={ `resolution-${index}}` }>{m}</li>
                     ))

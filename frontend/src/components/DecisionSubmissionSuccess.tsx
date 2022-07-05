@@ -5,17 +5,17 @@ import { useAppDispatch } from 'app/hooks';
 import { setIsTabDisabled } from 'components/ModalPatient.slice';
 
 export interface DecisionSubmissionSuccessProps {
-  milestones?: {
+  clinicalRequests?: {
     id: string;
     name: string;
   }[];
-  milestoneResolutions?: string[];
+  clinicalRequestResolutions?: string[];
 }
 
 const DecisionSubmissionSuccess = (
-  { milestones, milestoneResolutions }: DecisionSubmissionSuccessProps,
+  { clinicalRequests, clinicalRequestResolutions }: DecisionSubmissionSuccessProps,
 ): JSX.Element => {
-  const milestonesElement: JSX.Element[] | undefined = milestones?.map(
+  const clinicalRequestsElement: JSX.Element[] | undefined = clinicalRequests?.map(
     (m) => (<li key={ m.id }>{m.name}</li>),
   );
   const dispatch = useAppDispatch();
@@ -31,24 +31,24 @@ const DecisionSubmissionSuccess = (
         <div>
           <h2>Decision Submitted</h2>
           {
-            milestonesElement
+            clinicalRequestsElement
               ? (
                 <>
                   <strong>Requests sent:</strong>
                   <ul>
-                    { milestonesElement }
+                    { clinicalRequestsElement }
                   </ul>
                 </>
               )
               : ''
           }
           {
-            milestoneResolutions
+            clinicalRequestResolutions
               ? (
                 <div>These results have now been acknowledged:
                   <ul>
                     {
-                      milestoneResolutions?.map((m) => (
+                      clinicalRequestResolutions?.map((m) => (
                         <li key={ Math.random() }>{m}</li>
                       ))
                     }

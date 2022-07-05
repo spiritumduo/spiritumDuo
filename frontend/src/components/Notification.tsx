@@ -5,9 +5,9 @@ import { notificationSubscription } from 'components/__generated__/notificationS
 
 export const NOTIFICATION_SUBSCRIPTION_QUERY = gql`
     subscription notificationSubscription {
-      milestoneResolved {
+      clinicalRequestResolved {
         id
-        milestoneType {
+        clinicalRequestType {
           name
         }
         onPathway {
@@ -61,12 +61,12 @@ const Notification = (): JSX.Element => {
       const headerElement = <strong className="me-auto">Test Result Returned</strong>;
       const bodyElement = (
         <>
-          Name: {`${data.milestoneResolved.onPathway.patient.firstName} ${data.milestoneResolved.onPathway.patient.lastName}`} <br />
-          Result: {data.milestoneResolved.milestoneType.name}
+          Name: {`${data.clinicalRequestResolved.onPathway.patient.firstName} ${data.clinicalRequestResolved.onPathway.patient.lastName}`} <br />
+          Result: {data.clinicalRequestResolved.clinicalRequestType.name}
         </>
       );
       updateNotificationData({
-        id: data.milestoneResolved.id,
+        id: data.clinicalRequestResolved.id,
         header: headerElement,
         body: bodyElement,
         display: true,

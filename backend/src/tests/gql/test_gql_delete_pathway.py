@@ -1,4 +1,4 @@
-from models import Pathway, PathwayMilestoneType
+from models import Pathway, PathwayClinicalRequestType
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 
 
@@ -42,7 +42,7 @@ async def test_delete_pathway_conflict(
 
 async def test_delete_pathway_success(
     login_user, test_client, pathway_delete_permission,
-    test_milestone_type
+    test_clinical_request_type
 ):
     # testing delete pathway graphql mutation
 
@@ -50,9 +50,9 @@ async def test_delete_pathway_success(
         name="Testing pathway go brrt"
     )
 
-    await PathwayMilestoneType.create(
+    await PathwayClinicalRequestType.create(
         pathway_id=PATHWAY.id,
-        milestone_type_id=test_milestone_type.id
+        clinical_request_type_id=test_clinical_request_type.id
     )
 
     res = await test_client.post(

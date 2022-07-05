@@ -9,16 +9,16 @@ def pathway_create_mutation() -> str:
     return """
         mutation createPathway(
             $name: String!
-            $milestoneTypes: [MilestoneTypeInput!]
+            $clinicalRequestTypes: [ClinicalRequestTypeInput!]
         ){
             createPathway(input: {
                 name: $name
-                milestoneTypes: $milestoneTypes
+                clinicalRequestTypes: $clinicalRequestTypes
             }){
                 pathway{
                     id
                     name
-                    milestoneTypes{
+                    clinicalRequestTypes{
                         id
                     }
                 }
@@ -35,7 +35,7 @@ def pathway_create_mutation() -> str:
 # Scenario: the GraphQL query for createPathway is executed
 async def test_add_new_pathway(
     pathway_create_permission,
-    pathway_create_mutation, test_milestone_type,
+    pathway_create_mutation, test_clinical_request_type,
     httpx_test_client, httpx_login_user
 ):
     """
@@ -51,8 +51,8 @@ async def test_add_new_pathway(
             "query": pathway_create_mutation,
             "variables": {
                 "name": PATHWAY.name,
-                "milestoneTypes": [{
-                    "id": test_milestone_type.id
+                "clinicalRequestTypes": [{
+                    "id": test_clinical_request_type.id
                 }]
             }
         }
@@ -79,12 +79,12 @@ async def test_add_new_pathway(
         equal_to(PATHWAY.name)
     )
     assert_that(
-        create_pathway_query['pathway']['milestoneTypes'],
+        create_pathway_query['pathway']['clinicalRequestTypes'],
         not_none()
     )
     assert_that(
-        create_pathway_query['pathway']['milestoneTypes'][0]['id'],
-        equal_to(str(test_milestone_type.id))
+        create_pathway_query['pathway']['clinicalRequestTypes'][0]['id'],
+        equal_to(str(test_clinical_request_type.id))
     )
 
 

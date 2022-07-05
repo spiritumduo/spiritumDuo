@@ -13,33 +13,33 @@ export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnecti
   endCursor: string;
 }
 
-export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_milestones_milestoneType {
-  __typename: "MilestoneType";
+export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequests_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   id: string;
   name: string;
 }
 
-export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_milestones_forwardDecisionPoint {
+export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequests_forwardDecisionPoint {
   __typename: "DecisionPoint";
   id: string;
   addedAt: any;
 }
 
-export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_milestones {
-  __typename: "Milestone";
+export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequests {
+  __typename: "ClinicalRequest";
   id: string;
-  milestoneType: getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_milestones_milestoneType;
+  clinicalRequestType: getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequests_clinicalRequestType;
   addedAt: any;
   updatedAt: any;
   currentState: string;
-  forwardDecisionPoint: getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_milestones_forwardDecisionPoint | null;
+  forwardDecisionPoint: getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequests_forwardDecisionPoint | null;
 }
 
 export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways {
   __typename: "OnPathway";
   id: string;
   referredAt: any;
-  milestones: getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_milestones[] | null;
+  clinicalRequests: getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequests[] | null;
 }
 
 export interface getPatientOnPathwayConnectionForGrp_getPatientOnPathwayConnection_edges_node {

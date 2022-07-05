@@ -28,8 +28,8 @@ async def resolve_create_patient(
         patientInfo['awaiting_decision_type'] = input['awaitingDecisionType']
     if 'referredAt' in input:
         patientInfo['referred_at'] = input['referredAt']
-    if 'milestones' in input:
-        patientInfo['milestones'] = input['milestones']
+    if 'clinicalRequests' in input:
+        patientInfo['clinical_requests'] = input['clinicalRequests']
 
     return await CreatePatient(
         **patientInfo

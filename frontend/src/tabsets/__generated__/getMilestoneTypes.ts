@@ -4,16 +4,16 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: getMilestoneTypes
+// GraphQL query operation: getClinicalRequestTypes
 // ====================================================
 
-export interface getMilestoneTypes_getMilestoneTypes {
-  __typename: "MilestoneType";
+export interface getClinicalRequestTypes_getClinicalRequestTypes {
+  __typename: "ClinicalRequestType";
   id: string;
   name: string;
   refName: string;
 }
 
-export interface getMilestoneTypes {
-  getMilestoneTypes: getMilestoneTypes_getMilestoneTypes[] | null;
+export interface getClinicalRequestTypes {
+  getClinicalRequestTypes: getClinicalRequestTypes_getClinicalRequestTypes[] | null;
 }

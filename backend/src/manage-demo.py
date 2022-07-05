@@ -5,14 +5,14 @@ from models import (
     Pathway,
     Patient,
     DecisionPoint,
-    Milestone,
-    MilestoneType,
+    ClinicalRequest,
+    ClinicalRequestType,
     User,
     Session,
     OnPathway,
     Role,
     RolePermission, UserRole,
-    PathwayMilestoneType,
+    PathwayClinicalRequestType,
     UserPathway
 )
 from containers import SDContainer
@@ -22,7 +22,7 @@ from api import app
 from faker import Faker
 from random import randint, getrandbits
 from datetime import date
-from SdTypes import MilestoneState, Permissions, Sex
+from SdTypes import ClinicalRequestState, Permissions, Sex
 from itsdangerous import TimestampSigner
 from trustadapter.trustadapter import (
     Patient_IE,
@@ -106,10 +106,10 @@ async def clear_existing_data():
         print("Table `delete` not found. Continuing")
 
     try:
-        await Milestone.delete.where(Milestone.id >= 0).gino.status()
-        print("Table `Milestone` deleted")
+        await ClinicalRequest.delete.where(ClinicalRequest.id >= 0).gino.status()
+        print("Table `ClinicalRequest` deleted")
     except UndefinedTableError:
-        print("Table `Milestone` not found. Continuing")
+        print("Table `ClinicalRequest` not found. Continuing")
 
     try:
         await DecisionPoint.delete.where(DecisionPoint.id >= 0).gino.status()
@@ -148,11 +148,11 @@ async def clear_existing_data():
         print("Table `Patient` not found. Continuing")
 
     try:
-        await PathwayMilestoneType.delete.where(MilestoneType.id >= 0)\
+        await PathwayClinicalRequestType.delete.where(ClinicalRequestType.id >= 0)\
             .gino.status()
-        print("Table `PathwayMilestoneType` deleted")
+        print("Table `PathwayClinicalRequestType` deleted")
     except UndefinedTableError:
-        print("Table `PathwayMilestoneType` not found. Continuing")
+        print("Table `PathwayClinicalRequestType` not found. Continuing")
 
     try:
         await Pathway.delete.where(Pathway.id >= 0).gino.status()
@@ -161,10 +161,10 @@ async def clear_existing_data():
         print("Table `Pathway` not found. Continuing")
 
     try:
-        await MilestoneType.delete.where(MilestoneType.id >= 0).gino.status()
-        print("Table `MilestoneType` deleted")
+        await ClinicalRequestType.delete.where(ClinicalRequestType.id >= 0).gino.status()
+        print("Table `ClinicalRequestType` deleted")
     except UndefinedTableError:
-        print("Table `MilestoneType` not found. Continuing")
+        print("Table `ClinicalRequestType` not found. Continuing")
 
 
 async def create_roles():
@@ -201,131 +201,131 @@ async def create_roles():
 async def insert_demo_data():
     roles = await create_roles()
 
-    general_milestone_types: Dict[str, MilestoneType] = {
-        "referral_letter": await MilestoneType.create(
+    general_clinical_request_types: Dict[str, ClinicalRequestType] = {
+        "referral_letter": await ClinicalRequestType.create(
             name="Referral letter",
             ref_name="Referral letter (record artifact)",
             is_checkbox_hidden=True
         ),
-        "chest_xray": await MilestoneType.create(
+        "chest_xray": await ClinicalRequestType.create(
             name="Chest X-ray",
             ref_name="Plain chest X-ray (procedure)",
             is_test_request=True
         ),
-        "ct_chest": await MilestoneType.create(
+        "ct_chest": await ClinicalRequestType.create(
             name="CT chest",
             ref_name="Computed tomography of chest (procedure)",
             is_test_request=True
         )
     }
 
-    lung_cancer_milestone_types: List[MilestoneType] = [
-        await MilestoneType.create(
+    lung_cancer_clinical_request_types: List[ClinicalRequestType] = [
+        await ClinicalRequestType.create(
             name="Pathology",
             ref_name="Pathology report (record artifact)",
             is_checkbox_hidden=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Prehab referral",
             ref_name="Prehabilitation (regime/therapy)"
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Dietician referral",
             ref_name="Patient referral to dietitian (procedure)"
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Smoking cessation referral",
             ref_name="Referral to smoking cessation service (procedure)"
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Refer to surgeons",
             ref_name="ref Surgeons",
             is_discharge=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Refer to oncology",
             ref_name="ref Oncology",
             is_discharge=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Refer to palliation",
             ref_name="ref Palliation",
             is_discharge=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Discharge",
             ref_name="ref Discharge",
             is_discharge=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Add to MDT",
             ref_name="Assessment by multidisciplinary team (procedure)"
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Book clinic appointment",
             ref_name="Appointment (record artifact)"
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="PET-CT",
             ref_name="Positron emission tomography with computed tomography (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="CT head - contrast",
             ref_name="Computed tomography of head with contrast (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="MRI head",
             ref_name="Magnetic resonance imaging of head (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Lung function tests",
             ref_name="Measurement of respiratory function (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="ECHO",
             ref_name="Echocardiography (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="CT guided biopsy thorax",
             ref_name="Biopsy of thorax using computed tomography guidance (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="EBUS",
             ref_name="Transbronchial needle aspiration using endobronchial ultrasonography guidance (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="ECG",
             ref_name="Electrocardiogram analysis (qualifier value)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Thoracoscopy",
             ref_name="Thoracoscopy (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Bronchoscopy",
             ref_name="Bronchoscopy (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Pleural tap",
             ref_name="Thoracentesis (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="CPET",
             ref_name="Cardiopulmonary exercise test (procedure)",
             is_test_request=True
         ),
-        await MilestoneType.create(
+        await ClinicalRequestType.create(
             name="Bloods",
             ref_name="Blood test (procedure)",
             is_test_request=True
@@ -339,16 +339,16 @@ async def insert_demo_data():
             )
         ]
 
-        for key in general_milestone_types:
-            await PathwayMilestoneType.create(
+        for key in general_clinical_request_types:
+            await PathwayClinicalRequestType.create(
                 pathway_id=pathways[0].id,
-                milestone_type_id=general_milestone_types[key].id
+                clinical_request_type_id=general_clinical_request_types[key].id
             )
 
-        for mT in lung_cancer_milestone_types:
-            await PathwayMilestoneType.create(
+        for mT in lung_cancer_clinical_request_types:
+            await PathwayClinicalRequestType.create(
                 pathway_id=pathways[0].id,
-                milestone_type_id=mT.id
+                clinical_request_type_id=mT.id
             )
 
         for userIndex in range(1, NUMBER_OF_USERS_PER_PATHWAY+1):
@@ -440,51 +440,51 @@ async def insert_demo_data():
 
                 tie_testresult_ref: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
                     testResult=TestResultRequestImmediately_IE(
-                        type_id=general_milestone_types["referral_letter"].id,
-                        current_state=MilestoneState.COMPLETED,
+                        type_id=general_clinical_request_types["referral_letter"].id,
+                        current_state=ClinicalRequestState.COMPLETED,
                         hospital_number=hospital_number,
                         pathway_name=pathway.name
                     ),
                     auth_token=SESSION_COOKIE
                 )
 
-                sd_milestone_ref: Milestone = await Milestone.create(
+                sd_clinical_request_ref: ClinicalRequest = await ClinicalRequest.create(
                     on_pathway_id=sd_onpathway.id,
                     test_result_reference_id=str(tie_testresult_ref.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=general_milestone_types["referral_letter"].id,
+                    current_state=ClinicalRequestState.COMPLETED,
+                    clinical_request_type_id=general_clinical_request_types["referral_letter"].id,
                 )
 
                 tie_testresult_cxr: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
                     testResult=TestResultRequestImmediately_IE(
-                        type_id=general_milestone_types["chest_xray"].id,
-                        current_state=MilestoneState.COMPLETED,
+                        type_id=general_clinical_request_types["chest_xray"].id,
+                        current_state=ClinicalRequestState.COMPLETED,
                         hospital_number=hospital_number,
                         pathway_name=pathway.name
                     ),
                     auth_token=SESSION_COOKIE
                 )
-                sd_milestone_cxr: Milestone = await Milestone.create(
+                sd_clinical_request_cxr: ClinicalRequest = await ClinicalRequest.create(
                     on_pathway_id=sd_onpathway.id,
                     test_result_reference_id=str(tie_testresult_cxr.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=general_milestone_types["chest_xray"].id,
+                    current_state=ClinicalRequestState.COMPLETED,
+                    clinical_request_type_id=general_clinical_request_types["chest_xray"].id,
                 )
 
                 tie_testresult_ctx: TestResult_IE = await PseudoTrustAdapter().create_test_result_immediately(
                     testResult=TestResultRequestImmediately_IE(
-                        type_id=general_milestone_types["ct_chest"].id,
-                        current_state=MilestoneState.COMPLETED,
+                        type_id=general_clinical_request_types["ct_chest"].id,
+                        current_state=ClinicalRequestState.COMPLETED,
                         hospital_number=hospital_number,
                         pathway_name=pathway.name
                     ),
                     auth_token=SESSION_COOKIE
                 )
-                sd_milestone_ctx: Milestone = await Milestone.create(
+                sd_clinical_request_ctx: ClinicalRequest = await ClinicalRequest.create(
                     on_pathway_id=sd_onpathway.id,
                     test_result_reference_id=str(tie_testresult_ctx.id),
-                    current_state=MilestoneState.COMPLETED,
-                    milestone_type_id=general_milestone_types["ct_chest"].id,
+                    current_state=ClinicalRequestState.COMPLETED,
+                    clinical_request_type_id=general_clinical_request_types["ct_chest"].id,
                 )
 
 

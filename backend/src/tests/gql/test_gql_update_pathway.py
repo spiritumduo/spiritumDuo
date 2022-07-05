@@ -1,6 +1,6 @@
 from typing import List
 import pytest
-from models import Pathway, PathwayMilestoneType, MilestoneType
+from models import Pathway, PathwayClinicalRequestType, ClinicalRequestType
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 
 
@@ -14,20 +14,20 @@ async def test_update_pathway(
     )
     NEW_PATHWAY_NAME = "updated pathway go brrr"
 
-    MILESTONE_TYPE_ONE: MilestoneType = await MilestoneType.create(
-        name="test milestone one",
-        ref_name="ref_test_milestone_one",
+    MILESTONE_TYPE_ONE: ClinicalRequestType = await ClinicalRequestType.create(
+        name="test clinical_request one",
+        ref_name="ref_test_clinical_request_one",
     )
 
-    MILESTONE_TYPE_TWO: MilestoneType = await MilestoneType.create(
-        name="test milestone two",
-        ref_name="ref_test_milestone_two",
+    MILESTONE_TYPE_TWO: ClinicalRequestType = await ClinicalRequestType.create(
+        name="test clinical_request two",
+        ref_name="ref_test_clinical_request_two",
     )
 
-    PATHWAY_MILESTONE_TYPE: PathwayMilestoneType = await PathwayMilestoneType\
+    PATHWAY_MILESTONE_TYPE: PathwayClinicalRequestType = await PathwayClinicalRequestType\
         .create(
             pathway_id=PATHWAY.id,
-            milestone_type_id=MILESTONE_TYPE_ONE.id
+            clinical_request_type_id=MILESTONE_TYPE_ONE.id
         )
 
     res = await test_client.post(
@@ -39,7 +39,7 @@ async def test_update_pathway(
                         pathway{
                             id
                             name
-                            milestoneTypes{
+                            clinicalRequestTypes{
                                 id
                                 name
                                 refName
@@ -56,7 +56,7 @@ async def test_update_pathway(
                 "input": {
                     "id": PATHWAY.id,
                     "name": NEW_PATHWAY_NAME,
-                    "milestoneTypes": [
+                    "clinicalRequestTypes": [
                         {
                             "id": MILESTONE_TYPE_TWO.id
                         }
@@ -80,29 +80,29 @@ async def test_update_pathway(
     assert_that(pathwayResult['name'], equal_to(NEW_PATHWAY_NAME))
 
     assert_that(
-        pathwayResult['milestoneTypes'][0]['id'],
+        pathwayResult['clinicalRequestTypes'][0]['id'],
         equal_to(str(MILESTONE_TYPE_TWO.id))
     )
     assert_that(
-        pathwayResult['milestoneTypes'][0]['name'],
+        pathwayResult['clinicalRequestTypes'][0]['name'],
         equal_to(str(MILESTONE_TYPE_TWO.name))
     )
     assert_that(
-        pathwayResult['milestoneTypes'][0]['refName'],
+        pathwayResult['clinicalRequestTypes'][0]['refName'],
         equal_to(str(MILESTONE_TYPE_TWO.ref_name))
     )
 
     pathwayDb: Pathway = await Pathway.get(PATHWAY.id)
     assert_that(pathwayDb.name, equal_to(NEW_PATHWAY_NAME))
 
-    pathwayMilestoneTypes: List[PathwayMilestoneType] = await \
-        PathwayMilestoneType.query.where(
-            PathwayMilestoneType.pathway_id == PATHWAY.id
+    pathwayClinicalRequestTypes: List[PathwayClinicalRequestType] = await \
+        PathwayClinicalRequestType.query.where(
+            PathwayClinicalRequestType.pathway_id == PATHWAY.id
         ).gino.all()
 
-    assert_that(len(pathwayMilestoneTypes), equal_to(1))
+    assert_that(len(pathwayClinicalRequestTypes), equal_to(1))
     assert_that(
-        pathwayMilestoneTypes[0].milestone_type_id,
+        pathwayClinicalRequestTypes[0].clinical_request_type_id,
         equal_to(MILESTONE_TYPE_TWO.id)
     )
 
@@ -127,7 +127,7 @@ async def test_user_lacks_permission(login_user, test_client):
                 "input": {
                     "id": 1,
                     "name": "test go brrt",
-                    "milestoneTypes": [
+                    "clinicalRequestTypes": [
                     ]
                 }
             }

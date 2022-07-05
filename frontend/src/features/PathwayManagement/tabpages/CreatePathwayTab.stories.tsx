@@ -6,16 +6,16 @@ import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import CreatePathwayTab, { CREATE_PATHWAY_MUTATION } from './CreatePathwayTab';
 
-const milestoneTypes = [
+const clinicalRequestTypes = [
   {
     id: '1',
-    name: 'Test milestone type 1',
-    refName: 'ref test milestone type 1',
+    name: 'Test clinicalRequest type 1',
+    refName: 'ref test clinicalRequest type 1',
   },
   {
     id: '2',
-    name: 'Test milestone type 2',
-    refName: 'ref test milestone type 2',
+    name: 'Test clinicalRequest type 2',
+    refName: 'ref test clinicalRequest type 2',
   },
 ];
 
@@ -23,16 +23,16 @@ const successfulPathwayCreationResult = {
   pathway: {
     id: '1',
     name: 'test pathway',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'test milestone one',
-        refName: 'ref test milestone one',
+        name: 'test clinicalRequest one',
+        refName: 'ref test clinicalRequest one',
       },
       {
         id: '2',
-        name: 'test milestone two',
-        refName: 'ref test milestone two',
+        name: 'test clinicalRequest two',
+        refName: 'ref test clinicalRequest two',
       },
     ],
   },
@@ -81,7 +81,7 @@ export const Default: ComponentStory<typeof CreatePathwayTab> = () => (
   >
     <CreatePathwayTab
       disableForm={ false }
-      milestoneTypes={ milestoneTypes }
+      clinicalRequestTypes={ clinicalRequestTypes }
     />
   </NewMockSdApolloProvider>
 );
@@ -100,7 +100,7 @@ export const PathwayExistsError: ComponentStory<typeof CreatePathwayTab> = () =>
     }
   >
     <CreatePathwayTab
-      milestoneTypes={ milestoneTypes }
+      clinicalRequestTypes={ clinicalRequestTypes }
     />
   </NewMockSdApolloProvider>
 );

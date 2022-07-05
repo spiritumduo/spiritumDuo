@@ -8,16 +8,16 @@ import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import UpdatePathwayTab, { UPDATE_PATHWAY_MUTATION } from './UpdatePathwayTab';
 
-const milestoneTypes = [
+const clinicalRequestTypes = [
   {
     id: '1',
-    name: 'Test milestone type 1',
-    refName: 'ref test milestone type 1',
+    name: 'Test clinicalRequest type 1',
+    refName: 'ref test clinicalRequest type 1',
   },
   {
     id: '2',
-    name: 'Test milestone type 2',
-    refName: 'ref test milestone type 2',
+    name: 'Test clinicalRequest type 2',
+    refName: 'ref test clinicalRequest type 2',
   },
 ];
 
@@ -25,11 +25,11 @@ const pathways = [
   {
     id: '1',
     name: 'pathway one',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'Test milestone type 1',
-        refName: 'ref test milestone type 1',
+        name: 'Test clinicalRequest type 1',
+        refName: 'ref test clinicalRequest type 1',
       },
     ],
   },
@@ -39,16 +39,16 @@ const successfulPathwayUpdateResult = {
   pathway: {
     id: '1',
     name: 'pathway one edited',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'Test milestone type 1',
-        refName: 'ref test milestone type 1',
+        name: 'Test clinicalRequest type 1',
+        refName: 'ref test clinicalRequest type 1',
       },
       {
         id: '2',
-        name: 'Test milestone type 2',
-        refName: 'ref test milestone type 2',
+        name: 'Test clinicalRequest type 2',
+        refName: 'ref test clinicalRequest type 2',
       },
     ],
   },
@@ -98,7 +98,7 @@ export const Default: ComponentStory<typeof UpdatePathwayTab> = () => (
     }
   >
     <UpdatePathwayTab
-      milestoneTypes={ milestoneTypes }
+      clinicalRequestTypes={ clinicalRequestTypes }
       pathways={ pathways }
     />
   </NewMockSdApolloProvider>
@@ -120,7 +120,7 @@ export const PathwayExistsError: ComponentStory<typeof UpdatePathwayTab> = () =>
     }
   >
     <UpdatePathwayTab
-      milestoneTypes={ milestoneTypes }
+      clinicalRequestTypes={ clinicalRequestTypes }
       pathways={ pathways }
     />
   </NewMockSdApolloProvider>

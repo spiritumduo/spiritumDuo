@@ -1,7 +1,5 @@
 # It's very important this happens first
 from starlette.config import environ
-
-
 environ['TESTING'] = "True"
 
 
@@ -21,13 +19,13 @@ from models.db import db, TEST_DATABASE_URL
 from models import (
     User,
     Pathway,
-    MilestoneType,
+    ClinicalRequestType,
     Role,
     UserRole,
     RolePermission,
     Patient,
     OnPathway,
-    PathwayMilestoneType,
+    PathwayClinicalRequestType,
     UserPathway
 )
 
@@ -87,16 +85,16 @@ async def test_pathway(db_start_transaction) -> Pathway:
 
 
 @pytest.fixture
-async def test_milestone_type(db_start_transaction, test_pathway) -> MilestoneType:
-    mT: MilestoneType = await MilestoneType.create(
-        name="Test Milestone",
-        ref_name="ref_test_milestone",
+async def test_clinical_request_type(db_start_transaction, test_pathway) -> ClinicalRequestType:
+    mT: ClinicalRequestType = await ClinicalRequestType.create(
+        name="Test ClinicalRequest",
+        ref_name="ref_test_clinical_request",
         is_checkbox_hidden=True,
     )
 
-    await PathwayMilestoneType.create(
+    await PathwayClinicalRequestType.create(
         pathway_id=test_pathway.id,
-        milestone_type_id=mT.id
+        clinical_request_type_id=mT.id
     )
 
     return mT
@@ -239,7 +237,7 @@ async def decision_read_permission(test_role) -> RolePermission:
 
 # MILESTONE
 @pytest.fixture
-async def milestone_create_permission(test_role) -> RolePermission:
+async def clinical_request_create_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_CREATE
@@ -247,7 +245,7 @@ async def milestone_create_permission(test_role) -> RolePermission:
 
 
 @pytest.fixture
-async def milestone_read_permission(test_role) -> RolePermission:
+async def clinical_request_read_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_READ
@@ -255,7 +253,7 @@ async def milestone_read_permission(test_role) -> RolePermission:
 
 
 @pytest.fixture
-async def milestone_update_permission(test_role) -> RolePermission:
+async def clinical_request_update_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_UPDATE
@@ -264,7 +262,7 @@ async def milestone_update_permission(test_role) -> RolePermission:
 
 # MILESTONE TYPE
 @pytest.fixture
-async def milestone_type_read_permission(test_role) -> RolePermission:
+async def clinical_request_type_read_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_TYPE_READ

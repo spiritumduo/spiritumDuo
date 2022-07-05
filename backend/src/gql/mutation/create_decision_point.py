@@ -23,12 +23,12 @@ async def resolve_create_decision(
         "clinic_history": input['clinicHistory'],
         "comorbidities": input['comorbidities'],
     }
-    if "milestoneResolutions" in input:
-        decision_point_details['milestone_resolutions'] = \
-            input['milestoneResolutions']
-    if "milestoneRequests" in input:
-        decision_point_details['milestone_requests'] = \
-            input['milestoneRequests']
+    if "clinicalRequestResolutions" in input:
+        decision_point_details['clinical_request_resolutions'] = \
+            input['clinicalRequestResolutions']
+    if "clinicalRequestRequests" in input:
+        decision_point_details['clinical_request_requests'] = \
+            input['clinicalRequestRequests']
 
     decision_point: DecisionPoint = await CreateDecisionPoint(
         **decision_point_details

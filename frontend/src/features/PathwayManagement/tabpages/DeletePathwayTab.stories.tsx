@@ -8,16 +8,16 @@ import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import DeletePathwayTab, { DELETE_PATHWAY_MUTATION } from './DeletePathwayTab';
 
-const milestoneTypes = [
+const clinicalRequestTypes = [
   {
     id: '1',
-    name: 'TEST_MILESTONE_TYPE_ONE',
-    refName: 'ref_TEST_MILESTONE_TYPE_ONE',
+    name: 'TEST_CLINICALREQUEST_TYPE_ONE',
+    refName: 'ref_TEST_CLINICALREQUEST_TYPE_ONE',
   },
   {
     id: '2',
-    name: 'TEST_MILESTONE_TYPE_TWO',
-    refName: 'ref_TEST_MILESTONE_TYPE_TWO',
+    name: 'TEST_CLINICALREQUEST_TYPE_TWO',
+    refName: 'ref_TEST_CLINICALREQUEST_TYPE_TWO',
   },
 ];
 
@@ -25,11 +25,11 @@ const pathways = [
   {
     id: '1',
     name: 'pathway one',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'TEST_MILESTONE_TYPE_ONE',
-        refName: 'ref_TEST_MILESTONE_TYPE_ONE',
+        name: 'TEST_CLINICALREQUEST_TYPE_ONE',
+        refName: 'ref_TEST_CLINICALREQUEST_TYPE_ONE',
       },
     ],
   },
@@ -84,7 +84,7 @@ export const Default: ComponentStory<typeof DeletePathwayTab> = () => (
   >
     <DeletePathwayTab
       pathways={ pathways }
-      milestoneTypes={ milestoneTypes }
+      clinicalRequestTypes={ clinicalRequestTypes }
     />
   </NewMockSdApolloProvider>
 );
@@ -106,7 +106,7 @@ export const PathwayHasConstraints: ComponentStory<typeof DeletePathwayTab> = ()
   >
     <DeletePathwayTab
       pathways={ pathways }
-      milestoneTypes={ milestoneTypes }
+      clinicalRequestTypes={ clinicalRequestTypes }
     />
   </NewMockSdApolloProvider>
 );

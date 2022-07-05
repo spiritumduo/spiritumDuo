@@ -12,7 +12,7 @@ import { withTooltip, Tooltip, defaultStyles } from '@visx/tooltip';
 import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
 
 // GENERATED TYPES
-import { MilestoneState } from '__generated__/globalTypes';
+import { ClinicalRequestState } from '__generated__/globalTypes';
 
 // LOCAL
 import { GrpPatientFields } from './__generated__/GrpPatientFields';
@@ -70,9 +70,9 @@ export const PATIENT_PARTS_FOR_GRP = gql`
     onPathways { 
       id
       referredAt
-      milestones {
+      clinicalRequests {
           id
-          milestoneType {
+          clinicalRequestType {
             id
             name
           }
@@ -109,7 +109,7 @@ export const patientToVisData = (patient: NonNullable<GrpPatientFields>): Patien
     }
   }
   const events: EventDates = {};
-  patient.onPathways?.[0].milestones?.forEach((ms) => {
+  patient.onPathways?.[0].clinicalRequests?.forEach((ms) => {
     let startDay = events[getDatePortionString(ms.addedAt)];
     if (!startDay) {
       startDay = {};
@@ -117,13 +117,13 @@ export const patientToVisData = (patient: NonNullable<GrpPatientFields>): Patien
     }
     const event = {
       id: ms.id,
-      name: ms.milestoneType.name,
+      name: ms.clinicalRequestType.name,
     };
     startDay.requests !== undefined
       ? startDay.requests.add(event)
       : startDay.requests = new Set([event]);
 
-    if (ms.currentState === MilestoneState.COMPLETED) {
+    if (ms.currentState === ClinicalRequestState.COMPLETED) {
       let endDay = events[getDatePortionString(ms.updatedAt)];
       if (!endDay) {
         endDay = {};

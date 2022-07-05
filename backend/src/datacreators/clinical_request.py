@@ -1,7 +1,7 @@
 from ctypes import Union
 from models import Patient, OnPathway, UserPathway, Pathway
 from common import UserDoesNotHavePathwayPermission
-from SdTypes import MilestoneState
+from SdTypes import ClinicalRequestState
 from dataloaders import (
     OnPathwayByIdLoader, PatientByIdLoader,
     PathwayByIdLoader
@@ -13,32 +13,32 @@ from trustadapter.trustadapter import (
     TrustAdapter,
     TestResultRequest_IE
 )
-from models import Milestone
+from models import ClinicalRequest
 
 
 @inject
-async def ImportMilestone(
+async def ImportClinicalRequest(
     context=None,
     on_pathway_id: int = None,
-    milestone_type_id: int = None,
+    clinical_request_type_id: int = None,
     description: str = None,
-    current_state: MilestoneState = None,
+    current_state: ClinicalRequestState = None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     """
-    Creates a milestone object in local and external databases
+    Creates a clinical_request object in local and external databases
 
     Keyword arguments:
         context (dict): the current request context
         on_pathway_id (int): the ID of the `OnPathway` instance the newly
-            created Milestone is to be linked to
-        milestone_type_id (int): the ID of the `MilestoneType`
+            created ClinicalRequest is to be linked to
+        clinical_request_type_id (int): the ID of the `ClinicalRequestType`
         description (str): the description/result of the request
-        current_state (MilestoneState): the current state of the milestone
+        current_state (ClinicalRequestState): the current state of the clinical_request
             (used for data creation scripts to import data)
 
     Returns:
-        Milestone: newly created milestone object
+        ClinicalRequest: newly created clinical_request object
     """
 
     on_pathway: OnPathway = (await OnPathwayByIdLoader.load_from_id(
@@ -66,7 +66,7 @@ async def ImportMilestone(
     )
     testResult: TestResult_IE = await trust_adapter.create_test_result(
         TestResultRequest_IE(
-            type_id=milestone_type_id,
+            type_id=clinical_request_type_id,
             description=description,
             current_state=current_state,
             hospital_number=patient.hospital_number,
@@ -74,9 +74,9 @@ async def ImportMilestone(
         ), auth_token=context['request'].cookies['SDSESSION']
     )
 
-    return await Milestone.create(
+    return await ClinicalRequest.create(
         on_pathway_id=int(on_pathway_id),
         current_state=current_state,
-        milestone_type_id=int(milestone_type_id),
+        clinical_request_type_id=int(clinical_request_type_id),
         test_result_reference_id=str(testResult.id)
     )

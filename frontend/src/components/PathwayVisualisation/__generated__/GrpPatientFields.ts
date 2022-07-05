@@ -7,33 +7,33 @@
 // GraphQL fragment: GrpPatientFields
 // ====================================================
 
-export interface GrpPatientFields_onPathways_milestones_milestoneType {
-  __typename: "MilestoneType";
+export interface GrpPatientFields_onPathways_clinicalRequests_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   id: string;
   name: string;
 }
 
-export interface GrpPatientFields_onPathways_milestones_forwardDecisionPoint {
+export interface GrpPatientFields_onPathways_clinicalRequests_forwardDecisionPoint {
   __typename: "DecisionPoint";
   id: string;
   addedAt: any;
 }
 
-export interface GrpPatientFields_onPathways_milestones {
-  __typename: "Milestone";
+export interface GrpPatientFields_onPathways_clinicalRequests {
+  __typename: "ClinicalRequest";
   id: string;
-  milestoneType: GrpPatientFields_onPathways_milestones_milestoneType;
+  clinicalRequestType: GrpPatientFields_onPathways_clinicalRequests_clinicalRequestType;
   addedAt: any;
   updatedAt: any;
   currentState: string;
-  forwardDecisionPoint: GrpPatientFields_onPathways_milestones_forwardDecisionPoint | null;
+  forwardDecisionPoint: GrpPatientFields_onPathways_clinicalRequests_forwardDecisionPoint | null;
 }
 
 export interface GrpPatientFields_onPathways {
   __typename: "OnPathway";
   id: string;
   referredAt: any;
-  milestones: GrpPatientFields_onPathways_milestones[] | null;
+  clinicalRequests: GrpPatientFields_onPathways_clinicalRequests[] | null;
 }
 
 export interface GrpPatientFields {

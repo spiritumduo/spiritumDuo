@@ -36,10 +36,10 @@ test('Patient lists should contain patients', async () => {
   }
 });
 
-test('It should display the last completed milestone alongside the patient', async () => {
+test('It should display the last completed clinicalRequest alongside the patient', async () => {
   const patientsPerPage = Default.args?.patientsToDisplay;
   await renderDefault();
-  await waitFor(() => expect(screen.getAllByText(/third milestone/i).length).toEqual(patientsPerPage));
+  await waitFor(() => expect(screen.getAllByText(/third clinicalRequest/i).length).toEqual(patientsPerPage));
 });
 
 test('It should display lock icons for locked patients', async () => {

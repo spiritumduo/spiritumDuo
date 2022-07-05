@@ -3,7 +3,7 @@ from .api import _FastAPI
 from dependency_injector.wiring import Provide, inject
 from fastapi import Request
 from pydantic import BaseModel
-from models import Milestone, OnPathway
+from models import ClinicalRequest, OnPathway
 from fastapi.responses import Response
 from config import config
 
@@ -22,13 +22,13 @@ async def update_test_result(
     if ('SDTIEKEY' not in request.cookies
             or request.cookies['SDTIEKEY'] != config['UPDATE_ENDPOINT_KEY']):
         return Response(status_code=401)
-    milestone: Milestone = await Milestone.query.where(
-        Milestone.test_result_reference_id == str(data.id)
+    clinical_request: ClinicalRequest = await ClinicalRequest.query.where(
+        ClinicalRequest.test_result_reference_id == str(data.id)
     ).gino.one_or_none()
-    await milestone.update(current_state=data.new_state).apply()
+    await clinical_request.update(current_state=data.new_state).apply()
     await pub.publish(
         'on-pathway-updated',
-        await OnPathway.get(Milestone.on_pathway_id)
+        await OnPathway.get(ClinicalRequest.on_pathway_id)
     )
-    await pub.publish('milestone-resolutions', milestone)
+    await pub.publish('clinical_request-resolutions', clinical_request)
     return Response(status_code=200)

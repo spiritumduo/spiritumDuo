@@ -1,5 +1,5 @@
 import httpx
-from models import MilestoneType
+from models import ClinicalRequestType
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from datetime import date, datetime
@@ -314,10 +314,10 @@ class PseudoTrustAdapter(TrustAdapter):
         self, testResult: TestResultRequest_IE = None, auth_token: str = None
     ) -> TestResult_IE:
         params = {}
-        milestoneType: MilestoneType = await MilestoneType.get(
+        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.get(
             int(testResult.type_id)
         )
-        params['typeReferenceName'] = milestoneType.ref_name
+        params['typeReferenceName'] = clinicalRequestType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name
 
@@ -420,10 +420,10 @@ class PseudoTrustAdapter(TrustAdapter):
         auth_token: str = None
     ) -> TestResult_IE:
         params = {}
-        milestoneType: MilestoneType = await MilestoneType.get(
+        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.get(
             int(testResult.type_id)
         )
-        params['typeReferenceName'] = milestoneType.ref_name
+        params['typeReferenceName'] = clinicalRequestType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name
         params['addedAt'] = str(testResult.added_at) if (

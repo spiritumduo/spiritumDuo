@@ -26,7 +26,7 @@ mutation deletePathway($pathwayId: ID!){
 type DeletePathwayForm = {
   name: string
   pathwayIndex: string;
-  milestoneTypes: {
+  clinicalRequestTypes: {
     label: string;
     value: string;
   }[];
@@ -34,7 +34,7 @@ type DeletePathwayForm = {
 
 export interface UpdatePathwayInputs {
   name: string;
-  milestoneTypes: {
+  clinicalRequestTypes: {
     label: string;
     value: string;
   }[];
@@ -43,7 +43,7 @@ export interface UpdatePathwayInputs {
 export type DeletePathwayReturnData = {
   id: number,
   name: string,
-  milestoneTypes: string[],
+  clinicalRequestTypes: string[],
 };
 
 export interface DeletePathwayTabProps {
@@ -51,12 +51,12 @@ export interface DeletePathwayTabProps {
   refetchPathways?: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<getPathways>>,
-  milestoneTypes: {id: string, name: string, refName: string}[] | undefined,
+  clinicalRequestTypes: {id: string, name: string, refName: string}[] | undefined,
   pathways: (
     {
       id: string;
       name: string;
-      milestoneTypes: {
+      clinicalRequestTypes: {
         id: string;
         name: string;
         refName: string;
@@ -66,11 +66,11 @@ export interface DeletePathwayTabProps {
 }
 
 const DeletePathwayTab = ({
-  disableForm, milestoneTypes, pathways, refetchPathways,
+  disableForm, clinicalRequestTypes, pathways, refetchPathways,
 }: DeletePathwayTabProps): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedPathway, setSelectedPathway] = useState<string>('-1');
-  const [milestoneTypeFields, setMilestoneTypeFields] = useState<
+  const [clinicalRequestTypeFields, setClinicalRequestTypeFields] = useState<
   {label: string, value: string}[]
 >();
 
@@ -91,41 +91,41 @@ const DeletePathwayTab = ({
   } = useForm<DeletePathwayForm>({ resolver: yupResolver(deletePathwaySchema) });
 
   useEffect(() => {
-    setMilestoneTypeFields(milestoneTypes
-      ? milestoneTypes.flatMap((mT) => (
+    setClinicalRequestTypeFields(clinicalRequestTypes
+      ? clinicalRequestTypes.flatMap((mT) => (
         {
           label: mT.name,
           value: mT.id,
         }
       ))
       : []);
-  }, [milestoneTypes, setMilestoneTypeFields]);
+  }, [clinicalRequestTypes, setClinicalRequestTypeFields]);
 
   useEffect(() => {
     setValue('name', '');
-    setValue('milestoneTypes', []);
+    setValue('clinicalRequestTypes', []);
 
     if (selectedPathway !== '-1' && selectedPathway) {
-      const milestoneTypeSet = pathways?.filter(
+      const clinicalRequestTypeSet = pathways?.filter(
         (pW) => (pW?.id === selectedPathway),
       )?.[0];
 
       const listOfPermissions: Array<{label: string, value: string}> = [];
 
-      if (milestoneTypeSet) {
-        setValue('name', milestoneTypeSet.name);
-        milestoneTypeSet?.milestoneTypes?.forEach((milestoneType) => {
-          if (milestoneType) {
-            milestoneTypeFields?.find((mT) => (
-              mT.value === milestoneType.id
-              && listOfPermissions.push({ label: milestoneType.name, value: milestoneType.id })
+      if (clinicalRequestTypeSet) {
+        setValue('name', clinicalRequestTypeSet.name);
+        clinicalRequestTypeSet?.clinicalRequestTypes?.forEach((clinicalRequestType) => {
+          if (clinicalRequestType) {
+            clinicalRequestTypeFields?.find((mT) => (
+              mT.value === clinicalRequestType.id
+              && listOfPermissions.push({ label: clinicalRequestType.name, value: clinicalRequestType.id })
             ));
           }
         });
       }
-      setValue('milestoneTypes', listOfPermissions);
+      setValue('clinicalRequestTypes', listOfPermissions);
     }
-  }, [milestoneTypeFields, pathways, selectedPathway, setValue]);
+  }, [clinicalRequestTypeFields, pathways, selectedPathway, setValue]);
 
   const onSubmit = (
     mutation: typeof deletePathwayFunc, values: DeletePathwayForm,
@@ -193,9 +193,9 @@ const DeletePathwayTab = ({
         <Fieldset
           disabled
         >
-          <Fieldset.Legend>Milestone types</Fieldset.Legend>
+          <Fieldset.Legend>ClinicalRequest types</Fieldset.Legend>
           <Controller
-            name="milestoneTypes"
+            name="clinicalRequestTypes"
             control={ control }
             render={ ({ field }) => (
               <Select
@@ -205,7 +205,7 @@ const DeletePathwayTab = ({
                 onChange={ field.onChange }
                 ref={ field.ref }
                 value={ field.value }
-                options={ milestoneTypeFields?.map((mT) => (
+                options={ clinicalRequestTypeFields?.map((mT) => (
                   { label: mT.label, value: mT.value }
                 )) }
               />

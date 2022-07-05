@@ -18,7 +18,7 @@ mutation updatePathway($input: UpdatePathwayInput!){
     pathway{
       id
       name
-      milestoneTypes{
+      clinicalRequestTypes{
         id
         name
         refName
@@ -35,7 +35,7 @@ mutation updatePathway($input: UpdatePathwayInput!){
 type UpdatePathwayForm = {
   pathwayIndex: string;
   name: string;
-  milestoneTypes: {
+  clinicalRequestTypes: {
     label: string;
     value: string;
   }[];
@@ -43,7 +43,7 @@ type UpdatePathwayForm = {
 
 export interface UpdatePathwayInputs {
   name: string;
-  milestoneTypes: {
+  clinicalRequestTypes: {
     label: string;
     value: string;
   }[];
@@ -54,12 +54,12 @@ export interface UpdatePathwayTabProps {
   refetchPathways?: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<getPathways>>,
-  milestoneTypes: {id: string, name: string, refName: string}[] | undefined,
+  clinicalRequestTypes: {id: string, name: string, refName: string}[] | undefined,
   pathways: (
     {
       id: string;
       name: string;
-      milestoneTypes: {
+      clinicalRequestTypes: {
         id: string;
         name: string;
         refName: string;
@@ -69,11 +69,11 @@ export interface UpdatePathwayTabProps {
 }
 
 const UpdatePathwayTab = (
-  { disableForm, milestoneTypes, pathways, refetchPathways }: UpdatePathwayTabProps,
+  { disableForm, clinicalRequestTypes, pathways, refetchPathways }: UpdatePathwayTabProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedPathway, setSelectedPathway] = useState<string>('-1');
-  const [milestoneTypeFields, setMilestoneTypeFields] = useState<
+  const [clinicalRequestTypeFields, setClinicalRequestTypeFields] = useState<
     {label: string, value: string}[]
   >();
 
@@ -84,9 +84,9 @@ const UpdatePathwayTab = (
   const onSubmit = (
     mutation: typeof updatePathwayFunc, values: UpdatePathwayForm,
   ) => {
-    const selectedMilestoneTypes: Array<{id: string}> = [];
-    values.milestoneTypes.forEach((mT) => {
-      selectedMilestoneTypes.push( { id: mT.value } );
+    const selectedClinicalRequestTypes: Array<{id: string}> = [];
+    values.clinicalRequestTypes.forEach((mT) => {
+      selectedClinicalRequestTypes.push( { id: mT.value } );
     });
 
     mutation({
@@ -94,7 +94,7 @@ const UpdatePathwayTab = (
         input: {
           id: selectedPathway,
           name: values.name,
-          milestoneTypes: selectedMilestoneTypes,
+          clinicalRequestTypes: selectedClinicalRequestTypes,
         },
       },
     });
@@ -123,41 +123,41 @@ const UpdatePathwayTab = (
   } = useForm<UpdatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
 
   useEffect(() => {
-    setMilestoneTypeFields(milestoneTypes
-      ? milestoneTypes.flatMap((mT) => (
+    setClinicalRequestTypeFields(clinicalRequestTypes
+      ? clinicalRequestTypes.flatMap((mT) => (
         {
           label: mT.name,
           value: mT.id,
         }
       ))
       : []);
-  }, [milestoneTypes, setMilestoneTypeFields]);
+  }, [clinicalRequestTypes, setClinicalRequestTypeFields]);
 
   useEffect(() => {
     setValue('name', '');
-    setValue('milestoneTypes', []);
+    setValue('clinicalRequestTypes', []);
 
     if (selectedPathway !== '-1' && selectedPathway) {
       const currPathway = pathways?.filter(
         (pathway) => (pathway?.id === selectedPathway),
       )?.[0];
 
-      const listOfMilestoneTypes: Array<{label: string, value: string}> = [];
+      const listOfClinicalRequestTypes: Array<{label: string, value: string}> = [];
 
       if (currPathway) {
         setValue('name', currPathway.name);
-        currPathway?.milestoneTypes?.forEach((milestoneType) => {
-          if (milestoneType) {
-            milestoneTypeFields?.find((mT) => (
-              mT.value === milestoneType.id
-              && listOfMilestoneTypes.push({ label: mT.label, value: mT.value })
+        currPathway?.clinicalRequestTypes?.forEach((clinicalRequestType) => {
+          if (clinicalRequestType) {
+            clinicalRequestTypeFields?.find((mT) => (
+              mT.value === clinicalRequestType.id
+              && listOfClinicalRequestTypes.push({ label: mT.label, value: mT.value })
             ));
           }
         });
       }
-      setValue('milestoneTypes', listOfMilestoneTypes);
+      setValue('clinicalRequestTypes', listOfClinicalRequestTypes);
     }
-  }, [pathways, milestoneTypeFields, selectedPathway, setValue]);
+  }, [pathways, clinicalRequestTypeFields, selectedPathway, setValue]);
 
   return (
     <>
@@ -217,9 +217,9 @@ const UpdatePathwayTab = (
             || disableForm
           }
         >
-          <Fieldset.Legend>Milestone types</Fieldset.Legend>
+          <Fieldset.Legend>ClinicalRequest types</Fieldset.Legend>
           <Controller
-            name="milestoneTypes"
+            name="clinicalRequestTypes"
             control={ control }
             render={ ({ field }) => (
               <Select
@@ -230,7 +230,7 @@ const UpdatePathwayTab = (
                 onChange={ field.onChange }
                 ref={ field.ref }
                 value={ field.value }
-                options={ milestoneTypeFields?.map((mT) => (
+                options={ clinicalRequestTypeFields?.map((mT) => (
                   { label: mT.label, value: mT.value }
                 )) }
               />
@@ -261,7 +261,7 @@ const UpdatePathwayTab = (
               <SummaryList.Value>
                 <ul>
                   {
-                    mutationData?.updatePathway?.pathway?.milestoneTypes?.map((mT) => (
+                    mutationData?.updatePathway?.pathway?.clinicalRequestTypes?.map((mT) => (
                       <li key={ `update_pathway_modal_perm_${mT.id}` }>{mT.name}</li>
                     ))
                   }

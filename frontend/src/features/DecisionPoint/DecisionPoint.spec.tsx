@@ -49,10 +49,10 @@ describe('When page loads', () => {
     await renderDefault();
 
     await waitFor(() => {
-      Default.parameters?.milestones.forEach((ms: any) => {
+      Default.parameters?.clinicalRequests.forEach((ms: any) => {
         if (ms.testResult) {
           expect(screen.getAllByRole('cell', {
-            name: new RegExp(ms.milestoneType.name, 'i'),
+            name: new RegExp(ms.clinicalRequestType.name, 'i'),
           }).length).toBeGreaterThan(0);
           expect(screen.getByRole('cell', {
             name: new RegExp(ms.testResult.description.slice(0, 75), 'i'),

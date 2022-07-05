@@ -4,20 +4,20 @@ import { Button } from 'nhsuk-react-components';
 import React, { useLayoutEffect, useState } from 'react';
 import { Container, Row } from 'react-bootstrap';
 
-interface ConfirmNoMilestonesProps {
+interface ConfirmNoClinicalRequestsProps {
   confirmFn: () => void;
   submitFn: () => void;
   cancelFn: () => void;
-  milestoneResolutions?: string[];
+  clinicalRequestResolutions?: string[];
 }
 
 /**
- * Confirmation when user tries to submit without any milestones selected
- * @param {ConfirmNoMilestonesProps} props Props
+ * Confirmation when user tries to submit without any clinicalRequests selected
+ * @param {ConfirmNoClinicalRequestsProps} props Props
  * @returns JSX.Element
  */
-const ConfirmNoMilestones = (
-  { confirmFn, submitFn, cancelFn, milestoneResolutions }: ConfirmNoMilestonesProps,
+const ConfirmNoClinicalRequests = (
+  { confirmFn, submitFn, cancelFn, clinicalRequestResolutions }: ConfirmNoClinicalRequestsProps,
 ): JSX.Element => {
   const [disabledState, setDisabledState] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -38,12 +38,12 @@ const ConfirmNoMilestones = (
       </Row>
       <Row>
         {
-          milestoneResolutions
+          clinicalRequestResolutions
             ? (
               <div>By clicking &apos;Submit&apos; you are acknowledging:
                 <ul>
                   {
-                    milestoneResolutions?.map((m) => (
+                    clinicalRequestResolutions?.map((m) => (
                       <li key={ m }>{m}</li>
                     ))
                   }
@@ -78,4 +78,4 @@ const ConfirmNoMilestones = (
   );
 };
 
-export default ConfirmNoMilestones;
+export default ConfirmNoClinicalRequests;

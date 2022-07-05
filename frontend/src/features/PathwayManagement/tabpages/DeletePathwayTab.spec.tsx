@@ -42,7 +42,7 @@ test('Role dropdown fills inputs with existing data', async () => {
 
   click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect(screen.getByText('TEST_MILESTONE_TYPE_ONE'));
+    expect(screen.getByText('TEST_CLINICALREQUEST_TYPE_ONE'));
   });
 });
 
@@ -61,13 +61,13 @@ test('Role dropdown clears inputs when set to default value', async () => {
 
   click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect(screen.getByText('TEST_MILESTONE_TYPE_ONE'));
+    expect(screen.getByText('TEST_CLINICALREQUEST_TYPE_ONE'));
   });
   selectOptions(select, ['-1']);
 
   await waitFor(() => {
-    expect(screen.queryByText('TEST_MILESTONE_TYPE_ONE')).not.toBeInTheDocument();
-    expect(screen.queryByText('TEST_MILESTONE_TYPE_TWO')).not.toBeInTheDocument();
+    expect(screen.queryByText('TEST_CLINICALREQUEST_TYPE_ONE')).not.toBeInTheDocument();
+    expect(screen.queryByText('TEST_CLINICALREQUEST_TYPE_TWO')).not.toBeInTheDocument();
   });
 });
 

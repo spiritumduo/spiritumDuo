@@ -25,10 +25,10 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 // GENERATED TYPES
 import { createDecisionPointVariables, createDecisionPoint } from 'features/DecisionPoint/__generated__/createDecisionPoint';
 import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
-import { DecisionType, MilestoneRequestInput } from '../../__generated__/globalTypes';
+import { DecisionType, ClinicalRequestRequestInput } from '../../__generated__/globalTypes';
 
 // LOCAL COMPONENTS
-import ConfirmNoMilestones from './components/ConfirmNoMilestones';
+import ConfirmNoClinicalRequests from './components/ConfirmNoClinicalRequests';
 import PreviousTestResultsElement from './components/PreviousTestResultsElement';
 
 import './decisionpoint.css';
@@ -62,7 +62,7 @@ export const GET_PATIENT_QUERY = gql`
             firstName
             lastName
           }
-          milestones{
+          clinicalRequests{
             id
             forwardDecisionPoint {
               id
@@ -72,14 +72,14 @@ export const GET_PATIENT_QUERY = gql`
               description
               addedAt
             }
-            milestoneType{
+            clinicalRequestType{
               name
             }
           }
           decisionPoints {
             clinicHistory
             comorbidities
-            milestones {
+            clinicalRequests {
               id
               forwardDecisionPoint {
                 id
@@ -89,14 +89,14 @@ export const GET_PATIENT_QUERY = gql`
                 description
                 addedAt
               }
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
           }
         }
       }
-      getMilestoneTypes(pathwayId: $pathwayId) {
+      getClinicalRequestTypes(pathwayId: $pathwayId) {
         id
         name
         isDischarge
@@ -111,9 +111,9 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
     createDecisionPoint(input: $input) {
       decisionPoint {
         id
-        milestones {
+        clinicalRequests {
           id
-          milestoneType {
+          clinicalRequestType {
             id
             name
             isDischarge
@@ -137,15 +137,15 @@ type DecisionPointPageForm = {
   comorbidities: string;
   dischargeRequestId: string;
   something: string;
-  milestoneRequests: {
+  clinicalRequestRequests: {
     id: string;
-    milestoneTypeId: string;
+    clinicalRequestTypeId: string;
     name: string;
     checked: boolean;
     discharge: boolean;
     isTestRequest: boolean;
   }[];
-  milestoneResolutions?: {
+  clinicalRequestResolutions?: {
     id: string;
     name: string;
   }[];
@@ -201,7 +201,7 @@ const DecisionPointPage = (
     fields: requestFields,
     append: appendRequestFields,
   } = useFieldArray({
-    name: 'milestoneRequests',
+    name: 'clinicalRequestRequests',
     control: control,
   });
 
@@ -210,16 +210,16 @@ const DecisionPointPage = (
   useLayoutEffect(() => {
     if (!hasBuiltCheckboxes && data) {
       updateHasBuiltCheckboxes(true);
-      const fieldProps: DecisionPointPageForm['milestoneRequests'] = data.getMilestoneTypes
-        ? data.getMilestoneTypes?.flatMap((milestoneType) => (
-          !milestoneType.isCheckboxHidden
+      const fieldProps: DecisionPointPageForm['clinicalRequestRequests'] = data.getClinicalRequestTypes
+        ? data.getClinicalRequestTypes?.flatMap((clinicalRequestType) => (
+          !clinicalRequestType.isCheckboxHidden
             ? {
               id: '',
-              milestoneTypeId: milestoneType.id,
-              name: milestoneType.name,
+              clinicalRequestTypeId: clinicalRequestType.id,
+              name: clinicalRequestType.name,
               checked: false,
-              discharge: milestoneType.isDischarge,
-              isTestRequest: milestoneType.isTestRequest,
+              discharge: clinicalRequestType.isDischarge,
+              isTestRequest: clinicalRequestType.isTestRequest,
             }
             : []
         ))
@@ -233,7 +233,7 @@ const DecisionPointPage = (
     fields: hiddenConfirmationFields,
     append: appendHiddenConfirmationFields,
   } = useFieldArray({
-    name: 'milestoneResolutions',
+    name: 'clinicalRequestResolutions',
     control: control,
   });
 
@@ -242,12 +242,12 @@ const DecisionPointPage = (
   ] = useState<boolean>(false);
   useLayoutEffect(() => {
     if (!hasBuiltHiddenConfirmationFields && data) {
-      const outstandingTestResultIds: DecisionPointPageForm['milestoneResolutions'] | undefined = data?.getPatient?.onPathways?.[0]?.milestones?.flatMap(
+      const outstandingTestResultIds: DecisionPointPageForm['clinicalRequestResolutions'] | undefined = data?.getPatient?.onPathways?.[0]?.clinicalRequests?.flatMap(
         (ms) => (
           !ms.forwardDecisionPoint && ms.testResult
             ? {
               id: ms.id,
-              name: ms.milestoneType.name,
+              name: ms.clinicalRequestType.name,
             }
             : []
         ),
@@ -264,17 +264,17 @@ const DecisionPointPage = (
   }
 
   if (isSubmitted) {
-    const _milestones = mutateData?.createDecisionPoint?.decisionPoint?.milestones?.map((ms) => ({
+    const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map((ms) => ({
       id: ms.id,
-      name: ms.milestoneType.name,
-      isDischarge: ms.milestoneType.isDischarge,
+      name: ms.clinicalRequestType.name,
+      isDischarge: ms.clinicalRequestType.isDischarge,
     }));
-    return _milestones?.find((ms) => ms.isDischarge)
+    return _clinicalRequests?.find((ms) => ms.isDischarge)
       ? <PathwayComplete />
       : (
         <DecisionSubmissionSuccess
-          milestones={ _milestones }
-          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+          clinicalRequests={ _clinicalRequests }
+          clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
         />
       );
   }
@@ -283,16 +283,16 @@ const DecisionPointPage = (
   const onSubmitFn = (
     mutation: typeof createDecision, values: DecisionPointPageForm, isConfirmed = false,
   ) => {
-    const milestoneRequests: MilestoneRequestInput[] = values.milestoneRequests?.filter(
+    const clinicalRequestRequests: ClinicalRequestRequestInput[] = values.clinicalRequestRequests?.filter(
       (m) => (m.checked !== false),
     ).map((m) => ({
       // The value of 'checked' will be anything we supply in the tag, but the
       // form expects it to be boolean and breaks if it's not - so we do this cast
-      milestoneTypeId: m.checked as unknown as string,
+      clinicalRequestTypeId: m.checked as unknown as string,
     }));
 
     if (!confirmNoRequests && !isConfirmed) {
-      setRequestConfirmation(milestoneRequests.length);
+      setRequestConfirmation(clinicalRequestRequests.length);
     } else {
       const variables: createDecisionPointVariables = {
         input: {
@@ -300,8 +300,8 @@ const DecisionPointPage = (
           clinicHistory: values.clinicHistory,
           comorbidities: values.comorbidities,
           decisionType: values.decisionType,
-          milestoneRequests: milestoneRequests,
-          milestoneResolutions: values.milestoneResolutions?.map((mr) => mr.id),
+          clinicalRequestRequests: clinicalRequestRequests,
+          clinicalRequestResolutions: values.clinicalRequestResolutions?.map((mr) => mr.id),
         },
       };
       mutation({ variables: variables });
@@ -313,7 +313,7 @@ const DecisionPointPage = (
     // NO REQUESTS SELECTED
     if (requestConfirmation === 0 || requestConfirmation === true) {
       return (
-        <ConfirmNoMilestones
+        <ConfirmNoClinicalRequests
           confirmFn={ () => setConfirmNoRequests(true) }
           cancelFn={ () => {
             setRequestConfirmation(false);
@@ -322,15 +322,15 @@ const DecisionPointPage = (
             setConfirmNoRequests(true);
             onSubmitFn(createDecision, getValues(), true);
           } }
-          milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+          clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
         />
       );
     }
     // REQUESTS SELECTED
-    const milestones = getValues()
-      .milestoneRequests
+    const clinicalRequests = getValues()
+      .clinicalRequestRequests
       .filter((m) => m.checked)
-      .map((m) => ({ id: m.milestoneTypeId, name: m.name }));
+      .map((m) => ({ id: m.clinicalRequestTypeId, name: m.name }));
     return (
       <DecisionSubmissionConfirmation
         cancelCallback={ () => {
@@ -340,8 +340,8 @@ const DecisionPointPage = (
           setConfirmNoRequests(true);
           onSubmitFn(createDecision, getValues(), true);
         } }
-        milestones={ milestones }
-        milestoneResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+        clinicalRequests={ clinicalRequests }
+        clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
       />
     );
   }
@@ -362,12 +362,12 @@ const DecisionPointPage = (
   requestFields.forEach((field, index) => {
     const element = (
       <div className="form-check" key={ `ms-check-${field.id}` }>
-        <label className="form-check-label pull-right" htmlFor={ `milestoneRequests.${index}.checked` }>
+        <label className="form-check-label pull-right" htmlFor={ `clinicalRequestRequests.${index}.checked` }>
           <input
             className="form-check-input"
             type="checkbox"
-            value={ field.milestoneTypeId }
-            { ...register(`milestoneRequests.${index}.checked` as const) }
+            value={ field.clinicalRequestTypeId }
+            { ...register(`clinicalRequestRequests.${index}.checked` as const) }
             defaultChecked={ false }
           />
           { field.name }
@@ -403,7 +403,7 @@ const DecisionPointPage = (
                 type="hidden"
                 value={ field.id }
                 data-result-name={ field.name }
-                { ...register(`milestoneResolutions.${index}.id`) }
+                { ...register(`clinicalRequestResolutions.${index}.id`) }
               />
             ))
           }
