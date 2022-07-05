@@ -118,7 +118,9 @@ const DeletePathwayTab = ({
           if (clinicalRequestType) {
             clinicalRequestTypeFields?.find((mT) => (
               mT.value === clinicalRequestType.id
-              && listOfPermissions.push({ label: clinicalRequestType.name, value: clinicalRequestType.id })
+              && listOfPermissions.push({
+                label: clinicalRequestType.name, value: clinicalRequestType.id,
+              })
             ));
           }
         });

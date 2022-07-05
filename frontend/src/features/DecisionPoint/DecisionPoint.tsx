@@ -12,7 +12,6 @@ import * as yup from 'yup';
 // APP
 import { AuthContext, PathwayContext } from 'app/context';
 import { DecisionPointType } from 'types/DecisionPoint';
-import Patient from 'types/Patient';
 import User from 'types/Users';
 
 // COMPONENTS
@@ -264,11 +263,15 @@ const DecisionPointPage = (
   }
 
   if (isSubmitted) {
-    const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map((ms) => ({
-      id: ms.id,
-      name: ms.clinicalRequestType.name,
-      isDischarge: ms.clinicalRequestType.isDischarge,
-    }));
+    const _clinicalRequests = mutateData
+      ?.createDecisionPoint
+      ?.decisionPoint
+      ?.clinicalRequests
+      ?.map((ms) => ({
+        id: ms.id,
+        name: ms.clinicalRequestType.name,
+        isDischarge: ms.clinicalRequestType.isDischarge,
+      }));
     return _clinicalRequests?.find((ms) => ms.isDischarge)
       ? <PathwayComplete />
       : (
@@ -283,13 +286,14 @@ const DecisionPointPage = (
   const onSubmitFn = (
     mutation: typeof createDecision, values: DecisionPointPageForm, isConfirmed = false,
   ) => {
-    const clinicalRequestRequests: ClinicalRequestRequestInput[] = values.clinicalRequestRequests?.filter(
-      (m) => (m.checked !== false),
-    ).map((m) => ({
-      // The value of 'checked' will be anything we supply in the tag, but the
-      // form expects it to be boolean and breaks if it's not - so we do this cast
-      clinicalRequestTypeId: m.checked as unknown as string,
-    }));
+    const clinicalRequestRequests: ClinicalRequestRequestInput[] = values
+      .clinicalRequestRequests?.filter(
+        (m) => (m.checked !== false),
+      ).map((m) => ({
+        // The value of 'checked' will be anything we supply in the tag, but the
+        // form expects it to be boolean and breaks if it's not - so we do this cast
+        clinicalRequestTypeId: m.checked as unknown as string,
+      }));
 
     if (!confirmNoRequests && !isConfirmed) {
       setRequestConfirmation(clinicalRequestRequests.length);

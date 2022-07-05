@@ -56,8 +56,8 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
   const dispatch = useAppDispatch();
 
   const { data, loading, error } = useQuery<patientSearch>(PATIENT_SEARCH_QUERY, { variables: {
-    query: 'Test',
-    pathwayId: '1',
+    query: query,
+    pathwayId: currentPathwayId,
   } });
 
   const onClickCallback = useCallback((hospitalNumber: string) => {
@@ -74,7 +74,9 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
     const pathway = p.onPathways?.[0];
     const isLockedByOther = (pathway?.lockUser != null)
       && (pathway?.lockUser?.id !== user?.id);
-    const mostRecentStage = pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0];
+    const mostRecentStage = (
+      pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0]
+    );
     const patient: PatientListProps['data'][0] = {
       id: p.id,
       firstName: p.firstName,

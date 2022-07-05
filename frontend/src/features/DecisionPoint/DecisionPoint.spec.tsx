@@ -2,7 +2,6 @@ import React from 'react';
 import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
-import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);

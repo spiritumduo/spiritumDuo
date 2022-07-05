@@ -156,7 +156,9 @@ const WrappedPatientList = ({
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
         const pathway = n.onPathways?.[0];
-        const lastClinicalRequest = pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0];
+        const lastClinicalRequest = (
+          pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0]
+        );
         const mostRecentStage = lastClinicalRequest ? lastClinicalRequest.clinicalRequestType.name : 'Triage';
         const updatedAt = lastClinicalRequest?.updatedAt
           ? lastClinicalRequest.updatedAt

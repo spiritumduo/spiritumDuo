@@ -37,9 +37,13 @@ export const GET_PATHWAYS = gql`
 `;
 
 const PathwayManagementTabSet = (): JSX.Element => {
-  const { loading: loadingClinicalRequestTypes,
+  const {
+    loading: loadingClinicalRequestTypes,
     data: dataClinicalRequestTypes,
-    error: errorClinicalRequestTypes} = useQuery<getClinicalRequestTypes>(GET_CLINICALREQUEST_TYPES);
+    error: errorClinicalRequestTypes,
+  } = useQuery<getClinicalRequestTypes>(
+    GET_CLINICALREQUEST_TYPES,
+  );
 
   const { loading: loadingPathways,
     data: dataPathways,

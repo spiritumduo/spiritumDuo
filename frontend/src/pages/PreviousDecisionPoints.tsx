@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import './previousdecisionpoints.css';
 import { gql, useQuery } from '@apollo/client';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
