@@ -5,12 +5,8 @@ import * as stories from './PatientPathwayList.stories';
 
 const { Default } = composeStories(stories);
 
-it('It should render Default correctly', () => {
-  const { container } = render(<Default />);
-  expect(container).toMatchSnapshot();
-});
-
-it('Should have accessible table', async () => {
-  const { getByRole } = render(<Default />);
+it('It should render Default correctly', async () => {
+  const { container, getByRole } = render(<Default />);
   await waitFor(() => expect(getByRole('table', { name: /pathway\s+table/i })).toBeInTheDocument());
+  expect(container).toMatchSnapshot();
 });
