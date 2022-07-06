@@ -16,5 +16,7 @@ async def resolve_update_on_mdt(
     return await UpdateOnMDT(
         context=info.context,
         id=input['id'],
-        reason=input['reason']
+        reason=input['reason'],
+        actioned=input['actioned'],
+        outcome=input['outcome'] if 'outcome' in input else '',
     )
