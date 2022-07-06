@@ -1,3 +1,4 @@
+from common import DataCreatorInputErrors
 from .mutation_type import mutation
 from models import MDT, OnMdt, UserPathway
 from authentication.authentication import needsAuthorization
@@ -11,6 +12,8 @@ from models.db import db
 async def resolve_remove_pt_from_mdt(
     obj=None, info: GraphQLResolveInfo = None, id: str = None
 ) -> bool:
+    errors: DataCreatorInputErrors = DataCreatorInputErrors()
+
     query: str = OnMdt.join(MDT, OnMdt.mdt_id == MDT.id)\
         .join(UserPathway, MDT.pathway_id == UserPathway.pathway_id)\
         .select()\
@@ -22,10 +25,17 @@ async def resolve_remove_pt_from_mdt(
         .execution_options(loader=OnMdt)
 
     async with db.acquire(reuse=False) as conn:
-        on_mdt = await conn.one_or_none(query)
+        on_mdt: OnMdt = await conn.one_or_none(query)
 
     if on_mdt is None:
         raise PermissionError()
+
+    if on_mdt.lock_user_id != info.context["request"].user.id:
+        errors.addError(
+            'lock_user_id',
+            'This is locked by another user'
+        )
+        return errors
 
     await on_mdt.delete()
 

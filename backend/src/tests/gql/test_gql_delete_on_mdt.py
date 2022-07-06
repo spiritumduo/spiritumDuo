@@ -6,7 +6,7 @@ from hamcrest import (
     contains_string, not_none
 )
 from models import UserPathway, MDT, OnMdt
-
+from datetime import datetime, timedelta
 
 @pytest.fixture
 def delete_on_mdt_query() -> str:
@@ -25,13 +25,57 @@ def delete_on_mdt_query() -> str:
     """
 
 
-async def test_delete_on_mdt(
+async def test_delete_on_mdt_without_lock(
     on_mdt_delete_permission,
     delete_on_mdt_query,
     httpx_test_client, httpx_login_user,
     test_on_mdts: List[OnMdt], test_user
 ):
     on_mdt_to_remove = test_on_mdts[1]
+
+    """
+    When: we execute the query to delete an onmdt record
+    """
+    res = await httpx_test_client.post(
+        url="graphql",
+        json={
+            "query": delete_on_mdt_query,
+            "variables": {
+                "id": on_mdt_to_remove.id,
+            }
+        }
+    )
+
+    assert_that(res.status_code, equal_to(200))
+    result = json.loads(
+        res.text
+    )['data']['deleteOnMdt']
+
+    """
+    Then: We get a success indicator returned
+    """
+    assert_that(
+        result['success'],
+        is_(none())
+    )
+    assert_that(
+        result['userErrors'],
+        is_(not_none())
+    )
+
+
+async def test_delete_on_mdt_with_lock(
+    on_mdt_delete_permission,
+    delete_on_mdt_query,
+    httpx_test_client, httpx_login_user,
+    test_on_mdts: List[OnMdt], test_user
+):
+    on_mdt_to_remove = test_on_mdts[1]
+
+    await on_mdt_to_remove.update(
+        lock_user_id=test_user.user.id,
+        lock_end_time=datetime.now() + timedelta(minutes=10)
+    ).apply()
 
     """
     When: we execute the query to delete an onmdt record

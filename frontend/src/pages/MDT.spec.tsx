@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 // LOCAL IMPORTS
 import * as stories from './MDT.stories';
 
-const { Default } = composeStories(stories);
+const { Default, Locked } = composeStories(stories);
 
 describe('When the page loads', () => {
   it('Should display the loading spinner and then disappear', async () => {
@@ -90,9 +90,26 @@ describe('Clicking edit on a patient row', () => {
     });
   });
   it('it should autocomplete with data from query', async () => {
-    const { click } = userEvent.setup();
-
     await renderEdit();
     expect((screen.getByLabelText(/reason added to mdt/i) as HTMLInputElement)).toHaveValue('reason goes here (1)');
+  });
+  it('Should show an error if already locked', async () => {
+    const { click } = userEvent.setup();
+    jest.useFakeTimers();
+    render(
+      <Locked />,
+    );
+    expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+
+    await act(async () => {
+      jest.setSystemTime(Date.now() + 10000);
+      jest.advanceTimersByTime(1000);
+    });
+    expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+
+    click(screen.getAllByText(/edit/i)[0]);
+    await waitFor(() => {
+      expect(screen.getByText(/locked by someone else/i)).toBeInTheDocument();
+    });
   });
 });

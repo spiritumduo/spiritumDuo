@@ -6,11 +6,12 @@ import { useParams } from 'react-router-dom';
 import { useAppDispatch } from 'app/hooks';
 import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
 import '../components/patientlist.css';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import edgesToNodes from 'app/pagination';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import PatientOnMdtManagement from 'features/PatientOnMdtManagement/PatientOnMdtManagement';
 import { getOnMdtConnectionQuery } from './__generated__/getOnMdtConnectionQuery';
+import { lockOnMdtForManagement } from './__generated__/lockOnMdtForManagement';
 
 export const GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
   query getOnMdtConnectionQuery(
@@ -47,6 +48,35 @@ export const GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
   }
 `;
 
+export const LOCK_ON_MDT_MUTATION = gql`
+  mutation lockOnMdtForManagement(
+    $id: ID!
+    $unlock: Boolean!
+  ){
+    lockOnMdt(
+      input:{
+        id: $id,
+        unlock: $unlock
+      }
+    ){
+      onMdt{
+        id
+        lockEndTime
+        lockUser{
+          id
+          username
+          firstName
+          lastName
+        }
+      }
+      userErrors{
+        field
+        message
+      }
+    }
+  }
+`;
+
 const useGetOnMdtConnectionQuery = (
   id: string, first: number, after?: string,
 ) => useQuery<getOnMdtConnectionQuery>(
@@ -70,12 +100,43 @@ const MDTPage = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState(0);
   const { mdtId } = useParams();
   const [selectedOnMdt, setSelectedOnMdt] = useState<OnMdtElement | null>(null);
+  const [hasLock, setHasLock] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   dispatch(setOnMdtWorkflow( mdtId ));
   if (!mdtId) {
     navigate('/mdt');
   }
+
+  const [
+    lockMutation, { data: lockData, error: lockError, loading: lockLoading },
+  ] = useMutation<lockOnMdtForManagement>(LOCK_ON_MDT_MUTATION);
+
+  useEffect(() => {
+    if (selectedOnMdt) {
+      lockMutation({
+        variables: {
+          id: selectedOnMdt.onMdtId,
+          unlock: false,
+        },
+      });
+    } else if (hasLock) {
+      lockMutation({
+        variables: {
+          id: hasLock,
+          unlock: true,
+        },
+      });
+    }
+  }, [lockMutation, selectedOnMdt]);
+
+  useEffect(() => {
+    if (lockData?.lockOnMdt?.onMdt?.id && !lockData?.lockOnMdt?.userErrors) {
+      setHasLock(lockData.lockOnMdt.onMdt.id);
+    } else {
+      setHasLock(null);
+    }
+  }, [lockData]);
 
   const {
     loading,
@@ -113,11 +174,22 @@ const MDTPage = (): JSX.Element => {
         <Breadcrumb.Item href="../mdt">MDTs</Breadcrumb.Item>
         <Breadcrumb.Item href="">Patient list</Breadcrumb.Item>
       </Breadcrumb>
-      <PatientOnMdtManagement
-        onMdt={ selectedOnMdt }
-        closeCallback={ () => setSelectedOnMdt(null) }
-        refetch={ () => refetch() }
-      />
+      {
+        lockData?.lockOnMdt?.userErrors?.map((e) => (
+          <ErrorMessage key={ e.field }>{e.message}</ErrorMessage>
+        ))
+      }
+      {
+        selectedOnMdt && hasLock
+          ? (
+            <PatientOnMdtManagement
+              onMdt={ selectedOnMdt }
+              closeCallback={ () => setSelectedOnMdt(null) }
+              refetch={ () => refetch() }
+            />
+          )
+          : ''
+      }
       <LoadingSpinner loading={ loading }>
         {
           error

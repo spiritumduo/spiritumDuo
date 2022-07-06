@@ -1,6 +1,14 @@
-from common import ReferencedItemDoesNotExistError
+from common import DataCreatorInputErrors, ReferencedItemDoesNotExistError
 from models import MDT, OnMdt, UserPathway
 from models.db import db
+
+
+class OnMdtLockedByOtherUser(Exception):
+    """
+    This is raised when a modification to an OnMdt
+    record is attempted without the user owning the
+    lock to the record.
+    """
 
 
 async def UpdateOnMDT(
@@ -28,10 +36,13 @@ async def UpdateOnMDT(
         .execution_options(loader=OnMdt)
 
     async with db.acquire(reuse=False) as conn:
-        on_mdt = await conn.one_or_none(query)
+        on_mdt: OnMdt = await conn.one_or_none(query)
 
     if on_mdt is None:
         raise PermissionError()
+
+    if on_mdt.lock_user_id != context["request"].user.id:
+        raise OnMdtLockedByOtherUser()
 
     if outcome is not None and actioned is not None:
         await on_mdt.update(
