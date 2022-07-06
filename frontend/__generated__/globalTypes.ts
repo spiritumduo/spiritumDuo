@@ -106,6 +106,8 @@ export interface UpdateMdtInput {
 export interface UpdateOnMdtInput {
   id: string;
   reason: string;
+  outcome?: string | null;
+  actioned: boolean;
 }
 
 export interface UpdatePathwayInput {
