@@ -7,6 +7,8 @@ async def UpdateOnMDT(
     context: dict = None,
     id: int = None,
     reason: str = None,
+    outcome: str = None,
+    actioned: bool = None,
 ):
     if id is None:
         raise ReferencedItemDoesNotExistError("ID not provided")
@@ -31,6 +33,12 @@ async def UpdateOnMDT(
     if on_mdt is None:
         raise PermissionError()
 
-    await on_mdt.update(reason=reason).apply()
+    if outcome is not None and actioned is not None:
+        await on_mdt.update(
+            reason=reason, outcome=outcome, actioned=actioned).apply()
+    elif outcome is not None:
+        await on_mdt.update(reason=reason, outcome=outcome).apply()
+    else:
+        await on_mdt.update(reason=reason).apply()
 
     return on_mdt
