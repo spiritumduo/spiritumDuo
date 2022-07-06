@@ -35,6 +35,5 @@ async def test_submit_feedback(
     )
 
     assert_that(res.status_code, equal_to(200))
-    print(res.text)
     json_res = json.loads(res.text)['data']['submitFeedback']
     assert_that(json_res['success'], equal_to(True))

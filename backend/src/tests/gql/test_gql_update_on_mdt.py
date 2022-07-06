@@ -14,14 +14,19 @@ def update_on_mdt_query() -> str:
         mutation updateOnMdt(
             $id: ID!
             $reason: String!
-
+            $outcome: String
+            $actioned: Boolean!
         ){
             updateOnMdt(input: {
                 id: $id
                 reason: $reason
+                outcome: $outcome
+                actioned: $actioned
             }){
                 onMdt{
                     reason
+                    outcome
+                    actioned
                 }
                 userErrors{
                     field
@@ -41,6 +46,8 @@ async def test_update_on_mdt(
     on_mdt_to_update = test_on_mdts[1]
 
     NEW_REASON = 'test reason go brrt'
+    NEW_OUTCOME = 'test outcome go brrt'
+    ACTIONED = True
 
     """
     When: we execute the query to delete an onmdt record
@@ -51,7 +58,9 @@ async def test_update_on_mdt(
             "query": update_on_mdt_query,
             "variables": {
                 "id": on_mdt_to_update.id,
-                "reason": NEW_REASON
+                "reason": NEW_REASON,
+                "outcome": NEW_OUTCOME,
+                "actioned": ACTIONED
             }
         }
     )
@@ -73,6 +82,10 @@ async def test_update_on_mdt(
         is_(equal_to(NEW_REASON))
     )
     assert_that(
+        result['onMdt']['outcome'],
+        is_(equal_to(NEW_OUTCOME))
+    )
+    assert_that(
         result['userErrors'],
         is_(none())
     )
@@ -80,6 +93,8 @@ async def test_update_on_mdt(
     on_mdt_check = await OnMdt.get(on_mdt_to_update.id)
     assert_that(
         on_mdt_check.reason, is_(equal_to(NEW_REASON)))
+    assert_that(
+        on_mdt_check.outcome, is_(equal_to(NEW_OUTCOME)))
 
 
 async def test_update_on_mdt_no_user_pathway_permission(
@@ -90,6 +105,8 @@ async def test_update_on_mdt_no_user_pathway_permission(
 ):
     on_mdt_to_update = test_on_mdts[1]
     NEW_REASON = 'test reason go brrt'
+    NEW_OUTCOME = 'test outcome go brrt'
+    ACTIONED = True
 
     mdt: MDT = await MDT.get(on_mdt_to_update.mdt_id)
 
@@ -108,7 +125,9 @@ async def test_update_on_mdt_no_user_pathway_permission(
             "query": update_on_mdt_query,
             "variables": {
                 "id": on_mdt_to_update.id,
-                "reason": NEW_REASON
+                "reason": NEW_REASON,
+                "outcome": NEW_OUTCOME,
+                "actioned": ACTIONED,
             }
         }
     )
@@ -124,6 +143,7 @@ async def test_update_on_mdt_no_user_pathway_permission(
     """
     on_mdt_check = await OnMdt.get(on_mdt_to_update.id)
     assert_that(on_mdt_check.reason, is_(not_(equal_to(NEW_REASON))))
+    assert_that(on_mdt_check.outcome, is_(not_(equal_to(NEW_OUTCOME))))
 
 
 async def test_user_lacks_permission(
@@ -139,7 +159,9 @@ async def test_user_lacks_permission(
             "query": update_on_mdt_query,
             "variables": {
                 "id": "42",
-                "reason": "no"
+                "reason": "no",
+                "outcome": "brrt",
+                "actioned": False
             }
         }
     )
