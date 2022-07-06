@@ -17,6 +17,7 @@ import { Breadcrumb, Checkboxes, Table } from 'nhsuk-react-components';
 import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import PatientPathway from 'components/PatientPathway/PatientPathway';
+import PatientMdtTab from 'features/PatientMdtTab/PatientMdtTab';
 
 // LOCAL
 import { lockOnPathway } from './__generated__/lockOnPathway';
@@ -209,36 +210,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
             <PreviousDecisionPoints hospitalNumber={ hospitalNumber } />
           </TabPanel>
           <TabPanel>
-            {/* MDT panel */}
-            <Table>
-              <Table.Head>
-                <Table.Cell>Date</Table.Cell>
-                <Table.Cell>Requested by</Table.Cell>
-                <Table.Cell>Review reason</Table.Cell>
-                <Table.Cell>Outcome</Table.Cell>
-                <Table.Cell>Actioned</Table.Cell>
-              </Table.Head>
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell>01/01/2020</Table.Cell>
-                  <Table.Cell>Dr. Doctor Doctor</Table.Cell>
-                  <Table.Cell>The thing do be doing a thing tho</Table.Cell>
-                  <Table.Cell>Do the do with the thing</Table.Cell>
-                  <Table.Cell>
-                    <Checkboxes><Checkboxes.Box>&nbsp;</Checkboxes.Box></Checkboxes>
-                  </Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell>06/02/2020</Table.Cell>
-                  <Table.Cell>Dr. Doctor Doctor</Table.Cell>
-                  <Table.Cell>The other thing do be doing other thing things</Table.Cell>
-                  <Table.Cell>Do do be do be do</Table.Cell>
-                  <Table.Cell>
-                    <Checkboxes><Checkboxes.Box>&nbsp;</Checkboxes.Box></Checkboxes>
-                  </Table.Cell>
-                </Table.Row>
-              </Table.Body>
-            </Table>
+            <PatientMdtTab patientId={ patientData?.getPatient?.id } />
           </TabPanel>
           <TabPanel>
             test message
