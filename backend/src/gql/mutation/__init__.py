@@ -11,4 +11,6 @@ from .update_mdt import mutation
 from .delete_mdt import mutation
 from .update_on_mdt import mutation
 from .delete_on_mdt import mutation
+from .lock_on_mdt import mutation
+
 type_list = [mutation]

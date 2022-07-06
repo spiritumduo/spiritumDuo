@@ -32,3 +32,11 @@ async def resolve_on_mdt_mdt(
 ):
     return await MdtByIdLoader.load_from_id(
         context=info.context, id=obj.mdt_id)
+
+
+@OnMdtObjectType.field("lockUser")
+async def resolve_on_mdt_lock_user(
+    obj: OnMdt = None, info: GraphQLResolveInfo = None, *_
+):
+    return await UserByIdLoader.load_from_id(
+        context=info.context, id=obj.lock_user_id)
