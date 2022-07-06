@@ -12,6 +12,7 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 import { updateOnMdt } from './__generated__/updateOnMdt';
 import { deleteOnMdt } from './__generated__/deleteOnMdt';
+import { lockOnMdtForManagement } from './__generated__/lockOnMdtForManagement';
 
 export const UPDATE_ON_MDT_MUTATION = gql`
   mutation updateOnMdt($input: UpdateOnMdtInput!){
@@ -65,7 +66,7 @@ type DeleteForm = {
 };
 
 interface PatientOnMdtProps{
-  onMdt: OnMdtElement | null;
+  onMdt: OnMdtElement;
   closeCallback: () => void;
   refetch?: () => void;
 }
@@ -143,7 +144,7 @@ const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtP
           <TabPanel>
             {
               updateError?.message
-                ? <ErrorMessage>{updateError?.message}</ErrorMessage>
+                ? <ErrorMessage>{updateError.message}</ErrorMessage>
                 : ''
             }
             {
