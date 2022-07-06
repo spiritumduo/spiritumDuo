@@ -20,6 +20,9 @@ async def resolve_get_mdt(
         info.context[MdtByIdLoader.loader_name] = \
             MdtByIdLoader(db=info.context['db'])
 
+    if id is None and pathwayId is None:
+        return None
+
     if id:
         return await MdtByIdLoader.load_from_id(context=info.context, id=id)
 
