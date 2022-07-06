@@ -392,7 +392,7 @@ input UpdateOnMdtInput{
     id: ID!
     reason: String!
     outcome: String
-    actioned: Boolean!
+    actioned: Boolean
 }
 input MdtInput{
     pathwayId: ID!
