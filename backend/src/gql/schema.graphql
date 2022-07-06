@@ -61,7 +61,9 @@ type Query {
         after: String
         last: Int
         before: String
-        mdtId: ID!
+        mdtId: ID
+        patientId: ID
+        pathwayId: ID
     ): OnMdtConnection!,
 
     patientSearch(query: String!, pathwayId: ID!): [Patient!]!
@@ -80,6 +82,7 @@ type Mutation {
     deleteMdt(id: ID!): DeletePayload!
     updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
     deleteOnMdt(id: ID!): DeletePayload!
+    lockOnMdt(input:LockOnMdtInput!): LockOnMdtPayload!
 }
 
 type Subscription {
@@ -143,6 +146,11 @@ type AddDecisionPointPayload {
 
 type LockOnPathwayPayload {
     onPathway: OnPathway
+    userErrors: [UserError!]
+}
+
+type LockOnMdtPayload {
+    onMdt: OnMdt
     userErrors: [UserError!]
 }
 
@@ -279,6 +287,10 @@ type OnMdt{
     clinician: User!
     addedAt: Date!
     reason: String!
+    outcome: String
+    lockEndTime: Date
+    lockUser: User
+    actioned: Boolean!
 }
 
 type OnPathway {
@@ -379,6 +391,8 @@ enum Sex {
 input UpdateOnMdtInput{
     id: ID!
     reason: String!
+    outcome: String
+    actioned: Boolean!
 }
 input MdtInput{
     pathwayId: ID!
@@ -430,8 +444,14 @@ input DecisionPointInput{
     milestoneResolutions: [ID!]
     mdt: AddPatientToMdtInput
 }
+
 input LockOnPathwayInput{
     onPathwayId: ID!
+    unlock: Boolean
+}
+
+input LockOnMdtInput{
+    id: ID!
     unlock: Boolean
 }
 
