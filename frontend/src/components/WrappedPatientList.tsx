@@ -154,11 +154,7 @@ const WrappedPatientList = ({
   const { nodes, pageCount, pageInfo } = edgesToNodes<onPathwayNode>(
     data?.getPatientOnPathwayConnection, currentPage, patientsToDisplay,
   );
-  console.log(
-    'pathwayId', pathwayId, 'patientsToDisplay', patientsToDisplay, 'outstanding', outstanding,
-    'underCareOf', underCareOf, 'includeDischarged', includeDischarged,
-  );
-  console.log(nodes);
+
   if (nodes) {
     listElements = nodes.flatMap(
       (n) => {
