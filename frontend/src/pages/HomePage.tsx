@@ -58,8 +58,8 @@ const PatientListTab = (
             <WrappedPatientList
               pathwayId={ pathwayId }
               patientsToDisplay={ patientsPerPage }
-              outstanding
-              underCareOf
+              outstanding={ outstanding }
+              underCareOf={ underCareOf }
             />
           )
         }
