@@ -7,6 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ClinicalRequestState {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
+  INIT = "INIT",
+  WAITING = "WAITING",
+}
+
 export enum DecisionType {
   AD_HOC = "AD_HOC",
   CLINIC = "CLINIC",
@@ -14,14 +22,6 @@ export enum DecisionType {
   MDT = "MDT",
   POST_REQUEST = "POST_REQUEST",
   TRIAGE = "TRIAGE",
-}
-
-export enum ClinicalRequestState {
-  ACTIVE = "ACTIVE",
-  COMPLETED = "COMPLETED",
-  ERROR = "ERROR",
-  INIT = "INIT",
-  WAITING = "WAITING",
 }
 
 export enum PatientCommunicationMethods {
@@ -40,6 +40,15 @@ export enum Sex {
 export interface AddPatientToMdtInput {
   id: string;
   reason: string;
+}
+
+export interface ClinicalRequestRequestInput {
+  clinicalRequestTypeId: string;
+  currentState?: ClinicalRequestState | null;
+}
+
+export interface ClinicalRequestTypeInput {
+  id: string;
 }
 
 export interface DecisionPointInput {
@@ -66,15 +75,6 @@ export interface MdtInput {
   pathwayId: string;
   plannedAt: any;
   location: string;
-}
-
-export interface ClinicalRequestRequestInput {
-  clinicalRequestTypeId: string;
-  currentState?: ClinicalRequestState | null;
-}
-
-export interface ClinicalRequestTypeInput {
-  id: string;
 }
 
 export interface PathwayInput {

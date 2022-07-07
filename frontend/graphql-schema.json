@@ -257,7 +257,7 @@
             "deprecationReason": null
           },
           {
-            "name": "getMilestoneTypes",
+            "name": "getClinicalRequestTypes",
             "description": null,
             "args": [
               {
@@ -281,7 +281,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "MilestoneType",
+                  "name": "ClinicalRequestType",
                   "ofType": null
                 }
               }
@@ -1362,7 +1362,7 @@
         "specifiedByUrl": null,
         "fields": [
           {
-            "name": "milestoneResolved",
+            "name": "clinicalRequestResolved",
             "description": null,
             "args": [
               {
@@ -1383,7 +1383,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Milestone",
+                "name": "ClinicalRequest",
                 "ofType": null
               }
             },
@@ -2256,7 +2256,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneTypes",
+            "name": "clinicalRequestTypes",
             "description": null,
             "args": [],
             "type": {
@@ -2267,7 +2267,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "MilestoneType",
+                  "name": "ClinicalRequestType",
                   "ofType": null
                 }
               }
@@ -3574,7 +3574,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestones",
+            "name": "clinicalRequests",
             "description": null,
             "args": [
               {
@@ -3610,7 +3610,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Milestone",
+                  "name": "ClinicalRequest",
                   "ofType": null
                 }
               }
@@ -3991,7 +3991,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestones",
+            "name": "clinicalRequests",
             "description": null,
             "args": [],
             "type": {
@@ -4002,7 +4002,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Milestone",
+                  "name": "ClinicalRequest",
                   "ofType": null
                 }
               }
@@ -4011,7 +4011,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneResolutions",
+            "name": "clinicalRequestResolutions",
             "description": null,
             "args": [],
             "type": {
@@ -4022,7 +4022,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Milestone",
+                  "name": "ClinicalRequest",
                   "ofType": null
                 }
               }
@@ -4146,7 +4146,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "MilestoneType",
+        "name": "ClinicalRequestType",
         "description": null,
         "specifiedByUrl": null,
         "fields": [
@@ -4290,7 +4290,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Milestone",
+        "name": "ClinicalRequest",
         "description": null,
         "specifiedByUrl": null,
         "fields": [
@@ -4311,7 +4311,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneType",
+            "name": "clinicalRequestType",
             "description": null,
             "args": [],
             "type": {
@@ -4319,7 +4319,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "MilestoneType",
+                "name": "ClinicalRequestType",
                 "ofType": null
               }
             },
@@ -4434,7 +4434,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "MilestoneState",
+        "name": "ClinicalRequestState",
         "description": null,
         "specifiedByUrl": null,
         "fields": null,
@@ -4720,7 +4720,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "milestoneId",
+            "name": "clinicalRequestId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -4846,13 +4846,13 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "MilestoneRequestInput",
+        "name": "ClinicalRequestRequestInput",
         "description": null,
         "specifiedByUrl": null,
         "fields": null,
         "inputFields": [
           {
-            "name": "milestoneTypeId",
+            "name": "clinicalRequestTypeId",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -4872,7 +4872,7 @@
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "MilestoneState",
+              "name": "ClinicalRequestState",
               "ofType": null
             },
             "defaultValue": null,
@@ -4886,7 +4886,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "MilestoneTypeInput",
+        "name": "ClinicalRequestTypeInput",
         "description": null,
         "specifiedByUrl": null,
         "fields": null,
@@ -5024,7 +5024,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneRequests",
+            "name": "clinicalRequestRequests",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5034,7 +5034,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "MilestoneRequestInput",
+                  "name": "ClinicalRequestRequestInput",
                   "ofType": null
                 }
               }
@@ -5044,7 +5044,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneResolutions",
+            "name": "clinicalRequestResolutions",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5184,7 +5184,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneTypes",
+            "name": "clinicalRequestTypes",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5194,7 +5194,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "MilestoneTypeInput",
+                  "name": "ClinicalRequestTypeInput",
                   "ofType": null
                 }
               }
@@ -5248,7 +5248,7 @@
             "deprecationReason": null
           },
           {
-            "name": "milestoneTypes",
+            "name": "clinicalRequestTypes",
             "description": null,
             "type": {
               "kind": "LIST",
@@ -5258,7 +5258,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "MilestoneTypeInput",
+                  "name": "ClinicalRequestTypeInput",
                   "ofType": null
                 }
               }
@@ -5456,14 +5456,14 @@
             "deprecationReason": null
           },
           {
-            "name": "milestones",
+            "name": "clinicalRequests",
             "description": null,
             "type": {
               "kind": "LIST",
               "name": null,
               "ofType": {
                 "kind": "INPUT_OBJECT",
-                "name": "MilestoneRequestInput",
+                "name": "ClinicalRequestRequestInput",
                 "ofType": null
               }
             },

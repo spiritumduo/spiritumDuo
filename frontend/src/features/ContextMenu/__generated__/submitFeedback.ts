@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { FeedbackInput } from "./../../../__generated__/globalTypes";
+import { FeedbackInput } from "./../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: submitFeedback
