@@ -193,7 +193,7 @@ async def CreateDecisionPoint(
                 await ClinicalRequest(
                     on_pathway_id=int(_decisionPoint.on_pathway_id),
                     decision_point_id=int(_decisionPoint.id),
-                    milestone_type_id=int(testResultRequest.type_id),
+                    clinical_request_type_id=int(testResultRequest.type_id),
                     test_result_reference_id=str(testResult.id),
                 ).create()
 

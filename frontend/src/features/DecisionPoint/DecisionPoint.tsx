@@ -245,7 +245,7 @@ const DecisionPointPage = (
     // Form watch using callback, monitors + yeets callback when any value in form changes
     const sub = watch((value) => {
       const filteredOptions = value?.clinicalRequestRequests?.filter(
-        (cRQ) => cRQ?.checked && cRQ?.isMdt
+        (cRQ) => cRQ?.checked && cRQ?.isMdt,
       );
       const isMdtChecked = (filteredOptions && filteredOptions.length > 0) || false;
       setShowMdtDetails(isMdtChecked);

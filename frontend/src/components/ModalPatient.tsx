@@ -15,7 +15,7 @@ import { RootState } from 'app/store';
 // PAGES
 import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
-import PatientPathway from 'components/PatientPathway/PatientPathway';
+import PatientPathway from 'features/PatientPathway/PatientPathway';
 import PatientMdtTab from 'features/PatientMdtTab/PatientMdtTab';
 
 // LOCAL

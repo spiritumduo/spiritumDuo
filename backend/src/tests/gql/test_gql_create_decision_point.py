@@ -86,9 +86,9 @@ async def test_add_decision_point_to_patient(
     mock_trust_adapter, test_user,
     decision_create_permission,
     clinical_request_create_permission, decision_query,
-    test_pathway, test_milestone_type,
+    test_pathway, test_clinical_request_type,
     httpx_test_client, httpx_login_user,
-    on_mdt_create_permission, test_clinical_request_type
+    on_mdt_create_permission
 ):
     """
     When: we run the GraphQL mutation to add the decision point and clinical_requests

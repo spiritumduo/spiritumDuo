@@ -89,8 +89,8 @@ export const ON_PATHWAY_UPDATED_SUBSCRIPTION = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  // eslint-disable-next-line max-len
-  pathwayId: string, first: number, outstanding: boolean, underCareOf: boolean, includeDischarged: boolean, cursor?: string,
+  pathwayId: string, first: number, outstanding: boolean,
+  underCareOf: boolean, includeDischarged: boolean, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
@@ -126,8 +126,10 @@ const WrappedPatientList = ({
     data,
     fetchMore,
     refetch,
-  // eslint-disable-next-line max-len
-  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, !!outstanding, !!underCareOf, !!includeDischarged);
+  } = usePatientsForPathwayQuery(
+    pathwayId, patientsToDisplay, !!outstanding,
+    !!underCareOf, !!includeDischarged,
+  );
 
   const {
     data: subscrData,
@@ -152,6 +154,11 @@ const WrappedPatientList = ({
   const { nodes, pageCount, pageInfo } = edgesToNodes<onPathwayNode>(
     data?.getPatientOnPathwayConnection, currentPage, patientsToDisplay,
   );
+  console.log(
+    'pathwayId', pathwayId, 'patientsToDisplay', patientsToDisplay, 'outstanding', outstanding,
+    'underCareOf', underCareOf, 'includeDischarged', includeDischarged,
+  );
+  console.log(nodes);
   if (nodes) {
     listElements = nodes.flatMap(
       (n) => {
