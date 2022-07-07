@@ -7,8 +7,8 @@
 // GraphQL query operation: getPathways
 // ====================================================
 
-export interface getPathways_getPathways_milestoneTypes {
-  __typename: "MilestoneType";
+export interface getPathways_getPathways_clinicalRequestTypes {
+  __typename: "ClinicalRequestType";
   id: string;
   name: string;
   refName: string;
@@ -18,7 +18,7 @@ export interface getPathways_getPathways {
   __typename: "Pathway";
   id: string;
   name: string;
-  milestoneTypes: getPathways_getPathways_milestoneTypes[] | null;
+  clinicalRequestTypes: getPathways_getPathways_clinicalRequestTypes[] | null;
 }
 
 export interface getPathways {

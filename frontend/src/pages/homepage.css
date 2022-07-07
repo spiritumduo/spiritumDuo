@@ -57,3 +57,7 @@
 .nhsuk-table__body .nhsuk-table__row.disabled {
   color: rgb(150,150,150);
 }
+
+.select-container {
+  padding-right: 1rem;
+}

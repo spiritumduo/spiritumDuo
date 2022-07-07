@@ -3,14 +3,14 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { UpdatePathwayInput } from "./../../../../../__generated__/globalTypes";
+import { UpdatePathwayInput } from "./../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: updatePathway
 // ====================================================
 
-export interface updatePathway_updatePathway_pathway_milestoneTypes {
-  __typename: "MilestoneType";
+export interface updatePathway_updatePathway_pathway_clinicalRequestTypes {
+  __typename: "ClinicalRequestType";
   id: string;
   name: string;
   refName: string;
@@ -20,7 +20,7 @@ export interface updatePathway_updatePathway_pathway {
   __typename: "Pathway";
   id: string;
   name: string;
-  milestoneTypes: updatePathway_updatePathway_pathway_milestoneTypes[] | null;
+  clinicalRequestTypes: updatePathway_updatePathway_pathway_clinicalRequestTypes[] | null;
 }
 
 export interface updatePathway_updatePathway_userErrors {

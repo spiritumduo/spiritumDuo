@@ -17,15 +17,15 @@ describe('When page loads', () => {
     );
   });
 
-  it('Should display milestone type checkboxes', async () => {
+  it('Should display clinicalRequest type checkboxes', async () => {
     const { click } = userEvent.setup();
     await waitFor(() => {
       click(screen.getByText('Select...'));
       expect(
-        screen.getByText('Test milestone type 1 (ref test milestone type 1)'),
+        screen.getByText('Test clinicalRequest type 1 (ref test clinicalRequest type 1)'),
       );
       expect(
-        screen.getByText('Test milestone type 2 (ref test milestone type 2)'),
+        screen.getByText('Test clinicalRequest type 2 (ref test clinicalRequest type 2)'),
       );
     });
   });
@@ -62,8 +62,8 @@ test('Submitting should show modal confirmation', async () => {
   });
   await waitFor(() => {
     expect(screen.getByText('test pathway'));
-    expect(screen.getByText('test milestone one'));
-    expect(screen.getByText('test milestone two'));
+    expect(screen.getByText('test clinicalRequest one'));
+    expect(screen.getByText('test clinicalRequest two'));
   });
 });
 

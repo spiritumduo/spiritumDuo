@@ -13,30 +13,30 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_pag
   endCursor: string;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone_milestoneType {
-  __typename: "MilestoneType";
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingClinicalRequest_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   name: string;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone {
-  __typename: "Milestone";
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingClinicalRequest {
+  __typename: "ClinicalRequest";
   id: string;
   updatedAt: any;
   currentState: string;
-  milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone_milestoneType;
+  clinicalRequestType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingClinicalRequest_clinicalRequestType;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone_milestoneType {
-  __typename: "MilestoneType";
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequest_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   name: string;
 }
 
-export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone {
-  __typename: "Milestone";
+export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequest {
+  __typename: "ClinicalRequest";
   id: string;
   updatedAt: any;
   currentState: string;
-  milestoneType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone_milestoneType;
+  clinicalRequestType: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequest_clinicalRequestType;
 }
 
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_lockUser {
@@ -49,8 +49,8 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edg
 export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways {
   __typename: "OnPathway";
   id: string;
-  outstandingMilestone: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingMilestone[] | null;
-  milestone: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_milestone[] | null;
+  outstandingClinicalRequest: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_outstandingClinicalRequest[] | null;
+  clinicalRequest: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_clinicalRequest[] | null;
   lockEndTime: any | null;
   lockUser: getPatientOnPathwayConnection_getPatientOnPathwayConnection_edges_node_onPathways_lockUser | null;
   updatedAt: any;

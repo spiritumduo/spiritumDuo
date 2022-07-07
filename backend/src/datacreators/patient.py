@@ -1,12 +1,12 @@
 import re
 from dependency_injector.wiring import Provide, inject
 from containers import SDContainer
-from models import Patient, OnPathway, Milestone, Pathway
+from models import Patient, OnPathway, ClinicalRequest, Pathway
 from datetime import date, datetime
 from dataloaders import (
     PathwayByIdLoader,
     OnPathwaysByPatient,
-    MilestoneTypeLoader
+    ClinicalRequestTypeLoader
 )
 from config import config as SdConfig
 from typing import Optional, List, Union
@@ -32,7 +32,7 @@ async def CreatePatient(
     pathwayId: int = None,
     referred_at: datetime = None,
     awaiting_decision_type: Optional[str] = "TRIAGE",
-    milestones: List[Milestone] = {},
+    clinical_requests: List[ClinicalRequest] = None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     """
@@ -51,7 +51,7 @@ async def CreatePatient(
             importing patients)
         awaiting_decision_type (DecisionType): next decision type (used for
             importing patients)
-        milestones (List[Milestone]): list of milestones to import when a
+        clinical_requests (List[ClinicalRequest]): list of clinical_requests to import when a
             patient enters the pathway (referral letter, ex)
     Returns:
         Patient/DataCreatorInputErrors: newly created decision point
@@ -70,13 +70,13 @@ async def CreatePatient(
     auth_token = context['request'].cookies['SDSESSION']
     errors = DataCreatorInputErrors()
 
-    milestoneTypesFromMilestones = await MilestoneTypeLoader.load_many_from_id(
+    clinicalRequestTypesFromClinicalRequests = await ClinicalRequestTypeLoader.load_many_from_id(
         context=context,
-        ids=[int(m['milestoneTypeId']) for m in milestones]
+        ids=[int(cr['clinicalRequestTypeId']) for cr in clinical_requests]
     )
-    if None in milestoneTypesFromMilestones:
+    if None in clinicalRequestTypesFromClinicalRequests:
         raise ReferencedItemDoesNotExistError("""
-            Milestone type specified
+            ClinicalRequest type specified
             does not exist
         """)
 
@@ -210,21 +210,21 @@ async def CreatePatient(
         **onPathwayInformation
     )
 
-    for milestone in milestones:
+    for clinical_request in clinical_requests:
         test_result: TestResult_IE = await trust_adapter.create_test_result_immediately(
             TestResultRequestImmediately_IE(
-                type_id=milestone["milestoneTypeId"],
-                current_state=milestone["currentState"],
+                type_id=clinical_request["clinicalRequestTypeId"],
+                current_state=clinical_request["currentState"],
                 hospital_number=hospital_number,
                 pathway_name=_pathway.name
             ),
             auth_token=auth_token
         )
 
-        await Milestone.create(
+        await ClinicalRequest.create(
             on_pathway_id=int(_pathwayInstance.id),
-            current_state=milestone["currentState"],
-            milestone_type_id=int(milestone["milestoneTypeId"]),
+            current_state=clinical_request["currentState"],
+            clinical_request_type_id=int(clinical_request["clinicalRequestTypeId"]),
             test_result_reference_id=str(test_result.id)
         )
 

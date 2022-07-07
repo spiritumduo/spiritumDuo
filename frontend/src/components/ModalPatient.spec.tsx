@@ -81,7 +81,7 @@ async function renderWithTestMocks() {
   return mocks;
 }
 
-async function renderDefaultNoMilestones() {
+async function renderDefaultNoClinicalRequests() {
   jest.useFakeTimers();
   render(<Default />);
   expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
@@ -197,9 +197,9 @@ describe('When the page loads and the user does not get the lock', () => {
   });
 });
 
-describe('When page loads and a user submits a decision without milestones', () => {
+describe('When page loads and a user submits a decision without clinicalRequests', () => {
   it('Should warn the user when they submit', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -209,7 +209,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should succeed when they click submit', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -224,7 +224,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -241,7 +241,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should display test results that have been acknowledged', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -254,13 +254,13 @@ describe('When page loads and a user submits a decision without milestones', () 
 
     await waitFor(() => {
       expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
-      expect(screen.getByText(/Lung function/i)).toBeInTheDocument();
-      expect(screen.getByText(/pet-ct/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Lung function/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/pet-ct/i).length).toBeGreaterThan(0);
     });
   });
 
   it('Should disable the tabs', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
     await act(() => {
       click(screen.getByRole('button', { name: 'Submit' }));
@@ -272,7 +272,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should re-enable the tabs when the user cancels', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
     await act(() => {
       click(screen.getByRole('button', { name: 'Close' }));
@@ -284,8 +284,8 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 });
 
-async function renderDefaultWithMilestones() {
-  const { click, keyboard, selectOptions } = userEvent.setup();
+async function renderDefaultWithClinicalRequests() {
+  const { click, keyboard } = userEvent.setup();
   jest.useFakeTimers();
   act(() => {
     render(<Default />);
@@ -308,10 +308,10 @@ async function renderDefaultWithMilestones() {
   jest.useRealTimers();
 }
 
-describe('When page loads and a user submits a decision with milestones', () => {
+describe('When page loads and a user submits a decision with clinicalRequests', () => {
   it('Should ask for confirmation', async () => {
     const { click, keyboard, selectOptions } = userEvent.setup();
-    await renderDefaultWithMilestones();
+    await renderDefaultWithClinicalRequests();
 
     await waitFor(() => {
       expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
@@ -337,7 +337,7 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
   it('Should succeed when user confirms submission', async () => {
     const { click, keyboard, selectOptions } = userEvent.setup();
-    await renderDefaultWithMilestones();
+    await renderDefaultWithClinicalRequests();
 
     await waitFor(() => {
       expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
@@ -362,7 +362,7 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
   it('Should return to the decision page when the user cancels', async () => {
     const { click, keyboard, selectOptions } = userEvent.setup();
-    await renderDefaultWithMilestones();
+    await renderDefaultWithClinicalRequests();
 
     await waitFor(() => {
       expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
@@ -387,7 +387,7 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
   it('Should disable tabs', async () => {
     const { click, keyboard, selectOptions } = userEvent.setup();
-    await renderDefaultWithMilestones();
+    await renderDefaultWithClinicalRequests();
 
     await waitFor(() => {
       expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
@@ -412,7 +412,7 @@ describe('When page loads and a user submits a decision with milestones', () => 
 
   it('Should re-enable the tabs when the user cancels', async () => {
     const { click, keyboard, selectOptions } = userEvent.setup();
-    await renderDefaultWithMilestones();
+    await renderDefaultWithClinicalRequests();
 
     await waitFor(() => {
       expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);

@@ -1,4 +1,4 @@
-# Work Log
+# Placement Diary
 
 # Initial Meetup - 14/10
 
@@ -146,25 +146,25 @@ This week I did further refinement of the Decision Point page. We now highlight 
 
 This week was spent on bugfixing and polishing in preparation for a public discussion of the digital lung cancer pathway. In the end, we weren’t able to fully present the current state of the project during the meeting, but we were able to solicit some feedback 
 
-Conference thurs
-
 # Week 19 - w/c 21/02
 
-Websockets / notifications
+## Websockets / notifications
 
-UI updates (sdb-91)
+We had a requirement to be able to display real-time notifications to users, so this requires a websocket connection. So, I learned about and then implemented websockets on the backend.
 
-nginx.conf / wordpress routing
+## Mid-placement conference thurs
 
-Mid-placement conference thurs
+I attended a mid-placement conference at Uni to discuss my placement with other students.
 
 # Week 21 - w/c 7/03
 
-Fix frontend tests
+## Fix frontend tests
 
-Tidy up modal patient view in new UI design
+We had lots of warnings on our frontend tests, so I tidied them up to remove the warnings.
 
-Bugfixes
+## Tidy up modal patient view in new UI design
+
+We changed our UI to make it look and feel like an NHS app, but this left some outstanding issues. So, I tidied these up and made it look more like the designs and cleaned up how we navigate between components.
 
 # Week 22 - w/c 14/03
 
@@ -174,14 +174,124 @@ This week the focus was on polishing our prototype some more and creating a post
 
 # Week 23 - w/c 21/03
 
-CI/CD
+### CI/CD
 
-Locking
+I built a CI/CD pipeline using Github Actions. This set of actions runs our testing and build scripts on Github servers, and if successful it will push the container images to Docker hub and deploy them on our staging server.
+
+### Locking
+
+Joe did work on the locking backend, and we collaborated on the frontend. Specifically there were issues around how to implement the locking inside the `DecisionPoint` React component.
 
 # Week 24 - w/c 28/03
 
-Finish locking frontend
+### Finish locking frontend
 
-Write frontend tests
+Work on the locking frontend continued. The final implementation ended up with the lock in the parent `ModalPatient` component so that the lock could be retained during the decision confirmation dialogues.
+
+### Frontend tests
+
+Work was done to clean up frontend tests to remove warnings. I also refactored the tabs on `ModalPatient` to use Redux so that child components could dispatch state updates rather than perform state updates while rendering and generate React warnings.
 
 # Week 25 - w/c 04/04
+
+### WS auth
+
+Up until now, we haven’t haven’t had authentication on our websocket connection. This is because a WS connection is long-lived, so we can’t do per-request authorisation like with a HTTP request. So, I added authorisation to the WS connection. 
+
+# Week 26 - w/c 11/04
+
+### Frontend a11y - specifically patient list
+
+We didn’t have an accessible solution for our patient lists. To navigate to patients we just had a click handler on the table row, so many assistive technologies would not be able to navigate or click through to individual patients. To solve this, I placed a hidden button on the patient name so that assistive technologies would know that it’s possible to click through.
+
+### Initial backend roles
+
+Initial data models for `Role` and `UserRole`
+
+# Week 27 - w/c 18/04
+
+### Permissions system for backend
+
+Added operation permissions, e.g. `DECISION_POINT_CREATE`, to each GQL/REST endpoint.
+
+### Refactor `needsAuthorisation`
+
+The previous decorator didn’t actually work with our FastAPI endpoints, so that was rectified.
+
+### Associate permissions w/roles
+
+The created permissions were associated with roles, which could be associated with users via `UserRole`.
+
+### Initial patient search
+
+As we cannot depend on any particular search implementation, this just assumes the existence of a search provider in the hospital trust and passes the query string along to that.
+
+# Week 28 - w/c 25/04
+
+### User management
+
+We now have user management functionality on the frontend on the administration pages.
+
+### Update user, add roles
+
+Along with the user management, we can now add roles to users too - enabling us to use the previously added permissions functionality on the backend.
+
+# Week 29 - w/c 02/05
+
+### Multi-select - creating reusable component
+
+We decided that we should try and create a re-usable multi-select component, so I started on the implementation and design of that.
+
+# Week 30 - w/c 09/05
+
+## Search filter all patients page
+
+When searching for patients, we decided that we wanted input in the search box to switch to and then filter the all patients page. So, I implemented that and it behaved as expected.
+
+## Finish multi-select
+
+I finished the multi-select component from last week. Unfortunately it didn’t live up to expectations, and it seemed like supporting it could be challenging. So, we decided to abandon our development on this and instead investigate how easy it would be to style another multi-select component to our liking.
+
+# Week 31 - w/c 16/05
+
+## Update frontend dependancies
+
+We hadn’t updated our frontend dependancies in a while, so that needed doing. A main blocker was that updating webpack seemed to break our build. This was isolated to a particular SVG animation we were using. The previous method of simply importing it as an object was failing, so instead we had to import it via the more standard React import path and then include the transpiled animation JavaScript as a side-effect in a wrapper React component.
+
+# Week 32 - w/c 23/05
+
+## Tour of notes
+
+We visited the hospitals notes department. This is an archive of all patient records stored at the hospital. This helped us understand how patient information is currently distributed around the hospital.
+
+# Week 33 - w/c 30/05
+
+## Start on GRP
+
+This week was the platinum jubilee, and I also had the Monday off. I started investigating solutions for the Graphical Representation Pathway.
+
+# Week 34 - w/c 06/06
+
+## GRP Initial demo
+
+I investigated visualisations solutions for React and decided to use visx. This is a visualisation framework developed by Airbnb. It allows us to use visualisation primitives without being tied into a particular implementation of a visualisation. We want the GRP to look kind of like a horizontal stacked bar chart, so we use the visx `BarStackHorizontal` component which allows us to customise it to our requirements
+
+# Week 35 - w/c 13/06
+
+## Single patient GRP finished
+
+We initially wanted the graphical representation to be visible on top of our `ModalPatient` component. So, this implementation was finished. This means that the GRP is now visible whenever viewing patient details or making decisions.
+
+# Week 36 - w/c 20/06
+
+## Multi-patient GRP
+
+The full concept for the GRP is for a list of patients, so the user can easily see how far along each patient is for their pathway. This will permit the user to clearly see any patients experiencing delays. So, I carried on with the GRP and implementing it on our todo & all patient pages. 
+
+# Week 37 - w/c 27/06
+
+## Multi-patient GRP finished
+
+The GRP is finished! The main challenge was making it responsive. As the design looks like a stacked bar chart, it is not readable on narrow screens such as small smartphones. So, we had to deal with how it should be presented on smaller screens. We settled on making it just show the current state of the patient, e.g. awaiting a decision, or waiting for a test result to come back.
+
+Also, testing was somewhat problematic due to the fact that SVGs aren’t accessible, and our testing methodology is centred around accessibility and using ARIA roles as selectors in our tests. For the GRP, we decided to have a visually hidden table presenting the same information that screenreaders would be able to access - this means we can test based on that - and capture a snapshot of the GRP SVG for our test runner. This means we can visually confirm the GRP looks correct in all its desired states, and then automatically confirm in future tests that its appearance has not changed.

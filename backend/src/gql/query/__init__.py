@@ -1,6 +1,6 @@
 from .query_type import query
 
-from .get_milestone_types import query
+from .get_clinical_request_types import query
 from .get_patient import query
 from .get_pathway import query
 from .get_pathways import query

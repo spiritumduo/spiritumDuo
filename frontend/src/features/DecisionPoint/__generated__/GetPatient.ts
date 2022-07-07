@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { PatientCommunicationMethods } from "./../../../../__generated__/globalTypes";
+import { PatientCommunicationMethods } from "./../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL query operation: GetPatient
@@ -15,68 +15,68 @@ export interface GetPatient_getPatient_onPathways_underCareOf {
   lastName: string;
 }
 
-export interface GetPatient_getPatient_onPathways_milestones_forwardDecisionPoint {
+export interface GetPatient_getPatient_onPathways_clinicalRequests_forwardDecisionPoint {
   __typename: "DecisionPoint";
   id: string;
 }
 
-export interface GetPatient_getPatient_onPathways_milestones_testResult {
+export interface GetPatient_getPatient_onPathways_clinicalRequests_testResult {
   __typename: "TestResult";
   id: string;
   description: string;
   addedAt: any;
 }
 
-export interface GetPatient_getPatient_onPathways_milestones_milestoneType {
-  __typename: "MilestoneType";
+export interface GetPatient_getPatient_onPathways_clinicalRequests_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   name: string;
 }
 
-export interface GetPatient_getPatient_onPathways_milestones {
-  __typename: "Milestone";
+export interface GetPatient_getPatient_onPathways_clinicalRequests {
+  __typename: "ClinicalRequest";
   id: string;
-  forwardDecisionPoint: GetPatient_getPatient_onPathways_milestones_forwardDecisionPoint | null;
-  testResult: GetPatient_getPatient_onPathways_milestones_testResult | null;
-  milestoneType: GetPatient_getPatient_onPathways_milestones_milestoneType;
+  forwardDecisionPoint: GetPatient_getPatient_onPathways_clinicalRequests_forwardDecisionPoint | null;
+  testResult: GetPatient_getPatient_onPathways_clinicalRequests_testResult | null;
+  clinicalRequestType: GetPatient_getPatient_onPathways_clinicalRequests_clinicalRequestType;
 }
 
-export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_forwardDecisionPoint {
+export interface GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_forwardDecisionPoint {
   __typename: "DecisionPoint";
   id: string;
 }
 
-export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult {
+export interface GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_testResult {
   __typename: "TestResult";
   id: string;
   description: string;
   addedAt: any;
 }
 
-export interface GetPatient_getPatient_onPathways_decisionPoints_milestones_milestoneType {
-  __typename: "MilestoneType";
+export interface GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   name: string;
 }
 
-export interface GetPatient_getPatient_onPathways_decisionPoints_milestones {
-  __typename: "Milestone";
+export interface GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests {
+  __typename: "ClinicalRequest";
   id: string;
-  forwardDecisionPoint: GetPatient_getPatient_onPathways_decisionPoints_milestones_forwardDecisionPoint | null;
-  testResult: GetPatient_getPatient_onPathways_decisionPoints_milestones_testResult | null;
-  milestoneType: GetPatient_getPatient_onPathways_decisionPoints_milestones_milestoneType;
+  forwardDecisionPoint: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_forwardDecisionPoint | null;
+  testResult: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_testResult | null;
+  clinicalRequestType: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_clinicalRequestType;
 }
 
 export interface GetPatient_getPatient_onPathways_decisionPoints {
   __typename: "DecisionPoint";
   clinicHistory: string;
   comorbidities: string;
-  milestones: GetPatient_getPatient_onPathways_decisionPoints_milestones[] | null;
+  clinicalRequests: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests[] | null;
 }
 
 export interface GetPatient_getPatient_onPathways {
   __typename: "OnPathway";
   id: string;
   underCareOf: GetPatient_getPatient_onPathways_underCareOf | null;
-  milestones: GetPatient_getPatient_onPathways_milestones[] | null;
+  clinicalRequests: GetPatient_getPatient_onPathways_clinicalRequests[] | null;
   decisionPoints: GetPatient_getPatient_onPathways_decisionPoints[] | null;
 }
 
@@ -91,8 +91,8 @@ export interface GetPatient_getPatient {
   onPathways: GetPatient_getPatient_onPathways[] | null;
 }
 
-export interface GetPatient_getMilestoneTypes {
-  __typename: "MilestoneType";
+export interface GetPatient_getClinicalRequestTypes {
+  __typename: "ClinicalRequestType";
   id: string;
   name: string;
   isDischarge: boolean;
@@ -103,7 +103,7 @@ export interface GetPatient_getMilestoneTypes {
 
 export interface GetPatient {
   getPatient: GetPatient_getPatient | null;
-  getMilestoneTypes: GetPatient_getMilestoneTypes[] | null;
+  getClinicalRequestTypes: GetPatient_getClinicalRequestTypes[] | null;
 }
 
 export interface GetPatientVariables {

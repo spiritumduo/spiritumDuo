@@ -7,31 +7,31 @@ from graphql import GraphQLResolveInfo
 from SdTypes import Permissions
 from authentication.authentication import needsAuthorization
 from containers import SDContainer
-from models import Milestone
+from models import ClinicalRequest
 from .subscription_type import subscription
 
 
-@subscription.source("milestoneResolved")
+@subscription.source("clinicalRequestResolved")
 @needsAuthorization([Permissions.MILESTONE_READ])
 @inject
-async def milestone_resolved_generator(
+async def clinical_request_resolved_generator(
     _: Any = None,
     info: GraphQLResolveInfo = None,
     clinicianID=None,
     pub=Provide[SDContainer.pubsub_service]
 ) -> AsyncGenerator:
-    topic = pub.subscribe("milestone-resolutions")
+    topic = pub.subscribe("clinicalRequest-resolutions")
     log = logging.getLogger("uvicorn")
     log.debug(f"TOPIC: {topic}")
     async with topic as subscriber:
-        async for milestone in subscriber:
-            log.info(f"MILESTONE_RESOLVED SUBSCRIPTION RESOLVER: {milestone}")
-            yield milestone
+        async for clinical_request in subscriber:
+            log.info(f"MILESTONE_RESOLVED SUBSCRIPTION RESOLVER: {clinical_request}")
+            yield clinical_request
 
 
-@subscription.field("milestoneResolved")
-async def milestone_resolved_field(
-    obj: Milestone = None,
+@subscription.field("clinicalRequestResolved")
+async def clinical_request_resolved_field(
+    obj: ClinicalRequest = None,
     info: GraphQLResolveInfo = None
 ):
     return obj

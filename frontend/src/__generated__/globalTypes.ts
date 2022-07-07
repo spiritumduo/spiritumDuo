@@ -7,6 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ClinicalRequestState {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
+  INIT = "INIT",
+  WAITING = "WAITING",
+}
+
 export enum DecisionType {
   AD_HOC = "AD_HOC",
   CLINIC = "CLINIC",
@@ -14,14 +22,6 @@ export enum DecisionType {
   MDT = "MDT",
   POST_REQUEST = "POST_REQUEST",
   TRIAGE = "TRIAGE",
-}
-
-export enum MilestoneState {
-  ACTIVE = "ACTIVE",
-  COMPLETED = "COMPLETED",
-  ERROR = "ERROR",
-  INIT = "INIT",
-  WAITING = "WAITING",
 }
 
 export enum PatientCommunicationMethods {
@@ -37,13 +37,22 @@ export enum Sex {
   OTHER = "OTHER",
 }
 
+export interface ClinicalRequestRequestInput {
+  clinicalRequestTypeId: string;
+  currentState?: ClinicalRequestState | null;
+}
+
+export interface ClinicalRequestTypeInput {
+  id: string;
+}
+
 export interface DecisionPointInput {
   onPathwayId: string;
   decisionType: DecisionType;
   clinicHistory: string;
   comorbidities?: string | null;
-  milestoneRequests?: MilestoneRequestInput[] | null;
-  milestoneResolutions?: string[] | null;
+  clinicalRequestRequests?: ClinicalRequestRequestInput[] | null;
+  clinicalRequestResolutions?: string[] | null;
 }
 
 export interface FeedbackInput {
@@ -56,18 +65,9 @@ export interface LockOnPathwayInput {
   unlock?: boolean | null;
 }
 
-export interface MilestoneRequestInput {
-  milestoneTypeId: string;
-  currentState?: MilestoneState | null;
-}
-
-export interface MilestoneTypeInput {
-  id: string;
-}
-
 export interface PathwayInput {
   name: string;
-  milestoneTypes?: MilestoneTypeInput[] | null;
+  clinicalRequestTypes?: ClinicalRequestTypeInput[] | null;
 }
 
 export interface PatientInput {
@@ -81,13 +81,13 @@ export interface PatientInput {
   pathwayId: string;
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
-  milestones?: (MilestoneRequestInput | null)[] | null;
+  clinicalRequests?: (ClinicalRequestRequestInput | null)[] | null;
 }
 
 export interface UpdatePathwayInput {
   id: string;
   name: string;
-  milestoneTypes?: MilestoneTypeInput[] | null;
+  clinicalRequestTypes?: ClinicalRequestTypeInput[] | null;
 }
 
 //==============================================================

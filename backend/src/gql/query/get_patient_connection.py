@@ -1,8 +1,8 @@
 from sqlalchemy import or_, and_
 from dataloaders import PatientByIdLoader
 from .query_type import query
-from models import OnPathway, DecisionPoint, Milestone, db
-from SdTypes import MilestoneState
+from models import OnPathway, DecisionPoint, ClinicalRequest, db
+from SdTypes import ClinicalRequestState
 from .pagination import make_connection, validate_parameters
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
@@ -33,16 +33,16 @@ async def get_patient_connection(
                 OnPathway.id == DecisionPoint.on_pathway_id,
                 isouter=True
             ).join(
-                Milestone,
-                DecisionPoint.id == Milestone.decision_point_id,
+                ClinicalRequest,
+                DecisionPoint.id == ClinicalRequest.decision_point_id,
                 isouter=True
             )
         )
         db_query = db_query.where(
                 or_(
                     and_(
-                        Milestone.fwd_decision_point_id.is_(None),
-                        Milestone.current_state == MilestoneState.COMPLETED
+                        ClinicalRequest.fwd_decision_point_id.is_(None),
+                        ClinicalRequest.current_state == ClinicalRequestState.COMPLETED
                     ),
                     DecisionPoint.id.is_(None)
                 )

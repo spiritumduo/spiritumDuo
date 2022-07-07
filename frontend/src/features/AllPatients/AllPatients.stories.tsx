@@ -50,20 +50,20 @@ for (let i = 0; i < 15; ++i) {
     onPathways: [
       {
         id: i.toString(),
-        milestone: {
+        clinicalRequest: {
           id: '3',
           updatedAt: new Date(2022, 1, 5),
           forwardDecisionPoint: '1',
           currentState: 'COMPLETED',
-          milestoneType: {
-            name: 'Third Milestone',
+          clinicalRequestType: {
+            name: 'Third ClinicalRequest',
           },
         },
-        outstandingMilestone: {
+        outstandingClinicalRequest: {
           id: '1',
           updatedAt: new Date(2021, 1, 4),
           currentState: 'COMPLETED',
-          milestoneType: {
+          clinicalRequestType: {
             name: 'Triage',
           },
         },
@@ -178,17 +178,17 @@ const apolloMocks = [{
           nationalNumber: 'fNHS1234567890',
           dateOfBirth: new Date(),
           onPathways: [{
-            outstandingMilestone: [{
+            outstandingClinicalRequest: [{
               id: '1',
               updatedAt: new Date(),
-              milestoneType: {
+              clinicalRequestType: {
                 name: 'Test request',
               },
             }],
-            milestone: [{
+            clinicalRequest: [{
               id: '1',
               updatedAt: new Date(),
-              milestoneType: {
+              clinicalRequestType: {
                 name: 'Test request',
               },
             }],

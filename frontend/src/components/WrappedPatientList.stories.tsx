@@ -43,19 +43,19 @@ for (let i = 0; i < 15; ++i) {
     onPathways: [
       {
         id: i.toString(),
-        outstandingMilestone: [{
+        outstandingClinicalRequest: [{
           id: '3',
           updatedAt: new Date(2022, 1, 5),
           currentState: 'COMPLETED',
-          milestoneType: {
-            name: 'Third Milestone',
+          clinicalRequestType: {
+            name: 'Third ClinicalRequest',
           },
         }],
-        milestone: [{
+        clinicalRequest: [{
           id: '1',
           updatedAt: new Date(2021, 1, 5),
           currentState: 'COMPLETED',
-          milestoneType: {
+          clinicalRequestType: {
             name: 'Triage',
           },
         }],

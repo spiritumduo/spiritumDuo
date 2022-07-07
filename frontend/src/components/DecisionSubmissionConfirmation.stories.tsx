@@ -19,9 +19,9 @@ const Template: ComponentStory<
 
 export const Default = Template.bind({});
 
-export const WithMilestonesAndConfirmations = Template.bind({});
-WithMilestonesAndConfirmations.args = {
-  milestones: [
+export const WithClinicalRequestsAndConfirmations = Template.bind({});
+WithClinicalRequestsAndConfirmations.args = {
+  clinicalRequests: [
     {
       id: '1',
       name: 'First',
@@ -31,5 +31,5 @@ WithMilestonesAndConfirmations.args = {
       name: 'Second',
     },
   ],
-  milestoneResolutions: ['First Resolution', 'Second Resolutions'],
+  clinicalRequestResolutions: ['First Resolution', 'Second Resolutions'],
 };

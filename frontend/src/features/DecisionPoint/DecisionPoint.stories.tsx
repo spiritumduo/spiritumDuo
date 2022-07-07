@@ -17,10 +17,10 @@ const mdts = [
 ];
 
 const patientHospitalNumber = 'fMRN1234567';
-const milestoneTypes = [
+const clinicalRequestTypes = [
   {
     id: '1',
-    name: 'Milestone Request',
+    name: 'ClinicalRequest Request',
     isDischarge: false,
     isCheckboxHidden: false,
     isTestRequest: true,
@@ -68,12 +68,12 @@ const milestoneTypes = [
   },
 ];
 
-const milestones = [
+const clinicalRequests = [
   {
     id: '1',
     testResult: null,
     forwardDecisionPoint: null,
-    milestoneType: {
+    clinicalRequestType: {
       name: 'MRI Head',
     },
   },
@@ -87,7 +87,7 @@ const milestones = [
       description: 'X-Ray description from DP1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel suada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et suada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2021-12-12'),
     },
-    milestoneType: {
+    clinicalRequestType: {
       name: 'X-Ray',
     },
   },
@@ -101,7 +101,7 @@ const milestones = [
       description: 'CT Thorax description from DP1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel suada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et suada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-07'),
     },
-    milestoneType: {
+    clinicalRequestType: {
       name: 'CT Thorax',
     },
   },
@@ -115,7 +115,7 @@ const milestones = [
       description: 'EBUS description from DP2 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel suada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et suada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-02'),
     },
-    milestoneType: {
+    clinicalRequestType: {
       name: 'EBUS',
     },
   },
@@ -123,7 +123,7 @@ const milestones = [
     id: '5',
     forwardDecisionPoint: null,
     testResult: null,
-    milestoneType: {
+    clinicalRequestType: {
       name: 'MRI Head',
     },
   },
@@ -135,7 +135,7 @@ const milestones = [
       description: 'Lung function description from DP3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel suada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et suada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-16'),
     },
-    milestoneType: {
+    clinicalRequestType: {
       name: 'Lung function',
     },
   },
@@ -147,7 +147,7 @@ const milestones = [
       description: 'PET-CT description from DP3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum risus tortor, hendrerit eu nibh a, vestibulum pretium libero. In vel auctor tellus, quis eleifend urna. Suspendisse dictum nunc facilisis pellentesque scelerisque. Aliquam vel suada enim, vitae rutrum ligula. Suspendisse neque felis, semper sit amet convallis sed, vulputate eu eros. Nulla vitae diam congue, fermentum lorem eu, interdum nulla. Interdum et suada fames ac ante ipsum primis in faucibus. Etiam id auctor nisi, eget suscipit massa. Vivamus eleifend rutrum convallis. Phasellus tempus laoreet orci et faucibus. In hac habitasse platea dictumst. In id maximus risus. Nulla consectetur nunc ex.',
       addedAt: new Date('2022-01-06'),
     },
-    milestoneType: {
+    clinicalRequestType: {
       name: 'PET-CT',
     },
   },
@@ -156,15 +156,15 @@ const milestones = [
 const CREATE_DECISION_MOCK = {
   query: CREATE_DECISION_POINT_MUTATION,
   mockFn: (input: any) => Promise.resolve(
-    input.input.milestoneRequests[0]
+    input.input.clinicalRequestRequests[0]
       ? { data: {
         createDecisionPoint: {
           decisionPoint: {
             id: '1',
-            milestones: [
+            clinicalRequests: [
               {
                 id: '1',
-                milestoneType: {
+                clinicalRequestType: {
                   id: '1',
                   name: 'TypeName',
                   isDischarge: false,
@@ -180,7 +180,7 @@ const CREATE_DECISION_MOCK = {
           createDecisionPoint: {
             decisionPoint: {
               id: '1',
-              milestones: null,
+              clinicalRequests: null,
             },
             userErrors: null,
           },
@@ -208,44 +208,44 @@ const GET_PATIENT_MOCK = {
         onPathways: [
           {
             id: '1',
-            milestones: milestones,
+            clinicalRequests: clinicalRequests,
             underCareOf: clinician,
             decisionPoints: [
               {
                 clinicHistory: 'Clinic History 1',
                 comorbidities: 'Comorbidities 1',
-                milestones: [
-                  milestones[0],
-                  milestones[1],
-                  milestones[2],
+                clinicalRequests: [
+                  clinicalRequests[0],
+                  clinicalRequests[1],
+                  clinicalRequests[2],
                 ],
               },
               {
                 clinicHistory: 'Clinic History 2',
                 comorbidities: 'Comorbidities 2',
-                milestones: [
-                  milestones[3],
-                  milestones[4],
+                clinicalRequests: [
+                  clinicalRequests[3],
+                  clinicalRequests[4],
                 ],
               },
               {
                 clinicHistory: 'Clinic History 3',
                 comorbidities: 'Comorbidities 3',
-                milestones: [
-                  milestones[5],
-                  milestones[6],
+                clinicalRequests: [
+                  clinicalRequests[5],
+                  clinicalRequests[6],
                 ],
               },
               {
                 clinicHistory: 'Clinic History 4',
                 comorbidities: 'Comorbidities 4',
-                milestones: null,
+                clinicalRequests: null,
               },
             ],
           },
         ],
       },
-      getMilestoneTypes: milestoneTypes,
+      getClinicalRequestTypes: clinicalRequestTypes,
     },
   }),
 };
@@ -297,7 +297,7 @@ Default.args = {
   decisionType: DecisionPointType.TRIAGE,
 };
 Default.parameters = {
-  milestones: milestones,
+  clinicalRequests: clinicalRequests,
   createDecisionMock: CREATE_DECISION_MOCK,
   getPatientMock: GET_PATIENT_MOCK,
   clinician: clinician,
@@ -317,5 +317,5 @@ Locked.args = {
   },
 };
 Locked.parameters = {
-  milestones: milestones,
+  clinicalRequests: clinicalRequests,
 };

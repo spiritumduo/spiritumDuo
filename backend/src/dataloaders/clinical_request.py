@@ -6,22 +6,22 @@ from operator import and_
 
 from sqlalchemy import desc
 
-from SdTypes import MilestoneState
-from models import Milestone
+from SdTypes import ClinicalRequestState
+from models import ClinicalRequest
 from typing import Union
 from abc import abstractmethod
 
 
-class MilestoneByDecisionPointLoader(DataLoader):
+class ClinicalRequestByDecisionPointLoader(DataLoader):
     """
-        This is class for loading milestones using IDs from
+        This is class for loading clinical_requests using IDs from
         DecisionPoint and caching the result in the request context
 
         Attributes:
             loader_name (str): unique name of loader to cache data under
     """
 
-    loader_name = "_milestone_by_decision_point_loader"
+    loader_name = "_clinical_request_by_decision_point_loader"
     _db = None
 
     def __init__(self, db):
@@ -32,21 +32,21 @@ class MilestoneByDecisionPointLoader(DataLoader):
     def _get_loader_from_context(
         cls,
         context
-    ) -> "MilestoneByDecisionPointLoader":
+    ) -> "ClinicalRequestByDecisionPointLoader":
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return context[cls.loader_name]
 
-    async def fetch(self, keys) -> Dict[int, Milestone]:
+    async def fetch(self, keys) -> Dict[int, ClinicalRequest]:
         async with self._db.acquire(reuse=False) as conn:
-            query = Milestone.query.where(
-                Milestone.decision_point_id.in_(keys)
+            query = ClinicalRequest.query.where(
+                ClinicalRequest.decision_point_id.in_(keys)
             )
             result = await conn.all(query)
 
         returnData = {}
-        for patient_milestone in result:
-            returnData[patient_milestone.decision_point_id] = patient_milestone
+        for patient_clinical_request in result:
+            returnData[patient_clinical_request.decision_point_id] = patient_clinical_request
 
         return returnData
 
@@ -58,7 +58,7 @@ class MilestoneByDecisionPointLoader(DataLoader):
         return sortedData
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None) -> Optional[Milestone]:
+    async def load_from_id(cls, context=None, id=None) -> Optional[ClinicalRequest]:
         """
             Load a single entry from its DecisionPoint ID
 
@@ -66,7 +66,7 @@ class MilestoneByDecisionPointLoader(DataLoader):
                 context (dict): request context
                 id (int): ID to find
             Returns:
-                Milestone/None
+                ClinicalRequest/None
         """
         if not id:
             return None
@@ -77,7 +77,7 @@ class MilestoneByDecisionPointLoader(DataLoader):
         cls,
         context=None,
         ids=None
-    ) -> Optional[List[Milestone]]:
+    ) -> Optional[List[ClinicalRequest]]:
         """
             Loads multiple entries from their DecisionPoint IDs
 
@@ -85,7 +85,7 @@ class MilestoneByDecisionPointLoader(DataLoader):
                 context (dict): request context
                 id (List[int]): IDs to find
             Returns:
-                List[Milestone]/None
+                List[ClinicalRequest]/None
         """
         if not ids:
             return None
@@ -97,7 +97,7 @@ class MilestoneByDecisionPointLoader(DataLoader):
         context=None,
         id=None,
         value=None
-    ) -> "MilestoneByDecisionPointLoader":
+    ) -> "ClinicalRequestByDecisionPointLoader":
         return cls._get_loader_from_context(context).prime(id, value)
 
 
@@ -145,31 +145,31 @@ class SdDataLoader(DataLoader):
         return await cls._get_loader_from_context(loader_name, context).load_many(ids)
 
 
-class MilestoneByOnPathwayIdLoader(SdDataLoader):
+class ClinicalRequestByOnPathwayIdLoader(SdDataLoader):
     """
-        This is class for loading milestones and
+        This is class for loading clinical_requests and
         caching the result in the request context
     """
     @dataclass(frozen=True, eq=True)
-    class MilestoneByOnPathwayKey:
+    class ClinicalRequestByOnPathwayKey:
         id: int
         outstanding: bool
         limit: int
 
-    loader_name = "_milestone_by_on_pathway_loader"
+    loader_name = "_clinical_request_by_on_pathway_loader"
 
-    async def fetch(self, key: MilestoneByOnPathwayKey) -> Dict[MilestoneByOnPathwayKey, List[Milestone]]:
+    async def fetch(self, key: ClinicalRequestByOnPathwayKey) -> Dict[ClinicalRequestByOnPathwayKey, List[ClinicalRequest]]:
         async with self._db.acquire(reuse=False) as conn:
-            query = Milestone.query.where(Milestone.on_pathway_id == key.id)
+            query = ClinicalRequest.query.where(ClinicalRequest.on_pathway_id == key.id)
             if key.outstanding:
                 query = query.where(and_(
-                    Milestone.fwd_decision_point_id.is_(None), Milestone.current_state == MilestoneState.COMPLETED
+                    ClinicalRequest.fwd_decision_point_id.is_(None), ClinicalRequest.current_state == ClinicalRequestState.COMPLETED
                 ))
             if key.limit != 0:
-                query = query.order_by(desc(Milestone.updated_at)).limit(key.limit)
+                query = query.order_by(desc(ClinicalRequest.updated_at)).limit(key.limit)
             return await conn.all(query)
 
-    async def batch_load_fn(self, keys: List[MilestoneByOnPathwayKey]) -> List[List[Milestone]]:
+    async def batch_load_fn(self, keys: List[ClinicalRequestByOnPathwayKey]) -> List[List[ClinicalRequest]]:
         # So this currently queries in a loop, which is very bad. However, this could be batched into two loads - those
         # outstanding, and those not, and then filtering. In case of a limit flag, those might be the greatest-N per
         # group problem? So there could be a solution involving grouping and limiting by ID.
@@ -179,7 +179,7 @@ class MilestoneByOnPathwayIdLoader(SdDataLoader):
     @classmethod
     async def load_from_id(
             cls, context=None, id: int = None, outstanding: bool = False, limit: int = None
-    ) -> List[Milestone]:
+    ) -> List[ClinicalRequest]:
         """
             Load a multiple entries from their record ID
 
@@ -187,10 +187,10 @@ class MilestoneByOnPathwayIdLoader(SdDataLoader):
                 context (dict): request context
                 id (List[int]): IDs to find
             Returns:
-                List[Milestone]
+                List[ClinicalRequest]
         """
 
-        key = cls.MilestoneByOnPathwayKey(
+        key = cls.ClinicalRequestByOnPathwayKey(
             id=id, outstanding=outstanding, limit=limit
         )
         return await cls._get_loader_from_context(cls.loader_name, context).load(key)

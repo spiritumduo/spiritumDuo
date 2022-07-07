@@ -1,7 +1,7 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 // LIBRARIES
-import { Container } from 'nhsuk-react-components';
+import { Container, Select } from 'nhsuk-react-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { useParams, useNavigate } from 'react-router';
 
@@ -14,10 +14,58 @@ import { RootState } from 'app/store';
 import WrappedPatientList from 'components/WrappedPatientList';
 import ModalPatient from 'components/ModalPatient';
 import AllPatients from 'features/AllPatients/AllPatients';
+import PatientPathwayList from 'features/PatientPathwayList/PatientPathwayList';
 
 // LOCAL IMPORT
 import './homepage.css';
 import { setModalPatientHospitalNumber } from './HomePage.slice';
+
+type PatientListTabProps = React.PropsWithChildren<{
+  pathwayId: string;
+  patientsPerPage: number;
+  outstanding?: boolean;
+  underCareOf?: boolean;
+}>;
+
+const PatientListTab = (
+  { pathwayId, patientsPerPage, outstanding, underCareOf, children }: PatientListTabProps,
+) => {
+  const [isTimelineView, setIsTimelineView] = useState<boolean>(false);
+  return (
+    <>
+      <div className="text-end select-container">
+        <Select onChange={ (e) => {
+          setIsTimelineView((e.target as HTMLSelectElement).value === 'timeline');
+        } }
+        >
+          <option value="table">List</option>
+          <option value="timeline">Graphical</option>
+        </Select>
+      </div>
+      {
+        isTimelineView
+          ? (
+            <div>
+              <PatientPathwayList
+                pathwayId={ pathwayId }
+                patientsToDisplay={ patientsPerPage }
+                outstanding={ outstanding }
+                underCareOf={ underCareOf }
+              />
+            </div>
+          )
+          : (
+            <WrappedPatientList
+              pathwayId={ pathwayId }
+              patientsToDisplay={ patientsPerPage }
+              outstanding
+              underCareOf
+            />
+          )
+        }
+    </>
+  );
+};
 
 export interface HomePageProps {
   patientsPerPage: number;
@@ -68,15 +116,15 @@ const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps)
             <Tab>All patients</Tab>
           </TabList>
           <TabPanel>
-            <WrappedPatientList
+            <PatientListTab
               pathwayId={ pathwayId }
-              patientsToDisplay={ patientsPerPage }
+              patientsPerPage={ patientsPerPage }
               outstanding
               underCareOf
             />
           </TabPanel>
           <TabPanel>
-            <AllPatients pathwayId={ pathwayId } patientsPerPage={ patientsPerPage } />
+            <PatientListTab pathwayId={ pathwayId } patientsPerPage={ patientsPerPage } />
           </TabPanel>
         </Tabs>
       </Container>

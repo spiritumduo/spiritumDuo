@@ -2,9 +2,9 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient, OnPathway, DecisionPoint, Milestone
+from models import Patient, OnPathway, DecisionPoint, ClinicalRequest
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
-from SdTypes import DecisionTypes, MilestoneState
+from SdTypes import DecisionTypes, ClinicalRequestState
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 
 
@@ -16,21 +16,21 @@ def decision_query() -> str:
             $decisionType: DecisionType!
             $clinicHistory: String!
             $comorbidities: String!
-            $milestoneOneId: ID!
-            $milestoneResolutionId: ID!
+            $clinicalRequestOneId: ID!
+            $clinicalRequestResolutionId: ID!
         ){
             createDecisionPoint(input: {
                 onPathwayId: $onPathwayId,
                 decisionType: $decisionType,
                 clinicHistory: $clinicHistory,
                 comorbidities: $comorbidities,
-                milestoneRequests:[
+                clinicalRequestRequests:[
                     {
-                        milestoneTypeId: $milestoneOneId
+                        clinicalRequestTypeId: $clinicalRequestOneId
                     }
                 ]
-                milestoneResolutions:[
-                    $milestoneResolutionId
+                clinicalRequestResolutions:[
+                    $clinicalRequestResolutionId
                 ]
             })
             {
@@ -47,9 +47,9 @@ def decision_query() -> str:
                             name
                         }
                     }
-                    milestones{
+                    clinicalRequests{
                         id
-                        milestoneType{
+                        clinicalRequestType{
                             id
                             name
                         }
@@ -62,7 +62,7 @@ def decision_query() -> str:
                             typeReferenceName
                         }
                     }
-                    milestoneResolutions{
+                    clinicalRequestResolutions{
                         id
                     }
                     decisionType
@@ -80,18 +80,18 @@ def decision_query() -> str:
     """
 
 
-# Scenario: a patient needs a decision point added and milestones requested
+# Scenario: a patient needs a decision point added and clinical_requests requested
 @pytest.mark.asyncio
 async def test_add_decision_point_to_patient(
     mock_trust_adapter, test_user,
     decision_create_permission,
-    milestone_create_permission, decision_query,
+    clinical_request_create_permission, decision_query,
     test_pathway, test_milestone_type,
     httpx_test_client, httpx_login_user,
-    on_mdt_create_permission
+    on_mdt_create_permission, test_clinical_request_type
 ):
     """
-    When: we run the GraphQL mutation to add the decision point and milestones
+    When: we run the GraphQL mutation to add the decision point and clinical_requests
     """
     mock_trust_adapter.test_connection.return_value = True
 
@@ -108,10 +108,10 @@ async def test_add_decision_point_to_patient(
         lock_end_time=datetime(2030, 1, 1, 3, 0, 0)
     )
 
-    FIRST_MILESTONE = await Milestone.create(
+    FIRST_MILESTONE = await ClinicalRequest.create(
         on_pathway_id=ONPATHWAY.id,
         test_result_reference_id="1000",
-        milestone_type_id=test_milestone_type.id
+        clinical_request_type_id=test_clinical_request_type.id
     )
 
     DECISION_POINT = DecisionPoint(
@@ -124,19 +124,19 @@ async def test_add_decision_point_to_patient(
 
     FIRST_TEST_RESULT = TestResult_IE(
         id=1000,
-        current_state=MilestoneState.COMPLETED,
+        current_state=ClinicalRequestState.COMPLETED,
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=test_milestone_type.ref_name,
+        type_reference_name=test_clinical_request_type.ref_name,
     )
     SECOND_TEST_RESULT = TestResult_IE(
         id=2000,
-        current_state=MilestoneState.INIT,
+        current_state=ClinicalRequestState.INIT,
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=test_milestone_type.ref_name,
+        type_reference_name=test_clinical_request_type.ref_name,
     )
 
     async def create_test_result(**kwargs):
@@ -180,8 +180,8 @@ async def test_add_decision_point_to_patient(
                 "decisionType": DECISION_POINT.decision_type.value,
                 "clinicHistory": DECISION_POINT.clinic_history,
                 "comorbidities": DECISION_POINT.comorbidities,
-                "milestoneOneId": test_milestone_type.id,
-                "milestoneResolutionId": FIRST_MILESTONE.id
+                "clinicalRequestOneId": test_clinical_request_type.id,
+                "clinicalRequestResolutionId": FIRST_MILESTONE.id
             }
         }
     )
@@ -226,19 +226,19 @@ async def test_add_decision_point_to_patient(
         equal_to(test_pathway.name)
     )
 
-    assert_that(decision_point['milestones'][0], not_none())
-    assert_that(decision_point['milestones'][0]['id'], not_none())
-    assert_that(decision_point['milestones'][0]['milestoneType'], not_none())
+    assert_that(decision_point['clinicalRequests'][0], not_none())
+    assert_that(decision_point['clinicalRequests'][0]['id'], not_none())
+    assert_that(decision_point['clinicalRequests'][0]['clinicalRequestType'], not_none())
     assert_that(
-        decision_point['milestones'][0]['milestoneType']['id'],
-        test_milestone_type.id)
+        decision_point['clinicalRequests'][0]['clinicalRequestType']['id'],
+        test_clinical_request_type.id)
     assert_that(
-        decision_point['milestones'][0]['milestoneType']['name'],
-        test_milestone_type.name)
-    assert_that(decision_point['milestones'][0]['testResult'], none())
-    assert_that(decision_point['milestoneResolutions'], not_none())
-    assert_that(decision_point['milestoneResolutions'][0], not_none())
-    assert_that(decision_point['milestoneResolutions'][0]['id'], not_none())
+        decision_point['clinicalRequests'][0]['clinicalRequestType']['name'],
+        test_clinical_request_type.name)
+    assert_that(decision_point['clinicalRequests'][0]['testResult'], none())
+    assert_that(decision_point['clinicalRequestResolutions'], not_none())
+    assert_that(decision_point['clinicalRequestResolutions'][0], not_none())
+    assert_that(decision_point['clinicalRequestResolutions'][0]['id'], not_none())
 
 
 async def test_user_lacks_permission(login_user, test_client, decision_query):
@@ -254,8 +254,8 @@ async def test_user_lacks_permission(login_user, test_client, decision_query):
                 "decisionType": "TRIAGE",
                 "clinicHistory": "test",
                 "comorbidities": "test",
-                "milestoneOneId": "1",
-                "milestoneResolutionId": "1"
+                "clinicalRequestOneId": "1",
+                "clinicalRequestResolutionId": "1"
             }
         }
     )

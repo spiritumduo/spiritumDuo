@@ -99,3 +99,13 @@ Default.parameters = {
     ],
   },
 };
+
+export const AllPatients: Story<HomePageProps> = (args: HomePageProps) => {
+  currentPathwayIdVar('1');
+  return <HomePage { ...args } />;
+};
+
+AllPatients.args = {
+  patientsPerPage: patientsPerPage,
+  allPatients: true,
+};

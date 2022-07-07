@@ -19,17 +19,17 @@ export const PATIENT_SEARCH_QUERY = gql`
           nationalNumber
           dateOfBirth
           onPathways(pathwayId: $pathwayId, includeDischarged: true) {
-            outstandingMilestone: milestones(outstanding: true, limit: 1) {
+            outstandingClinicalRequest: clinicalRequests(outstanding: true, limit: 1) {
               id
               updatedAt
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
-            milestone: milestones(outstanding: false, limit: 1) {
+            clinicalRequest: clinicalRequests(outstanding: false, limit: 1) {
               id
               updatedAt
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
@@ -56,8 +56,8 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
   const dispatch = useAppDispatch();
 
   const { data, loading, error } = useQuery<patientSearch>(PATIENT_SEARCH_QUERY, { variables: {
-    query: 'Test',
-    pathwayId: '1',
+    query: query,
+    pathwayId: currentPathwayId,
   } });
 
   const onClickCallback = useCallback((hospitalNumber: string) => {
@@ -74,7 +74,9 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
     const pathway = p.onPathways?.[0];
     const isLockedByOther = (pathway?.lockUser != null)
       && (pathway?.lockUser?.id !== user?.id);
-    const mostRecentStage = pathway?.outstandingMilestone?.[0] || pathway?.milestone?.[0];
+    const mostRecentStage = (
+      pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0]
+    );
     const patient: PatientListProps['data'][0] = {
       id: p.id,
       firstName: p.firstName,
@@ -82,7 +84,7 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
       hospitalNumber: p.hospitalNumber,
       dateOfBirth: p.dateOfBirth,
       updatedAt: mostRecentStage?.updatedAt,
-      mostRecentStage: mostRecentStage?.milestoneType.name || '',
+      mostRecentStage: mostRecentStage?.clinicalRequestType.name || '',
       isOnPathwayLockedByOther: isLockedByOther,
       lockFirstName: pathway?.lockUser?.firstName,
       lockLastName: pathway?.lockUser?.lastName,

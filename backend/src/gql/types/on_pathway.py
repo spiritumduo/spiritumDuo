@@ -3,14 +3,14 @@ from operator import and_
 
 from sqlalchemy import desc
 
-from SdTypes import MilestoneState
-from models import OnPathway, Milestone
+from SdTypes import ClinicalRequestState
+from models import OnPathway, ClinicalRequest
 from dataloaders import (
     PatientByIdLoader,
     PathwayByIdLoader,
     DecisionPointsByOnPathway,
     UserByIdLoader,
-    MilestoneByOnPathwayIdLoader
+    ClinicalRequestByOnPathwayIdLoader
 )
 from graphql.type import GraphQLResolveInfo
 
@@ -49,14 +49,14 @@ async def resolve_under_care_of(
         context=info.context, id=obj.under_care_of_id)
 
 
-@OnPathwayObjectType.field("milestones")
+@OnPathwayObjectType.field("clinicalRequests")
 async def resolver(
     obj: OnPathway = None,
     info: GraphQLResolveInfo = None,
     outstanding: bool = False,
     limit: int = 0, *_
 ):
-    result = await MilestoneByOnPathwayIdLoader.load_from_id(
+    result = await ClinicalRequestByOnPathwayIdLoader.load_from_id(
         context=info.context, id=obj.id, outstanding=outstanding, limit=limit
     )
     return result

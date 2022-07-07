@@ -44,19 +44,19 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
           dateOfBirth
           onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
             id
-            outstandingMilestone: milestones(outstanding: true, limit: 1) {
+            outstandingClinicalRequest: clinicalRequests(outstanding: true, limit: 1) {
               id
               updatedAt
               currentState
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
-            milestone: milestones(outstanding: false, limit: 1) {
+            clinicalRequest: clinicalRequests(outstanding: false, limit: 1) {
               id
               updatedAt
               currentState
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
@@ -157,10 +157,12 @@ const WrappedPatientList = ({
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
         const pathway = n.onPathways?.[0];
-        const lastMilestone = pathway?.outstandingMilestone?.[0] || pathway?.milestone?.[0];
-        const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
-        const updatedAt = lastMilestone?.updatedAt
-          ? lastMilestone.updatedAt
+        const lastClinicalRequest = (
+          pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0]
+        );
+        const mostRecentStage = lastClinicalRequest ? lastClinicalRequest.clinicalRequestType.name : 'Triage';
+        const updatedAt = lastClinicalRequest?.updatedAt
+          ? lastClinicalRequest.updatedAt
           : n.onPathways?.[0].updatedAt;
 
         let isOnPathwayLockedByOther = false;

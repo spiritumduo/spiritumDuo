@@ -85,7 +85,7 @@ const invalidLoginMock: LoginPayload = {
  * Default login page - results in successful login
  */
 export const Default: Story = () => {
-  fetchMock.restore().mock('end:/rest/login', successfulLoginMock);
+  fetchMock.restore().mock('end:/rest/login/', successfulLoginMock);
   return <LoginPage />;
 };
 
@@ -93,7 +93,7 @@ export const Default: Story = () => {
  * Loading state - will pause loading for short time
  */
 export const Loading: Story = () => {
-  fetchMock.restore().mock('end:/rest/login', successfulLoginMock, { delay: 1000 });
+  fetchMock.restore().mock('end:/rest/login/', successfulLoginMock, { delay: 1000 });
   return <LoginPage />;
 };
 
@@ -101,7 +101,7 @@ export const Loading: Story = () => {
  * Error state - fetch responds with error code
  */
 export const Error: Story = () => {
-  fetchMock.restore().mock('end:/rest/login', { body: { user: null, pathways: null }, status: 500 });
+  fetchMock.restore().mock('end:/rest/login/', { body: { user: null, pathways: null }, status: 500 });
   return <LoginPage />;
 };
 
@@ -109,6 +109,6 @@ export const Error: Story = () => {
  * Invalid login - incorrect username or passsword
  */
 export const InvalidLogin: Story = () => {
-  fetchMock.restore().mock('end:/rest/login', invalidLoginMock);
+  fetchMock.restore().mock('end:/rest/login/', invalidLoginMock);
   return <LoginPage />;
 };

@@ -10,7 +10,7 @@ interface TestResultData {
   id: string;
   key: string;
   elementId: string;
-  milestoneName: string;
+  clinicalRequestName: string;
   description: string;
   addedAt: Date;
   forwardDecisionPointId?: string;
@@ -41,7 +41,7 @@ const TestResultDataElement = ({ result, isCollapsed, onClick }: TestResultDataE
     </Col>
     <Col role="cell" xs={ 12 } sm={ 11 } xl={ 3 }>
       <p className="text-left">
-        {result.milestoneName}: <br />
+        {result.clinicalRequestName}: <br />
         {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
       </p>
     </Col>
@@ -128,14 +128,14 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
   ] = useReducer(collapseStateReducer, {});
 
   const testResults = useMemo(() => {
-    const results = data?.getPatient?.onPathways?.[0].milestones?.flatMap(
+    const results = data?.getPatient?.onPathways?.[0].clinicalRequests?.flatMap(
       (ms) => (
         ms.testResult?.description
           ? {
             id: ms.testResult.id,
             key: `tr-${ms.testResult.id}`,
             elementId: `tr-href-${ms.testResult.id}`,
-            milestoneName: ms.milestoneType.name,
+            clinicalRequestName: ms.clinicalRequestType.name,
             description: ms.testResult?.description,
             addedAt: ms.testResult.addedAt,
             forwardDecisionPointId: ms.forwardDecisionPoint?.id,

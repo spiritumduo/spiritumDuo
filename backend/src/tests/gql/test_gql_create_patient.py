@@ -3,7 +3,7 @@ import pytest
 from datetime import datetime
 from models import Patient
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
-from SdTypes import DecisionTypes, MilestoneState, Sex
+from SdTypes import DecisionTypes, ClinicalRequestState, Sex
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 
 
@@ -18,7 +18,7 @@ def patient_create_query() -> str:
             $sex: Sex!
             $dateOfBirth: Date!
             $pathwayId: ID!
-            $milestoneTypeId: ID!
+            $clinicalRequestTypeId: ID!
         ){
             createPatient(input: {
                 firstName: $firstName,
@@ -28,9 +28,9 @@ def patient_create_query() -> str:
                 sex: $sex,
                 dateOfBirth: $dateOfBirth,
                 pathwayId: $pathwayId,
-                milestones: [
+                clinicalRequests: [
                     {
-                        milestoneTypeId: $milestoneTypeId,
+                        clinicalRequestTypeId: $clinicalRequestTypeId,
                         currentState: COMPLETED
                     }
                 ]
@@ -63,9 +63,9 @@ def patient_create_query() -> str:
                         underCareOf{
                             id
                         }
-                        milestones{
+                        clinicalRequests{
                             id
-                            milestoneType{
+                            clinicalRequestType{
                                 id
                                 name
                             }
@@ -98,7 +98,7 @@ async def test_add_new_patient_to_system(
     mock_trust_adapter,
     httpx_test_client,
     httpx_login_user,
-    test_milestone_type,
+    test_clinical_request_type,
     test_pathway
 ):
     """
@@ -134,11 +134,11 @@ async def test_add_new_patient_to_system(
     mock_trust_adapter.load_patient = load_patient
 
     TEST_RESULT = TestResult_IE(
-        current_state=MilestoneState.COMPLETED,
+        current_state=ClinicalRequestState.COMPLETED,
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=test_milestone_type.ref_name,
+        type_reference_name=test_clinical_request_type.ref_name,
         id=1000
     )
 
@@ -181,7 +181,7 @@ async def test_add_new_patient_to_system(
                 "dateOfBirth": PATIENT_IE.date_of_birth,
                 "sex": PATIENT_IE.sex,
                 "pathwayId": test_pathway.id,
-                "milestoneTypeId": test_milestone_type.id
+                "clinicalRequestTypeId": test_clinical_request_type.id
             }
         },
     )
@@ -245,40 +245,40 @@ async def test_add_new_patient_to_system(
     assert_that(onPathway['referredAt'], not_none())
     assert_that(onPathway['decisionPoints'], equal_to([]))
     assert_that(onPathway['underCareOf'], none())
-    assert_that(onPathway['milestones'][0], not_none())
-    assert_that(onPathway['milestones'][0]['id'], not_none())
-    assert_that(onPathway['milestones'][0]['milestoneType'], not_none())
+    assert_that(onPathway['clinicalRequests'][0], not_none())
+    assert_that(onPathway['clinicalRequests'][0]['id'], not_none())
+    assert_that(onPathway['clinicalRequests'][0]['clinicalRequestType'], not_none())
     assert_that(
-        onPathway['milestones'][0]['milestoneType']['id'],
-        test_milestone_type.id
+        onPathway['clinicalRequests'][0]['clinicalRequestType']['id'],
+        test_clinical_request_type.id
     )
     assert_that(
-        onPathway['milestones'][0]['milestoneType']['name'],
-        test_milestone_type.name
+        onPathway['clinicalRequests'][0]['clinicalRequestType']['name'],
+        test_clinical_request_type.name
     )
-    assert_that(onPathway['milestones'][0]['testResult'], not_none())
+    assert_that(onPathway['clinicalRequests'][0]['testResult'], not_none())
     assert_that(
-        onPathway['milestones'][0]['testResult']['id'],
+        onPathway['clinicalRequests'][0]['testResult']['id'],
         equal_to(str(TEST_RESULT.id))
     )
     assert_that(
-        onPathway['milestones'][0]['testResult']['description'],
+        onPathway['clinicalRequests'][0]['testResult']['description'],
         equal_to(TEST_RESULT.description)
     )
     assert_that(
-        onPathway['milestones'][0]['testResult']['currentState'],
+        onPathway['clinicalRequests'][0]['testResult']['currentState'],
         equal_to(str(TEST_RESULT.current_state.value))
     )
     assert_that(
-        onPathway['milestones'][0]['testResult']['addedAt'],
+        onPathway['clinicalRequests'][0]['testResult']['addedAt'],
         equal_to(TEST_RESULT.added_at.isoformat())
     )
     assert_that(
-        onPathway['milestones'][0]['testResult']['updatedAt'],
+        onPathway['clinicalRequests'][0]['testResult']['updatedAt'],
         equal_to(TEST_RESULT.updated_at.isoformat())
     )
     assert_that(
-        onPathway['milestones'][0]['testResult']['typeReferenceName'],
+        onPathway['clinicalRequests'][0]['testResult']['typeReferenceName'],
         equal_to(TEST_RESULT.type_reference_name)
     )
 
@@ -300,7 +300,7 @@ async def test_user_lacks_permission(
                 "nationalNumber": "test",
                 "dateOfBirth": datetime.now().isoformat(),
                 "pathwayId": "test",
-                "milestoneTypeId": "test",
+                "clinicalRequestTypeId": "test",
                 "sex": Sex.MALE
             }
         }

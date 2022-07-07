@@ -12,7 +12,7 @@ class DecisionTypes(str, Enum):
 
 
 @unique
-class MilestoneState(str, Enum):
+class ClinicalRequestState(str, Enum):
     INIT = "INIT"
     ACTIVE = "ACTIVE"
     WAITING = "WAITING"

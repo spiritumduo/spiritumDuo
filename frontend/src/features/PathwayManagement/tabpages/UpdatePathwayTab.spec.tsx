@@ -42,7 +42,7 @@ test('Role dropdown fills inputs with existing data', async () => {
 
   click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect(screen.getByText('Test milestone type 1'));
+    expect(screen.getByText('Test clinicalRequest type 1'));
   });
 });
 
@@ -63,14 +63,14 @@ test('Role dropdown clears inputs when set to default value', async () => {
 
   click(screen.getByText('Select...'));
   await waitFor(() => {
-    expect(screen.getByText('Test milestone type 1'));
+    expect(screen.getByText('Test clinicalRequest type 1'));
   });
   selectOptions(select, ['-1']);
 
   await waitFor(() => {
     expect((screen.getByRole('textbox', { name: 'Pathway name' }) as HTMLInputElement).value).toBe('');
-    expect(screen.queryByText('Test milestone type 1')).not.toBeInTheDocument();
-    expect(screen.queryByText('Test milestone type 2')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test clinicalRequest type 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test clinicalRequest type 2')).not.toBeInTheDocument();
   });
 });
 
@@ -104,8 +104,8 @@ test('Submitting should show modal confirmation', async () => {
   });
   await waitFor(() => {
     expect(screen.getByText('pathway one edited'));
-    expect(screen.getByText('Test milestone type 1'));
-    expect(screen.getByText('Test milestone type 2'));
+    expect(screen.getByText('Test clinicalRequest type 1'));
+    expect(screen.getByText('Test clinicalRequest type 2'));
   });
 });
 
