@@ -71,7 +71,11 @@ const PatientList = (
         <Table.Body>
           { data.map((p) => {
             const lockIconElement = p.isOnPathwayLockedByOther
-              ? <BsLockFill role="img" aria-label="lock icon" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+              ? (
+                <div>
+                  <BsLockFill role="img" aria-label="lock icon" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
+                </div>
+              )
               : <></>;
             const lockIconElementResponsive = p.isOnPathwayLockedByOther
               ? <BsLockFill role="img" aria-label="lock icon responsive" size="1em" style={ { boxSizing: 'content-box', marginTop: '-3px' } } color="black" />
