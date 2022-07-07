@@ -14,3 +14,7 @@ class Patient(db.Model):
     last_name = db.Column(db.String(), nullable=False)
     date_of_birth = db.Column(db.Date(), nullable=False)
     sex = db.Column(Enum(Sex), nullable=False)
+    address_id = db.Column(
+        db.Integer(), db.ForeignKey('tbl_address.id'), unique=False)
+    occupation = db.Column(db.String(), nullable=False)
+    telephone_number = db.Column(db.String(), nullable=True)

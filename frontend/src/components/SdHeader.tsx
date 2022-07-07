@@ -77,7 +77,7 @@ const SdHeader = ({
                       <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app">Home</a>
                     </li>
                     <li className="nhsuk-header__navigation-item">
-                      <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#mdt">MDT</a>
+                      <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="/app/mdt">MDT</a>
                     </li>
                     <li className="nhsuk-header__navigation-item">
                       <a className="nhsuk-header__navigation-link" style={ { fontSize: '1.1875rem' } } href="#add-patient">Add Patient</a>

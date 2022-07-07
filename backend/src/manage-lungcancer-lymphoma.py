@@ -13,7 +13,10 @@ from models import (
     Role,
     RolePermission, UserRole,
     PathwayClinicalRequestType,
-    UserPathway
+    UserPathway,
+    MDT,
+    OnMdt,
+    UserMDT
 )
 from containers import SDContainer
 from asyncpg.exceptions import UndefinedTableError
@@ -27,7 +30,6 @@ from itsdangerous import TimestampSigner
 from trustadapter.trustadapter import (
     Patient_IE,
     TestResult_IE,
-    TestResultRequest_IE,
     TestResultRequestImmediately_IE,
     TrustIntegrationCommunicationError,
     PseudoTrustAdapter
@@ -37,7 +39,7 @@ from base64 import b64encode
 from typing import Dict, List
 from bcrypt import hashpw, gensalt
 
-faker = Faker()
+faker = Faker(['en_GB'])
 app.container = SDContainer()
 
 NUMBER_OF_PATHWAYS = 5
@@ -86,6 +88,24 @@ async def clear_existing_data():
     )
 
     print("Clearing existing data from local database")
+
+    try:
+        await OnMdt.delete.gino.status()
+        print("Table `OnMdt` deleted")
+    except UndefinedTableError:
+        print("Table `OnMdt` not found. Continuing")
+
+    try:
+        await UserMDT.delete.gino.status()
+        print("Table `UserMDT` deleted")
+    except UndefinedTableError:
+        print("Table `UserMDT` not found. Continuing")
+
+    try:
+        await MDT.delete.gino.status()
+        print("Table `MDT` deleted")
+    except UndefinedTableError:
+        print("Table `MDT` not found. Continuing")
 
     try:
         await UserRole.delete.gino.status()
@@ -216,6 +236,11 @@ async def insert_demo_data():
             name="CT chest",
             ref_name="Computed tomography of chest (procedure)",
             is_test_request=True
+        ),
+        "mdt": await ClinicalRequestType.create(
+            name="Add to MDT",
+            ref_name="Multidisciplinary meeting (procedure)",
+            is_mdt=True
         )
     }
 
@@ -256,10 +281,6 @@ async def insert_demo_data():
             name="Discharge",
             ref_name="ref Discharge",
             is_discharge=True
-        ),
-        await ClinicalRequestType.create(
-            name="Add to MDT",
-            ref_name="Assessment by multidisciplinary team (procedure)"
         ),
         await ClinicalRequestType.create(
             name="Book clinic appointment",
@@ -479,7 +500,16 @@ async def insert_demo_data():
                         national_number=national_number,
                         date_of_birth=date_of_birth,
                         communication_method="LETTER",
-                        sex=sex
+                        sex=sex,
+                        occupation=faker.job(),
+                        telephone_number=faker.phone_number(),
+                        address={
+                            "line": f"{randint(1,1000)} {faker.street_name()}",
+                            "city": faker.city(),
+                            "district": faker.county(),
+                            "postal_code": faker.postcode(),
+                            "country": "England",
+                        }
                     ),
                     auth_token=SESSION_COOKIE
                 )

@@ -9,7 +9,11 @@ from SdTypes import Permissions
 
 
 @mutation.field("createDecisionPoint")
-@needsAuthorization([Permissions.DECISION_CREATE, Permissions.MILESTONE_CREATE])
+@needsAuthorization([
+    Permissions.DECISION_CREATE,
+    Permissions.MILESTONE_CREATE,
+    Permissions.ON_MDT_CREATE
+])
 @inject
 async def resolve_create_decision(
     obj=None, info: GraphQLResolveInfo = None, input: dict = None,
@@ -23,12 +27,17 @@ async def resolve_create_decision(
         "clinic_history": input['clinicHistory'],
         "comorbidities": input['comorbidities'],
     }
+
     if "clinicalRequestResolutions" in input:
         decision_point_details['clinical_request_resolutions'] = \
             input['clinicalRequestResolutions']
     if "clinicalRequestRequests" in input:
         decision_point_details['clinical_request_requests'] = \
             input['clinicalRequestRequests']
+    if "mdt" in input:
+        decision_point_details['mdt'] = input['mdt']
+
+    on_pathway: OnPathway = await OnPathway.get(int(input['onPathwayId']))
 
     decision_point: DecisionPoint = await CreateDecisionPoint(
         **decision_point_details
@@ -36,7 +45,7 @@ async def resolve_create_decision(
 
     await pub.publish(
         'on-pathway-updated',
-        await OnPathway.get(int(input["onPathwayId"]))
+        on_pathway
     )
 
     return decision_point

@@ -1,5 +1,4 @@
-/* eslint-disable max-len */
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 // LIBRARIES
 import { Modal, Container, Col, Row } from 'react-bootstrap';
@@ -17,6 +16,7 @@ import { RootState } from 'app/store';
 import DecisionPointPage from 'features/DecisionPoint/DecisionPoint';
 import PreviousDecisionPoints from 'pages/PreviousDecisionPoints';
 import PatientPathway from 'features/PatientPathway/PatientPathway';
+import PatientMdtTab from 'features/PatientMdtTab/PatientMdtTab';
 
 // LOCAL
 import { lockOnPathway } from './__generated__/lockOnPathway';
@@ -68,8 +68,10 @@ export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
 const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps) => {
   // START HOOKS
   const tabState = useAppSelector((state: RootState) => state.modalPatient.isTabDisabled);
+  const onMdtWorkflow = useAppSelector((state: RootState) => state.onMdtWorkflow.onMdtWorkflow);
   const { currentPathwayId } = useContext(PathwayContext);
   const { user } = useContext(AuthContext);
+  const [currentTab, setCurrentTab] = useState<number>(0);
 
   const [
     lockOnPathwayMutation, { data },
@@ -95,6 +97,12 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     (userId?.toString() === storedOnPathwayUserId)
     && (data?.lockOnPathway.onPathway?.lockEndTime > Date.now())
   );
+
+  useEffect(() => {
+    if (onMdtWorkflow) {
+      setCurrentTab(2);
+    }
+  }, [setCurrentTab, onMdtWorkflow]);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -136,6 +144,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     }
     : undefined;
   const currentPatient = patientData?.getPatient;
+
   return (
     <Modal container={ document.getElementById('root') } size="xl" fullscreen="lg-down" show onHide={ closeCallback }>
       <Modal.Header>
@@ -146,7 +155,12 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
                 <div className="visually-hidden">
                   {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${currentPatient?.hospitalNumber},    ${currentPatient?.nationalNumber},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
                 </div>
-                <PatientPathway hospitalNumber={ hospitalNumber } maxDays={ 80 } showName showNationalNumber />
+                <PatientPathway
+                  hospitalNumber={ hospitalNumber }
+                  maxDays={ 80 }
+                  showName
+                  showNationalNumber
+                />
               </Col>
               <Col xs="1">
                 <button
@@ -165,10 +179,30 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Tabs>
+        {
+          onMdtWorkflow
+            ? (
+              <nav className="nhsuk-breadcrumb" aria-label="Breadcrumb">
+                <ol className="nhsuk-breadcrumb__list">
+                  <li className="nhsuk-breadcrumb__item">
+                    <a className="nhsuk-breadcrumb__link" href="/app/mdt">MDTs</a>
+                  </li>
+                  <li className="nhsuk-breadcrumb__item">
+                    <a className="nhsuk-breadcrumb__link" href="/app/mdt/1">Patient list</a>
+                  </li>
+                  <li className="nhsuk-breadcrumb__item">
+                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                    <a className="nhsuk-breadcrumb__link" href="#">Patient</a>
+                  </li>
+                </ol>
+              </nav>
+            ) : ''
+        }
+        <Tabs onSelect={ (index) => setCurrentTab(index) } selectedIndex={ currentTab }>
           <TabList>
             <Tab disabled={ tabState }>New Decision</Tab>
             <Tab disabled={ tabState }>Previous Decisions</Tab>
+            <Tab disabled={ tabState }>MDT</Tab>
             <Tab disabled>Messages</Tab>
             <Tab disabled>Notes</Tab>
           </TabList>
@@ -177,10 +211,14 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
               hospitalNumber={ hospitalNumber }
               decisionType={ DecisionPointType.CLINIC }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
+              closeCallback={ () => closeCallback() }
             />
           </TabPanel>
           <TabPanel>
             <PreviousDecisionPoints hospitalNumber={ hospitalNumber } />
+          </TabPanel>
+          <TabPanel>
+            <PatientMdtTab patientId={ patientData?.getPatient?.id } />
           </TabPanel>
           <TabPanel>
             test message
