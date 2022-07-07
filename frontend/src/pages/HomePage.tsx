@@ -58,8 +58,8 @@ const PatientListTab = (
             <WrappedPatientList
               pathwayId={ pathwayId }
               patientsToDisplay={ patientsPerPage }
-              outstanding
-              underCareOf
+              outstanding={ outstanding }
+              underCareOf={ underCareOf }
             />
           )
         }
@@ -82,12 +82,17 @@ const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps)
   const modalPatientNumber = useAppSelector(
     (state: RootState) => state.homePage.modalPatientHospitalNumber,
   );
+  const onMdtWorkflow = useAppSelector((state: RootState) => state.onMdtWorkflow.onMdtWorkflow);
 
   if (modalPatient) dispatch(setModalPatientHospitalNumber(hospitalNumber));
 
   const modalCloseCallback = () => {
     dispatch(setModalPatientHospitalNumber(undefined));
-    // navigate('/');
+    if (onMdtWorkflow) {
+      navigate(`/mdt/${onMdtWorkflow}`);
+    } else {
+      navigate('/');
+    }
   };
 
   const onSelect = useCallback((index: number) => {

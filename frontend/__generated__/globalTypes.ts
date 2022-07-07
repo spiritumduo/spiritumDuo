@@ -7,6 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ClinicalRequestState {
+  ACTIVE = "ACTIVE",
+  COMPLETED = "COMPLETED",
+  ERROR = "ERROR",
+  INIT = "INIT",
+  WAITING = "WAITING",
+}
+
 export enum DecisionType {
   AD_HOC = "AD_HOC",
   CLINIC = "CLINIC",
@@ -14,14 +22,6 @@ export enum DecisionType {
   MDT = "MDT",
   POST_REQUEST = "POST_REQUEST",
   TRIAGE = "TRIAGE",
-}
-
-export enum ClinicalRequestState {
-  ACTIVE = "ACTIVE",
-  COMPLETED = "COMPLETED",
-  ERROR = "ERROR",
-  INIT = "INIT",
-  WAITING = "WAITING",
 }
 
 export enum PatientCommunicationMethods {
@@ -37,6 +37,20 @@ export enum Sex {
   OTHER = "OTHER",
 }
 
+export interface AddPatientToMdtInput {
+  id: string;
+  reason: string;
+}
+
+export interface ClinicalRequestRequestInput {
+  clinicalRequestTypeId: string;
+  currentState?: ClinicalRequestState | null;
+}
+
+export interface ClinicalRequestTypeInput {
+  id: string;
+}
+
 export interface DecisionPointInput {
   onPathwayId: string;
   decisionType: DecisionType;
@@ -44,6 +58,7 @@ export interface DecisionPointInput {
   comorbidities?: string | null;
   clinicalRequestRequests?: ClinicalRequestRequestInput[] | null;
   clinicalRequestResolutions?: string[] | null;
+  mdt?: AddPatientToMdtInput | null;
 }
 
 export interface FeedbackInput {
@@ -56,13 +71,10 @@ export interface LockOnPathwayInput {
   unlock?: boolean | null;
 }
 
-export interface ClinicalRequestRequestInput {
-  clinicalRequestTypeId: string;
-  currentState?: ClinicalRequestState | null;
-}
-
-export interface ClinicalRequestTypeInput {
-  id: string;
+export interface MdtInput {
+  pathwayId: string;
+  plannedAt: any;
+  location: string;
 }
 
 export interface PathwayInput {
@@ -82,6 +94,20 @@ export interface PatientInput {
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
   clinicalRequests?: (ClinicalRequestRequestInput | null)[] | null;
+}
+
+export interface UpdateMdtInput {
+  id: string;
+  plannedAt: any;
+  location: string;
+  users: (string | null)[];
+}
+
+export interface UpdateOnMdtInput {
+  id: string;
+  reason: string;
+  outcome?: string | null;
+  actioned?: boolean | null;
 }
 
 export interface UpdatePathwayInput {

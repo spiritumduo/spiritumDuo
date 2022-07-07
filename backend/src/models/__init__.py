@@ -13,3 +13,6 @@ from .User import User
 from .UserRole import UserRole
 from .PathwayClinicalRequestType import PathwayClinicalRequestType
 from .UserPathway import UserPathway
+from .MDT import MDT
+from .OnMdt import OnMdt
+from .UserMDT import UserMDT

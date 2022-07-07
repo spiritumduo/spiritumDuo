@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { PatientCommunicationMethods } from "./../../../__generated__/globalTypes";
+import { PatientCommunicationMethods } from "./../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL query operation: GetPatient
@@ -98,6 +98,7 @@ export interface GetPatient_getClinicalRequestTypes {
   isDischarge: boolean;
   isCheckboxHidden: boolean;
   isTestRequest: boolean;
+  isMdt: boolean;
 }
 
 export interface GetPatient {

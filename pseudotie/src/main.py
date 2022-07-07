@@ -8,13 +8,13 @@ from starlette.background import BackgroundTasks
 from authentication import needs_authentication, PseudoAuth
 from fastapi import FastAPI, Request, Response
 from datetime import date, datetime, timedelta
-from models import Patient, db, TestResult
+from models import Patient, db, TestResult, Address
 from asyncpg.exceptions import UniqueViolationError
 from pydantic import BaseModel
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
 from sqlalchemy import or_
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 from RecordTypes import TestResultState
 from placeholder_data import getTestResultFromCharacteristics
 import httpx
@@ -86,6 +86,9 @@ async def get_patient_hospital_id(request: Request, id: str):
         Patient.hospital_number == str(id)
     ).gino.first()
     if patient is not None:
+        address: Address = await Address.query\
+            .where(Address.id == patient.address_id)\
+            .gino.one_or_none()
         return {
             "hospital_number": patient.hospital_number,
             "national_number": patient.national_number,
@@ -93,7 +96,16 @@ async def get_patient_hospital_id(request: Request, id: str):
             "first_name": patient.first_name,
             "last_name": patient.last_name,
             "date_of_birth": patient.date_of_birth,
-            "sex": patient.sex
+            "sex": patient.sex,
+            "address": {
+                "line": address.line,
+                "city": address.city,
+                "district": address.district,
+                "postal_code": address.postal_code,
+                "country": address.country,
+            },
+            "occupation": patient.occupation,
+            "telephone_number": patient.telephone_number
         }
     else:
         return None
@@ -115,6 +127,9 @@ async def post_patient_hospital_id(request: Request, input: List[str]):
     if patients is not None:
         res = []
         for patient in patients:
+            address: Address = await Address.query\
+                .where(Address.id == patient.address_id)\
+                .gino.one_or_none()
             res.append({
                 "hospital_number": patient.hospital_number,
                 "national_number": patient.national_number,
@@ -122,7 +137,16 @@ async def post_patient_hospital_id(request: Request, input: List[str]):
                 "first_name": patient.first_name,
                 "last_name": patient.last_name,
                 "date_of_birth": patient.date_of_birth,
-                "sex": patient.sex
+                "sex": patient.sex,
+                "address": {
+                    "line": address.line,
+                    "city": address.city,
+                    "district": address.district,
+                    "postal_code": address.postal_code,
+                    "country": address.country,
+                },
+                "occupation": patient.occupation,
+                "telephone_number": patient.telephone_number
             })
         return res
     else:
@@ -300,6 +324,9 @@ class PatientInput(BaseModel):
     last_name: str
     date_of_birth: date
     sex: str
+    address: Dict[str, str]
+    occupation: str
+    telephone_number: str
 
 
 @app.post("/debug/patient/")
@@ -311,16 +338,43 @@ async def debug_patient_post(request: Request, input: PatientInput):
     :param input: PatientInput - patient data to input
     :return: JSONResponse of created patient
     """
+
     try:
-        patient = await Patient.create(
-            hospital_number=input.hospital_number,
-            national_number=input.national_number,
-            communication_method=input.communication_method,
-            first_name=input.first_name,
-            last_name=input.last_name,
-            date_of_birth=input.date_of_birth,
-            sex=input.sex,
+        address: Address = await Address.create(
+            line=input.address['line'],
+            city=input.address['city'],
+            district=input.address['district'],
+            postal_code=input.address['postal_code'],
+            country=input.address['country'],
         )
+    except UniqueViolationError:
+        address: Address = await Address.query\
+            .where(Address.line == input.address['line'])\
+            .where(Address.city == input.address['city'])\
+            .where(Address.district == input.address['district'])\
+            .where(Address.postal_code == input.address['postal_code'])\
+            .where(Address.country == input.address['country'])\
+            .gino.one_or_none()
+
+    try:
+        patient_details = {
+            "hospital_number": input.hospital_number,
+            "national_number": input.national_number,
+            "communication_method": input.communication_method,
+            "first_name": input.first_name,
+            "last_name": input.last_name,
+            "date_of_birth": input.date_of_birth,
+            "sex": input.sex,
+            "address_id": address.id,
+            "occupation": input.occupation,
+            "telephone_number": input.telephone_number
+        }
+
+        if input.telephone_number:
+            patient_details["telephone_number"] = input.telephone_number
+
+        patient = await Patient.create(**patient_details)
+
         return {
             "hospital_number": patient.hospital_number,
             "national_number": patient.national_number,
@@ -328,7 +382,16 @@ async def debug_patient_post(request: Request, input: PatientInput):
             "first_name": patient.first_name,
             "last_name": patient.last_name,
             "date_of_birth": patient.date_of_birth,
-            "sex": patient.sex
+            "sex": patient.sex,
+            "address": {
+                "line": address.line,
+                "city": address.city,
+                "district": address.district,
+                "postal_code": address.postal_code,
+                "country": address.country,
+            },
+            "occupation": patient.occupation,
+            "telephone_number": patient.telephone_number
         }
     except UniqueViolationError:
         return JSONResponse(status_code=409)
@@ -343,6 +406,7 @@ async def debug_clear_db(request: Request):
     """
     await TestResult.delete.gino.status()
     await Patient.delete.gino.status()
+    await Address.delete.gino.status()
 
     return JSONResponse({"success": True}, status_code=200)
 

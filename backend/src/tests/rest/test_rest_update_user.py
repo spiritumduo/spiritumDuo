@@ -73,8 +73,6 @@ async def test_valid_user_update_with_roles(
         json=user_update_details
     )
 
-    print(res.json())
-
     assert_that(res.status_code, equal_to(200))
     decoded = res.json()
 

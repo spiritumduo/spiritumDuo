@@ -6,3 +6,5 @@ from .on_pathway import OnPathwayByIdLoader, OnPathwaysByPatient
 from .clinical_request import ClinicalRequestByDecisionPointLoader, ClinicalRequestByOnPathwayIdLoader
 from .clinical_request_type import ClinicalRequestTypeLoader, ClinicalRequestTypeLoaderByPathwayId
 from .test_result import TestResultByReferenceIdFromIELoader
+from .mdt import MdtByIdLoader
+from .on_mdt import OnMdtByIdLoader

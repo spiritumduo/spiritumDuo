@@ -7,7 +7,7 @@ DeletePayloadObjectType = ObjectType("DeletePayload")
 
 @DeletePayloadObjectType.field("success")
 async def resolve_patient(
-    obj: bool = None, *_
+    obj: Union[bool, DataCreatorInputErrors] = None, *_
 ):
     if type(obj) == bool:
         return obj
@@ -16,7 +16,7 @@ async def resolve_patient(
 
 @DeletePayloadObjectType.field("userErrors")
 async def resolve_user_errors(
-    obj: DataCreatorInputErrors = None, *_
+    obj: Union[bool, DataCreatorInputErrors] = None, *_
 ):
     if type(obj) == DataCreatorInputErrors:
         return obj.errorList
