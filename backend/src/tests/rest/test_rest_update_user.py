@@ -2,7 +2,7 @@ from typing import List
 import pytest
 
 from models import Role, UserRole, User, Pathway, UserPathway
-from ..conftest import UserFixture
+from tests.conftest import UserFixture
 from hamcrest import (
     assert_that, equal_to,
     contains_inanyorder, contains_string,

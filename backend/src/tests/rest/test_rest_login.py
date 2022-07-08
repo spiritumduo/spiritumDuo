@@ -1,6 +1,6 @@
 import json
 import pytest
-from ..conftest import UserFixture
+from tests.conftest import UserFixture
 from models import User, UserPathway
 from hamcrest import assert_that, equal_to, not_none
 from bcrypt import hashpw, gensalt
