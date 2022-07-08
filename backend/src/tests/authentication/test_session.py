@@ -1,17 +1,18 @@
 import datetime
 
 import pytest
-from hamcrest import assert_that, equal_to
+from hamcrest import assert_that, equal_to, is_not
 
 from tests.conftest import UserFixture
 from models import Session
 
 
-async def test_session_valid(login_user, test_client, role_create_permission):
+async def test_session_valid(login_user, test_user: UserFixture, test_client, role_create_permission):
     """
     Test valid session. Just assert that this operation succeeds, we'll pick creating
     roles because we need an endpoint
     """
+    session = await Session.query.where(Session.user_id == test_user.user.id).gino.one_or_none()
     role_name = "new-test-role"
     res = await test_client.post(
         path="/rest/createrole/",
@@ -19,8 +20,13 @@ async def test_session_valid(login_user, test_client, role_create_permission):
             "name": role_name
         }
     )
+    updated_session = await Session.query.where(Session.user_id == test_user.user.id).gino.one_or_none()
 
     assert_that(res.status_code, equal_to(200))
+    assert_that(
+        updated_session.expiry.timestamp(),
+        is_not(equal_to(session.expiry.timestamp()))
+    )
 
 
 async def test_session_invalid(login_user, test_user: UserFixture, test_client, role_create_permission):
