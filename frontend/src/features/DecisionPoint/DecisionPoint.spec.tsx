@@ -2,6 +2,7 @@ import React from 'react';
 import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
+import userEvent from '@testing-library/user-event';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);
@@ -74,6 +75,26 @@ describe('When page loads', () => {
     const clinician = Default.parameters?.clinician;
     await waitFor(() => {
       expect(screen.getByRole('option', { name: new RegExp(`${clinician.firstName} ${clinician.lastName}`, 'i') }));
+    });
+  });
+
+  it('Clicking `Add to MDT` should show dropdown and textarea', async () => {
+    await renderDefault();
+
+    const { click } = userEvent.setup();
+
+    expect(screen.queryByText(/mdt session/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/discussion points/i)).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/discussion points/i)).toBeInTheDocument();
     });
   });
 });

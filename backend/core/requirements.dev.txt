@@ -16,7 +16,7 @@ bcrypt==3.2.0
 PyHamcrest==2.0.3
 sqlalchemy_utils==0.38.2
 Faker==11.3.0
-httpx==0.21.3
+httpx==0.23.0
 dependency-injector==4.37.0
 pytest==7.0.1
 pytest-asyncio==0.18.2

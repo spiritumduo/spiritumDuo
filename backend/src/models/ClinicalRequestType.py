@@ -13,3 +13,4 @@ class ClinicalRequestType(db.Model):
         server_default="FALSE"
     )
     is_test_request = db.Column(db.Boolean(), nullable=False, default=False)
+    is_mdt = db.Column(db.Boolean(), nullable=False, default=False)

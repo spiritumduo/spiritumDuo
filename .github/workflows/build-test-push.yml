@@ -91,6 +91,7 @@ jobs:
           -e EXCHANGE_USER_EMAIL=${{ secrets.EXCHANGE_USER_EMAIL }}
           -e EXCHANGE_USER_PASSWORD=${{ secrets.EXCHANGE_USER_PASSWORD }}
           -e EXCHANGE_SERVER_ADDRESS=${{ secrets.EXCHANGE_SERVER_ADDRESS }}
+          -e ON_MDT_EDIT_LOCKOUT_DURATION=${{ secrets.ON_MDT_EDIT_LOCKOUT_DURATION }}
           staging-test test
       -
         name: Build and push using primary dockerfile

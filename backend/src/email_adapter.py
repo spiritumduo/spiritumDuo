@@ -1,5 +1,13 @@
 from typing import List, Union
-from exchangelib import DELEGATE, Credentials, FileAttachment, Message, Configuration, Account, HTMLBody
+from exchangelib import (
+    DELEGATE,
+    Credentials,
+    FileAttachment,
+    Message,
+    Configuration,
+    Account,
+    HTMLBody
+)
 from config import config
 
 
@@ -12,9 +20,16 @@ class EmailAdapter:
         attachments: List[FileAttachment] = None,
     ):
 
-        credentials: Credentials = Credentials(config['EXCHANGE_USER_EMAIL'], config['EXCHANGE_USER_PASSWORD'])
-        server_configuration: Configuration = Configuration(credentials, config['EXCHANGE_SERVER_ADDRESS'])
-        account: Account = Account(config['EXCHANGE_USER_EMAIL'], access_type=DELEGATE, config=server_configuration)
+        credentials: Credentials = Credentials(
+            config['EXCHANGE_USER_EMAIL'], config['EXCHANGE_USER_PASSWORD']
+        )
+        server_configuration: Configuration = Configuration(
+            credentials, config['EXCHANGE_SERVER_ADDRESS']
+        )
+        account: Account = Account(
+            config['EXCHANGE_USER_EMAIL'], access_type=DELEGATE,
+            config=server_configuration
+        )
 
         message: Message = Message(
             account=account,

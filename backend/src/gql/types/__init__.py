@@ -15,6 +15,10 @@ from .role_permission import RolePermissionObjectType
 from .role import RoleObjectType
 from .clinical_request_type import ClinicalRequestTypeType
 from .delete_payload import DeletePayloadObjectType
+from .mdt_payload import MdtPayloadObjectType
+from .mdt import MDTObjectType
+from .on_mdt import OnMdtObjectType
+from .on_mdt_payload import OnMdtPayloadObjectType
 
 object_types_list = [
     PatientObjectType,
@@ -34,4 +38,8 @@ object_types_list = [
     RoleObjectType,
     ClinicalRequestTypeType,
     DeletePayloadObjectType,
+    MdtPayloadObjectType,
+    MDTObjectType,
+    OnMdtObjectType,
+    OnMdtPayloadObjectType
 ]

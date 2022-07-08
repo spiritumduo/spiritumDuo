@@ -80,7 +80,6 @@ const PatientPathwayList = ({
 
   const patientData = useMemo(() => nodes?.map((n) => patientToVisData(n)), [nodes]);
   const rowClicked = (patient: PatientVisData): void => {
-    console.log(patient);
     dispatch(setModalPatientHospitalNumber(patient.hospitalNumber));
   };
 

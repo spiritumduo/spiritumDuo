@@ -1,5 +1,5 @@
 /* eslint-disable quotes */
-import React, { useContext, useLayoutEffect, useState } from 'react';
+import React, { useContext, useLayoutEffect, useState, useEffect } from 'react';
 
 // LIBRARIES
 import { gql, useMutation, useQuery } from '@apollo/client';
@@ -31,6 +31,7 @@ import ConfirmNoClinicalRequests from './components/ConfirmNoClinicalRequests';
 import PreviousTestResultsElement from './components/PreviousTestResultsElement';
 
 import './decisionpoint.css';
+import { getMdts } from './__generated__/getMdts';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -43,6 +44,7 @@ export interface DecisionPointPageProps {
     };
     lockEndTime: Date;
   }
+  closeCallback?: () => void;
 }
 
 export const GET_PATIENT_QUERY = gql`
@@ -101,6 +103,7 @@ export const GET_PATIENT_QUERY = gql`
         isDischarge
         isCheckboxHidden
         isTestRequest
+        isMdt
       }
     }
 `;
@@ -127,6 +130,15 @@ export const CREATE_DECISION_POINT_MUTATION = gql`
   }
 `;
 
+export const GET_MDTS = gql`
+  query getMdts($pathwayId: ID!){
+    getMdts(pathwayId: $pathwayId){
+      id
+      plannedAt
+    }
+  }
+`;
+
 type DecisionPointPageForm = {
   patientId: number;
   clinicianId: number;
@@ -143,22 +155,27 @@ type DecisionPointPageForm = {
     checked: boolean;
     discharge: boolean;
     isTestRequest: boolean;
+    isMdt: boolean;
   }[];
   clinicalRequestResolutions?: {
     id: string;
     name: string;
   }[];
+  mdtSessionId: string;
+  mdtReason: string;
+  mdtSelected: boolean;
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType, onPathwayLock }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, onPathwayLock, closeCallback }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
   const { currentPathwayId } = useContext(PathwayContext);
   const { user: contextUser } = useContext(AuthContext);
+  const [showMdtDetails, setShowMdtDetails] = useState<boolean>(true);
   const user = contextUser as User; // context can be undefined
-
+  const [showServerConfirmation, setShowServerConfirmation] = useState<boolean>(false);
   // GET PATIENT DATA QUERY
   const { loading, data, error } = useQuery<GetPatient>(
     GET_PATIENT_QUERY, {
@@ -166,6 +183,15 @@ const DecisionPointPage = (
         hospitalNumber: hospitalNumber,
         pathwayId: currentPathwayId,
         includeDischarged: true,
+      },
+    },
+  );
+
+  // GET MDTS QUERY
+  const { loading: mdtLoading, data: mdtData, error: mdtError } = useQuery<getMdts>(
+    GET_MDTS, {
+      variables: {
+        pathwayId: currentPathwayId,
       },
     },
   );
@@ -178,7 +204,6 @@ const DecisionPointPage = (
   const isSubmitted = mutateData?.createDecisionPoint?.decisionPoint?.id !== undefined;
 
   // FORM HOOK & VALIDATION
-  const [confirmNoRequests, setConfirmNoRequests] = useState<boolean>(false);
   const [requestConfirmation, setRequestConfirmation] = useState<number | boolean>(false);
   const newDecisionPointSchema = yup.object({
     decisionType: yup.mixed().oneOf([Object.keys(DecisionPointType)]).required(),
@@ -186,13 +211,25 @@ const DecisionPointPage = (
     comorbidities: yup.string().required('Comorbidities are required'),
     patientId: yup.number().required().positive().integer(),
     onPathwayId: yup.number().required().positive().integer(),
+    mdtSelected: yup.boolean(),
+    mdtSessionId: yup.number().when('mdtSelected', {
+      is: true,
+      then: yup.number().required().integer().positive('A valid entry must be selected'),
+    }),
+    mdtReason: yup.string().when('mdtSelected', {
+      is: true,
+      then: yup.string().required('A reason is required'),
+    }),
   });
+
   const {
     register,
     handleSubmit,
     formState: { errors: formErrors },
     getValues,
     control,
+    watch,
+    setValue,
   } = useForm<DecisionPointPageForm>({ resolver: yupResolver(newDecisionPointSchema) });
 
   // REQUEST CHECKBOXES
@@ -203,6 +240,22 @@ const DecisionPointPage = (
     name: 'clinicalRequestRequests',
     control: control,
   });
+
+  useEffect(() => {
+    // Form watch using callback, monitors + yeets callback when any value in form changes
+    const sub = watch((value) => {
+      const filteredOptions = value?.clinicalRequestRequests?.filter(
+        (cRQ) => cRQ?.checked && cRQ?.isMdt,
+      );
+      const isMdtChecked = (filteredOptions && filteredOptions.length > 0) || false;
+      setShowMdtDetails(isMdtChecked);
+    });
+    return () => sub.unsubscribe();
+  }, [watch]);
+
+  useEffect(() => {
+    setValue('mdtSelected', showMdtDetails);
+  }, [setShowMdtDetails, setValue, showMdtDetails]);
 
   const [hasBuiltCheckboxes, updateHasBuiltCheckboxes] = useState<boolean>(false);
 
@@ -219,6 +272,7 @@ const DecisionPointPage = (
               checked: false,
               discharge: clinicalRequestType.isDischarge,
               isTestRequest: clinicalRequestType.isTestRequest,
+              isMdt: clinicalRequestType.isMdt,
             }
             : []
         ))
@@ -262,25 +316,22 @@ const DecisionPointPage = (
     return <h1>Patient not on this pathway!</h1>;
   }
 
-  if (isSubmitted) {
-    const _clinicalRequests = mutateData
-      ?.createDecisionPoint
-      ?.decisionPoint
-      ?.clinicalRequests
-      ?.map((ms) => ({
-        id: ms.id,
-        name: ms.clinicalRequestType.name,
-        isDischarge: ms.clinicalRequestType.isDischarge,
-      }));
-    return _clinicalRequests?.find((ms) => ms.isDischarge)
-      ? <PathwayComplete />
-      : (
-        <DecisionSubmissionSuccess
-          clinicalRequests={ _clinicalRequests }
-          clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-        />
-      );
-  }
+  // if (isSubmitted) {
+  // eslint-disable-next-line max-len
+  //   const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map((ms) => ({
+  //       id: ms.id,
+  //       name: ms.clinicalRequestType.name,
+  //       isDischarge: ms.clinicalRequestType.isDischarge,
+  //     }));
+  //   return _clinicalRequests?.find((ms) => ms.isDischarge)
+  //     ? <PathwayComplete />
+  //     : (
+  //       <DecisionSubmissionSuccess
+  //         clinicalRequests={ _clinicalRequests }
+  //         clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+  //       />
+  //     );
+  // }
 
   // FORM SUBMISSION
   const onSubmitFn = (
@@ -295,9 +346,16 @@ const DecisionPointPage = (
         clinicalRequestTypeId: m.checked as unknown as string,
       }));
 
-    if (!confirmNoRequests && !isConfirmed) {
+    if (!isConfirmed) {
       setRequestConfirmation(clinicalRequestRequests.length);
     } else {
+      let addPatientToMdt = null;
+      if (values.mdtSelected) {
+        addPatientToMdt = {
+          id: values.mdtSessionId,
+          reason: values.mdtReason,
+        };
+      }
       const variables: createDecisionPointVariables = {
         input: {
           onPathwayId: values.onPathwayId,
@@ -306,49 +364,88 @@ const DecisionPointPage = (
           decisionType: values.decisionType,
           clinicalRequestRequests: clinicalRequestRequests,
           clinicalRequestResolutions: values.clinicalRequestResolutions?.map((mr) => mr.id),
+          mdt: addPatientToMdt,
         },
       };
       mutation({ variables: variables });
     }
   };
-
-  // CONFIRM SUBMISSION DIALOGUES
-  if (requestConfirmation !== false) {
-    // NO REQUESTS SELECTED
-    if (requestConfirmation === 0 || requestConfirmation === true) {
+  if (requestConfirmation !== null) {
+    if (requestConfirmation === true || requestConfirmation === 0) {
       return (
         <ConfirmNoClinicalRequests
-          confirmFn={ () => setConfirmNoRequests(true) }
+          confirmFn={ () => setRequestConfirmation(false) }
           cancelFn={ () => {
             setRequestConfirmation(false);
           } }
           submitFn={ () => {
-            setConfirmNoRequests(true);
             onSubmitFn(createDecision, getValues(), true);
+            setRequestConfirmation(false);
+            setShowServerConfirmation(true);
           } }
           clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
         />
       );
     }
-    // REQUESTS SELECTED
-    const clinicalRequests = getValues()
-      .clinicalRequestRequests
-      .filter((m) => m.checked)
-      .map((m) => ({ id: m.clinicalRequestTypeId, name: m.name }));
-    return (
-      <DecisionSubmissionConfirmation
-        cancelCallback={ () => {
-          setRequestConfirmation(false);
-        } }
-        okCallback={ () => {
-          setConfirmNoRequests(true);
-          onSubmitFn(createDecision, getValues(), true);
-        } }
-        clinicalRequests={ clinicalRequests }
-        clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-      />
-    );
+    if (requestConfirmation > 0) {
+      const clinicalRequests = getValues()?.clinicalRequestRequests?.filter(
+        (m) => m.checked,
+      ).map((m) => ({ id: m.clinicalRequestTypeId, name: m.name }));
+      return (
+        <DecisionSubmissionConfirmation
+          cancelCallback={ () => {
+            setRequestConfirmation(false);
+          } }
+          okCallback={ () => {
+            onSubmitFn(createDecision, getValues(), true);
+            setRequestConfirmation(false);
+            setShowServerConfirmation(true);
+          } }
+          clinicalRequests={ clinicalRequests }
+          clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+        />
+      );
+    }
+    // // REQUESTS SELECTED
+    // const clinicalRequests = getValues()
+    //   .clinicalRequestRequests
+    //   .filter((m) => m.checked)
+    //   .map((m) => ({ id: m.clinicalRequestTypeId, name: m.name }));
+    // return (
+    //   <DecisionSubmissionConfirmation
+    //     cancelCallback={ () => {
+    //       setRequestConfirmation(false);
+    //     } }
+    //     okCallback={ () => {
+    //       setConfirmNoRequests(true);
+    //       onSubmitFn(createDecision, getValues(), true);
+    //     } }
+    //     clinicalRequests={ clinicalRequests }
+    //     clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+    //   />
+    // );
   }
+  if (showServerConfirmation && !mutateData?.createDecisionPoint?.userErrors) {
+    const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map(
+      (ms) => ({
+        id: ms.id,
+        name: ms.clinicalRequestType.name,
+        isDischarge: ms.clinicalRequestType.isDischarge,
+      }),
+    );
+    return _clinicalRequests?.find((ms) => ms.isDischarge)
+      ? <PathwayComplete />
+      : (
+        <DecisionSubmissionSuccess
+          clinicalRequests={ _clinicalRequests }
+          clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
+          onClose={ () => {
+            setShowServerConfirmation(false);
+            if (closeCallback) closeCallback();
+          } }
+        />
+      );
+  } if (showServerConfirmation) setShowServerConfirmation(false);
 
   // IF PATIENT HAS PRIOR DECISION
   const previousDecisionPoint = data?.getPatient?.onPathways?.[0]?.decisionPoints
@@ -388,13 +485,20 @@ const DecisionPointPage = (
   });
 
   return (
-    <LoadingSpinner loading={ loading }>
+    <LoadingSpinner loading={ loading || mdtLoading }>
       <Container fluid>
         <ErrorSummary className="sd-dp-errormessage" aria-labelledby="error-summary-title" role="alert" hidden={ onPathwayLock === undefined }>
           <ErrorSummary.Title id="error-summary-title">
             This patient is locked by { `${onPathwayLock?.lockUser.firstName} ${onPathwayLock?.lockUser.lastName}` }
           </ErrorSummary.Title>
         </ErrorSummary>
+        {
+          mutateData?.createDecisionPoint?.userErrors
+            ? mutateData?.createDecisionPoint?.userErrors?.map(
+              (uE) => <ErrorMessage key={ uE.field }> {uE.message} </ErrorMessage>,
+            )
+            : ''
+        }
         <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
           <input type="hidden" value={ data?.getPatient?.id } { ...register('patientId', { required: true }) } />
           <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
@@ -500,6 +604,48 @@ const DecisionPointPage = (
           </Fieldset>
           <p>{ mutateLoading ? 'Submitting...' : '' }</p>
           { mutateError ? <ErrorMessage> {mutateError?.message} </ErrorMessage> : false }
+          {
+            showMdtDetails
+              ? (
+                <div className="row">
+                  <hr />
+                  { mdtError ? <ErrorMessage> {mdtError?.message} </ErrorMessage> : false }
+                  {
+                    formErrors.mdtSessionId
+                      ? <ErrorMessage> {formErrors.mdtSessionId?.message} </ErrorMessage>
+                      : false
+                  }
+                  {
+                    formErrors.mdtReason
+                      ? <ErrorMessage> {formErrors.mdtReason?.message} </ErrorMessage>
+                      : false
+                  }
+                  <div className="col-12 col-md-5 d-inline-block">
+                    <Select label="MDT session" className="w-100" { ...register('mdtSessionId') }>
+                      <option value="-1">Select MDT</option>
+                      {
+                        mdtData?.getMdts.map((mdt) => (
+                          mdt
+                            ? (
+                              <option
+                                key={ mdt.id }
+                                value={ mdt.id }
+                              >
+                                { new Date(mdt.plannedAt).toLocaleDateString() }
+                              </option>
+                            )
+                            : ''
+                        ))
+                      }
+                    </Select>
+                  </div>
+                  <div className="col-12 col-md-5 offset-md-2 d-inline-block">
+                    <Textarea label="Discussion points" { ...register('mdtReason') } />
+                  </div>
+                </div>
+              )
+              : ''
+          }
           <div>
             <Button
               type="submit"
