@@ -14,12 +14,14 @@ import {
 } from './__generated__/getPatientOnPathwayConnectionForGrp';
 import PatientPathwayList, { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from './PatientPathwayList';
 
+const totalCount = 12;
+
 const mockPatient: (id: string) => PatientNode = (id) => ({
   __typename: 'Patient',
   id: id,
   firstName: 'John',
   lastName: `Doe ${id}`,
-  dateOfBirth: new Date('1970-10-10'),
+  dateOfBirth: new Date('1970-10-31'),
   hospitalNumber: 'fMRN1234567',
   nationalNumber: 'fNHS1234567890',
   onPathways: [{
@@ -129,7 +131,7 @@ const mockPatient: (id: string) => PatientNode = (id) => ({
 
 // eslint-disable-next-line max-len, camelcase
 const mockPatientEdges: PatientEdge[] = [];
-for (let i = 1; i <= 10; i += 1) {
+for (let i = 1; i <= totalCount; i += 1) {
   // eslint-disable-next-line camelcase
   const edge: PatientEdge = {
     __typename: 'PatientEdge',
@@ -147,19 +149,23 @@ const apolloMock: {
   >
 }[] = [{
   query: GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY,
-  mockFn: () => Promise.resolve({
-    data: {
+  mockFn: ({ first, after }) => new Promise((resolve) => {
+    const start = after
+      ? parseInt(after, 10)
+      : 0;
+    const end = start + first;
+    resolve({ data: {
       getPatientOnPathwayConnection: {
         __typename: 'PatientConnection',
-        totalCount: 20,
+        totalCount: totalCount,
         pageInfo: {
           __typename: 'PageInfo',
-          hasNextPage: true,
-          endCursor: '10',
+          hasNextPage: end < totalCount,
+          endCursor: end.toString(),
         },
-        edges: mockPatientEdges,
+        edges: mockPatientEdges.slice(start, end),
       },
-    },
+    } });
   }),
 }];
 
@@ -183,7 +189,7 @@ export const Default = Template.bind({});
 Default.args = {
   outstanding: true,
   pathwayId: '1',
-  patientsToDisplay: 10,
+  patientsToDisplay: 5,
   underCareOf: false,
   includeDischarged: false,
 };

@@ -82,7 +82,7 @@ export interface getPatientOnPathwayConnectionForGrp {
 export interface getPatientOnPathwayConnectionForGrpVariables {
   outstanding?: boolean | null;
   pathwayId: string;
-  first?: number | null;
+  first: number;
   after?: string | null;
   underCareOf?: boolean | null;
   includeDischarged?: boolean | null;

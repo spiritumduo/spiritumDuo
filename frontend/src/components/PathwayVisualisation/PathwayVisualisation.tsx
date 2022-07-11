@@ -266,6 +266,7 @@ const PathwayVisualisation = withTooltip<PathwayVisualisationProps, TooltipData>
     hideTooltip,
     showTooltip,
   }: PathwayVisualisationProps & WithTooltipProvidedProps<TooltipData>) => {
+    if (data.length === 0) return <></>; // we don't want to render an empty graph
     // memoise all this to prevent scale recalculation on re-render
     // bounds
     const safeWidth = useMemo(() => (width > 280 ? width : 280), [width]);
