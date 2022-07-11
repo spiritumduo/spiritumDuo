@@ -2,9 +2,8 @@ from graphql import GraphQLResolveInfo
 from authentication.authentication import needsAuthorization
 from SdTypes import Permissions
 from containers import SDContainer
-from email_adapter import EmailAdapter
+from email_adapter import EmailAdapter, EmailAttachment
 from .mutation_type import mutation
-from exchangelib import DELEGATE, Credentials, FileAttachment, Message, Configuration, Account, HTMLBody
 from config import config
 import base64    
 import re
@@ -19,14 +18,9 @@ async def resolve_submit_feedback(
     email_service: EmailAdapter = Provide[SDContainer.email_service]
 ) -> bool:
     
-    # this might look a bit funky, encoding this image this way
-    # afaik exchangelib doesn't really do embedding images via b64
-    # what I've had to do here is strip the 'header' (for lack of a better word)
-    # and then decode that into a binary so it can upload the attachment as a file
-
-    feedback_image = FileAttachment(
+    feedback_image = EmailAttachment(
         name="feedback_image.png",
-        content=base64.b64decode(
+        data=base64.b64decode(
                 re.sub(
                     r"^data:image\/[a-zA-Z]+;base64,",
                     '',
@@ -34,10 +28,9 @@ async def resolve_submit_feedback(
                 )
             ),
         is_inline=False,
-        content_id="feedback_image.png"
     )
 
-    message_body=HTMLBody(
+    message_body=(
         f"""
         <html>
             <body>
@@ -56,15 +49,13 @@ async def resolve_submit_feedback(
         """
     )
 
-    # await email_service.send_email(message)
+    recipients = str(config['FEEDBACK_EMAIL_RECIPIENTS']).split(";")
+
     await email_service.send_email(
-        recipients=[config['EXCHANGE_USER_EMAIL']],
+        recipients=recipients,
         subject="User feedback received",
         body=message_body,
         attachments=[feedback_image]
     )
-
-
-    # recipied, subject, body, attachments
 
     return {"success": True}
