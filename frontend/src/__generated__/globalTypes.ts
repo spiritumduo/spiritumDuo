@@ -37,6 +37,11 @@ export enum Sex {
   OTHER = "OTHER",
 }
 
+export interface AddPatientToMdtInput {
+  id: string;
+  reason: string;
+}
+
 export interface ClinicalRequestRequestInput {
   clinicalRequestTypeId: string;
   currentState?: ClinicalRequestState | null;
@@ -53,6 +58,7 @@ export interface DecisionPointInput {
   comorbidities?: string | null;
   clinicalRequestRequests?: ClinicalRequestRequestInput[] | null;
   clinicalRequestResolutions?: string[] | null;
+  mdt?: AddPatientToMdtInput | null;
 }
 
 export interface FeedbackInput {
@@ -63,6 +69,12 @@ export interface FeedbackInput {
 export interface LockOnPathwayInput {
   onPathwayId: string;
   unlock?: boolean | null;
+}
+
+export interface MdtInput {
+  pathwayId: string;
+  plannedAt: any;
+  location: string;
 }
 
 export interface PathwayInput {
@@ -82,6 +94,20 @@ export interface PatientInput {
   awaitingDecisionType?: DecisionType | null;
   referredAt?: any | null;
   clinicalRequests?: (ClinicalRequestRequestInput | null)[] | null;
+}
+
+export interface UpdateMdtInput {
+  id: string;
+  plannedAt: any;
+  location: string;
+  users: (string | null)[];
+}
+
+export interface UpdateOnMdtInput {
+  id: string;
+  reason: string;
+  outcome?: string | null;
+  actioned?: boolean | null;
 }
 
 export interface UpdatePathwayInput {
