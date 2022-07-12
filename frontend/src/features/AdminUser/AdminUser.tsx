@@ -11,7 +11,7 @@ import { BsX } from 'react-icons/bs';
 export const AdminUser = (): JSX.Element => {
   const [selectedUserId, setSelectedUserId] = useState<string>();
 
-  const userListOnClick = useCallback((id: string) => {
+  const userListOnClick: (id: string) => void = useCallback((id: string) => {
     setSelectedUserId(id);
   }, [setSelectedUserId]);
 
