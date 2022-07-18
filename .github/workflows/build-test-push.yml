@@ -207,3 +207,15 @@ jobs:
       -
         name: Add demo data
         run: ssh staging 'docker exec sd-backend python manage-demo.py'
+
+  selenium:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install test prerequisites
+        run: python3 -m pip install httpx webdriver-manager selenium pytest
+      - name: Run tests
+        run: cd selenium_tests && pytest
