@@ -209,6 +209,9 @@ jobs:
         run: ssh staging 'docker exec sd-backend python manage-demo.py'
 
   selenium:
+    defaults:
+      run:
+        working-directory: selenium_tests
     runs-on: ubuntu-latest
     needs: deploy
     steps:
@@ -219,4 +222,4 @@ jobs:
       - name: Install test prerequisites
         run: python3 -m pip install httpx webdriver-manager selenium pytest
       - name: Run tests
-        run: cd selenium_tests && pytest
+        run: pytest
