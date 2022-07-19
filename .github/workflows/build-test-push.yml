@@ -221,6 +221,6 @@ jobs:
         with:
           python-version: 3.9
       - name: Install test prerequisites
-        run: python3 -m pip install httpx webdriver-manager selenium pytest
+        run: python3 -m pip install httpx webdriver-manager selenium pytest pytest-bdd
       - name: Run tests
         run: pytest

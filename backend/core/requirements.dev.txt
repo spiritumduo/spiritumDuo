@@ -23,3 +23,6 @@ pytest-asyncio==0.18.2
 async_asgi_testclient==1.4.10
 pyisemail==1.4.0
 exchangelib==4.7.3
+selenium==4.3.0
+pytest-bdd==6.0.1
+webdriver-manager==3.8.2
