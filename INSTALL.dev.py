@@ -303,11 +303,15 @@ PrintHeading("Check Docker Compose is installed")
 DOCKER_COMPOSE_PRESENT = "compose version" in str(subprocess.getoutput(
    "docker-compose --version"
 )).lower()
-if DOCKER_COMPOSE_PRESENT:
-    print("Success! Docker Compose found!")
-else:
+
+DOCKER_COMPOSE_ALTERNATIVE_PRESENT = "compose version" in str(subprocess.getoutput(
+   "docker compose --version"
+)).lower()
+
+if not DOCKER_COMPOSE_PRESENT and not DOCKER_COMPOSE_ALTERNATIVE_PRESENT:
     raise ComponentNotFound("Docker Compose cannot be found!")
 
+DOCKER_COMPOSE_COMMAND = 'docker-compose' if DOCKER_COMPOSE_PRESENT else 'docker compose'
 
 PrintHeading("Configuring Docker Compose file from template")
 
@@ -337,7 +341,7 @@ to continue. Do you wish to stop these containers? (Y/n) """,
         ["y", "n"]
     ) == "y":
         RunCommand(
-            "docker-compose -f docker-compose.dev.yml down",
+            f"{DOCKER_COMPOSE_COMMAND} -f docker-compose.dev.yml down",
             shell=True
         )
     else:
@@ -520,7 +524,7 @@ sleep(2)
 PrintHeading("Build containers")
 os.chdir("..")
 RunCommand(
-    "docker-compose -f docker-compose.dev.yml up -d --build"
+    f"{DOCKER_COMPOSE_COMMAND} -f docker-compose.dev.yml up -d --build"
     " sd-backend sd-pseudotie", shell=True)
 sleep(5)
 
@@ -537,11 +541,11 @@ RunCommand(
 
 PrintHeading("Restart containers")
 RunCommand(
-    "docker-compose -f docker-compose.dev.yml down",
+    f"{DOCKER_COMPOSE_COMMAND} -f docker-compose.dev.yml down",
     shell=True)
 sleep(5)
 RunCommand(
-    "docker-compose -f docker-compose.dev.yml up -d --build",
+    f"{DOCKER_COMPOSE_COMMAND} -f docker-compose.dev.yml up -d --build",
     shell=True)
 
 sleep(10)
