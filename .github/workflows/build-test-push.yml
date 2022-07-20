@@ -208,7 +208,7 @@ jobs:
         name: Add demo data
         run: ssh staging 'docker exec sd-backend python manage-demo.py'
 
-  selenium:
+  selenium_linux:
     defaults:
       run:
         working-directory: selenium_tests
@@ -227,3 +227,24 @@ jobs:
         run: export SELENIUM_BROWSER_CLIENT="firefox" && pytest && export SELENIUM_BROWSER_CLIENT="chromium" && pytest
         env:
           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+
+  selenium_macos:
+    defaults:
+      run:
+        working-directory: selenium_tests
+    runs-on: macos-latest
+    environment: staging
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install test prerequisites
+        run: python3 -m pip install -r requirements.txt
+      - name: Run tests
+        run: pytest
+        env:
+          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+          SELENIUM_BROWSER_CLIENT: safari
