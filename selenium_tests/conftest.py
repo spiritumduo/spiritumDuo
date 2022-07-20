@@ -9,6 +9,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.safari.options import Options as SafariOptions
+from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
@@ -73,6 +75,18 @@ def driver():
         )
         driver.set_window_size(1920, 1080)
         driver.maximize_window()
+
+    elif browser_choice == "safari":
+        options = SafariOptions()
+        options.add_argument("--headless")
+
+        driver = webdriver.Safari(
+            service=SafariService(),
+            options=options,
+        )
+        driver.set_window_size(1920, 1080)
+        driver.maximize_window()
+
     driver.implicitly_wait(10)
     yield driver
     driver.close()
