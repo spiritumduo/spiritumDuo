@@ -4,6 +4,7 @@ from os import environ
 from selenium import webdriver
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.core.utils import ChromeType
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
@@ -86,7 +87,9 @@ def driver():
 
     elif browser_choice == "edge":
         options = EdgeOptions()
-        driver = webdriver.Edge(EdgeService())
+        driver = webdriver.Edge(EdgeService(
+            EdgeChromiumDriverManager.install()
+        ))
         driver.set_window_size(1920, 1080)
         driver.maximize_window()
 
