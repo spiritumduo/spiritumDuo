@@ -248,6 +248,7 @@ jobs:
           defaults write com.apple.Safari IncludeDevelopMenu YES
           defaults write com.apple.Safari AllowRemoteAutomation 1
           sudo safaridriver --enable
+          safaridriver -p 0 &
           pytest
         env:
           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
