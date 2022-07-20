@@ -24,7 +24,7 @@ def endpoints():
     hostname: str = (
             'SELENIUM_HOSTNAME' in environ
             and (
-                'http://' + environ['SELENIUM_HOSTNAME']
+                environ['SELENIUM_HOSTNAME']
             ) or 'http://localhost'
         )
     return ServerEndpoints(
