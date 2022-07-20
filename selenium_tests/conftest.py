@@ -21,19 +21,15 @@ class ServerEndpoints():
 
 @pytest.fixture
 def endpoints():
+    hostname: str = (
+            'SELENIUM_HOSTNAME' in environ
+            and (
+                'http://' + environ['SELENIUM_HOSTNAME']
+            ) or 'http://localhost'
+        )
     return ServerEndpoints(
-        app=(
-            'SELENIUM_HOSTNAME' in environ
-            and (
-                'http://' + environ['SELENIUM_HOSTNAME'] + '/app'
-            ) or 'http://localhost/app'
-        ),
-        api=(
-            'SELENIUM_HOSTNAME' in environ
-            and (
-                'http://' + environ['SELENIUM_HOSTNAME'] + '/api'
-            ) or 'http://localhost/api'
-        ),
+        app=hostname + "/app",
+        api=hostname + "/api"
     )
 
 
