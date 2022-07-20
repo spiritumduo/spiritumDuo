@@ -77,13 +77,7 @@ def driver():
         driver.maximize_window()
 
     elif browser_choice == "safari":
-        options = SafariOptions()
-        options.add_argument("--headless")
-
-        driver = webdriver.Safari(
-            service=SafariService(),
-            options=options,
-        )
+        driver = webdriver.Safari()
         driver.set_window_size(1920, 1080)
         driver.maximize_window()
 
