@@ -213,6 +213,7 @@ jobs:
       run:
         working-directory: selenium_tests
     runs-on: ubuntu-latest
+    environment: staging
     needs: deploy
     steps:
       - uses: actions/checkout@v2
