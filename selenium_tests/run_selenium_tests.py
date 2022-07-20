@@ -18,6 +18,14 @@ if __name__ == "__main__":
         print("Running Pytest/Selenium with Chromium browser client")
         os.environ['SELENIUM_BROWSER_CLIENT'] = 'chromium'
         run_tests()
+    elif arg == "safari":
+        print("Running Pytest/Selenium with Safari browser client")
+        os.environ['SELENIUM_BROWSER_CLIENT'] = 'safari'
+        run_tests()
+    elif arg == "edge":
+        print("Running Pytest/Selenium with Edge browser client")
+        os.environ['SELENIUM_BROWSER_CLIENT'] = 'edge'
+        run_tests()
     else:
         print("Running Pytest/Selenium with Firefox browser client")
         os.environ['SELENIUM_BROWSER_CLIENT'] = 'firefox'
