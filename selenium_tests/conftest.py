@@ -84,6 +84,7 @@ def driver():
         driver = webdriver.Safari()
         driver.set_window_size(1920, 1080)
         driver.maximize_window()
+        driver.switch_to.frame(0)  # set frame to default, safari fix?
 
     elif browser_choice == "edge":
         options = EdgeOptions()
