@@ -213,9 +213,7 @@ jobs:
       run:
         working-directory: selenium_tests
     runs-on: ubuntu-latest
-    environment: 
-    env:
-      SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+    environment: staging
     needs: deploy
     steps:
       - uses: actions/checkout@v2
@@ -227,3 +225,5 @@ jobs:
         run: python3 -m pip install -r requirements.txt
       - name: Run tests
         run: export SELENIUM_BROWSER_CLIENT="firefox" && pytest && export SELENIUM_BROWSER_CLIENT="chromium" && pytest
+        env:
+          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
