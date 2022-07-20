@@ -213,7 +213,9 @@ jobs:
       run:
         working-directory: selenium_tests
     runs-on: ubuntu-latest
-    environment: staging
+    environment: 
+    env:
+      SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
     needs: deploy
     steps:
       - uses: actions/checkout@v2
