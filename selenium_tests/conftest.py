@@ -1,5 +1,4 @@
 import pytest
-import httpx
 from os import environ
 from selenium import webdriver
 from webdriver_manager.firefox import GeckoDriverManager
@@ -9,6 +8,8 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 
 
 @pytest.fixture
@@ -23,7 +24,8 @@ def driver():
         options = FirefoxOptions()
         options.add_argument("--headless")
         driver = webdriver.Firefox(
-            service=FirefoxService(GeckoDriverManager().install()),
+            service=FirefoxService(),
+            # service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
         driver.maximize_window()
@@ -51,15 +53,28 @@ def driver():
 
 
 @pytest.fixture
-async def login_user(firefox_driver: webdriver.Firefox):
-    res: httpx.Response = await httpx.post(
-        url='/rest/login/',
-        json={
-            "username": 'demo-1-2',
-            "password": '22password1',
-        }
-    )
-    firefox_driver.add_cookie({
-        'name': 'SDSESSION',
-        'value': res.cookies['SDSESSION']
-    })
+def login_user(driver: webdriver.Remote):
+    # driver.get("http://knightlx/app")
+    # with httpx.Client() as client:
+    #     res: httpx.Response = client.post(
+    #         url='http://knightlx/api/rest/login/',
+    #         json={
+    #             "username": 'demo-1-2',
+    #             "password": '22password1',
+    #         }
+    #     )
+    # driver.add_cookie({
+    #     'name': 'SDSESSION',
+    #     'value': res.cookies['SDSESSION'],
+    #     'path': '/',
+    # })
+
+    driver.get("http://knightlx/app")
+    # username field
+    driver.find_element(By.NAME, "username").send_keys("demo-1-2")
+
+    # password field
+    driver.find_element(By.NAME, "password").send_keys("22password1")
+
+    # submit button
+    driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
