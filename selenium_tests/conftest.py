@@ -46,8 +46,7 @@ def driver():
         options.add_argument("--headless")
         options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
-            service=FirefoxService(),
-            # service=FirefoxService(GeckoDriverManager().install()),
+            service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
         driver.set_window_size(1920, 1080)
