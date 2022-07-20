@@ -17,18 +17,23 @@ def driver():
     browser_choice: str = (
         'SELENIUM_BROWSER_CLIENT' in environ
         and environ['SELENIUM_BROWSER_CLIENT']
-        or 'chromium'
+        or 'firefox'
     ).lower()
 
     if browser_choice == "firefox":
         options = FirefoxOptions()
         options.add_argument("--headless")
+        options.add_argument("window-size=1920,1080")
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
             service=FirefoxService(),
             # service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
+        driver.set_window_size(1920, 1080)
         driver.maximize_window()
+
     elif browser_choice == "chromium":
         options = ChromeOptions()
         options.add_argument("--no-sandbox")
@@ -48,6 +53,7 @@ def driver():
             options=options,
         )
         driver.maximize_window()
+    driver.implicitly_wait(10)
     yield driver
     driver.close()
 
