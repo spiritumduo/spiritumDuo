@@ -1,5 +1,5 @@
+from dataclasses import dataclass
 import pytest
-import httpx
 from os import environ
 from selenium import webdriver
 from webdriver_manager.firefox import GeckoDriverManager
@@ -9,6 +9,28 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
+
+@dataclass
+class ServerEndpoints():
+    app: str
+    api: str
+
+
+@pytest.fixture
+def endpoints():
+    hostname: str = (
+            'SELENIUM_HOSTNAME' in environ
+            and (
+                'http://' + environ['SELENIUM_HOSTNAME']
+            ) or 'http://localhost'
+        )
+    return ServerEndpoints(
+        app=hostname + "/app",
+        api=hostname + "/api"
+    )
 
 
 @pytest.fixture
@@ -22,11 +44,15 @@ def driver():
     if browser_choice == "firefox":
         options = FirefoxOptions()
         options.add_argument("--headless")
+        options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
-            service=FirefoxService(GeckoDriverManager().install()),
+            service=FirefoxService(),
+            # service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
+        driver.set_window_size(1920, 1080)
         driver.maximize_window()
+
     elif browser_choice == "chromium":
         options = ChromeOptions()
         options.add_argument("--no-sandbox")
@@ -39,27 +65,43 @@ def driver():
         options.add_argument("--start-maximized")
         options.add_argument("--disable-infobars")
         options.add_argument("--ignore-certificate-errors")
+
         driver = webdriver.Chrome(
             service=ChromeService(ChromeDriverManager(
                 chrome_type=ChromeType.CHROMIUM).install()
             ),
             options=options,
         )
+        driver.set_window_size(1920, 1080)
         driver.maximize_window()
+    driver.implicitly_wait(10)
     yield driver
     driver.close()
 
 
 @pytest.fixture
-async def login_user(firefox_driver: webdriver.Firefox):
-    res: httpx.Response = await httpx.post(
-        url='/rest/login/',
-        json={
-            "username": 'demo-1-2',
-            "password": '22password1',
-        }
-    )
-    firefox_driver.add_cookie({
-        'name': 'SDSESSION',
-        'value': res.cookies['SDSESSION']
-    })
+def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
+    # driver.get(endpoints.api)
+    # with httpx.Client() as client:
+    #     res: httpx.Response = client.post(
+    #         url=f'{endpoints.api}/rest/login/',
+    #         json={
+    #             "username": 'demo-1-2',
+    #             "password": '22password1',
+    #         }
+    #     )
+    # driver.add_cookie({
+    #     'name': 'SDSESSION',
+    #     'value': res.cookies['SDSESSION'],
+    #     'path': '/',
+    # })
+
+    driver.get(endpoints.app)
+    # username field
+    driver.find_element(By.NAME, "username").send_keys("demo-1-2")
+
+    # password field
+    driver.find_element(By.NAME, "password").send_keys("22password1")
+
+    # submit button
+    driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
