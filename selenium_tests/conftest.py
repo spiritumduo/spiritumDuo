@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import pytest
 from os import environ
 from selenium import webdriver
@@ -12,19 +13,41 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
 
+@dataclass
+class ServerEndpoints():
+    app: str
+    api: str
+
+
+@pytest.fixture
+def endpoints():
+    return ServerEndpoints(
+        app=(
+            'SELENIUM_HOSTNAME' in environ
+            and (
+                'http://' + environ['SELENIUM_HOSTNAME'] + '/app'
+            ) or 'http://localhost/app'
+        ),
+        api=(
+            'SELENIUM_HOSTNAME' in environ
+            and (
+                'http://' + environ['SELENIUM_HOSTNAME'] + '/api'
+            ) or 'http://localhost/api'
+        ),
+    )
+
+
 @pytest.fixture
 def driver():
     browser_choice: str = (
         'SELENIUM_BROWSER_CLIENT' in environ
         and environ['SELENIUM_BROWSER_CLIENT']
-        or 'firefox'
+        or 'chromium'
     ).lower()
 
     if browser_choice == "firefox":
         options = FirefoxOptions()
         options.add_argument("--headless")
-        options.add_argument("window-size=1920,1080")
-        options.add_argument("--window-size=1920,1080")
         options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
             service=FirefoxService(),
@@ -46,12 +69,14 @@ def driver():
         options.add_argument("--start-maximized")
         options.add_argument("--disable-infobars")
         options.add_argument("--ignore-certificate-errors")
+
         driver = webdriver.Chrome(
             service=ChromeService(ChromeDriverManager(
                 chrome_type=ChromeType.CHROMIUM).install()
             ),
             options=options,
         )
+        driver.set_window_size(1920, 1080)
         driver.maximize_window()
     driver.implicitly_wait(10)
     yield driver
@@ -59,11 +84,11 @@ def driver():
 
 
 @pytest.fixture
-def login_user(driver: webdriver.Remote):
-    # driver.get("http://knightlx/app")
+def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
+    # driver.get(endpoints.api)
     # with httpx.Client() as client:
     #     res: httpx.Response = client.post(
-    #         url='http://knightlx/api/rest/login/',
+    #         url=f'{endpoints.api}/rest/login/',
     #         json={
     #             "username": 'demo-1-2',
     #             "password": '22password1',
@@ -75,7 +100,7 @@ def login_user(driver: webdriver.Remote):
     #     'path': '/',
     # })
 
-    driver.get("http://knightlx/app")
+    driver.get(endpoints.app)
     # username field
     driver.find_element(By.NAME, "username").send_keys("demo-1-2")
 

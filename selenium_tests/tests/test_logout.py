@@ -1,8 +1,9 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
+
+from selenium_tests.conftest import ServerEndpoints
 
 
 @scenario("logout.feature", "Logging the user out from the home page")
@@ -17,14 +18,16 @@ def set_user_logged_in(login_user: None, driver: webdriver.Remote):
 
 
 @given("the user is on the home page")
-def set_client_on_homepage(driver: webdriver.Remote):
-    driver.get("http://knightlx/app/")
+def set_client_on_homepage(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(endpoints.app)
 
 
 @when("I press the logout button")
 def press_logout_btn(driver: webdriver.Remote):
     # logout button on header
-    driver.find_element(By.ID, "logoutBtn").send_keys(Keys.ENTER)
+    driver.find_element(By.ID, "logoutBtn").click()
 
 
 @then("I should not be assigned a session cookie")

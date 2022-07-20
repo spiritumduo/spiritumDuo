@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
 
+from selenium_tests.conftest import ServerEndpoints
+
 
 @scenario("login.feature", "Logging the user in with valid credentials")
 def test_login_correct_creds():
@@ -11,8 +13,10 @@ def test_login_correct_creds():
 
 
 @given("the login page is displayed")
-def set_login_page_for_correct_credentials_test(driver: webdriver.Remote):
-    driver.get("http://sd.foxtrot-titan.co.uk/app")
+def set_login_page_for_correct_credentials_test(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(endpoints.app)
 
 
 @when("I insert a correct username and password and submit")
@@ -48,8 +52,10 @@ def test_login_incorrect_creds():
 
 
 @given("the login page is displayed")
-def set_login_page_for_incorrect_credentials_test(driver: webdriver.Remote):
-    driver.get("http://knightlx/app")
+def set_login_page_for_incorrect_credentials_test(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(endpoints.app)
 
 
 @when("I insert an incorrect username and password and submit")
