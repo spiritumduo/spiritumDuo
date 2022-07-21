@@ -17,7 +17,7 @@ class ClinicalRequest(db.Model):
         db.Integer(),
         db.ForeignKey('tbl_decision_point.id'), nullable=True)
     test_result_reference_id = db.Column(
-        db.String(), unique=True, nullable=False)
+        db.String(), nullable=True)
     current_state = db.Column(
         Enum(ClinicalRequestState, native_enum=False),
         default=ClinicalRequestState.INIT.value,
@@ -30,3 +30,5 @@ class ClinicalRequest(db.Model):
     updated_at = db.Column(
         db.DateTime(), server_default=func.now(), onupdate=func.now(),
         nullable=False)
+    completed_at = db.Column(
+        db.DateTime(), nullable=True)

@@ -48,7 +48,10 @@ async def resolve_clinical_request_type(
 async def resolve_test_result(
     obj: ClinicalRequest = None, info: GraphQLResolveInfo = None, *_
 ):
-    if obj.current_state == ClinicalRequestState.COMPLETED:
+    if (
+        obj.current_state == ClinicalRequestState.COMPLETED
+        and obj.test_result_reference_id is not None
+    ):
         return await TestResultByReferenceIdFromIELoader.load_from_id(
             context=info.context, id=obj.test_result_reference_id)
     else:
