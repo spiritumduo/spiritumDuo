@@ -76,6 +76,8 @@ export const GET_PATIENT_QUERY = gql`
             clinicalRequestType{
               name
             }
+            currentState
+            completedAt
           }
           decisionPoints {
             clinicHistory
@@ -93,6 +95,8 @@ export const GET_PATIENT_QUERY = gql`
               clinicalRequestType {
                 name
               }
+              currentState
+              completedAt
             }
           }
         }
@@ -316,23 +320,6 @@ const DecisionPointPage = (
     return <h1>Patient not on this pathway!</h1>;
   }
 
-  // if (isSubmitted) {
-  // eslint-disable-next-line max-len
-  //   const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map((ms) => ({
-  //       id: ms.id,
-  //       name: ms.clinicalRequestType.name,
-  //       isDischarge: ms.clinicalRequestType.isDischarge,
-  //     }));
-  //   return _clinicalRequests?.find((ms) => ms.isDischarge)
-  //     ? <PathwayComplete />
-  //     : (
-  //       <DecisionSubmissionSuccess
-  //         clinicalRequests={ _clinicalRequests }
-  //         clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-  //       />
-  //     );
-  // }
-
   // FORM SUBMISSION
   const onSubmitFn = (
     mutation: typeof createDecision, values: DecisionPointPageForm, isConfirmed = false,
@@ -406,24 +393,6 @@ const DecisionPointPage = (
         />
       );
     }
-    // // REQUESTS SELECTED
-    // const clinicalRequests = getValues()
-    //   .clinicalRequestRequests
-    //   .filter((m) => m.checked)
-    //   .map((m) => ({ id: m.clinicalRequestTypeId, name: m.name }));
-    // return (
-    //   <DecisionSubmissionConfirmation
-    //     cancelCallback={ () => {
-    //       setRequestConfirmation(false);
-    //     } }
-    //     okCallback={ () => {
-    //       setConfirmNoRequests(true);
-    //       onSubmitFn(createDecision, getValues(), true);
-    //     } }
-    //     clinicalRequests={ clinicalRequests }
-    //     clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
-    //   />
-    // );
   }
   if (showServerConfirmation && !mutateData?.createDecisionPoint?.userErrors) {
     const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map(
