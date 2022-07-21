@@ -1,9 +1,11 @@
+import re
 from ariadne.objects import ObjectType
 from models import OnMdt
 from dataloaders import (
     PatientByIdLoader,
     UserByIdLoader,
-    MdtByIdLoader
+    MdtByIdLoader,
+    ClinicalRequestByIdLoader
 )
 from graphql.type import GraphQLResolveInfo
 
@@ -40,3 +42,10 @@ async def resolve_on_mdt_lock_user(
 ):
     return await UserByIdLoader.load_from_id(
         context=info.context, id=obj.lock_user_id)
+
+@OnMdtObjectType.field("clinicalRequest")
+async def resolve_clinical_request(
+    obj: OnMdt = None, info: GraphQLResolveInfo = None, *_
+):
+    return await ClinicalRequestByIdLoader.load_from_id(
+        context=info.context, id=obj.clinical_request_id)

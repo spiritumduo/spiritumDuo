@@ -43,7 +43,7 @@ class OnMdt(db.Model):
     lock_end_time = db.Column(
         db.DateTime(),
         nullable=True)
-    actioned = db.Column(
-        db.Boolean(),
-        default=False,
+    clinical_request_id = db.Column(
+        db.Integer(),
+        db.ForeignKey('tbl_clinical_request.id'),
         nullable=False)
