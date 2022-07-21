@@ -14,6 +14,7 @@ Here is a video describing the digital architecture, correct as of the 14th Apri
 
 Spiritum Duo is a new digital healthcare app, designed to speed up patient clinical pathways, improve staff workflows and reduce staff workloads. It has been built as a single page application (SPA) with progressive web app (PWA) features. The frontend communicates with the backend via graphQL. The backend is housed in separate Docker containers. An NGINX web server is used along with an Uvicorn ASGI webserver implementation for python. The Spiritum Duo backend is separated from the trust’s backend via a trust adaptor. The trust adaptor is unique to the trust and allows the Spiritum Duo frontend and backend to be decoupled from the inner workings of the trust it is operating within. This is to allow Spiritum Duo to be more modular. Spiritum Duo is built in an open source model, and all code is shared on GitHub (https://github.com/spiritumduo/spiritumDuo). 
 
+![alt text](/_images/digitalArchitectureOverview.png "Overview diagram")
 
 ## Frontend 
 
