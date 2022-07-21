@@ -104,7 +104,7 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
 
   if (data?.createMdt?.mdt?.id && showConfirmation) {
     return (
-      <Modal size="lg" show={ showModal } setShowModal={ setShowModal } onHide={ () => setShowModal(false) }>
+      <Modal size="lg" show={ showModal } onHide={ () => setShowModal(false) }>
         <Modal.Header>
           <Modal.Title>Create MDT</Modal.Title>
           <button
@@ -143,7 +143,7 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
   }
 
   return (
-    <Modal size="lg" show={ showModal } setShowModal={ setShowModal } onHide={ () => setShowModal(false) }>
+    <Modal size="lg" show={ showModal } onHide={ () => setShowModal(false) }>
       <Modal.Header>
         <Modal.Title>Create MDT</Modal.Title>
         <button
