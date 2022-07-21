@@ -8,6 +8,7 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { cache } from 'app/cache';
 import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, GET_MDTS } from './DecisionPoint';
+import { ClinicalRequestState } from '__generated__/globalTypes';
 
 const mdts = [
   {
@@ -76,9 +77,13 @@ const clinicalRequests = [
     clinicalRequestType: {
       name: 'MRI Head',
     },
+    currentState: ClinicalRequestState.INIT,
+    completedAt: null,
   },
   {
     id: '2',
+    currentState: ClinicalRequestState.COMPLETED,
+    completedAt: new Date(),
     forwardDecisionPoint: {
       id: '1',
     },
@@ -93,6 +98,8 @@ const clinicalRequests = [
   },
   {
     id: '3',
+    currentState: ClinicalRequestState.COMPLETED,
+    completedAt: new Date(),
     forwardDecisionPoint: {
       id: '2',
     },
@@ -107,6 +114,8 @@ const clinicalRequests = [
   },
   {
     id: '4',
+    currentState: ClinicalRequestState.COMPLETED,
+    completedAt: new Date(),
     forwardDecisionPoint: {
       id: '3',
     },
@@ -121,6 +130,8 @@ const clinicalRequests = [
   },
   {
     id: '5',
+    currentState: ClinicalRequestState.COMPLETED,
+    completedAt: new Date(),
     forwardDecisionPoint: null,
     testResult: null,
     clinicalRequestType: {
@@ -129,6 +140,8 @@ const clinicalRequests = [
   },
   {
     id: '6',
+    currentState: ClinicalRequestState.COMPLETED,
+    completedAt: new Date(),
     forwardDecisionPoint: null, // THIS SHOULD BE NEW
     testResult: {
       id: '4',
@@ -141,6 +154,8 @@ const clinicalRequests = [
   },
   {
     id: '7',
+    currentState: ClinicalRequestState.COMPLETED,
+    completedAt: new Date(),
     forwardDecisionPoint: null, // THIS SHOULD BE NEW
     testResult: {
       id: '5',

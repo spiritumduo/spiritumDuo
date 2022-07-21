@@ -9,6 +9,7 @@ import PatientMdtTab, {
   LOCK_ON_MDT_MUTATION,
   UPDATE_ON_MDT_MUTATION,
 } from './PatientMdtTab';
+import { ClinicalRequestState } from '__generated__/globalTypes';
 
 const lockOnMdtSuccessResult = {
   onMdt: {
@@ -54,6 +55,10 @@ const getPatientOnMdtResult = {
       outcome: 'outcomes goes here',
       reason: 'review reason goes here',
       actioned: true,
+      clinicalRequest: {
+        id: '1',
+        currentState: ClinicalRequestState.COMPLETED
+      },
       mdt: {
         id: '1',
         plannedAt: '3000-01-01T00:00:00',
