@@ -40,7 +40,10 @@ export const GET_PATIENT_ON_MDT_CONNECTION_QUERY = gql`
           id
           outcome
           reason
-          actioned
+          clinicalRequest{
+            id
+            currentState
+          }
           mdt{
             id
             plannedAt
@@ -121,14 +124,14 @@ interface OnMdtElementType {
     firstName: string;
     lastName: string;
   };
-  actioned: boolean;
+  completed: boolean;
 }
 
 const schema = yup.object({
   id: yup.number().positive().required(),
   reason: yup.string().required('A reason is required'),
   outcome: yup.string(),
-  actioned: yup.boolean().required(),
+  completed: yup.boolean().required(),
 });
 
 interface PatientMdtTabProps{
@@ -163,7 +166,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
     id: string;
     reason: string;
     outcome?: string;
-    actioned: boolean;
+    completed: boolean;
   }
 
   const {
@@ -187,7 +190,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
         id: editingRow.onMdtId,
         unlock: false,
       } });
-      setValue('actioned', editingRow.actioned);
+      setValue('completed', editingRow.completed);
     } else if (editingRow === null && hasEditingRowLock) {
       lockMutation({ variables: {
         id: hasEditingRowLock,
@@ -201,7 +204,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
       id: editingRow?.onMdtId,
       reason: editingRow?.reason,
       outcome: editingRow?.outcome || '',
-      actioned: editingRow?.actioned,
+      completed: editingRow?.completed,
     }),
     [editingRow, reset],
   );
@@ -232,7 +235,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
         firstName: node.mdt.creator.firstName,
         lastName: node.mdt.creator.lastName,
       },
-      actioned: node.actioned,
+      completed: node.clinicalRequest.currentState === 'COMPLETED',
     }));
   }
   async function onSaveFn(variables: UpdateOnMdtForm) {
@@ -241,7 +244,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
         id: variables.id,
         reason: variables.reason,
         outcome: variables.outcome,
-        actioned: !!variables.actioned,
+        completed: !!variables.completed,
       },
     } });
     await refetch();
@@ -305,7 +308,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
                         (editingRow?.onMdtId === element.onMdtId && hasEditingRowLock)
                           ? (
                             <CheckboxBox
-                              { ...register('actioned') }
+                              { ...register('completed') }
                             >
                               &nbsp;
                             </CheckboxBox>
@@ -313,7 +316,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
                           : (
                             <CheckboxBox
                               disabled
-                              defaultChecked={ element.actioned }
+                              defaultChecked={ element.completed }
                             >
                               &nbsp;
                             </CheckboxBox>

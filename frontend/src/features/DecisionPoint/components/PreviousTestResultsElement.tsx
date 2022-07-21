@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import classNames from 'classnames';
 import React, { useLayoutEffect, useMemo, useReducer } from 'react';
 import { Button, Col, Collapse, Row } from 'react-bootstrap';
@@ -5,6 +6,7 @@ import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
 
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { MdtAlreadyExists } from 'features/MdtManagement/tabpages/UpdateMdtTab.stories';
 
 interface TestResultData {
   id: string;
@@ -14,6 +16,8 @@ interface TestResultData {
   description: string;
   addedAt: Date;
   forwardDecisionPointId?: string;
+  completedAt?: Date;
+  currentState: string;
 }
 
 interface TestResultDataElementProps {
@@ -42,7 +46,13 @@ const TestResultDataElement = ({ result, isCollapsed, onClick }: TestResultDataE
     <Col role="cell" xs={ 12 } sm={ 11 } xl={ 3 }>
       <p className="text-left">
         {result.clinicalRequestName}: <br />
-        {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+        Updated: {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`} <br />
+        { result.completedAt ? (
+          <>
+            Completed: {`${result.completedAt?.toLocaleDateString()} ${result.completedAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+          </>
+        )
+          : ''}
       </p>
     </Col>
     <Col role="cell" xs={ 10 } sm={ 10 } xl={ 7 } id={ result.elementId }>
@@ -139,6 +149,8 @@ const PreviousTestResultsElement = ({ data }: PreviousTestResultsElementProps) =
             description: ms.testResult?.description,
             addedAt: ms.testResult.addedAt,
             forwardDecisionPointId: ms.forwardDecisionPoint?.id,
+            currentState: ms.currentState,
+            completedAt: ms.completedAt,
           }
           : []
       ),

@@ -38,6 +38,8 @@ export interface GetPatient_getPatient_onPathways_clinicalRequests {
   forwardDecisionPoint: GetPatient_getPatient_onPathways_clinicalRequests_forwardDecisionPoint | null;
   testResult: GetPatient_getPatient_onPathways_clinicalRequests_testResult | null;
   clinicalRequestType: GetPatient_getPatient_onPathways_clinicalRequests_clinicalRequestType;
+  currentState: string;
+  completedAt: any | null;
 }
 
 export interface GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_forwardDecisionPoint {
@@ -63,6 +65,8 @@ export interface GetPatient_getPatient_onPathways_decisionPoints_clinicalRequest
   forwardDecisionPoint: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_forwardDecisionPoint | null;
   testResult: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_testResult | null;
   clinicalRequestType: GetPatient_getPatient_onPathways_decisionPoints_clinicalRequests_clinicalRequestType;
+  currentState: string;
+  completedAt: any | null;
 }
 
 export interface GetPatient_getPatient_onPathways_decisionPoints {

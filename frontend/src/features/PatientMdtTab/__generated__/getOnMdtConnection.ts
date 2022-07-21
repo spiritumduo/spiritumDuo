@@ -13,6 +13,12 @@ export interface getOnMdtConnection_getOnMdtConnection_pageInfo {
   endCursor: string;
 }
 
+export interface getOnMdtConnection_getOnMdtConnection_edges_node_clinicalRequest {
+  __typename: "ClinicalRequest";
+  id: string;
+  currentState: string;
+}
+
 export interface getOnMdtConnection_getOnMdtConnection_edges_node_mdt_creator {
   __typename: "User";
   id: string;
@@ -32,7 +38,7 @@ export interface getOnMdtConnection_getOnMdtConnection_edges_node {
   id: string;
   outcome: string | null;
   reason: string;
-  actioned: boolean;
+  clinicalRequest: getOnMdtConnection_getOnMdtConnection_edges_node_clinicalRequest;
   mdt: getOnMdtConnection_getOnMdtConnection_edges_node_mdt;
 }
 
