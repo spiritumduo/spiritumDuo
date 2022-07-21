@@ -9,7 +9,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 // APP
 import { cache, loggedInUserVar } from 'app/cache';
-import scalarLink from 'app/scalars';
+import scalarResolver from 'app/scalars';
 import { AuthContext } from 'app/context';
 
 interface SdApolloProviderProps {
@@ -78,7 +78,7 @@ const SdApolloProvider = ({ children }: SdApolloProviderProps): JSX.Element => {
   });
 
   const client = new ApolloClient({
-    link: from([scalarLink, errorLink, splitLink]),
+    link: from([scalarResolver, errorLink, splitLink]),
     cache: cache,
     connectToDevTools: true,
     defaultOptions: {

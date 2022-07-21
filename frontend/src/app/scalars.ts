@@ -23,6 +23,6 @@ const typesMap = {
   }),
 };
 
-const scalarLink = ApolloLink.from([withScalars({ schema, typesMap })]);
+const scalarResolver = withScalars({ schema, typesMap });
 
-export default scalarLink;
+export default scalarResolver;
