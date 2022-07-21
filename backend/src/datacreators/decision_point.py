@@ -1,5 +1,6 @@
 from ctypes import Union
 from asyncpg import UniqueViolationError
+from sqlalchemy import null
 
 from dataloaders import (
     OnPathwayByIdLoader,
@@ -16,7 +17,8 @@ from models import (
     Patient,
     UserPathway,
     OnMdt,
-    MDT
+    MDT,
+    db
 )
 from SdTypes import DecisionTypes
 from typing import List, Dict
@@ -132,14 +134,13 @@ async def CreateDecisionPoint(
         if mdt_obj.pathway_id != on_pathway.pathway_id:
             raise DecisionPointMdtMismatchException()
 
-        try:
-            await OnMdt.create(
-                mdt_id=mdt_obj.id,
-                patient_id=on_pathway.patient_id,
-                user_id=context['request']['user'].id,
-                reason=mdt['reason']
+        async with db.acquire(reuse=False) as conn:
+            patient_has_on_mdt = await conn.one_or_none(
+                MDT.join(OnMdt, MDT.id == OnMdt.mdt_id).select()
+                .where(OnMdt.patient_id == on_pathway.patient_id)
+                .where(MDT.pathway_id == on_pathway.pathway_id)
             )
-        except UniqueViolationError:
+        if patient_has_on_mdt:
             errors.addError(
                 'mdt',
                 'This patient is already on the MDT specified'
@@ -179,32 +180,49 @@ async def CreateDecisionPoint(
             if str(milestone_type.id) not in validClinicalRequestTypeIds:
                 raise ClinicalRequestTypeIdNotOnPathway(milestone_type.id)
 
-            if not milestone_type.is_mdt:
-                testResultRequest = TestResultRequest_IE()
-                testResultRequest.type_id = milestone_type.id
-                testResultRequest.hospital_number = patient.hospital_number
-                testResultRequest.pathway_name = pathway.name
+            testResultRequest = TestResultRequest_IE()
+            testResultRequest.type_id = milestone_type.id
+            testResultRequest.hospital_number = patient.hospital_number
+            testResultRequest.pathway_name = pathway.name
 
+            testResult = None
+            if not milestone_type.is_mdt:
                 testResult = await trust_adapter.create_test_result(
                     testResultRequest,
                     auth_token=context['request'].cookies['SDSESSION']
                 )
+            kwargs_clinical_request = {}
 
-                await ClinicalRequest(
-                    on_pathway_id=int(_decisionPoint.on_pathway_id),
-                    decision_point_id=int(_decisionPoint.id),
-                    clinical_request_type_id=int(testResultRequest.type_id),
-                    test_result_reference_id=str(testResult.id),
-                ).create()
+            if testResult and testResult.id:
+                kwargs_clinical_request = {
+                    "test_result_reference_id": str(testResult.id)
+                }
 
-                clinical_request_type = await ClinicalRequestType.get(
-                    int(testResultRequest.type_id)
+            clinical_request: ClinicalRequest = await ClinicalRequest(
+                on_pathway_id=int(_decisionPoint.on_pathway_id),
+                decision_point_id=int(_decisionPoint.id),
+                clinical_request_type_id=int(testResultRequest.type_id),
+                # test_result_reference_id=str(testResult and testResult.id),
+                **kwargs_clinical_request
+            ).create()
+
+            if milestone_type.is_mdt:
+                await OnMdt.create(
+                    mdt_id=mdt_obj.id,
+                    patient_id=on_pathway.patient_id,
+                    user_id=context['request']['user'].id,
+                    reason=mdt['reason'],
+                    clinical_request_id=clinical_request.id
                 )
-                if clinical_request_type.is_discharge:
-                    await OnPathway.update\
-                        .where(OnPathway.id == on_pathway_id)\
-                        .values(is_discharged=True)\
-                        .gino.scalar()
+
+            clinical_request_type = await ClinicalRequestType.get(
+                int(testResultRequest.type_id)
+            )
+            if clinical_request_type.is_discharge:
+                await OnPathway.update\
+                    .where(OnPathway.id == on_pathway_id)\
+                    .values(is_discharged=True)\
+                    .gino.scalar()
 
     if clinical_request_resolutions is not None:
         for clinicalRequestId in clinical_request_resolutions:
