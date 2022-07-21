@@ -31,6 +31,7 @@ async def test_delete_on_mdt_without_lock(
     httpx_test_client, httpx_login_user,
     test_on_mdts: List[OnMdt], test_user
 ):
+    print("test_on_mdts", test_on_mdts)
     on_mdt_to_remove = test_on_mdts[1]
 
     """

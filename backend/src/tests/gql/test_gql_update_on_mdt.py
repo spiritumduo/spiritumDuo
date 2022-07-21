@@ -16,18 +16,20 @@ def update_on_mdt_query() -> str:
             $id: ID!
             $reason: String!
             $outcome: String
-            $actioned: Boolean!
+            $completed: Boolean!
         ){
             updateOnMdt(input: {
                 id: $id
                 reason: $reason
                 outcome: $outcome
-                actioned: $actioned
+                completed: $completed
             }){
                 onMdt{
                     reason
                     outcome
-                    actioned
+                    clinicalRequest{
+                        currentState
+                    }
                 }
                 userErrors{
                     field
@@ -48,7 +50,7 @@ async def test_update_on_mdt_without_lock(
 
     NEW_REASON = 'test reason go brrt'
     NEW_OUTCOME = 'test outcome go brrt'
-    ACTIONED = True
+    COMPLETED = True
 
     """
     When: we execute the query to delete an onmdt record
@@ -61,7 +63,7 @@ async def test_update_on_mdt_without_lock(
                 "id": on_mdt_to_update.id,
                 "reason": NEW_REASON,
                 "outcome": NEW_OUTCOME,
-                "actioned": ACTIONED
+                "completed": COMPLETED
             }
         }
     )
@@ -99,7 +101,7 @@ async def test_update_on_mdt_with_lock(
 
     NEW_REASON = 'test reason go brrt'
     NEW_OUTCOME = 'test outcome go brrt'
-    ACTIONED = True
+    COMPLETED = True
 
     """
     When: we execute the query to delete an onmdt record
@@ -112,7 +114,7 @@ async def test_update_on_mdt_with_lock(
                 "id": on_mdt_to_update.id,
                 "reason": NEW_REASON,
                 "outcome": NEW_OUTCOME,
-                "actioned": ACTIONED
+                "completed": COMPLETED
             }
         }
     )
@@ -158,7 +160,7 @@ async def test_update_on_mdt_no_user_pathway_permission(
     on_mdt_to_update = test_on_mdts[1]
     NEW_REASON = 'test reason go brrt'
     NEW_OUTCOME = 'test outcome go brrt'
-    ACTIONED = True
+    COMPLETED = True
 
     mdt: MDT = await MDT.get(on_mdt_to_update.mdt_id)
 
@@ -179,7 +181,7 @@ async def test_update_on_mdt_no_user_pathway_permission(
                 "id": on_mdt_to_update.id,
                 "reason": NEW_REASON,
                 "outcome": NEW_OUTCOME,
-                "actioned": ACTIONED,
+                "completed": COMPLETED,
             }
         }
     )
@@ -213,7 +215,7 @@ async def test_user_lacks_permission(
                 "id": "42",
                 "reason": "no",
                 "outcome": "brrt",
-                "actioned": False
+                "completed": False
             }
         }
     )

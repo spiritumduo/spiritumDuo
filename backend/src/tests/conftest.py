@@ -5,7 +5,7 @@ environ['TESTING'] = "True"
 
 
 from typing import List
-from SdTypes import Permissions
+from SdTypes import ClinicalRequestState, Permissions
 from sdpubsub import SdPubSub
 from gino import GinoConnection
 import dataclasses
@@ -29,7 +29,8 @@ from models import (
     PathwayClinicalRequestType,
     UserPathway,
     MDT,
-    OnMdt
+    OnMdt,
+    ClinicalRequest
 )
 
 from api import app
@@ -126,9 +127,11 @@ async def test_patients_on_pathway(
 ) -> List[OnPathway]:
     on_pathway_list = []
     for p in test_patients:
-        await OnPathway.create(
-            patient_id=p.id,
-            pathway_id=test_pathway.id,
+        on_pathway_list.append(
+            await OnPathway.create(
+                patient_id=p.id,
+                pathway_id=test_pathway.id,
+            )
         )
     return on_pathway_list
 
@@ -191,15 +194,23 @@ async def test_mdt(test_user: UserFixture, test_pathway: Pathway):
 @pytest.fixture
 async def test_on_mdts(
     test_user: UserFixture, test_mdt: MDT,
-    test_patients: List[Patient]
+    test_patients_on_pathway: List[OnPathway],
+    test_clinical_request_type: ClinicalRequestType
 ):
     on_mdts: List[OnMdt] = []
-    for pt in test_patients:
+    for op in test_patients_on_pathway:
+        clinical_request: ClinicalRequest = await ClinicalRequest.create(
+            on_pathway_id=op.id,
+            current_state=ClinicalRequestState.COMPLETED,
+            completed_at=datetime.datetime.now(),
+            clinical_request_type_id=test_clinical_request_type.id,
+        )
         on_mdts.append(await OnMdt.create(
             mdt_id=test_mdt.id,
-            patient_id=pt.id,
+            patient_id=op.patient_id,
             user_id=test_user.user.id,
-            reason="test reason"
+            reason="test reason",
+            clinical_request_id=clinical_request.id
         ))
     return on_mdts
 
