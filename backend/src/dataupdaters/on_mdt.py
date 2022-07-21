@@ -1,5 +1,7 @@
-from common import DataCreatorInputErrors, ReferencedItemDoesNotExistError
-from models import MDT, OnMdt, UserPathway
+from datetime import datetime
+from SdTypes import ClinicalRequestState
+from common import ReferencedItemDoesNotExistError
+from models import MDT, OnMdt, UserPathway, ClinicalRequest
 from models.db import db
 
 
@@ -16,7 +18,7 @@ async def UpdateOnMDT(
     id: int = None,
     reason: str = None,
     outcome: str = None,
-    actioned: bool = None,
+    completed: bool = None,
 ):
     if id is None:
         raise ReferencedItemDoesNotExistError("ID not provided")
@@ -44,12 +46,21 @@ async def UpdateOnMDT(
     if on_mdt.lock_user_id != context["request"].user.id:
         raise OnMdtLockedByOtherUser()
 
-    if outcome is not None and actioned is not None:
-        await on_mdt.update(
-            reason=reason, outcome=outcome, actioned=actioned).apply()
-    elif outcome is not None:
+    if outcome is not None:
         await on_mdt.update(reason=reason, outcome=outcome).apply()
     else:
         await on_mdt.update(reason=reason).apply()
+
+    if completed is not None:
+        clinical_request_id = on_mdt.clinical_request_id
+
+        clinical_request: ClinicalRequest = await ClinicalRequest.get(
+            int(clinical_request_id)
+        )
+
+        await clinical_request.update(
+            current_state=ClinicalRequestState.COMPLETED,
+            completed_at=datetime.now()
+        ).apply()
 
     return on_mdt
