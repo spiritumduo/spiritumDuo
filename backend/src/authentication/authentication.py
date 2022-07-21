@@ -16,7 +16,8 @@ from functools import wraps
 
 import logging
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
+
 
 class PermissionsError(HTTPException):
     """
