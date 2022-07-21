@@ -22,6 +22,7 @@ Spiritum Duo is a new digital healthcare app, designed to speed up patient clini
 The frontend is a [single page application](https://en.wikipedia.org/wiki/Single-page_application) with [progressive web application](https://web.dev/progressive-web-apps/) features. It is coded in [typescript](https://www.typescriptlang.org/). By using typescript, typing (enforcing of variable types, eg integers, strings, decimals, Booleans) is ensured. Typescript is eventually transpiled into the final javascript app. The [React library](https://reactjs.org/) is also used. The styling mirrors that of Government Digital Services (GDS) and NHS websites by using the [NHS React Components library](https://github.com/NHSDigital/nhsuk-react-components). Creation and visualisation of frontend components was done by using [Storybooks](https://storybook.js.org/). [Redux](https://redux.js.org/) is used to manage some elements of state (variables) and Apollo GraphgQL is used to manage state and the graphQL protocol to the backend. 
 
 <p align="center">
+oo
 ![alt text](/_images/frontendOverview.png "Frontend stack overview")
 </p>
 <b>Figure 2.</b> Overview of frontend stack
