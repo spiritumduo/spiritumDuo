@@ -1,3 +1,4 @@
+from datetime import datetime
 from containers import SDContainer
 from .api import _FastAPI
 from dependency_injector.wiring import Provide, inject
@@ -25,7 +26,10 @@ async def update_test_result(
     clinical_request: ClinicalRequest = await ClinicalRequest.query.where(
         ClinicalRequest.test_result_reference_id == str(data.id)
     ).gino.one_or_none()
-    await clinical_request.update(current_state=data.new_state).apply()
+    await clinical_request.update(
+        current_state=data.new_state,
+        completed_at=datetime.now()
+    ).apply()
     await pub.publish(
         'on-pathway-updated',
         await OnPathway.get(ClinicalRequest.on_pathway_id)
