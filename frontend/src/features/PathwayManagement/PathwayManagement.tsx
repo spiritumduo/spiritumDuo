@@ -9,12 +9,12 @@ import CreatePathwayTab from './tabpages/CreatePathwayTab';
 import UpdatePathwayTab from './tabpages/UpdatePathwayTab';
 import DeletePathwayTab from './tabpages/DeletePathwayTab';
 
-import { getMilestoneTypes } from './__generated__/getMilestoneTypes';
+import { getClinicalRequestTypes } from './__generated__/getClinicalRequestTypes';
 import { getPathways } from './__generated__/getPathways';
 
-export const GET_MILESTONE_TYPES = gql`
-  query getMilestoneTypes{
-    getMilestoneTypes{
+export const GET_CLINICALREQUEST_TYPES = gql`
+  query getClinicalRequestTypes{
+    getClinicalRequestTypes{
       id
       name
       refName
@@ -27,7 +27,7 @@ export const GET_PATHWAYS = gql`
     getPathways{
       id
       name
-      milestoneTypes{
+      clinicalRequestTypes{
         id
         name
         refName
@@ -37,9 +37,13 @@ export const GET_PATHWAYS = gql`
 `;
 
 const PathwayManagementTabSet = (): JSX.Element => {
-  const { loading: loadingMilestoneTypes,
-    data: dataMilestoneTypes,
-    error: errorMilestoneTypes} = useQuery<getMilestoneTypes>(GET_MILESTONE_TYPES);
+  const {
+    loading: loadingClinicalRequestTypes,
+    data: dataClinicalRequestTypes,
+    error: errorClinicalRequestTypes,
+  } = useQuery<getClinicalRequestTypes>(
+    GET_CLINICALREQUEST_TYPES,
+  );
 
   const { loading: loadingPathways,
     data: dataPathways,
@@ -54,8 +58,8 @@ const PathwayManagementTabSet = (): JSX.Element => {
         <Tab>Delete pathway</Tab>
       </TabList>
       {
-        errorMilestoneTypes?.message
-          ? <ErrorMessage>An error occured: {errorMilestoneTypes.message}</ErrorMessage>
+        errorClinicalRequestTypes?.message
+          ? <ErrorMessage>An error occured: {errorClinicalRequestTypes.message}</ErrorMessage>
           : null
       }
       {
@@ -63,12 +67,12 @@ const PathwayManagementTabSet = (): JSX.Element => {
           ? <ErrorMessage>An error occured: {errorPathways.message}</ErrorMessage>
           : null
       }
-      <LoadingSpinner loading={ loadingMilestoneTypes || loadingPathways }>
+      <LoadingSpinner loading={ loadingClinicalRequestTypes || loadingPathways }>
         <TabPanel>
           <CreatePathwayTab
-            disableForm={ loadingMilestoneTypes }
+            disableForm={ loadingClinicalRequestTypes }
             refetchPathways={ refetchPathways }
-            milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
+            clinicalRequestTypes={ dataClinicalRequestTypes?.getClinicalRequestTypes?.map((mT) => (
               {
                 id: mT.id,
                 name: mT.name,
@@ -79,9 +83,9 @@ const PathwayManagementTabSet = (): JSX.Element => {
         </TabPanel>
         <TabPanel>
           <UpdatePathwayTab
-            disableForm={ loadingMilestoneTypes || loadingPathways }
+            disableForm={ loadingClinicalRequestTypes || loadingPathways }
             refetchPathways={ refetchPathways }
-            milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
+            clinicalRequestTypes={ dataClinicalRequestTypes?.getClinicalRequestTypes?.map((mT) => (
               {
                 id: mT.id,
                 name: mT.name,
@@ -93,7 +97,7 @@ const PathwayManagementTabSet = (): JSX.Element => {
                 pW ? {
                   id: pW.id,
                   name: pW.name,
-                  milestoneTypes: pW.milestoneTypes?.map((mT) => ({
+                  clinicalRequestTypes: pW.clinicalRequestTypes?.map((mT) => ({
                     id: mT.id,
                     name: mT.name,
                     refName: mT.refName,
@@ -105,9 +109,9 @@ const PathwayManagementTabSet = (): JSX.Element => {
         </TabPanel>
         <TabPanel>
           <DeletePathwayTab
-            disableForm={ loadingMilestoneTypes || loadingPathways }
+            disableForm={ loadingClinicalRequestTypes || loadingPathways }
             refetchPathways={ refetchPathways }
-            milestoneTypes={ dataMilestoneTypes?.getMilestoneTypes?.map((mT) => (
+            clinicalRequestTypes={ dataClinicalRequestTypes?.getClinicalRequestTypes?.map((mT) => (
               {
                 id: mT.id,
                 name: mT.name,
@@ -119,7 +123,7 @@ const PathwayManagementTabSet = (): JSX.Element => {
                 pW ? {
                   id: pW.id,
                   name: pW.name,
-                  milestoneTypes: pW.milestoneTypes?.map((mT) => ({
+                  clinicalRequestTypes: pW.clinicalRequestTypes?.map((mT) => ({
                     id: mT.id,
                     name: mT.name,
                     refName: mT.refName,

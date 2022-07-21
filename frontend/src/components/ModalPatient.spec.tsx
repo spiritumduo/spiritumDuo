@@ -21,7 +21,7 @@ import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionP
 import ModalPatient, { LOCK_ON_PATHWAY_MUTATION } from './ModalPatient';
 import * as stories from './ModalPatient.stories';
 
-const { Default } = composeStories(stories);
+const { Default, LoadedViaMdtWorkflow } = composeStories(stories);
 
 async function renderWithTestMocks() {
   jest.useFakeTimers();
@@ -50,6 +50,7 @@ async function renderWithTestMocks() {
     Default.parameters?.patientMock,
     DecisionPointsStory.parameters?.createDecisionMock,
     DecisionPointsStory.parameters?.getPatientMock,
+    DecisionPointsStory.parameters?.getMdtsMock,
     PreviousDecisionPointsStory.parameters?.getPatientMock,
   ];
 
@@ -80,7 +81,7 @@ async function renderWithTestMocks() {
   return mocks;
 }
 
-async function renderDefaultNoMilestones() {
+async function renderDefaultNoClinicalRequests() {
   jest.useFakeTimers();
   render(<Default />);
   expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
@@ -117,6 +118,10 @@ async function renderDefaultNoMilestones() {
   });
 }
 
+async function renderViaMdtWorkflow() {
+  render(<LoadedViaMdtWorkflow />);
+}
+
 describe('When page loads and user gets the lock', () => {
   // it('Should display the patient\'s name', async () => {
   //   await renderWithTestMocks();
@@ -139,18 +144,6 @@ describe('When page loads and user gets the lock', () => {
       expect(screen.getByText(
         new RegExp(`${patient.firstName} ${patient.lastName}, ${patient.hospitalNumber}, ${patient.nationalNumber}, ${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
       )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.hospitalNumber}`, 'i'),
-      // )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.nationalNumber}`, 'i'),
-      // )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
-      // )).toBeInTheDocument();
-      // expect(screen.getByText(
-      //   new RegExp(`${patient.sex}`, 'i'),
-      // )).toBeInTheDocument();
     });
   });
 
@@ -204,9 +197,9 @@ describe('When the page loads and the user does not get the lock', () => {
   });
 });
 
-describe('When page loads and a user submits a decision without milestones', () => {
+describe('When page loads and a user submits a decision without clinicalRequests', () => {
   it('Should warn the user when they submit', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -216,7 +209,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should succeed when they click submit', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -231,7 +224,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -248,7 +241,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should display test results that have been acknowledged', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
     await act(() => {
@@ -261,13 +254,13 @@ describe('When page loads and a user submits a decision without milestones', () 
 
     await waitFor(() => {
       expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
-      expect(screen.getByText(/Lung function/i)).toBeInTheDocument();
-      expect(screen.getByText(/pet-ct/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Lung function/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/pet-ct/i).length).toBeGreaterThan(0);
     });
   });
 
   it('Should disable the tabs', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
     await act(() => {
       click(screen.getByRole('button', { name: 'Submit' }));
@@ -279,7 +272,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 
   it('Should re-enable the tabs when the user cancels', async () => {
-    await renderDefaultNoMilestones();
+    await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
     await act(() => {
       click(screen.getByRole('button', { name: 'Close' }));
@@ -291,7 +284,7 @@ describe('When page loads and a user submits a decision without milestones', () 
   });
 });
 
-async function renderDefaultWithMilestones() {
+async function renderDefaultWithClinicalRequests() {
   const { click, keyboard } = userEvent.setup();
   jest.useFakeTimers();
   act(() => {
@@ -311,24 +304,56 @@ async function renderDefaultWithMilestones() {
     click(screen.getByLabelText('Co-morbidities'));
     keyboard('{Control>}A{/Control}New Comorbidities');
   });
+
   jest.useRealTimers();
 }
 
-describe('When page loads and a user submits a decision with milestones', () => {
+describe('When page loads and a user submits a decision with clinicalRequests', () => {
   it('Should ask for confirmation', async () => {
-    const { click } = userEvent.setup();
-    await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    requestCheckboxes.forEach(async (cb) => click(cb));
+    const { click, keyboard, selectOptions } = userEvent.setup();
+    await renderDefaultWithClinicalRequests();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/discussion points/i));
+    });
+
+    await click(screen.getByLabelText(/discussion points/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await click(screen.getByRole('button', { name: 'Submit' }));
-    await waitFor(() => expect(screen.getByText(/Submit these requests\?/i)).toBeInTheDocument());
+
+    await waitFor(() => {
+      expect(screen.getByText(/submit these requests\?/i)).toBeInTheDocument();
+    });
   });
 
   it('Should succeed when user confirms submission', async () => {
-    const { click } = userEvent.setup();
-    await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    const { click, keyboard, selectOptions } = userEvent.setup();
+    await renderDefaultWithClinicalRequests();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/discussion points/i));
+    });
+
+    await click(screen.getByLabelText(/discussion points/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     await waitFor(() => click(screen.getByRole('button', { name: 'OK' })));
@@ -336,10 +361,24 @@ describe('When page loads and a user submits a decision with milestones', () => 
   });
 
   it('Should return to the decision page when the user cancels', async () => {
-    const { click } = userEvent.setup();
-    await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    const { click, keyboard, selectOptions } = userEvent.setup();
+    await renderDefaultWithClinicalRequests();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/discussion points/i));
+    });
+
+    await click(screen.getByLabelText(/discussion points/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
@@ -347,10 +386,24 @@ describe('When page loads and a user submits a decision with milestones', () => 
   });
 
   it('Should disable tabs', async () => {
-    const { click } = userEvent.setup();
-    await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    const { click, keyboard, selectOptions } = userEvent.setup();
+    await renderDefaultWithClinicalRequests();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/discussion points/i));
+    });
+
+    await click(screen.getByLabelText(/discussion points/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
@@ -358,14 +411,48 @@ describe('When page loads and a user submits a decision with milestones', () => 
   });
 
   it('Should re-enable the tabs when the user cancels', async () => {
-    const { click } = userEvent.setup();
-    await renderDefaultWithMilestones();
-    const requestCheckboxes = screen.getAllByRole('checkbox');
-    act(() => requestCheckboxes.forEach(async (cb) => click(cb)));
+    const { click, keyboard, selectOptions } = userEvent.setup();
+    await renderDefaultWithClinicalRequests();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i));
+      expect(screen.getByLabelText(/discussion points/i));
+    });
+
+    await click(screen.getByLabelText(/discussion points/i));
+    await keyboard('test data goes brrrt');
+    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
     await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
     expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'false');
     expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'false');
+  });
+});
+
+test('Opening the modal when MDT workflow dispatch is set should start on MDT page', async () => {
+  await renderViaMdtWorkflow();
+
+  await waitFor(() => {
+    expect(screen.getByRole('tab', { name: /mdt/i })).toBeInTheDocument();
+  });
+  await waitFor(() => {
+    expect(screen.getByRole('tab', { name: /mdt/i })).toHaveAttribute('aria-selected', 'true');
+  });
+});
+
+test('Opening the modal when MDT workflow dispatch is set should show breadcrumb', async () => {
+  await renderViaMdtWorkflow();
+
+  await waitFor(() => {
+    expect(screen.getByText(/mdts/i)).toBeInTheDocument();
+    expect(screen.getByText(/patient list/i)).toBeInTheDocument();
   });
 });

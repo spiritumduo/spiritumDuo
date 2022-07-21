@@ -7,28 +7,28 @@
 // GraphQL query operation: patientSearch
 // ====================================================
 
-export interface patientSearch_patientSearch_onPathways_outstandingMilestone_milestoneType {
-  __typename: "MilestoneType";
+export interface patientSearch_patientSearch_onPathways_outstandingClinicalRequest_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   name: string;
 }
 
-export interface patientSearch_patientSearch_onPathways_outstandingMilestone {
-  __typename: "Milestone";
+export interface patientSearch_patientSearch_onPathways_outstandingClinicalRequest {
+  __typename: "ClinicalRequest";
   id: string;
   updatedAt: any;
-  milestoneType: patientSearch_patientSearch_onPathways_outstandingMilestone_milestoneType;
+  clinicalRequestType: patientSearch_patientSearch_onPathways_outstandingClinicalRequest_clinicalRequestType;
 }
 
-export interface patientSearch_patientSearch_onPathways_milestone_milestoneType {
-  __typename: "MilestoneType";
+export interface patientSearch_patientSearch_onPathways_clinicalRequest_clinicalRequestType {
+  __typename: "ClinicalRequestType";
   name: string;
 }
 
-export interface patientSearch_patientSearch_onPathways_milestone {
-  __typename: "Milestone";
+export interface patientSearch_patientSearch_onPathways_clinicalRequest {
+  __typename: "ClinicalRequest";
   id: string;
   updatedAt: any;
-  milestoneType: patientSearch_patientSearch_onPathways_milestone_milestoneType;
+  clinicalRequestType: patientSearch_patientSearch_onPathways_clinicalRequest_clinicalRequestType;
 }
 
 export interface patientSearch_patientSearch_onPathways_lockUser {
@@ -40,8 +40,8 @@ export interface patientSearch_patientSearch_onPathways_lockUser {
 
 export interface patientSearch_patientSearch_onPathways {
   __typename: "OnPathway";
-  outstandingMilestone: patientSearch_patientSearch_onPathways_outstandingMilestone[] | null;
-  milestone: patientSearch_patientSearch_onPathways_milestone[] | null;
+  outstandingClinicalRequest: patientSearch_patientSearch_onPathways_outstandingClinicalRequest[] | null;
+  clinicalRequest: patientSearch_patientSearch_onPathways_clinicalRequest[] | null;
   lockUser: patientSearch_patientSearch_onPathways_lockUser | null;
   lockEndTime: any | null;
 }

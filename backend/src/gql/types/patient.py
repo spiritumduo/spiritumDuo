@@ -1,11 +1,15 @@
+from typing import List
 from ariadne.objects import ObjectType
 from dataloaders import (
     OnPathwaysByPatient,
-    PatientByHospitalNumberFromIELoader
+    PatientByHospitalNumberFromIELoader,
+    OnMdtByIdLoader
 )
 from graphql.type import GraphQLResolveInfo
-from models import Patient
+from models import Patient, MDT, OnMdt
 from trustadapter.trustadapter import Patient_IE
+from models.db import db
+
 
 PatientObjectType = ObjectType("Patient")
 
@@ -72,3 +76,48 @@ async def resolve_sex(
     record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
         context=info.context, id=obj.hospital_number)
     return record.sex
+
+
+@PatientObjectType.field("occupation")
+async def resolve_occupation(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.occupation
+
+
+@PatientObjectType.field("telephoneNumber")
+async def resolve_telephone_number(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.telephone_number
+
+
+@PatientObjectType.field("address")
+async def resolve_address(
+    obj: Patient = None, info: GraphQLResolveInfo = None, *_
+):
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
+        context=info.context, id=obj.hospital_number)
+    return record.address
+
+
+@PatientObjectType.field("onMdts")
+async def resolve_mdt_clinicians(
+    obj: Patient = None,
+    info: GraphQLResolveInfo = None,
+    id: int = None
+):
+    async with db.acquire(reuse=False) as conn:
+        query: str = OnMdt.query.where(OnMdt.patient_id == obj.id)
+        if id is not None:
+            query = query.where(OnMdt.mdt_id == int(id))
+        on_mdt_list: List[OnMdt] = await query.gino.all()
+        for on_mdt in on_mdt_list:
+            OnMdtByIdLoader.prime(
+                context=info.context, key=on_mdt.id, value=on_mdt
+            )
+        return on_mdt_list

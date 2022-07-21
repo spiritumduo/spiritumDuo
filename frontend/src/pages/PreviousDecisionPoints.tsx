@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import './previousdecisionpoints.css';
 import { gql, useQuery } from '@apollo/client';
 import { previousDecisionPoints } from 'pages/__generated__/previousDecisionPoints';
@@ -24,10 +24,10 @@ export const PREVIOUS_DECISION_POINTS_QUERY = gql`
             firstName
             lastName
           }
-          milestones {
+          clinicalRequests {
             id
             currentState
-            milestoneType {
+            clinicalRequestType {
               name
             }
           }
@@ -81,16 +81,16 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
                   <p><strong>Comorbidities:</strong> {d.comorbidities}</p>
                 </div>
                 {
-                  d.milestones?.length !== 0
+                  d.clinicalRequests?.length !== 0
                     ? (
                       <div className="row">
                         <div className="col" id={ `request-tbl-${d.id}` }>
                           <b>Requests / referrals made:</b>
                         </div>
-                        <div className="col" role="table" aria-label="Milestone Requests" aria-describedby={ `request-tbl-${d.id}` }>
+                        <div className="col" role="table" aria-label="ClinicalRequest Requests" aria-describedby={ `request-tbl-${d.id}` }>
                           <div className="row" role="row">
                             <div className="col" role="columnheader">
-                              <strong>Milestone</strong>
+                              <strong>ClinicalRequest</strong>
                             </div>
                             <div className="col" role="columnheader">
                               <strong>Status</strong>
@@ -98,10 +98,10 @@ const PreviousDecisionPoints = ({ hospitalNumber }: PreviousDecisionPointsProps)
                           </div>
                         </div>
                         {
-                          d.milestones?.map((m) => (
+                          d.clinicalRequests?.map((m) => (
                             <div key={ `m-id-${m.id}` } className="row" role="row">
                               <div className="col" role="cell">
-                                {m.milestoneType.name}
+                                {m.clinicalRequestType.name}
                               </div>
                               <div className="col" role="cell">
                                 {m.currentState}

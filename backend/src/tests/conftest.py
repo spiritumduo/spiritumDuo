@@ -1,7 +1,6 @@
 # It's very important this happens first
+import datetime
 from starlette.config import environ
-
-
 environ['TESTING'] = "True"
 
 
@@ -21,14 +20,16 @@ from models.db import db, TEST_DATABASE_URL
 from models import (
     User,
     Pathway,
-    MilestoneType,
+    ClinicalRequestType,
     Role,
     UserRole,
     RolePermission,
     Patient,
     OnPathway,
-    PathwayMilestoneType,
-    UserPathway
+    PathwayClinicalRequestType,
+    UserPathway,
+    MDT,
+    OnMdt
 )
 
 from api import app
@@ -87,16 +88,16 @@ async def test_pathway(db_start_transaction) -> Pathway:
 
 
 @pytest.fixture
-async def test_milestone_type(db_start_transaction, test_pathway) -> MilestoneType:
-    mT: MilestoneType = await MilestoneType.create(
-        name="Test Milestone",
-        ref_name="ref_test_milestone",
+async def test_clinical_request_type(db_start_transaction, test_pathway) -> ClinicalRequestType:
+    mT: ClinicalRequestType = await ClinicalRequestType.create(
+        name="Test ClinicalRequest",
+        ref_name="ref_test_clinical_request",
         is_checkbox_hidden=True,
     )
 
-    await PathwayMilestoneType.create(
+    await PathwayClinicalRequestType.create(
         pathway_id=test_pathway.id,
-        milestone_type_id=mT.id
+        clinical_request_type_id=mT.id
     )
 
     return mT
@@ -108,7 +109,7 @@ async def test_role(db_start_transaction) -> Role:
 
 
 @pytest.fixture
-async def test_patients(db_start_transaction) -> List[Role]:
+async def test_patients(db_start_transaction) -> List[Patient]:
     patients = []
     for i in range(1, 11):
         p = await Patient.create(
@@ -174,6 +175,36 @@ async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role
 
 
 @pytest.fixture
+async def test_mdt(test_user: UserFixture, test_pathway: Pathway):
+    mdt_info = {
+        "planned_at": datetime.date(3000, 1, 1),
+        "location": "In a cabin in the woods",
+        "pathway_id": test_pathway.id
+    }
+    mdt = await MDT.create(
+        **mdt_info,
+        creator_user_id=test_user.user.id
+    )
+    return mdt
+
+
+@pytest.fixture
+async def test_on_mdts(
+    test_user: UserFixture, test_mdt: MDT,
+    test_patients: List[Patient]
+):
+    on_mdts: List[OnMdt] = []
+    for pt in test_patients:
+        on_mdts.append(await OnMdt.create(
+            mdt_id=test_mdt.id,
+            patient_id=pt.id,
+            user_id=test_user.user.id,
+            reason="test reason"
+        ))
+    return on_mdts
+
+
+@pytest.fixture
 async def httpx_login_user(test_user: UserFixture, httpx_test_client) -> Response:
     client = httpx_test_client
     user_fixture = test_user
@@ -206,11 +237,13 @@ def mock_trust_adapter():
     with app.container.trust_adapter_client.override(trust_adapter_mock):
         yield trust_adapter_mock
 
+
 @pytest.fixture
 def test_sdpubsub():
     test_sdpubsub = SdPubSub()
     with app.container.pubsub_client.override(test_sdpubsub):
         yield test_sdpubsub
+
 
 @pytest.fixture
 def test_email_adapter():
@@ -239,7 +272,7 @@ async def decision_read_permission(test_role) -> RolePermission:
 
 # MILESTONE
 @pytest.fixture
-async def milestone_create_permission(test_role) -> RolePermission:
+async def clinical_request_create_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_CREATE
@@ -247,7 +280,7 @@ async def milestone_create_permission(test_role) -> RolePermission:
 
 
 @pytest.fixture
-async def milestone_read_permission(test_role) -> RolePermission:
+async def clinical_request_read_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_READ
@@ -255,7 +288,7 @@ async def milestone_read_permission(test_role) -> RolePermission:
 
 
 @pytest.fixture
-async def milestone_update_permission(test_role) -> RolePermission:
+async def clinical_request_update_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_UPDATE
@@ -264,7 +297,7 @@ async def milestone_update_permission(test_role) -> RolePermission:
 
 # MILESTONE TYPE
 @pytest.fixture
-async def milestone_type_read_permission(test_role) -> RolePermission:
+async def clinical_request_type_read_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MILESTONE_TYPE_READ
@@ -410,4 +443,62 @@ async def user_update_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.USER_UPDATE
+    ).create()
+
+
+# MDT
+@pytest.fixture
+async def mdt_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def mdt_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_UPDATE
+    ).create()
+
+
+@pytest.fixture
+async def mdt_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_READ
+    ).create()
+
+
+# ONMDT
+@pytest.fixture
+async def on_mdt_create_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_CREATE
+    ).create()
+
+
+@pytest.fixture
+async def on_mdt_update_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_UPDATE
+    ).create()
+
+
+@pytest.fixture
+async def on_mdt_read_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_READ
+    ).create()
+
+
+@pytest.fixture
+async def on_mdt_delete_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.ON_MDT_DELETE
     ).create()

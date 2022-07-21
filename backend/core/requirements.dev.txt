@@ -16,10 +16,13 @@ bcrypt==3.2.0
 PyHamcrest==2.0.3
 sqlalchemy_utils==0.38.2
 Faker==11.3.0
-httpx==0.21.3
+httpx==0.23.0
 dependency-injector==4.37.0
 pytest==7.0.1
 pytest-asyncio==0.18.2
 async_asgi_testclient==1.4.10
 pyisemail==1.4.0
 exchangelib==4.7.3
+selenium==4.3.0
+pytest-bdd==6.0.1
+webdriver-manager==3.8.2

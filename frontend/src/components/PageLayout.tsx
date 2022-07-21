@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useContext } from 'react';
 import Notification from 'components/Notification';

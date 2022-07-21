@@ -3,6 +3,7 @@ from starlette.authentication import (
     AuthCredentials, has_required_scope
 )
 import inspect
+from config import config
 from starlette.exceptions import HTTPException
 from ariadne.format_error import GraphQLError
 from SdTypes import Permissions
@@ -10,9 +11,12 @@ from models.db import db
 from models import User, Session, RolePermission, Role, UserRole
 from starlette.requests import HTTPConnection
 from typing import Callable, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
+import logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 class PermissionsError(HTTPException):
     """
@@ -89,7 +93,7 @@ class SDAuthentication(AuthenticationBackend):
         if "Authorization" not in request.headers:
             if request['session']:
                 async with db.acquire(reuse=False) as conn:
-                    session = db.select([User, Session]).where(
+                    user_query = db.select([User, Session]).where(
                         Session.session_key == str(request['session'])
                     ).where(
                         Session.user_id == User.id
@@ -98,18 +102,23 @@ class SDAuthentication(AuthenticationBackend):
                     ).where(
                         User.is_active == True
                     )
-                    user = await conn.one_or_none(session)
-                if user:
-                    sdUser = SDUser(
-                        id=user.id,
-                        username=user.username,
-                        firstName=user.first_name,
-                        lastName=user.last_name,
-                        department=user.department,
-                        default_pathway_id=user.default_pathway_id,
-                        email=user.email,
-                    )
-                    async with db.acquire(reuse=False) as conn:
+                    user = await conn.one_or_none(user_query)
+                    if user:
+                        session_query = Session.query.where(Session.session_key == str(request['session']))
+                        session = await conn.one_or_none(session_query)
+                        sessionExpiry = datetime.now() + timedelta(
+                            seconds=int(config['SESSION_EXPIRY_LENGTH'])
+                        )
+                        update_request = await session.update(expiry=sessionExpiry).apply()
+                        sdUser = SDUser(
+                            id=user.id,
+                            username=user.username,
+                            firstName=user.first_name,
+                            lastName=user.last_name,
+                            department=user.department,
+                            default_pathway_id=user.default_pathway_id,
+                            email=user.email,
+                        )
                         query = RolePermission.outerjoin(Role)\
                             .outerjoin(UserRole)\
                             .outerjoin(User)\
@@ -117,12 +126,12 @@ class SDAuthentication(AuthenticationBackend):
                             .where(User.id == user.id)
                         permissions: List[RolePermission] = await conn.all(
                             query)
-                    scopes = [Permissions.AUTHENTICATED]
-                    for p in permissions:
-                        scopes.append(p.permission)
-                    return AuthCredentials(
-                        scopes=scopes
-                    ), sdUser
+                        scopes = [Permissions.AUTHENTICATED]
+                        for p in permissions:
+                            scopes.append(p.permission)
+                        return AuthCredentials(
+                            scopes=scopes
+                        ), sdUser
             else:
                 return AuthCredentials(scopes=[]), None
 

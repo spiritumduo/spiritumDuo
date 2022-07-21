@@ -1,0 +1,2283 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`It should render Default correctly 1`] = `
+<div>
+  <div
+    style="width: 90vw; height: 100vh; min-width: 300px;"
+  >
+    <div>
+      <div
+        style="width: 100%; height: 100%;"
+      >
+        <div
+          style="position: relative; width: inherit; height: inherit;"
+        >
+          <div>
+            <div
+              class="visually-hidden"
+              id="pathway-visualisation-desc"
+            >
+              Patient Pathway Visualisation
+            </div>
+            <svg
+              aria-describedby="pathway-visualisation-desc"
+              aria-details="accessible-table"
+              height="1102"
+              width="280"
+            >
+              <rect
+                fill="#f1f4f5"
+                height="1102"
+                width="280"
+              />
+              <g
+                class="visx-group"
+                transform="translate(20, 75)"
+              >
+                <g
+                  class="visx-group"
+                  transform="translate(0, 0)"
+                >
+                  <rect
+                    fill="white"
+                    height="177.5"
+                    width="280"
+                    x="-15"
+                    y="-27"
+                  />
+                  <svg
+                    font-size="1.5rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="-5"
+                  >
+                    <text
+                      font-size="1.5rem"
+                      font-weight="650"
+                      text-anchor="start"
+                      transform=""
+                      y="44"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="0"
+                      >
+                        John Doe 1, fMRN1234567, 10/31/1970
+                      </tspan>
+                    </text>
+                  </svg>
+                  <rect
+                    fill="#D8DDE0"
+                    height="71"
+                    rx="0.7%"
+                    width="0"
+                    y="44"
+                  />
+                  <rect
+                    fill="#99C7EB"
+                    height="71"
+                    rx="0.7%"
+                    width="126"
+                    x="0"
+                    y="64"
+                  />
+                  <svg
+                    font-size="1rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="67.33333333333334"
+                  >
+                    <text
+                      fill="white"
+                      font-size="1rem"
+                      text-anchor="middle"
+                      transform=""
+                      x="63"
+                      y="44"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="63"
+                      >
+                        Awaiting CT-Thorax +1
+                      </tspan>
+                    </text>
+                  </svg>
+                </g>
+                <g
+                  class="visx-group"
+                  transform="translate(0, 0)"
+                >
+                  <rect
+                    fill="white"
+                    height="177.5"
+                    width="280"
+                    x="-15"
+                    y="183"
+                  />
+                  <svg
+                    font-size="1.5rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="-5"
+                  >
+                    <text
+                      font-size="1.5rem"
+                      font-weight="650"
+                      text-anchor="start"
+                      transform=""
+                      y="254"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="0"
+                      >
+                        John Doe 2, fMRN1234567, 10/31/1970
+                      </tspan>
+                    </text>
+                  </svg>
+                  <rect
+                    fill="#D8DDE0"
+                    height="71"
+                    rx="0.7%"
+                    width="0"
+                    y="254"
+                  />
+                  <rect
+                    fill="#99C7EB"
+                    height="71"
+                    rx="0.7%"
+                    width="126"
+                    x="0"
+                    y="274"
+                  />
+                  <svg
+                    font-size="1rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="67.33333333333334"
+                  >
+                    <text
+                      fill="white"
+                      font-size="1rem"
+                      text-anchor="middle"
+                      transform=""
+                      x="63"
+                      y="254"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="63"
+                      >
+                        Awaiting CT-Thorax +1
+                      </tspan>
+                    </text>
+                  </svg>
+                </g>
+                <g
+                  class="visx-group"
+                  transform="translate(0, 0)"
+                >
+                  <rect
+                    fill="white"
+                    height="177.5"
+                    width="280"
+                    x="-15"
+                    y="393"
+                  />
+                  <svg
+                    font-size="1.5rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="-5"
+                  >
+                    <text
+                      font-size="1.5rem"
+                      font-weight="650"
+                      text-anchor="start"
+                      transform=""
+                      y="464"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="0"
+                      >
+                        John Doe 3, fMRN1234567, 10/31/1970
+                      </tspan>
+                    </text>
+                  </svg>
+                  <rect
+                    fill="#D8DDE0"
+                    height="71"
+                    rx="0.7%"
+                    width="0"
+                    y="464"
+                  />
+                  <rect
+                    fill="#99C7EB"
+                    height="71"
+                    rx="0.7%"
+                    width="126"
+                    x="0"
+                    y="484"
+                  />
+                  <svg
+                    font-size="1rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="67.33333333333334"
+                  >
+                    <text
+                      fill="white"
+                      font-size="1rem"
+                      text-anchor="middle"
+                      transform=""
+                      x="63"
+                      y="464"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="63"
+                      >
+                        Awaiting CT-Thorax +1
+                      </tspan>
+                    </text>
+                  </svg>
+                </g>
+                <g
+                  class="visx-group"
+                  transform="translate(0, 0)"
+                >
+                  <rect
+                    fill="white"
+                    height="177.5"
+                    width="280"
+                    x="-15"
+                    y="603"
+                  />
+                  <svg
+                    font-size="1.5rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="-5"
+                  >
+                    <text
+                      font-size="1.5rem"
+                      font-weight="650"
+                      text-anchor="start"
+                      transform=""
+                      y="674"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="0"
+                      >
+                        John Doe 4, fMRN1234567, 10/31/1970
+                      </tspan>
+                    </text>
+                  </svg>
+                  <rect
+                    fill="#D8DDE0"
+                    height="71"
+                    rx="0.7%"
+                    width="0"
+                    y="674"
+                  />
+                  <rect
+                    fill="#99C7EB"
+                    height="71"
+                    rx="0.7%"
+                    width="126"
+                    x="0"
+                    y="694"
+                  />
+                  <svg
+                    font-size="1rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="67.33333333333334"
+                  >
+                    <text
+                      fill="white"
+                      font-size="1rem"
+                      text-anchor="middle"
+                      transform=""
+                      x="63"
+                      y="674"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="63"
+                      >
+                        Awaiting CT-Thorax +1
+                      </tspan>
+                    </text>
+                  </svg>
+                </g>
+                <g
+                  class="visx-group"
+                  transform="translate(0, 0)"
+                >
+                  <rect
+                    fill="white"
+                    height="177.5"
+                    width="280"
+                    x="-15"
+                    y="813"
+                  />
+                  <svg
+                    font-size="1.5rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="-5"
+                  >
+                    <text
+                      font-size="1.5rem"
+                      font-weight="650"
+                      text-anchor="start"
+                      transform=""
+                      y="884"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="0"
+                      >
+                        John Doe 5, fMRN1234567, 10/31/1970
+                      </tspan>
+                    </text>
+                  </svg>
+                  <rect
+                    fill="#D8DDE0"
+                    height="71"
+                    rx="0.7%"
+                    width="0"
+                    y="884"
+                  />
+                  <rect
+                    fill="#99C7EB"
+                    height="71"
+                    rx="0.7%"
+                    width="126"
+                    x="0"
+                    y="904"
+                  />
+                  <svg
+                    font-size="1rem"
+                    style="overflow: visible;"
+                    x="0"
+                    y="67.33333333333334"
+                  >
+                    <text
+                      fill="white"
+                      font-size="1rem"
+                      text-anchor="middle"
+                      transform=""
+                      x="63"
+                      y="884"
+                    >
+                      <tspan
+                        dy="0em"
+                        x="63"
+                      >
+                        Awaiting CT-Thorax +1
+                      </tspan>
+                    </text>
+                  </svg>
+                </g>
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#005EB8"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#FF2D00"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#FF2D00"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#FF2D00"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#FF2D00"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#FF2D00"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="44"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="254"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="464"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="674"
+                />
+                <rect
+                  fill="#99C7EB"
+                  height="71"
+                  rx="0.7%"
+                  width="0"
+                  x="0"
+                  y="884"
+                />
+              </g>
+            </svg>
+            <div
+              class="visually-hidden"
+              id="accessible-table"
+            >
+              <table
+                aria-label="Pathway Table"
+              >
+                <thead>
+                  <tr>
+                    <th
+                      id="tname"
+                      rowspan="2"
+                      scope="col"
+                    >
+                      Name
+                    </th>
+                    <th
+                      id="thosp"
+                      rowspan="2"
+                      scope="col"
+                    >
+                      Hospital Number
+                    </th>
+                    <th
+                      id="tdob"
+                      rowspan="2"
+                      scope="col"
+                    >
+                      Date Of Birth
+                    </th>
+                    <th
+                      colspan="4"
+                      scope="colgroup"
+                      style="text-align: center;"
+                    >
+                      Periods
+                    </th>
+                  </tr>
+                  <tr>
+                    <th
+                      id="pt"
+                      scope="colgroup"
+                    >
+                      Period Type
+                    </th>
+                    <th
+                      id="pt"
+                      scope="colgroup"
+                    >
+                      Duration
+                    </th>
+                    <th
+                      id="preq"
+                      scope="colgroup"
+                    >
+                      Outstanding Requests
+                    </th>
+                    <th
+                      id="pres"
+                      scope="colgroup"
+                    >
+                      Awaiting Results
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th
+                      headers="tname"
+                      id="rowname-1"
+                      role="rowheader"
+                      rowspan="10"
+                      scope="rowgroup"
+                    >
+                      <button
+                        role="link"
+                        tabindex="0"
+                        type="button"
+                      >
+                        John Doe 1
+                      </button>
+                    </th>
+                    <td
+                      headers="thosp rowname-1"
+                    >
+                      fMRN1234567
+                    </td>
+                    <td
+                      headers="tdob rowname-1"
+                    >
+                      10/31/1970
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Stalled
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      Bloods
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <th
+                      headers="tname"
+                      id="rowname-2"
+                      role="rowheader"
+                      rowspan="10"
+                      scope="rowgroup"
+                    >
+                      <button
+                        role="link"
+                        tabindex="0"
+                        type="button"
+                      >
+                        John Doe 2
+                      </button>
+                    </th>
+                    <td
+                      headers="thosp rowname-2"
+                    >
+                      fMRN1234567
+                    </td>
+                    <td
+                      headers="tdob rowname-2"
+                    >
+                      10/31/1970
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Stalled
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      Bloods
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <th
+                      headers="tname"
+                      id="rowname-3"
+                      role="rowheader"
+                      rowspan="10"
+                      scope="rowgroup"
+                    >
+                      <button
+                        role="link"
+                        tabindex="0"
+                        type="button"
+                      >
+                        John Doe 3
+                      </button>
+                    </th>
+                    <td
+                      headers="thosp rowname-3"
+                    >
+                      fMRN1234567
+                    </td>
+                    <td
+                      headers="tdob rowname-3"
+                    >
+                      10/31/1970
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Stalled
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      Bloods
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <th
+                      headers="tname"
+                      id="rowname-4"
+                      role="rowheader"
+                      rowspan="10"
+                      scope="rowgroup"
+                    >
+                      <button
+                        role="link"
+                        tabindex="0"
+                        type="button"
+                      >
+                        John Doe 4
+                      </button>
+                    </th>
+                    <td
+                      headers="thosp rowname-4"
+                    >
+                      fMRN1234567
+                    </td>
+                    <td
+                      headers="tdob rowname-4"
+                    >
+                      10/31/1970
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Stalled
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      Bloods
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <th
+                      headers="tname"
+                      id="rowname-5"
+                      role="rowheader"
+                      rowspan="10"
+                      scope="rowgroup"
+                    >
+                      <button
+                        role="link"
+                        tabindex="0"
+                        type="button"
+                      >
+                        John Doe 5
+                      </button>
+                    </th>
+                    <td
+                      headers="thosp rowname-5"
+                    >
+                      fMRN1234567
+                    </td>
+                    <td
+                      headers="tdob rowname-5"
+                    >
+                      10/31/1970
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      Lung Function
+                       
+                      <br />
+                      CT-Thorax
+                       
+                      <br />
+                      X-Ray
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td>
+                      EBUS
+                       
+                      <br />
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Decision
+                    </td>
+                    <td />
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      MRI-Head
+                       
+                      <br />
+                      EBUS
+                       
+                      <br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Stalled
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      -
+                    </td>
+                    <td>
+                      -
+                    </td>
+                    <td
+                      headers="pt"
+                    >
+                      Awaiting Result
+                    </td>
+                    <td>
+                      CT-Thorax
+                       
+                      <br />
+                      Bloods
+                       
+                      <br />
+                    </td>
+                    <td>
+                      -
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul
+        class="pagination justify-content-center"
+      >
+        <li
+          class="page-item disabled"
+        >
+          <a
+            aria-disabled="true"
+            aria-label="Previous page"
+            class="page-link colour-nhs-blue paginator-button"
+            rel="prev"
+            role="button"
+            tabindex="0"
+          >
+            previous
+          </a>
+        </li>
+        <li
+          class="page-item bkcolour-nhs-blue"
+        >
+          <a
+            aria-current="page"
+            aria-label="Page 1 is your current page"
+            class="page-link colour-nhs-blue paginator-button bkcolour-nhs-blue text-white paginator-button"
+            role="button"
+            tabindex="0"
+          >
+            1
+          </a>
+        </li>
+        <li
+          class="page-item"
+        >
+          <a
+            aria-label="Page 2"
+            class="page-link colour-nhs-blue paginator-button"
+            role="button"
+            tabindex="0"
+          >
+            2
+          </a>
+        </li>
+        <li
+          class="page-item"
+        >
+          <a
+            aria-label="Page 3"
+            class="page-link colour-nhs-blue paginator-button"
+            role="button"
+            tabindex="0"
+          >
+            3
+          </a>
+        </li>
+        <li
+          class="page-item"
+        >
+          <a
+            aria-disabled="false"
+            aria-label="Next page"
+            class="page-link colour-nhs-blue paginator-button"
+            rel="next"
+            role="button"
+            tabindex="0"
+          >
+            next
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

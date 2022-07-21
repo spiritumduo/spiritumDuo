@@ -1,7 +1,7 @@
 from ariadne.objects import ObjectType
 from dataloaders import UserByIdLoader, OnPathwayByIdLoader
-from dataloaders import MilestoneByDecisionPointLoader
-from models import Milestone, DecisionPoint
+from dataloaders import ClinicalRequestByDecisionPointLoader
+from models import ClinicalRequest, DecisionPoint
 from graphql.type import GraphQLResolveInfo
 from typing import Union, List
 
@@ -24,33 +24,33 @@ async def resolve_on_pathway_pathway(
         context=info.context, id=obj.on_pathway_id)
 
 
-@DecisionPointObjectType.field("milestoneResolutions")
-async def resolve_on_pathway_milestoneresolutions(
+@DecisionPointObjectType.field("clinicalRequestResolutions")
+async def resolve_on_pathway_clinical_requestresolutions(
     obj: DecisionPoint = None, info: GraphQLResolveInfo = None, *_
 ):
-    query = Milestone.query.where(Milestone.fwd_decision_point_id == obj.id)
-    query.order_by(Milestone.id.desc())
+    query = ClinicalRequest.query.where(ClinicalRequest.fwd_decision_point_id == obj.id)
+    query.order_by(ClinicalRequest.id.desc())
     async with info.context['db'].acquire(reuse=False) as conn:
-        milestones = await conn.all(query)
-        for m in milestones:
-            MilestoneByDecisionPointLoader.prime_with_context(
+        clinical_requests = await conn.all(query)
+        for m in clinical_requests:
+            ClinicalRequestByDecisionPointLoader.prime_with_context(
                 info.context, m.id, m)
-        return milestones
+        return clinical_requests
 
 
-@DecisionPointObjectType.field("milestones")
-async def resolve_decision_point_milestones(
+@DecisionPointObjectType.field("clinicalRequests")
+async def resolve_decision_point_clinical_requests(
     obj: DecisionPoint = None, info: GraphQLResolveInfo = None, *_
 ):
     # TODO: added another dataloader to get by decision point ID
-    # tieMilestone=await TestResultByReferenceIdFromIELoader.load_from_id(
+    # tieClinicalRequest=await TestResultByReferenceIdFromIELoader.load_from_id(
     # context=info.context, id=obj.id)
-    # query.order_by(tieMilestone.added_at)
-    query = Milestone.query.where(Milestone.decision_point_id == obj.id)
-    query.order_by(Milestone.added_at.desc())
+    # query.order_by(tieClinicalRequest.added_at)
+    query = ClinicalRequest.query.where(ClinicalRequest.decision_point_id == obj.id)
+    query.order_by(ClinicalRequest.added_at.desc())
     async with info.context['db'].acquire(reuse=False) as conn:
-        milestones: Union[List[Milestone], None] = await conn.all(query)
-        for milestone in milestones:
-            MilestoneByDecisionPointLoader.prime_with_context(
-                info.context, milestone.id, milestone)
-        return milestones
+        clinical_requests: Union[List[ClinicalRequest], None] = await conn.all(query)
+        for clinical_request in clinical_requests:
+            ClinicalRequestByDecisionPointLoader.prime_with_context(
+                info.context, clinical_request.id, clinical_request)
+        return clinical_requests

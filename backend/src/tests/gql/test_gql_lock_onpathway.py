@@ -4,7 +4,6 @@ from hamcrest import assert_that, equal_to, not_none, none, contains_string
 from trustadapter.trustadapter import Patient_IE
 from json import loads
 from datetime import datetime, timedelta
-# TODO: add test to ensure errors if locking twice
 
 
 @pytest.fixture

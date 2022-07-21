@@ -31,8 +31,8 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
             auth_token=self._context['request'].cookies['SDSESSION']
         )
         returnData = {}
-        for milestone in result:
-            returnData[milestone.id] = milestone
+        for clinical_request in result:
+            returnData[clinical_request.id] = clinical_request
         return returnData
 
     async def batch_load_fn(self, keys):

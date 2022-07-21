@@ -20,9 +20,9 @@ Standard.parameters = {
         },
         result: {
           data: {
-            milestoneResolved: {
+            clinicalRequestResolved: {
               id: 'first-1',
-              milestoneType: {
+              clinicalRequestType: {
                 name: 'Test Result',
               },
               onPathway: {

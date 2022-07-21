@@ -1,7 +1,7 @@
 import httpx
-from models import MilestoneType
+from models import ClinicalRequestType
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Dict, List, Optional
 from datetime import date, datetime
 from dataclasses import dataclass
 from enum import Enum
@@ -16,6 +16,9 @@ class Patient_IE:
     communication_method: str = None
     date_of_birth: date = None
     sex: str = None
+    occupation: str = None
+    address: Dict[str, str] = None
+    telephone_number: str = None
 
 
 @dataclass
@@ -231,7 +234,16 @@ class PseudoTrustAdapter(TrustAdapter):
             "first_name": patient.first_name,
             "last_name": patient.last_name,
             "date_of_birth": patient.date_of_birth.isoformat(),
-            "sex": patient.sex
+            "sex": patient.sex,
+            "occupation": patient.occupation,
+            "address": {
+                "line": patient.address['line'],
+                "city": patient.address['city'],
+                "district": patient.address['district'],
+                "postal_code": patient.address['postal_code'],
+                "country": patient.address['country'],
+            },
+            "telephone_number": patient.telephone_number
         }
         patientRecord = await httpRequest(
             HTTPRequestType.POST,
@@ -253,7 +265,16 @@ class PseudoTrustAdapter(TrustAdapter):
             national_number=patientRecord['national_number'],
             communication_method=patientRecord['communication_method'],
             date_of_birth=patientRecord['date_of_birth'],
-            sex=patientRecord['sex']
+            sex=patientRecord['sex'],
+            occupation=patientRecord['occupation'],
+            address={
+                "line": patientRecord['address']['line'],
+                "city": patientRecord['address']['city'],
+                "district": patientRecord['address']['district'],
+                "postal_code": patientRecord['address']['postal_code'],
+                "country": patientRecord['address']['country'],
+            },
+            telephone_number=patientRecord['telephone_number']
         )
 
     async def load_patient(
@@ -277,7 +298,16 @@ class PseudoTrustAdapter(TrustAdapter):
             national_number=patientRecord['national_number'],
             communication_method=patientRecord['communication_method'],
             date_of_birth=date.fromisoformat(patientRecord['date_of_birth']),
-            sex=patientRecord['sex']
+            sex=patientRecord['sex'],
+            occupation=patientRecord['occupation'],
+            address={
+                "line": patientRecord['address']['line'],
+                "city": patientRecord['address']['city'],
+                "district": patientRecord['address']['district'],
+                "postal_code": patientRecord['address']['postal_code'],
+                "country": patientRecord['address']['country'],
+            },
+            telephone_number=patientRecord['telephone_number']
         )
 
     async def load_many_patients(
@@ -305,7 +335,16 @@ class PseudoTrustAdapter(TrustAdapter):
                     date_of_birth=date.fromisoformat(
                         patientRecord['date_of_birth']
                     ),
-                    sex=patientRecord['sex']
+                    sex=patientRecord['sex'],
+                    occupation=patientRecord['occupation'],
+                    address={
+                        "line": patientRecord['address']['line'],
+                        "city": patientRecord['address']['city'],
+                        "district": patientRecord['address']['district'],
+                        "postal_code": patientRecord['address']['postal_code'],
+                        "country": patientRecord['address']['country'],
+                    },
+                    telephone_number=patientRecord['telephone_number']
                 )
             )
         return patientObjectList
@@ -314,10 +353,10 @@ class PseudoTrustAdapter(TrustAdapter):
         self, testResult: TestResultRequest_IE = None, auth_token: str = None
     ) -> TestResult_IE:
         params = {}
-        milestoneType: MilestoneType = await MilestoneType.get(
+        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.get(
             int(testResult.type_id)
         )
-        params['typeReferenceName'] = milestoneType.ref_name
+        params['typeReferenceName'] = clinicalRequestType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name
 
@@ -420,10 +459,10 @@ class PseudoTrustAdapter(TrustAdapter):
         auth_token: str = None
     ) -> TestResult_IE:
         params = {}
-        milestoneType: MilestoneType = await MilestoneType.get(
+        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.get(
             int(testResult.type_id)
         )
-        params['typeReferenceName'] = milestoneType.ref_name
+        params['typeReferenceName'] = clinicalRequestType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name
         params['addedAt'] = str(testResult.added_at) if (

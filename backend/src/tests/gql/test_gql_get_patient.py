@@ -2,9 +2,9 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient, OnPathway, DecisionPoint, Milestone
+from models import Patient, OnPathway, DecisionPoint, ClinicalRequest
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
-from SdTypes import DecisionTypes, MilestoneState
+from SdTypes import DecisionTypes, ClinicalRequestState
 from hamcrest import assert_that, equal_to, not_none, contains_string
 
 
@@ -46,9 +46,9 @@ def get_patient_query() -> str:
                         firstName
                         lastName
                     }
-                    milestones{
+                    clinicalRequests{
                         id
-                        milestoneType{
+                        clinicalRequestType{
                             id
                             name
                         }
@@ -80,9 +80,9 @@ def get_patient_query() -> str:
                                 name
                             }
                         }
-                        milestones{
+                        clinicalRequests{
                             id
-                            milestoneType{
+                            clinicalRequestType{
                                 id
                                 name
                             }
@@ -95,7 +95,7 @@ def get_patient_query() -> str:
                                 typeReferenceName
                             }
                         }
-                        milestoneResolutions{
+                        clinicalRequestResolutions{
                             id
                         }
                         decisionType
@@ -116,7 +116,7 @@ async def test_search_for_patient(
     patient_read_permission,
     get_patient_query,
     test_pathway,
-    test_user, test_milestone_type,
+    test_user, test_clinical_request_type,
     mock_trust_adapter,
     httpx_test_client, httpx_login_user,
 ):
@@ -153,37 +153,37 @@ async def test_search_for_patient(
         comorbidities="I ran out of things to put here"
     )
 
-    MILESTONE_ONE = await Milestone.create(
+    MILESTONE_ONE = await ClinicalRequest.create(
         on_pathway_id=ONPATHWAY.id,
         test_result_reference_id="1000",
-        current_state=MilestoneState.COMPLETED.value,
-        milestone_type_id=test_pathway.id,
+        current_state=ClinicalRequestState.COMPLETED.value,
+        clinical_request_type_id=test_pathway.id,
         fwd_decision_point_id=DECISION_POINT.id
     )
 
-    await Milestone.create(
+    await ClinicalRequest.create(
         on_pathway_id=ONPATHWAY.id,
         decision_point_id=DECISION_POINT.id,
         test_result_reference_id="2000",
-        current_state=MilestoneState.COMPLETED.value,
-        milestone_type_id=test_pathway.id
+        current_state=ClinicalRequestState.COMPLETED.value,
+        clinical_request_type_id=test_pathway.id
     )
 
     FIRST_TEST_RESULT = TestResult_IE(
         id=1000,
-        current_state=MilestoneState.COMPLETED,
+        current_state=ClinicalRequestState.COMPLETED,
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=test_milestone_type.ref_name,
+        type_reference_name=test_clinical_request_type.ref_name,
     )
     SECOND_TEST_RESULT = TestResult_IE(
         id=2000,
-        current_state=MilestoneState.COMPLETED,
+        current_state=ClinicalRequestState.COMPLETED,
         added_at=datetime.now(),
         updated_at=datetime.now(),
         description="This is a test description!",
-        type_reference_name=test_milestone_type.ref_name,
+        type_reference_name=test_clinical_request_type.ref_name,
     )
 
     async def create_test_result(**kwargs):
@@ -286,101 +286,101 @@ async def test_search_for_patient(
         on_pathway['underCareOf']['lastName'],
         equal_to(test_user.user.last_name)
     )
-    milestones = on_pathway['milestones'][0]
-    assert_that(milestones, not_none())
-    assert_that(milestones['id'], equal_to(str(MILESTONE_ONE.id)))
-    assert_that(milestones['milestoneType'], not_none())
+    clinical_requests = on_pathway['clinicalRequests'][0]
+    assert_that(clinical_requests, not_none())
+    assert_that(clinical_requests['id'], equal_to(str(MILESTONE_ONE.id)))
+    assert_that(clinical_requests['clinicalRequestType'], not_none())
     assert_that(
-        milestones['milestoneType']['id'],
-        equal_to(str(test_milestone_type.id))
+        clinical_requests['clinicalRequestType']['id'],
+        equal_to(str(test_clinical_request_type.id))
     )
     assert_that(
-        milestones['milestoneType']['name'],
-        equal_to(test_milestone_type.name)
+        clinical_requests['clinicalRequestType']['name'],
+        equal_to(test_clinical_request_type.name)
     )
-    assert_that(milestones['onPathway'], not_none())
-    assert_that(milestones['onPathway']['id'], equal_to(str(ONPATHWAY.id)))
+    assert_that(clinical_requests['onPathway'], not_none())
+    assert_that(clinical_requests['onPathway']['id'], equal_to(str(ONPATHWAY.id)))
     assert_that(
-        milestones['addedAt'],
+        clinical_requests['addedAt'],
         equal_to(MILESTONE_ONE.added_at.isoformat())
     )
     assert_that(
-        milestones['updatedAt'],
+        clinical_requests['updatedAt'],
         equal_to(MILESTONE_ONE.updated_at.isoformat())
     )
     assert_that(
-        milestones['currentState'],
+        clinical_requests['currentState'],
         equal_to(MILESTONE_ONE.current_state.value)
     )
-    assert_that(milestones['testResult'], not_none())
+    assert_that(clinical_requests['testResult'], not_none())
     assert_that(
-        milestones['testResult']['id'],
+        clinical_requests['testResult']['id'],
         equal_to(str(FIRST_TEST_RESULT.id))
     )
     assert_that(
-        milestones['testResult']['description'],
+        clinical_requests['testResult']['description'],
         equal_to(FIRST_TEST_RESULT.description)
     )
     assert_that(
-        milestones['testResult']['currentState'],
+        clinical_requests['testResult']['currentState'],
         equal_to(FIRST_TEST_RESULT.current_state.value)
     )
     assert_that(
-        milestones['testResult']['addedAt'],
+        clinical_requests['testResult']['addedAt'],
         equal_to(FIRST_TEST_RESULT.added_at.isoformat())
     )
     assert_that(
-        milestones['testResult']['updatedAt'],
+        clinical_requests['testResult']['updatedAt'],
         equal_to(FIRST_TEST_RESULT.updated_at.isoformat())
     )
     assert_that(
-        milestones['testResult']['typeReferenceName'],
+        clinical_requests['testResult']['typeReferenceName'],
         equal_to(FIRST_TEST_RESULT.type_reference_name)
     )
-    dp_milestone = on_pathway['decisionPoints'][0]['milestones'][0]
+    dp_clinical_request = on_pathway['decisionPoints'][0]['clinicalRequests'][0]
 
-    assert_that(dp_milestone, not_none())
-    assert_that(dp_milestone['id'], not_none())
-    assert_that(dp_milestone['milestoneType'], not_none())
+    assert_that(dp_clinical_request, not_none())
+    assert_that(dp_clinical_request['id'], not_none())
+    assert_that(dp_clinical_request['clinicalRequestType'], not_none())
     assert_that(
-        dp_milestone['milestoneType']['id'],
-        equal_to(str(test_milestone_type.id))
+        dp_clinical_request['clinicalRequestType']['id'],
+        equal_to(str(test_clinical_request_type.id))
     )
     assert_that(
-        dp_milestone['milestoneType']['name'],
-        equal_to(test_milestone_type.name)
+        dp_clinical_request['clinicalRequestType']['name'],
+        equal_to(test_clinical_request_type.name)
     )
-    assert_that(dp_milestone['testResult'], not_none())
+    assert_that(dp_clinical_request['testResult'], not_none())
     assert_that(
-        dp_milestone['testResult']['id'],
+        dp_clinical_request['testResult']['id'],
         equal_to(str(SECOND_TEST_RESULT.id))
     )
     assert_that(
-        dp_milestone['testResult']['description'],
+        dp_clinical_request['testResult']['description'],
         equal_to(SECOND_TEST_RESULT.description)
     )
     assert_that(
-        dp_milestone['testResult']['currentState'],
+        dp_clinical_request['testResult']['currentState'],
         equal_to(str(SECOND_TEST_RESULT.current_state.value))
     )
     assert_that(
-        dp_milestone['testResult']['addedAt'],
+        dp_clinical_request['testResult']['addedAt'],
         equal_to(SECOND_TEST_RESULT.added_at.isoformat())
     )
     assert_that(
-        dp_milestone['testResult']['updatedAt'],
+        dp_clinical_request['testResult']['updatedAt'],
         equal_to(SECOND_TEST_RESULT.updated_at.isoformat())
     )
     assert_that(
-        dp_milestone['testResult']['typeReferenceName'],
+        dp_clinical_request['testResult']['typeReferenceName'],
         equal_to(SECOND_TEST_RESULT.type_reference_name)
     )
     assert_that(
-        on_pathway['decisionPoints'][0]['milestoneResolutions'],
+        on_pathway['decisionPoints'][0]['clinicalRequestResolutions'],
         not_none()
     )
     assert_that(
-        on_pathway['decisionPoints'][0]['milestoneResolutions'][0]['id'],
+        on_pathway['decisionPoints'][0]['clinicalRequestResolutions'][0]['id'],
         equal_to(str(MILESTONE_ONE.id))
     )
 

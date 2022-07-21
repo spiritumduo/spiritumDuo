@@ -5,7 +5,9 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
 import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionPoint.stories';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import { Default as PatientPathwayDefault } from 'components/PatientPathway/PatientPathway.stories';
+import { Default as PatientPathwayDefault } from 'features/PatientPathway/PatientPathway.stories';
+import { useAppDispatch } from 'app/hooks';
+import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
 
 const patient = {
   id: '1',
@@ -100,6 +102,7 @@ export const Default: ComponentStory<typeof ModalPatient> = () => (
         ...PatientPathwayDefault.parameters?.mocks,
         DecisionPointsStory.parameters?.createDecisionMock,
         DecisionPointsStory.parameters?.getPatientMock,
+        DecisionPointsStory.parameters?.getMdtsMock,
         PreviousDecisionPointsStory.parameters?.getPatientMock,
       ]
     }
@@ -130,6 +133,7 @@ export const LockedByOtherUser: ComponentStory<typeof ModalPatient> = () => (
         patientMock,
         DecisionPointsStory.parameters?.getPatientMock,
         PreviousDecisionPointsStory.parameters?.getPatientMock,
+        DecisionPointsStory.parameters?.getMdtsMock,
       ]
     }
   >
@@ -148,4 +152,29 @@ LockedByOtherUser.args = {
 
 LockedByOtherUser.parameters = {
   patient: patient,
+};
+
+export const LoadedViaMdtWorkflow: ComponentStory<typeof ModalPatient> = () => {
+  const dispatch = useAppDispatch();
+  dispatch(setOnMdtWorkflow('1'));
+  return (
+    <NewMockSdApolloProvider
+      mocks={
+        [
+          patientMock,
+          userHasLockMocks,
+          ...PatientPathwayDefault.parameters?.mocks,
+          DecisionPointsStory.parameters?.createDecisionMock,
+          DecisionPointsStory.parameters?.getPatientMock,
+          DecisionPointsStory.parameters?.getMdtsMock,
+          PreviousDecisionPointsStory.parameters?.getPatientMock,
+        ]
+      }
+    >
+      <ModalPatient
+        hospitalNumber={ patient.hospitalNumber }
+        closeCallback={ () => ({}) }
+      />
+    </NewMockSdApolloProvider>
+  );
 };

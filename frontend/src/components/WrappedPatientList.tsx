@@ -12,6 +12,7 @@ import edgesToNodes from 'app/pagination';
 import PatientList, { PatientListProps } from 'components/PatientList';
 import { useAppDispatch } from 'app/hooks';
 import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
+import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
 
 // GENERATED TYPES
 import { onPathwayUpdated } from 'components/__generated__/onPathwayUpdated';
@@ -43,19 +44,19 @@ export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
           dateOfBirth
           onPathways(pathwayId: $pathwayId, includeDischarged: $includeDischarged) {
             id
-            outstandingMilestone: milestones(outstanding: true, limit: 1) {
+            outstandingClinicalRequest: clinicalRequests(outstanding: true, limit: 1) {
               id
               updatedAt
               currentState
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
-            milestone: milestones(outstanding: false, limit: 1) {
+            clinicalRequest: clinicalRequests(outstanding: false, limit: 1) {
               id
               updatedAt
               currentState
-              milestoneType {
+              clinicalRequestType {
                 name
               }
             }
@@ -88,8 +89,8 @@ export const ON_PATHWAY_UPDATED_SUBSCRIPTION = gql`
 `;
 
 const usePatientsForPathwayQuery = (
-  // eslint-disable-next-line max-len
-  pathwayId: string, first: number, outstanding: boolean, underCareOf: boolean, includeDischarged: boolean, cursor?: string,
+  pathwayId: string, first: number, outstanding: boolean,
+  underCareOf: boolean, includeDischarged: boolean, cursor?: string,
 ) => useQuery<getPatientOnPathwayConnection>(
   GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY, {
     variables: {
@@ -125,8 +126,10 @@ const WrappedPatientList = ({
     data,
     fetchMore,
     refetch,
-  // eslint-disable-next-line max-len
-  } = usePatientsForPathwayQuery(pathwayId, patientsToDisplay, !!outstanding, !!underCareOf, !!includeDischarged);
+  } = usePatientsForPathwayQuery(
+    pathwayId, patientsToDisplay, !!outstanding,
+    !!underCareOf, !!includeDischarged,
+  );
 
   const {
     data: subscrData,
@@ -151,15 +154,18 @@ const WrappedPatientList = ({
   const { nodes, pageCount, pageInfo } = edgesToNodes<onPathwayNode>(
     data?.getPatientOnPathwayConnection, currentPage, patientsToDisplay,
   );
+
   if (nodes) {
     listElements = nodes.flatMap(
       (n) => {
         if (!n) return []; // the type says we can have undefined nodes
         const pathway = n.onPathways?.[0];
-        const lastMilestone = pathway?.outstandingMilestone?.[0] || pathway?.milestone?.[0];
-        const mostRecentStage = lastMilestone ? lastMilestone.milestoneType.name : 'Triage';
-        const updatedAt = lastMilestone?.updatedAt
-          ? lastMilestone.updatedAt
+        const lastClinicalRequest = (
+          pathway?.outstandingClinicalRequest?.[0] || pathway?.clinicalRequest?.[0]
+        );
+        const mostRecentStage = lastClinicalRequest ? lastClinicalRequest.clinicalRequestType.name : 'Triage';
+        const updatedAt = lastClinicalRequest?.updatedAt
+          ? lastClinicalRequest.updatedAt
           : n.onPathways?.[0].updatedAt;
 
         let isOnPathwayLockedByOther = false;
@@ -190,6 +196,7 @@ const WrappedPatientList = ({
 
   const onClickCallback = (hospitalNumber: string) => {
     dispatch(setModalPatientHospitalNumber(hospitalNumber));
+    dispatch(setOnMdtWorkflow(undefined));
   };
 
   return (

@@ -91,6 +91,13 @@ jobs:
           -e EXCHANGE_USER_EMAIL=${{ secrets.EXCHANGE_USER_EMAIL }}
           -e EXCHANGE_USER_PASSWORD=${{ secrets.EXCHANGE_USER_PASSWORD }}
           -e EXCHANGE_SERVER_ADDRESS=${{ secrets.EXCHANGE_SERVER_ADDRESS }}
+          -e ON_MDT_EDIT_LOCKOUT_DURATION=${{ secrets.ON_MDT_EDIT_LOCKOUT_DURATION }}
+          -e SMTP_USER_EMAIL=${{ secrets.SMTP_USER_EMAIL }}
+          -e SMTP_USER_PASSWORD=${{ secrets.SMTP_USER_PASSWORD }}
+          -e SMTP_SERVER_ADDRESS=${{ secrets.SMTP_SERVER_ADDRESS }}
+          -e SMTP_PORT=${{ secrets.SMTP_PORT }}
+          -e FEEDBACK_EMAIL_RECIPIENTS=${{ secrets.FEEDBACK_EMAIL_RECIPIENTS }}
+          -e EMAIL_ADAPTER=${{ secrets.EMAIL_ADAPTER }}
           staging-test test
       -
         name: Build and push using primary dockerfile
@@ -200,3 +207,70 @@ jobs:
       -
         name: Add demo data
         run: ssh staging 'docker exec sd-backend python manage-demo.py'
+
+  selenium_linux:
+    defaults:
+      run:
+        working-directory: selenium_tests
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install test prerequisites
+        run: python3 -m pip install -r requirements.txt
+      - name: Run tests
+        run: export SELENIUM_BROWSER_CLIENT="firefox" && pytest && export SELENIUM_BROWSER_CLIENT="chromium" && pytest
+        env:
+          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+  
+  # selenium_macos:
+  #   defaults:
+  #     run:
+  #       working-directory: selenium_tests
+  #   runs-on: macos-12
+  #   environment: staging
+  #   needs: deploy
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: 3.9
+  #     - name: Install test prerequisites
+  #       run: python3 -m pip install -r requirements.txt
+  #     - name: Run tests
+  #       run: |
+  #         defaults write com.apple.Safari IncludeDevelopMenu YES
+  #         defaults write com.apple.Safari AllowRemoteAutomation 1
+  #         sudo safaridriver --enable
+  #         safaridriver -p 0 &
+  #         pytest
+  #       env:
+  #         SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+  #         SELENIUM_BROWSER_CLIENT: safari
+
+  selenium_windows:
+    defaults:
+      run:
+        working-directory: selenium_tests
+    runs-on: windows-latest
+    environment: staging
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install test prerequisites
+        run: python3 -m pip install -r requirements.txt
+      - name: Run tests
+        run: pytest
+        env:
+          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+          SELENIUM_BROWSER_CLIENT: edge

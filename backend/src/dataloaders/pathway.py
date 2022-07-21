@@ -1,5 +1,5 @@
 from aiodataloader import DataLoader
-from models import Pathway, PathwayMilestoneType
+from models import Pathway, PathwayClinicalRequestType
 from typing import List, Union
 
 
@@ -190,11 +190,11 @@ class PathwayByNameLoader(DataLoader):
         return await context[cls.loader_name].load_many(ids)
 
 
-class PathwayLoaderByMilestoneType(DataLoader):
+class PathwayLoaderByClinicalRequestType(DataLoader):
     """
         This is class for loading Pathway objects and
-        caching the result in the request context by milestone type ID
-        using PathwayMilestoneType link table
+        caching the result in the request context by clinical_request type ID
+        using PathwayClinicalRequestType link table
 
         Attributes:
             loader_name (str): unique name of loader to cache data under
@@ -207,8 +207,8 @@ class PathwayLoaderByMilestoneType(DataLoader):
         id=None
     ) -> Union[Pathway, None]:
         """
-            Loads MilestoneTypes from their associated
-            pathway ID from the PathwayMilestoneType link
+            Loads ClinicalRequestTypes from their associated
+            pathway ID from the PathwayClinicalRequestType link
             table
 
             Parameters:
@@ -227,11 +227,11 @@ class PathwayLoaderByMilestoneType(DataLoader):
                 .select_from(
                     _gino.join(
                         Pathway,
-                        PathwayMilestoneType,
-                        Pathway.id == PathwayMilestoneType.pathway_id
+                        PathwayClinicalRequestType,
+                        Pathway.id == PathwayClinicalRequestType.pathway_id
                     )
                 )\
-                .where(PathwayMilestoneType.milestone_type_id == int(id))
+                .where(PathwayClinicalRequestType.clinical_request_type_id == int(id))
 
             result = await conn.all(query)
 

@@ -12,10 +12,13 @@ type Query {
     getPathway(id:ID!): Pathway
     getPathways: [Pathway!]!
     getUser(id:ID, username:String): User
+    getUsers(pathwayId: ID): [User]!
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
-    getMilestoneTypes(pathwayId: ID): [MilestoneType!]
+    getClinicalRequestTypes(pathwayId: ID): [ClinicalRequestType!]
     getRolePermissions: [RolePermission!]
     getRoles: [Role!]!
+    getMdt(id: ID, pathwayId: ID, plannedAt: Date): MDT
+    getMdts(pathwayId: ID!, includePast: Boolean = False): [MDT]!
 
     """
     getPatentOnPathwayConnection:
@@ -45,6 +48,24 @@ type Query {
         before: String
     ): UserConnection!,
 
+    getMdtConnection(
+        first: Int
+        after: String
+        last: Int
+        before: String
+        pathwayId: ID!
+    ): MdtConnection!,
+
+    getOnMdtConnection(
+        first: Int
+        after: String
+        last: Int
+        before: String
+        mdtId: ID
+        patientId: ID
+        pathwayId: ID
+    ): OnMdtConnection!,
+
     patientSearch(query: String!, pathwayId: ID!): [Patient!]!
 }
 
@@ -56,10 +77,16 @@ type Mutation {
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
     lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
     submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
+    createMdt(input:MdtInput!): MdtPayload!
+    updateMdt(input:UpdateMdtInput!): MdtPayload!
+    deleteMdt(id: ID!): DeletePayload!
+    updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
+    deleteOnMdt(id: ID!): DeletePayload!
+    lockOnMdt(input:LockOnMdtInput!): LockOnMdtPayload!
 }
 
 type Subscription {
-    milestoneResolved(clinicianID: ID): Milestone!
+    clinicalRequestResolved(clinicianID: ID): ClinicalRequest!
     onPathwayUpdated(
         pathwayId: ID
         includeDischarged: Boolean
@@ -83,9 +110,20 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
+type MdtPayload{
+    mdt: MDT
+    userErrors: [UserError!]
+}
+
+type OnMdtPayload{
+    onMdt: OnMdt
+    userErrors: [UserError!]
+}
+
 type SubmitFeedbackPayload {
     success: Boolean!
 }
+
 type DeletePayload {
     success: Boolean
     userErrors: [UserError!]
@@ -111,7 +149,24 @@ type LockOnPathwayPayload {
     userErrors: [UserError!]
 }
 
+type LockOnMdtPayload {
+    onMdt: OnMdt
+    userErrors: [UserError!]
+}
+
 #### DATA TYPES
+type MDT {
+    id: ID!
+    creator: User!
+    pathway: Pathway!
+    createdAt: Date!
+    plannedAt: Date!
+    updatedAt: Date!
+    location: String!
+    patients: [Patient]!
+    clinicians: [User]!
+}
+
 type Role {
     id: ID!
     name: String!
@@ -131,7 +186,16 @@ type Pathway {
     id: ID!
     name: String!
     patients: [Patient]
-    milestoneTypes: [MilestoneType!]
+    clinicalRequestTypes: [ClinicalRequestType!]
+}
+
+type Address {
+    id: ID!
+    line: String!
+    city: String!
+    district: String!
+    postalCode: String!
+    country: String!
 }
 
 type Patient {
@@ -143,6 +207,9 @@ type Patient {
 	lastName: String!
     dateOfBirth: Date!
     sex: String!
+    occupation: String!
+    telephoneNumber: String
+    address: Address!
 
     onPathways(
         pathwayId: ID,
@@ -150,6 +217,10 @@ type Patient {
         awaitingDecisionType: DecisionType, 
         limit: Int
     ): [OnPathway!]
+
+    onMdts(
+        id: ID
+    ): [OnMdt]!
 }
 
 type PageInfo {
@@ -181,10 +252,45 @@ type UserConnection {
     edges: [UserEdge!]!
 }
 
+type MdtEdge {
+    node: MDT!
+    cursor: String!
+}
+
+type MdtConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [MdtEdge!]!
+}
+
+type OnMdtEdge {
+    node: OnMdt!
+    cursor: String!
+}
+
+type OnMdtConnection {
+    totalCount: Int!
+    pageInfo: PageInfo!
+    edges: [OnMdtEdge!]!
+}
+
 type Group {
     id: ID!
     name: String!
     permissions: [String]
+}
+
+type OnMdt{
+    id: ID!
+    patient: Patient!
+    mdt: MDT!
+    clinician: User!
+    addedAt: Date!
+    reason: String!
+    outcome: String
+    lockEndTime: Date
+    lockUser: User
+    actioned: Boolean!
 }
 
 type OnPathway {
@@ -197,10 +303,10 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
-    milestones(
+    clinicalRequests(
         outstanding: Boolean = False
         limit: Int = 0
-    ): [Milestone!]
+    ): [ClinicalRequest!]
     underCareOf: User
     lockUser: User
     lockEndTime: DateTime
@@ -229,8 +335,8 @@ type DecisionPoint {
     updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
-    milestones: [Milestone!]
-    milestoneResolutions: [Milestone!]
+    clinicalRequests: [ClinicalRequest!]
+    clinicalRequestResolutions: [ClinicalRequest!]
 }
 
 type TestResult { 
@@ -243,20 +349,21 @@ type TestResult {
     updatedAt: DateTime!
 }
 
-type MilestoneType {
+type ClinicalRequestType {
     id: ID!
     refName: String!
     name: String!
     isDischarge: Boolean!
     isCheckboxHidden: Boolean!
     isTestRequest: Boolean!
+    isMdt: Boolean!
     pathways: [Pathway!]
 }
 
 
-type Milestone {
+type ClinicalRequest {
     id: ID!
-    milestoneType: MilestoneType!
+    clinicalRequestType: ClinicalRequestType!
     onPathway: OnPathway!
     decisionPoint: DecisionPoint
     forwardDecisionPoint: DecisionPoint
@@ -266,7 +373,7 @@ type Milestone {
     currentState: String!                     # from SD
 }
 
-enum MilestoneState {
+enum ClinicalRequestState {
   INIT
   ACTIVE
   WAITING
@@ -281,8 +388,26 @@ enum Sex {
 }
 
 #### INPUT TYPES
+input UpdateOnMdtInput{
+    id: ID!
+    reason: String!
+    outcome: String
+    actioned: Boolean
+}
+input MdtInput{
+    pathwayId: ID!
+    plannedAt: Date!
+    location: String!
+}
+input UpdateMdtInput{
+    id: ID!
+    plannedAt: Date!
+    location: String!
+    users: [ID]!
+}
+
 input TestResultInput{
-    milestoneId: ID!
+    clinicalRequestId: ID!
     description: String!
 }
 
@@ -296,13 +421,18 @@ input AddUserToGroupInput{
     groupName: String!
 }
 
-input MilestoneRequestInput {
-    milestoneTypeId: ID!
-    currentState: MilestoneState
+input ClinicalRequestRequestInput {
+    clinicalRequestTypeId: ID!
+    currentState: ClinicalRequestState
 }
 
-input MilestoneTypeInput{
+input ClinicalRequestTypeInput{
     id: ID!
+}
+
+input AddPatientToMdtInput{
+    id: ID!
+    reason: String!
 }
 
 input DecisionPointInput{
@@ -310,23 +440,30 @@ input DecisionPointInput{
     decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String
-    milestoneRequests: [MilestoneRequestInput!]
-    milestoneResolutions: [ID!]
+    clinicalRequestRequests: [ClinicalRequestRequestInput!]
+    clinicalRequestResolutions: [ID!]
+    mdt: AddPatientToMdtInput
 }
+
 input LockOnPathwayInput{
     onPathwayId: ID!
     unlock: Boolean
 }
 
+input LockOnMdtInput{
+    id: ID!
+    unlock: Boolean
+}
+
 input PathwayInput{
     name: String!
-    milestoneTypes: [MilestoneTypeInput!]
+    clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 
 input UpdatePathwayInput{
     id: ID!
     name: String!
-    milestoneTypes: [MilestoneTypeInput!]
+    clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 
 input GroupInput{
@@ -346,5 +483,5 @@ input PatientInput{
     awaitingDecisionType: DecisionType
     referredAt: DateTime
 
-    milestones: [MilestoneRequestInput]
+    clinicalRequests: [ClinicalRequestRequestInput]
 }

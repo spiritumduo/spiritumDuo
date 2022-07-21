@@ -1,6 +1,6 @@
 from asyncpg import ForeignKeyViolationError
 from SdTypes import Permissions
-from models import Pathway, db, PathwayMilestoneType
+from models import Pathway, db, PathwayClinicalRequestType
 from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
@@ -19,10 +19,14 @@ async def resolve_delete_pathway(
 
     async with db.transaction() as tx:
         try:
-            await PathwayMilestoneType.delete.where(
-                PathwayMilestoneType.pathway_id == int(id)
+            await PathwayClinicalRequestType.delete.where(
+                PathwayClinicalRequestType.pathway_id == int(id)
             ).gino.status()
             pathway: Pathway = await Pathway.get(int(id))
+            if not pathway:
+                userErrors.addError(
+                    "id", "A pathway with this ID does not exist")
+                return userErrors
             await pathway.delete()
             return True
         except ForeignKeyViolationError:

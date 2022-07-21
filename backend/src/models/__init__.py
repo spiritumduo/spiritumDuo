@@ -1,8 +1,8 @@
 from .db import db
 
 from .DecisionPoint import DecisionPoint
-from .Milestone import Milestone
-from .MilestoneType import MilestoneType
+from .ClinicalRequest import ClinicalRequest
+from .ClinicalRequestType import ClinicalRequestType
 from .OnPathway import OnPathway
 from .Pathway import Pathway
 from .Patient import Patient
@@ -11,5 +11,8 @@ from .Role import Role
 from .Session import Session
 from .User import User
 from .UserRole import UserRole
-from .PathwayMilestoneType import PathwayMilestoneType
+from .PathwayClinicalRequestType import PathwayClinicalRequestType
 from .UserPathway import UserPathway
+from .MDT import MDT
+from .OnMdt import OnMdt
+from .UserMDT import UserMDT

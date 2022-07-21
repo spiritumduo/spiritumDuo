@@ -17,7 +17,7 @@ class SDContainer(containers.DeclarativeContainer):
             "gql.mutation.submit_feedback",
             "gql.query",
             "gql.query.patient_search",
-            "gql.subscription.milestone_resolved",
+            "gql.subscription.clinical_request_resolved",
             "gql.subscription.onpathway_updated",
             "rest.update_test_result",
         ]

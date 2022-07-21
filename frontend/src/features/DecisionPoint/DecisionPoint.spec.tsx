@@ -2,7 +2,7 @@ import React from 'react';
 import { waitFor, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { composeStories } from '@storybook/testing-react';
-import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
+import userEvent from '@testing-library/user-event';
 import * as stories from './DecisionPoint.stories';
 
 const { Default } = composeStories(stories);
@@ -49,10 +49,10 @@ describe('When page loads', () => {
     await renderDefault();
 
     await waitFor(() => {
-      Default.parameters?.milestones.forEach((ms: any) => {
+      Default.parameters?.clinicalRequests.forEach((ms: any) => {
         if (ms.testResult) {
           expect(screen.getAllByRole('cell', {
-            name: new RegExp(ms.milestoneType.name, 'i'),
+            name: new RegExp(ms.clinicalRequestType.name, 'i'),
           }).length).toBeGreaterThan(0);
           expect(screen.getByRole('cell', {
             name: new RegExp(ms.testResult.description.slice(0, 75), 'i'),
@@ -75,6 +75,26 @@ describe('When page loads', () => {
     const clinician = Default.parameters?.clinician;
     await waitFor(() => {
       expect(screen.getByRole('option', { name: new RegExp(`${clinician.firstName} ${clinician.lastName}`, 'i') }));
+    });
+  });
+
+  it('Clicking `Add to MDT` should show dropdown and textarea', async () => {
+    await renderDefault();
+
+    const { click } = userEvent.setup();
+
+    expect(screen.queryByText(/mdt session/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/discussion points/i)).not.toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
+    });
+
+    screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/mdt session/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/discussion points/i)).toBeInTheDocument();
     });
   });
 });

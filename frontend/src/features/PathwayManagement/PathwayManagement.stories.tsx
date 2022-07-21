@@ -9,18 +9,18 @@ import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { CREATE_PATHWAY_MUTATION } from './tabpages/CreatePathwayTab';
 import { UPDATE_PATHWAY_MUTATION } from './tabpages/UpdatePathwayTab';
 import { DELETE_PATHWAY_MUTATION } from './tabpages/DeletePathwayTab';
-import PathwayManagementTabSet, { GET_MILESTONE_TYPES, GET_PATHWAYS } from './PathwayManagement';
+import PathwayManagementTabSet, { GET_CLINICALREQUEST_TYPES, GET_PATHWAYS } from './PathwayManagement';
 
-const milestoneTypes = [
+const clinicalRequestTypes = [
   {
     id: '1',
-    name: 'Test milestone type 1',
-    refName: 'ref test milestone type 1',
+    name: 'Test clinicalRequest type 1',
+    refName: 'ref test clinicalRequest type 1',
   },
   {
     id: '2',
-    name: 'Test milestone type 2',
-    refName: 'ref test milestone type 2',
+    name: 'Test clinicalRequest type 2',
+    refName: 'ref test clinicalRequest type 2',
   },
 ];
 
@@ -28,16 +28,16 @@ const pathways = [
   {
     id: '1',
     name: 'Test pathway 1',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'Test milestone type 1',
-        refName: 'ref test milestone type 1',
+        name: 'Test clinicalRequest type 1',
+        refName: 'ref test clinicalRequest type 1',
       },
       {
         id: '2',
-        name: 'Test milestone type 2',
-        refName: 'ref test milestone type 2',
+        name: 'Test clinicalRequest type 2',
+        refName: 'ref test clinicalRequest type 2',
       },
     ],
   },
@@ -47,16 +47,16 @@ const successfulPathwayCreationResult = {
   pathway: {
     id: '1',
     name: 'test pathway',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'test milestone one',
-        refName: 'ref test milestone one',
+        name: 'test clinicalRequest one',
+        refName: 'ref test clinicalRequest one',
       },
       {
         id: '2',
-        name: 'test milestone two',
-        refName: 'ref test milestone two',
+        name: 'test clinicalRequest two',
+        refName: 'ref test clinicalRequest two',
       },
     ],
   },
@@ -67,16 +67,16 @@ const successfulPathwayUpdateResult = {
   pathway: {
     id: '1',
     name: 'pathway one edited',
-    milestoneTypes: [
+    clinicalRequestTypes: [
       {
         id: '1',
-        name: 'Test milestone type 1',
-        refName: 'ref test milestone type 1',
+        name: 'Test clinicalRequest type 1',
+        refName: 'ref test clinicalRequest type 1',
       },
       {
         id: '2',
-        name: 'Test milestone type 2',
-        refName: 'ref test milestone type 2',
+        name: 'Test clinicalRequest type 2',
+        refName: 'ref test clinicalRequest type 2',
       },
     ],
   },
@@ -112,10 +112,10 @@ export const Default: ComponentStory<typeof PathwayManagementTabSet> = () => (
     mocks={
       [
         {
-          query: GET_MILESTONE_TYPES,
+          query: GET_CLINICALREQUEST_TYPES,
           mockFn: () => Promise.resolve({
             data: {
-              getMilestoneTypes: milestoneTypes,
+              getClinicalRequestTypes: clinicalRequestTypes,
             },
           }),
         },

@@ -13,7 +13,7 @@ type Query {
     getPathways: [Pathway!]!
     getUser(id:ID, username:String): User
     getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
-    getMilestoneTypes(pathwayId: ID): [MilestoneType!]
+    getClinicalRequestTypes(pathwayId: ID): [ClinicalRequestType!]
     getRolePermissions: [RolePermission!]
     getRoles: [Role!]!
 
@@ -55,12 +55,12 @@ type Mutation {
     deletePathway(id: ID!): DeletePayload!
     createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
 
-    importMilestone(input:MilestoneImportInput!): ImportMilestonePayload!
+    importClinicalRequest(input:ClinicalRequestImportInput!): ImportClinicalRequestPayload!
     lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
 }
 
 type Subscription {
-    milestoneResolved(clinicianID: ID): Milestone!
+    clinicalRequestResolved(clinicianID: ID): ClinicalRequest!
     onPathwayUpdated(
         pathwayId: ID
         includeDischarged: Boolean
@@ -104,8 +104,8 @@ type AddDecisionPointPayload {
     userErrors:[UserError!]    
 }
 
-type ImportMilestonePayload {
-    milestone: Milestone
+type ImportClinicalRequestPayload {
+    clinicalRequest: ClinicalRequest
     userErrors:[UserError!]
 }
 
@@ -133,7 +133,7 @@ type Pathway {
     id: ID!
     name: String!
     patients: [Patient]
-    milestoneTypes: [MilestoneType!]
+    clinicalRequestTypes: [ClinicalRequestType!]
 }
 
 type Patient {
@@ -198,10 +198,10 @@ type OnPathway {
     updatedAt: DateTime!
     referredAt: DateTime!
     decisionPoints: [DecisionPoint!]
-    milestones(
+    clinicalRequests(
         outstanding: Boolean = False
         limit: Int = 0
-    ): [Milestone!]
+    ): [ClinicalRequest!]
     underCareOf: User
     lockUser: User
     lockEndTime: DateTime
@@ -230,8 +230,8 @@ type DecisionPoint {
     updatedAt: DateTime!
     clinicHistory: String!
     comorbidities: String!
-    milestones: [Milestone!]
-    milestoneResolutions: [Milestone!]
+    clinicalRequests: [ClinicalRequest!]
+    clinicalRequestResolutions: [ClinicalRequest!]
 }
 
 type TestResult { 
@@ -244,7 +244,7 @@ type TestResult {
     updatedAt: DateTime!
 }
 
-type MilestoneType {
+type ClinicalRequestType {
     id: ID!
     refName: String!
     name: String!
@@ -255,10 +255,10 @@ type MilestoneType {
 }
 
 
-type Milestone {
+type ClinicalRequest {
     id: ID!
 
-    milestoneType: MilestoneType!
+    clinicalRequestType: ClinicalRequestType!
     onPathway: OnPathway!
     decisionPoint: DecisionPoint
     forwardDecisionPoint: DecisionPoint
@@ -269,7 +269,7 @@ type Milestone {
     currentState: String!                     # from SD
 }
 
-enum MilestoneState {
+enum ClinicalRequestState {
   INIT
   ACTIVE
   WAITING
@@ -279,7 +279,7 @@ enum MilestoneState {
 
 #### INPUT TYPES
 input TestResultInput{
-    milestoneId: ID!
+    clinicalRequestId: ID!
     description: String!
 }
 
@@ -288,20 +288,20 @@ input AddUserToGroupInput{
     groupName: String!
 }
 
-input MilestoneRequestInput {
-    milestoneTypeId: ID!
-    currentState: MilestoneState
+input ClinicalRequestRequestInput {
+    clinicalRequestTypeId: ID!
+    currentState: ClinicalRequestState
 }
 
-input MilestoneTypeInput{
+input ClinicalRequestTypeInput{
     id: ID!
 }
 
-input MilestoneImportInput {
+input ClinicalRequestImportInput {
     onPathwayId: ID!
-    milestoneTypeId: ID!
+    clinicalRequestTypeId: ID!
     description: String!
-    currentState: MilestoneState!
+    currentState: ClinicalRequestState!
 }
 
 input DecisionPointInput{
@@ -309,8 +309,8 @@ input DecisionPointInput{
     decisionType: DecisionType!
     clinicHistory: String!
     comorbidities: String
-    milestoneRequests: [MilestoneRequestInput!]
-    milestoneResolutions: [ID!]
+    clinicalRequestRequests: [ClinicalRequestRequestInput!]
+    clinicalRequestResolutions: [ID!]
 }
 input LockOnPathwayInput{
     onPathwayId: ID!
@@ -319,13 +319,13 @@ input LockOnPathwayInput{
 
 input PathwayInput{
     name: String!
-    milestoneTypes: [MilestoneTypeInput!]
+    clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 
 input UpdatePathwayInput{
     id: ID!
     name: String!
-    milestoneTypes: [MilestoneTypeInput!]
+    clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 
 input GroupInput{
@@ -344,5 +344,5 @@ input PatientInput{
     awaitingDecisionType: DecisionType
     referredAt: DateTime
 
-    milestones: [MilestoneRequestInput]
+    clinicalRequests: [ClinicalRequestRequestInput]
 }

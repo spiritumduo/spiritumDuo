@@ -2,7 +2,7 @@ from typing import List
 import pytest
 
 from models import Role, UserRole, User, Pathway, UserPathway
-from ..conftest import UserFixture
+from tests.conftest import UserFixture
 from hamcrest import (
     assert_that, equal_to,
     contains_inanyorder, contains_string,
@@ -72,8 +72,6 @@ async def test_valid_user_update_with_roles(
         path="/rest/updateuser/",
         json=user_update_details
     )
-
-    print(res.json())
 
     assert_that(res.status_code, equal_to(200))
     decoded = res.json()

@@ -5,17 +5,18 @@ import { useAppDispatch } from 'app/hooks';
 import { setIsTabDisabled } from 'components/ModalPatient.slice';
 
 export interface DecisionSubmissionSuccessProps {
-  milestones?: {
+  clinicalRequests?: {
     id: string;
     name: string;
   }[];
-  milestoneResolutions?: string[];
+  clinicalRequestResolutions?: string[];
+  onClose: (() => void);
 }
 
 const DecisionSubmissionSuccess = (
-  { milestones, milestoneResolutions }: DecisionSubmissionSuccessProps,
+  { clinicalRequests, clinicalRequestResolutions, onClose }: DecisionSubmissionSuccessProps,
 ): JSX.Element => {
-  const milestonesElement: JSX.Element[] | undefined = milestones?.map(
+  const clinicalRequestsElement: JSX.Element[] | undefined = clinicalRequests?.map(
     (m) => (<li key={ m.id }>{m.name}</li>),
   );
   const dispatch = useAppDispatch();
@@ -31,24 +32,24 @@ const DecisionSubmissionSuccess = (
         <div>
           <h2>Decision Submitted</h2>
           {
-            milestonesElement
+            clinicalRequestsElement
               ? (
                 <>
                   <strong>Requests sent:</strong>
                   <ul>
-                    { milestonesElement }
+                    { clinicalRequestsElement }
                   </ul>
                 </>
               )
               : ''
           }
           {
-            milestoneResolutions
+            clinicalRequestResolutions
               ? (
                 <div>These results have now been acknowledged:
                   <ul>
                     {
-                      milestoneResolutions?.map((m) => (
+                      clinicalRequestResolutions?.map((m) => (
                         <li key={ Math.random() }>{m}</li>
                       ))
                     }
@@ -63,7 +64,7 @@ const DecisionSubmissionSuccess = (
               receive confirmation of any requests shortly.
             </p>
           </div>
-          <Button className="float-end mt-lg-4" href="/app/">
+          <Button className="float-end mt-lg-4" onClick={ () => onClose() }>
             OK
           </Button>
         </div>

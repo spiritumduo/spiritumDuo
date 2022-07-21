@@ -23,25 +23,25 @@ const decisionPoints = [
     },
     addedAt: '2021-12-02T13:42:25.129062',
     updatedAt: '2021-12-02T13:42:25.129062',
-    milestones: [
+    clinicalRequests: [
       {
         id: '1',
         currentState: 'COMPLETED',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'X-Ray',
         },
       },
       {
         id: '2',
         currentState: 'WAITING',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'MRI Head',
         },
       },
       {
         id: '3',
         currentState: 'WAITING',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'Bronchoscopy',
         },
       },
@@ -58,18 +58,18 @@ const decisionPoints = [
     },
     addedAt: '2021-12-02T13:42:25.132480',
     updatedAt: '2021-12-02T13:42:25.132480',
-    milestones: [
+    clinicalRequests: [
       {
         id: '4',
         currentState: 'COMPLETED',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'X-Ray',
         },
       },
       {
         id: '5',
         currentState: 'WAITING',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'MRI Head',
         },
       },
@@ -86,18 +86,18 @@ const decisionPoints = [
     },
     addedAt: '2021-12-02T13:42:25.135691',
     updatedAt: '2021-12-02T13:42:25.135691',
-    milestones: [
+    clinicalRequests: [
       {
         id: '6',
         currentState: 'COMPLETED',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'X-Ray',
         },
       },
       {
         id: '7',
         currentState: 'COMPLETED',
-        milestoneType: {
+        clinicalRequestType: {
           name: 'Bronchoscopy',
         },
       },
