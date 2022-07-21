@@ -14,18 +14,14 @@ Here is a video describing the digital architecture, correct as of the 14th Apri
 
 Spiritum Duo is a new digital healthcare app, designed to speed up patient clinical pathways, improve staff workflows and reduce staff workloads. It has been built as a single page application (SPA) with progressive web app (PWA) features. The frontend communicates with the backend via graphQL. The backend is housed in separate Docker containers. An NGINX web server is used along with an Uvicorn ASGI webserver implementation for python. The Spiritum Duo backend is separated from the trust’s backend via a trust adaptor. The trust adaptor is unique to the trust and allows the Spiritum Duo frontend and backend to be decoupled from the inner workings of the trust it is operating within. This is to allow Spiritum Duo to be more modular. Spiritum Duo is built in an open source model, and all code is shared on [GitHub](https://github.com/spiritumduo/spiritumDuo). 
 
-<p align="center">
 ![alt text](/_images/digitalArchitectureOverview.png "Overview diagram")
-<p>
 <b>Figure 1.</b> Overview of digital architecture
 
 ### Frontend 
 
 The frontend is a [single page application](https://en.wikipedia.org/wiki/Single-page_application) with [progressive web application](https://web.dev/progressive-web-apps/) features. It is coded in [typescript](https://www.typescriptlang.org/). By using typescript, typing (enforcing of variable types, eg integers, strings, decimals, Booleans) is ensured. Typescript is eventually transpiled into the final javascript app. The [React library](https://reactjs.org/) is also used. The styling mirrors that of Government Digital Services (GDS) and NHS websites by using the [NHS React Components library](https://github.com/NHSDigital/nhsuk-react-components). Creation and visualisation of frontend components was done by using [Storybooks](https://storybook.js.org/). [Redux](https://redux.js.org/) is used to manage some elements of state (variables) and Apollo GraphgQL is used to manage state and the graphQL protocol to the backend. 
 
-<p align="center">
 ![alt text](/_images/frontendOverview.png "Frontend stack overview")
-</p>
 <b>Figure 2.</b> Overview of frontend stack
 
 ### Communication protocol 
@@ -44,9 +40,7 @@ The internet facing webserver is [NGINX](https://www.nginx.com/). HTTPS (port 44
 
 The backend of Spiritum Duo is programmed in python with typing hints to help with typing. Testing before pushing to the Github repo (repository) is undertaken to check that typing is enforced (I think it will be anyway). Unfortunately, python does not naturally support typing, and so we have used the method above to enforce it. A [Starlette ASGI framework](https://www.starlette.io/) is used for asynchonous web services. This supports websockets. The [Ariadne schema-first GraphQL server implementation](https://ariadnegraphql.org/) is used to create GraphQL schemas that communicate with the Spiritum Duo frontend. 
 
-<p align="center">
 ![alt text](/_images/backendOverview.png "Backend stack overview")
-</p>
 <b>Figure 3.</b> Overview of backend stack
 
 ### Data storage 
