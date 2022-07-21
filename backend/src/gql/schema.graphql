@@ -290,7 +290,7 @@ type OnMdt{
     outcome: String
     lockEndTime: Date
     lockUser: User
-    actioned: Boolean!
+    clinicalRequest: ClinicalRequest!
 }
 
 type OnPathway {
@@ -371,6 +371,7 @@ type ClinicalRequest {
     addedAt: DateTime!                        # from SD                      
     updatedAt: DateTime!                      # from SD
     currentState: String!                     # from SD
+    completedAt: DateTime
 }
 
 enum ClinicalRequestState {
@@ -392,7 +393,7 @@ input UpdateOnMdtInput{
     id: ID!
     reason: String!
     outcome: String
-    actioned: Boolean
+    completed: Boolean
 }
 input MdtInput{
     pathwayId: ID!
