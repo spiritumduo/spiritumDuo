@@ -534,7 +534,7 @@ async def insert_demo_data():
                     on_pathway_id=sd_onpathway.id,
                     test_result_reference_id=str(tie_testresult_ref.id),
                     current_state=ClinicalRequestState.COMPLETED,
-                    completed_at=datetime.now(),
+                    completed_at=datetime.datetime.now(),
                     clinical_request_type_id=general_clinical_request_types["referral_letter"].id,
                 )
 
@@ -551,7 +551,7 @@ async def insert_demo_data():
                     on_pathway_id=sd_onpathway.id,
                     test_result_reference_id=str(tie_testresult_cxr.id),
                     current_state=ClinicalRequestState.COMPLETED,
-                    completed_at=datetime.now(),
+                    completed_at=datetime.datetime.now(),
                     clinical_request_type_id=general_clinical_request_types["chest_xray"].id,
                 )
 
@@ -568,7 +568,7 @@ async def insert_demo_data():
                     on_pathway_id=sd_onpathway.id,
                     test_result_reference_id=str(tie_testresult_ctx.id),
                     current_state=ClinicalRequestState.COMPLETED,
-                    completed_at=datetime.now(),
+                    completed_at=datetime.datetime.now(),
                     clinical_request_type_id=general_clinical_request_types["ct_chest"].id,
                 )
 
