@@ -194,3 +194,48 @@ class ClinicalRequestByOnPathwayIdLoader(SdDataLoader):
             id=id, outstanding=outstanding, limit=limit
         )
         return await cls._get_loader_from_context(cls.loader_name, context).load(key)
+
+
+class ClinicalRequestByIdLoader(SdDataLoader):
+    """
+        This is class for loading clinical_requests and
+        caching the result in the request context
+    """
+
+    loader_name = "_clinical_request_by_on_id_loader"
+
+    async def fetch(self, keys: List[int]) -> Dict[int, List[ClinicalRequest]]:
+        result = None
+        async with self._db.acquire(reuse=False) as conn:
+            query = ClinicalRequest.query.where(ClinicalRequest.id.in_(keys))
+            result = await conn.all(query)
+        returnData = {}
+        for key in keys:
+            returnData[key] = None
+        for row in result:
+            returnData[row.id] = row
+        return returnData
+    
+    async def batch_load_fn(self, keys: List[int]) -> List[List[ClinicalRequest]]:
+        fetchDict = await self.fetch([int(i) for i in keys])
+        sortedData = []
+        for key in keys:
+            sortedData.append(fetchDict.get(int(key)))
+        return sortedData
+
+    @classmethod
+    async def load_from_id(
+            cls, context=None, id: int = None
+    ) -> List[ClinicalRequest]:
+        """
+            Load a multiple entries from their record ID
+
+            Parameters:
+                context (dict): request context
+                id (List[int]): IDs to find
+            Returns:
+                List[ClinicalRequest]
+        """
+
+        return await cls._get_loader_from_context(
+            cls.loader_name, context).load(id)
