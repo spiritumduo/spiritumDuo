@@ -24,7 +24,7 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 // GENERATED TYPES
 import { createDecisionPointVariables, createDecisionPoint } from 'features/DecisionPoint/__generated__/createDecisionPoint';
 import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
-import { DecisionType, ClinicalRequestRequestInput } from '../../__generated__/globalTypes';
+import { DecisionType, ClinicalRequestRequestInput, ClinicalRequestState } from '../../__generated__/globalTypes';
 
 // LOCAL COMPONENTS
 import ConfirmNoClinicalRequests from './components/ConfirmNoClinicalRequests';
@@ -301,7 +301,7 @@ const DecisionPointPage = (
     if (!hasBuiltHiddenConfirmationFields && data) {
       const outstandingTestResultIds: DecisionPointPageForm['clinicalRequestResolutions'] | undefined = data?.getPatient?.onPathways?.[0]?.clinicalRequests?.flatMap(
         (ms) => (
-          !ms.forwardDecisionPoint && ms.testResult
+          !ms.forwardDecisionPoint && ms.currentState === ClinicalRequestState.COMPLETED
             ? {
               id: ms.id,
               name: ms.clinicalRequestType.name,
