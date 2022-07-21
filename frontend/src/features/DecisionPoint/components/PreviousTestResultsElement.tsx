@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import classNames from 'classnames';
 import React, { useLayoutEffect, useMemo, useReducer } from 'react';
 import { Button, Col, Collapse, Row } from 'react-bootstrap';
@@ -6,7 +5,6 @@ import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
 
 import newResultImage from 'static/i/Image_Pasted_2022-31-01_at_11_31_45_png.png';
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
-import { MdtAlreadyExists } from 'features/MdtManagement/tabpages/UpdateMdtTab.stories';
 
 interface TestResultData {
   id: string;
@@ -46,10 +44,9 @@ const TestResultDataElement = ({ result, isCollapsed, onClick }: TestResultDataE
     <Col role="cell" xs={ 12 } sm={ 11 } xl={ 3 }>
       <p className="text-left">
         {result.clinicalRequestName}: <br />
-        Updated: {`${result.addedAt.toLocaleDateString()} ${result.addedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`} <br />
         { result.completedAt ? (
           <>
-            Completed: {`${result.completedAt?.toLocaleDateString()} ${result.completedAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+            {`${result.completedAt?.toLocaleDateString()} ${result.completedAt?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
           </>
         )
           : ''}
