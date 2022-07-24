@@ -1,6 +1,4 @@
 from ctypes import Union
-from asyncpg import UniqueViolationError
-from sqlalchemy import null
 
 from dataloaders import (
     OnPathwayByIdLoader,
@@ -88,10 +86,11 @@ async def CreateDecisionPoint(
             point
         added_at (datetime): the date and time of creation of the decision
             point (used for data creation scripts to add previous data)
-        clinical_request_resolutions (List[int]): a list of previous clinical_requests this
-            decision point will acknowledge
-        clinical_request_requests (List[Dict[str, int]]): a list of clinical_requests this
-            decision point will request
+        clinical_request_resolutions (List[int]): a list of previous
+            clinical_requests this decision point will acknowledge
+        clinical_request_requests (List[Dict[str, int]]): a list of
+            clinical_requests this decision point will request
+        mdt (Dict[str, str]): a list of data pertaining to MDT creation
     Returns:
         DecisionPoint: newly created decision point object
     """
@@ -114,12 +113,14 @@ async def CreateDecisionPoint(
     pathway = await PathwayByIdLoader.load_from_id(
         context, on_pathway.pathway_id)
 
-    userHasPathwayPermission: Union[UserPathway, None] = await UserPathway\
-        .query.where(UserPathway.user_id == clinician_id)\
-        .where(UserPathway.pathway_id == on_pathway.pathway_id)\
-        .gino.one_or_none()
+    async with db.acquire(reuse=False) as conn:
+        user_has_pathway_permission = await conn.one_or_none(
+            UserPathway
+            .query.where(UserPathway.user_id == clinician_id)
+            .where(UserPathway.pathway_id == on_pathway.pathway_id)
+        )
 
-    if userHasPathwayPermission is None:
+    if user_has_pathway_permission is None:
         raise UserDoesNotHavePathwayPermission(
             f"User ID: {clinician_id}"
             f"; Pathway ID: {on_pathway.pathway_id}"
@@ -168,41 +169,42 @@ async def CreateDecisionPoint(
     if clinical_request_requests is not None:
         pathwayId: int = on_pathway.pathway_id
 
-        validClinicalRequestTypes: Union[ClinicalRequestType, None] = \
+        valid_clinical_request_types: Union[ClinicalRequestType, None] = \
             await ClinicalRequestTypeLoaderByPathwayId.load_from_id(
                     context, pathwayId)
-        validClinicalRequestTypeIds = [str(mT.id) for mT in validClinicalRequestTypes]
+        valid_clinical_request_type_ids = [
+            str(mT.id) for mT in valid_clinical_request_types
+        ]
 
-        for requestInput in clinical_request_requests:
+        for request_input in clinical_request_requests:
             milestone_type: ClinicalRequestType = await ClinicalRequestTypeLoader.load_from_id(
-                context, str(requestInput['clinicalRequestTypeId']))
+                context, str(request_input['clinicalRequestTypeId']))
 
-            if str(milestone_type.id) not in validClinicalRequestTypeIds:
+            if str(milestone_type.id) not in valid_clinical_request_type_ids:
                 raise ClinicalRequestTypeIdNotOnPathway(milestone_type.id)
 
-            testResultRequest = TestResultRequest_IE()
-            testResultRequest.type_id = milestone_type.id
-            testResultRequest.hospital_number = patient.hospital_number
-            testResultRequest.pathway_name = pathway.name
+            test_result_request = TestResultRequest_IE()
+            test_result_request.type_id = milestone_type.id
+            test_result_request.hospital_number = patient.hospital_number
+            test_result_request.pathway_name = pathway.name
 
-            testResult = None
+            test_result = None
             if not milestone_type.is_mdt:
-                testResult = await trust_adapter.create_test_result(
-                    testResultRequest,
+                test_result = await trust_adapter.create_test_result(
+                    test_result_request,
                     auth_token=context['request'].cookies['SDSESSION']
                 )
             kwargs_clinical_request = {}
 
-            if testResult and testResult.id:
+            if test_result and test_result.id:
                 kwargs_clinical_request = {
-                    "test_result_reference_id": str(testResult.id)
+                    "test_result_reference_id": str(test_result.id)
                 }
 
             clinical_request: ClinicalRequest = await ClinicalRequest(
                 on_pathway_id=int(_decisionPoint.on_pathway_id),
                 decision_point_id=int(_decisionPoint.id),
-                clinical_request_type_id=int(testResultRequest.type_id),
-                # test_result_reference_id=str(testResult and testResult.id),
+                clinical_request_type_id=int(test_result_request.type_id),
                 **kwargs_clinical_request
             ).create()
 
@@ -216,7 +218,7 @@ async def CreateDecisionPoint(
                 )
 
             clinical_request_type = await ClinicalRequestType.get(
-                int(testResultRequest.type_id)
+                int(test_result_request.type_id)
             )
             if clinical_request_type.is_discharge:
                 await OnPathway.update\
@@ -225,10 +227,11 @@ async def CreateDecisionPoint(
                     .gino.scalar()
 
     if clinical_request_resolutions is not None:
-        for clinicalRequestId in clinical_request_resolutions:
+        for clinical_request_id in clinical_request_resolutions:
             await ClinicalRequest.update.values(
                 fwd_decision_point_id=int(_decisionPoint.id)
-            ).where(ClinicalRequest.id == int(clinicalRequestId)).gino.status()
+            ).where(ClinicalRequest.id == int(clinical_request_id))\
+                .gino.status()
 
     await OnPathway.update\
         .where(OnPathway.id == on_pathway_id)\
