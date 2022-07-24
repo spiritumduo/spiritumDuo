@@ -202,7 +202,7 @@ class ClinicalRequestByIdLoader(SdDataLoader):
         caching the result in the request context
     """
 
-    loader_name = "_clinical_request_by_on_id_loader"
+    loader_name = "_clinical_request_by_id_loader"
 
     async def fetch(self, keys: List[int]) -> Dict[int, List[ClinicalRequest]]:
         result = None
