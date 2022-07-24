@@ -58,9 +58,16 @@ async def UpdateOnMDT(
             int(clinical_request_id)
         )
 
-        await clinical_request.update(
-            current_state=ClinicalRequestState.COMPLETED,
-            completed_at=datetime.now()
-        ).apply()
+        if completed is True:
+
+            await clinical_request.update(
+                current_state=ClinicalRequestState.COMPLETED,
+                completed_at=datetime.now()
+            ).apply()
+        else:
+            await clinical_request.update(
+                current_state=ClinicalRequestState.WAITING,
+                completed_at=None
+            ).apply()
 
     return on_mdt
