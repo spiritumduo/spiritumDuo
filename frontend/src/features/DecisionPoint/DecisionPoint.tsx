@@ -45,6 +45,7 @@ export interface DecisionPointPageProps {
     lockEndTime: Date;
   }
   closeCallback?: () => void;
+  fromMdtId?: string;
 }
 
 export const GET_PATIENT_QUERY = gql`
@@ -171,7 +172,7 @@ type DecisionPointPageForm = {
 };
 
 const DecisionPointPage = (
-  { hospitalNumber, decisionType, onPathwayLock, closeCallback }: DecisionPointPageProps,
+  { hospitalNumber, decisionType, onPathwayLock, closeCallback, fromMdtId }: DecisionPointPageProps,
 ): JSX.Element => {
   // START HOOKS
   // CONTEXT
@@ -352,6 +353,7 @@ const DecisionPointPage = (
           clinicalRequestRequests: clinicalRequestRequests,
           clinicalRequestResolutions: values.clinicalRequestResolutions?.map((mr) => mr.id),
           mdt: addPatientToMdt,
+          fromMdtId: fromMdtId,
         },
       };
       mutation({ variables: variables });

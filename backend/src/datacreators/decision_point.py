@@ -17,13 +17,14 @@ from models import (
     MDT,
     db
 )
-from SdTypes import DecisionTypes
+from SdTypes import ClinicalRequestState, DecisionTypes
 from typing import List, Dict
 from containers import SDContainer
 from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from common import (
     DataCreatorInputErrors,
+    ReferencedItemDoesNotExistError,
     UserDoesNotHavePathwayPermission
 )
 
@@ -64,6 +65,7 @@ async def CreateDecisionPoint(
     clinical_request_resolutions: List[int] = None,
     clinical_request_requests: List[Dict[str, int]] = None,
     mdt: Dict[str, str] = None,
+    from_mdt_id: int = None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
 ):
     """
@@ -84,10 +86,14 @@ async def CreateDecisionPoint(
             clinical_requests this decision point will acknowledge
         clinical_request_requests (List[Dict[str, int]]): a list of
             clinical_requests this decision point will request
-        mdt (Dict[str, str]): a list of data pertaining to MDT creation
+        mdt (Dict[str, str]): a list of data pertaining to the MDT the
+            pt should be added to
+        from_mdt_id (int): the ID of the MDT this decision point is
+            created from
     Returns:
         DecisionPoint: newly created decision point object
     """
+
     errors = DataCreatorInputErrors()
 
     await trust_adapter.test_connection(
@@ -134,7 +140,9 @@ async def CreateDecisionPoint(
                 MDT.join(OnMdt, MDT.id == OnMdt.mdt_id).select()
                 .where(OnMdt.patient_id == on_pathway.patient_id)
                 .where(MDT.pathway_id == on_pathway.pathway_id)
+                .where(MDT.id == mdt_obj.id)
             )
+
         if patient_has_on_mdt:
             errors.addError(
                 'mdt',
@@ -153,6 +161,32 @@ async def CreateDecisionPoint(
     decision_point: DecisionPoint = await DecisionPoint.create(
         **decision_point_details
     )
+
+    if from_mdt_id is not None:
+        async with db.acquire(reuse=False) as conn:
+            mdt_clinical_request: ClinicalRequest = await conn.one_or_none(
+                ClinicalRequest.join(
+                    OnMdt, ClinicalRequest.id == OnMdt.clinical_request_id
+                ).join(
+                    MDT, MDT.id == OnMdt.mdt_id
+                ).select().where(
+                    MDT.id == int(from_mdt_id)
+                ).where(
+                    OnMdt.patient_id == on_pathway.patient_id
+                ).execution_options(loader=ClinicalRequest)
+            )
+
+        if mdt_clinical_request is None:
+            raise ReferencedItemDoesNotExistError(
+                f"ClinicalRequest does not exist; MDT: {from_mdt_id}; "
+                "Patient: {on_pathway.patient_id}"
+            )
+
+        if mdt_clinical_request.fwd_decision_point_id is None:
+            await mdt_clinical_request.update(
+                fwd_decision_point_id=decision_point.id,
+                current_state=ClinicalRequestState.COMPLETED
+            ).apply()
 
     patient: Patient = await PatientByIdLoader.load_from_id(
         context=context,

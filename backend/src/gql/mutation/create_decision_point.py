@@ -36,6 +36,8 @@ async def resolve_create_decision(
             input['clinicalRequestRequests']
     if "mdt" in input:
         decision_point_details['mdt'] = input['mdt']
+    if "fromMdtId" in input:
+        decision_point_details['from_mdt_id'] = input['fromMdtId']
 
     on_pathway: OnPathway = await OnPathway.get(int(input['onPathwayId']))
 

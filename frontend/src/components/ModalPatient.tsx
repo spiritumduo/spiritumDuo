@@ -212,6 +212,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
               decisionType={ DecisionPointType.CLINIC }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
               closeCallback={ () => closeCallback() }
+              fromMdtId={ onMdtWorkflow }
             />
           </TabPanel>
           <TabPanel>
