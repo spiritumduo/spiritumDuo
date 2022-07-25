@@ -2,7 +2,10 @@ import json
 import pytest
 from datetime import datetime
 from random import randint
-from models import Patient, OnPathway, DecisionPoint, ClinicalRequest
+from models import (
+    Patient, OnPathway, DecisionPoint, ClinicalRequest,
+    ClinicalRequestType, PathwayClinicalRequestType
+)
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, ClinicalRequestState
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
@@ -18,20 +21,30 @@ def decision_query() -> str:
             $comorbidities: String!
             $clinicalRequestOneId: ID!
             $clinicalRequestResolutionId: ID!
+            $mdtId: ID!
+            $mdtAddReason: String!
+            $clinicalRequestMdtId: ID!
         ){
             createDecisionPoint(input: {
-                onPathwayId: $onPathwayId,
-                decisionType: $decisionType,
-                clinicHistory: $clinicHistory,
-                comorbidities: $comorbidities,
+                onPathwayId: $onPathwayId
+                decisionType: $decisionType
+                clinicHistory: $clinicHistory
+                comorbidities: $comorbidities
                 clinicalRequestRequests:[
                     {
                         clinicalRequestTypeId: $clinicalRequestOneId
+                    },
+                    {
+                        clinicalRequestTypeId: $clinicalRequestMdtId
                     }
                 ]
                 clinicalRequestResolutions:[
                     $clinicalRequestResolutionId
                 ]
+                mdt: {
+                    id: $mdtId
+                    reason: $mdtAddReason
+                }
             })
             {
                 decisionPoint {
@@ -45,6 +58,12 @@ def decision_query() -> str:
                         pathway{
                             id
                             name
+                        }
+                        patient{
+                            onMdts(id: $mdtId){
+                                id
+                                reason
+                            }
                         }
                     }
                     clinicalRequests{
@@ -80,7 +99,8 @@ def decision_query() -> str:
     """
 
 
-# Scenario: a patient needs a decision point added and clinical_requests requested
+# Scenario: a patient needs a decision point added and clinical_requests
+# requested
 @pytest.mark.asyncio
 async def test_add_decision_point_to_patient(
     mock_trust_adapter, test_user,
@@ -88,10 +108,11 @@ async def test_add_decision_point_to_patient(
     clinical_request_create_permission, decision_query,
     test_pathway, test_clinical_request_type,
     httpx_test_client, httpx_login_user,
-    on_mdt_create_permission
+    on_mdt_create_permission, test_mdt
 ):
     """
-    When: we run the GraphQL mutation to add the decision point and clinical_requests
+    When: we run the GraphQL mutation to add the decision point and
+    clinical_requests
     """
     mock_trust_adapter.test_connection.return_value = True
 
@@ -171,6 +192,17 @@ async def test_add_decision_point_to_patient(
         )
     mock_trust_adapter.load_patient = load_patient
 
+    mdt_type = await ClinicalRequestType.create(
+        name="mdt type",
+        ref_name="mdt_type",
+        is_mdt=True
+    )
+
+    await PathwayClinicalRequestType.create(
+        pathway_id=test_pathway.id,
+        clinical_request_type_id=mdt_type.id
+    )
+
     create_decision_point_result = await httpx_test_client.post(
         url="graphql",
         json={
@@ -181,7 +213,10 @@ async def test_add_decision_point_to_patient(
                 "clinicHistory": DECISION_POINT.clinic_history,
                 "comorbidities": DECISION_POINT.comorbidities,
                 "clinicalRequestOneId": test_clinical_request_type.id,
-                "clinicalRequestResolutionId": FIRST_MILESTONE.id
+                "clinicalRequestResolutionId": FIRST_MILESTONE.id,
+                "mdtAddReason": "this is a test reason",
+                "mdtId": test_mdt.id,
+                "clinicalRequestMdtId": mdt_type.id
             }
         }
     )
@@ -197,6 +232,9 @@ async def test_add_decision_point_to_patient(
         create_decision_point_result.text
     )['data']['createDecisionPoint']['decisionPoint']
 
+    print(decision_point)
+    
+    assert_that(decision_point, not_none())
     assert_that(decision_point['id'], not_none())
     assert_that(decision_point['decisionType'], DECISION_POINT.decision_type)
     assert_that(decision_point['clinicHistory'], DECISION_POINT.clinic_history)
@@ -228,7 +266,10 @@ async def test_add_decision_point_to_patient(
 
     assert_that(decision_point['clinicalRequests'][0], not_none())
     assert_that(decision_point['clinicalRequests'][0]['id'], not_none())
-    assert_that(decision_point['clinicalRequests'][0]['clinicalRequestType'], not_none())
+    assert_that(
+        decision_point['clinicalRequests'][0]['clinicalRequestType'],
+        not_none()
+    )
     assert_that(
         decision_point['clinicalRequests'][0]['clinicalRequestType']['id'],
         test_clinical_request_type.id)
@@ -238,7 +279,17 @@ async def test_add_decision_point_to_patient(
     assert_that(decision_point['clinicalRequests'][0]['testResult'], none())
     assert_that(decision_point['clinicalRequestResolutions'], not_none())
     assert_that(decision_point['clinicalRequestResolutions'][0], not_none())
-    assert_that(decision_point['clinicalRequestResolutions'][0]['id'], not_none())
+    assert_that(
+        decision_point['clinicalRequestResolutions'][0]['id'], not_none()
+    )
+    assert_that(
+        decision_point['onPathway']['patient']['onMdts'],
+        not_none()
+    )
+    assert_that(
+        decision_point['onPathway']['patient']['onMdts'][0]['reason'],
+        equal_to("this is a test reason")
+    )
 
 
 async def test_user_lacks_permission(login_user, test_client, decision_query):
@@ -255,7 +306,10 @@ async def test_user_lacks_permission(login_user, test_client, decision_query):
                 "clinicHistory": "test",
                 "comorbidities": "test",
                 "clinicalRequestOneId": "1",
-                "clinicalRequestResolutionId": "1"
+                "clinicalRequestResolutionId": "1",
+                "mdtAddReason": "this is a test reason",
+                "mdtId": "42",
+                "clinicalRequestMdtId": "1"
             }
         }
     )
