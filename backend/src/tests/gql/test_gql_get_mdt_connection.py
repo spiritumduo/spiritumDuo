@@ -1,6 +1,8 @@
 from datetime import datetime
 import json
+from typing import List
 import pytest
+from tests.conftest import UserFixture
 from models import MDT
 from hamcrest import (
     assert_that, equal_to,
@@ -14,19 +16,13 @@ from hamcrest import (
 @pytest.mark.asyncio
 async def test_get_mdt_connection(
     mdt_read_permission,
-    test_mdt, test_user,
+    test_mdts: List[MDT], test_user: UserFixture,
     httpx_test_client, httpx_login_user,
     test_pathway
 ):
     """
     Given: we have MDTs in our database
     """
-    mdt = await MDT.create(
-        pathway_id=test_pathway.id,
-        creator_user_id=test_user.user.id,
-        location='test',
-        planned_at=datetime(3030, 1, 1)
-    )
 
     """
     When: we execute the query
@@ -75,12 +71,15 @@ async def test_get_mdt_connection(
         get_mdt_conn_query.text
     )['data']['getMdtConnection']
 
+    print(mdt_list)
+    print([mdt.id for mdt in test_mdts])
+
     """
     Then: we get one mdt on the pathway
     """
     assert_that(
         mdt_list['edges'][0]['node']['id'],
-        equal_to(str(test_mdt.id))
+        equal_to(str(test_mdts[0].id))
     )
 
     """
@@ -129,7 +128,7 @@ async def test_get_mdt_connection(
         )['data']['getMdtConnection'],
         not_none()
     )
-    patient_list_cursor = json.loads(
+    connection_result = json.loads(
         get_mdt_conn_query_cursor.text
     )['data']['getMdtConnection']
 
@@ -137,8 +136,8 @@ async def test_get_mdt_connection(
     Then: we get all the second mdt on that pathway
     """
     assert_that(
-        patient_list_cursor['edges'][0]['node']['id'],
-        equal_to(str(mdt.id))
+        connection_result['edges'][0]['node']['id'],
+        equal_to(str(test_mdts[1].id))
     )
 
 

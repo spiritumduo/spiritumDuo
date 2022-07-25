@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+from typing import List
 import pytest
 from models import MDT, User, UserMDT
 from hamcrest import (
@@ -59,7 +60,7 @@ async def test_update_mdt(
     mdt_update_permission,
     mdt_update_mutation,
     httpx_test_client, httpx_login_user,
-    test_mdt: MDT, test_user
+    test_mdts: List[MDT], test_user
 ):
     USER_INFO = {
         "first_name": "Test",
@@ -79,7 +80,7 @@ async def test_update_mdt(
     )
 
     await UserMDT.create(
-        mdt_id=test_mdt.id,
+        mdt_id=test_mdts[0].id,
         user_id=_USER.id
     )
 
@@ -96,7 +97,7 @@ async def test_update_mdt(
         json={
             "query": mdt_update_mutation,
             "variables": {
-                "id": test_mdt.id,
+                "id": test_mdts[0].id,
                 "location": _MDT.location,
                 "plannedAt": _MDT.planned_at,
                 "users": [test_user.user.id]

@@ -178,22 +178,36 @@ async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role
 
 
 @pytest.fixture
-async def test_mdt(test_user: UserFixture, test_pathway: Pathway):
-    mdt_info = {
-        "planned_at": datetime.date(3000, 1, 1),
-        "location": "In a cabin in the woods",
-        "pathway_id": test_pathway.id
-    }
-    mdt = await MDT.create(
-        **mdt_info,
-        creator_user_id=test_user.user.id
-    )
-    return mdt
+async def test_mdts(test_user: UserFixture, test_pathway: Pathway):
+
+    list_of_mdt_info = [
+        {
+            "planned_at": datetime.date(3000, 1, 1),
+            "location": "In a cabin in the woods",
+            "pathway_id": test_pathway.id
+        },
+        {
+            "planned_at": datetime.date(3000, 5, 1),
+            "location": "Out by the lake",
+            "pathway_id": test_pathway.id
+        }
+    ]
+
+    list_of_mdts: List[MDT] = []
+
+    for mdt_info in list_of_mdt_info:
+        list_of_mdts.append(
+            await MDT.create(
+                **mdt_info,
+                creator_user_id=test_user.user.id
+            )
+        )
+    return list_of_mdts
 
 
 @pytest.fixture
 async def test_on_mdts(
-    test_user: UserFixture, test_mdt: MDT,
+    test_user: UserFixture, test_mdts: List[MDT],
     test_patients_on_pathway: List[OnPathway],
     test_clinical_request_type: ClinicalRequestType
 ):
@@ -206,7 +220,7 @@ async def test_on_mdts(
             clinical_request_type_id=test_clinical_request_type.id,
         )
         on_mdts.append(await OnMdt.create(
-            mdt_id=test_mdt.id,
+            mdt_id=test_mdts[0].id,
             patient_id=op.patient_id,
             user_id=test_user.user.id,
             reason="test reason",

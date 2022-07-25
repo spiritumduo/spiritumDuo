@@ -15,7 +15,7 @@ from hamcrest import (
 async def test_get_on_mdt_connection(
     mdt_read_permission, patient_read_permission,
     httpx_test_client, httpx_login_user,
-    test_on_mdts: List[OnMdt], test_mdt: MDT
+    test_on_mdts: List[OnMdt], test_mdts: List[MDT]
 ):
 
     """
@@ -45,7 +45,7 @@ async def test_get_on_mdt_connection(
                 }
             """,
             "variables": {
-                "mdtId": test_mdt.id,
+                "mdtId": test_mdts[0].id,
                 "first": 9
             }
         }
@@ -102,7 +102,7 @@ async def test_get_on_mdt_connection(
                 }
             """,
             "variables": {
-                "mdtId": test_mdt.id,
+                "mdtId": test_mdts[0].id,
                 "after": mdt_list['edges'][8]['cursor'],
                 "first": 2
             }
