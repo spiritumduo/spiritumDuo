@@ -131,7 +131,6 @@ const schema = yup.object({
   id: yup.number().positive().required(),
   reason: yup.string().required('A reason is required'),
   outcome: yup.string(),
-  completed: yup.boolean().required(),
 });
 
 interface PatientMdtTabProps{
@@ -190,7 +189,6 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
         id: editingRow.onMdtId,
         unlock: false,
       } });
-      setValue('completed', editingRow.completed);
     } else if (editingRow === null && hasEditingRowLock) {
       lockMutation({ variables: {
         id: hasEditingRowLock,
@@ -204,7 +202,6 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
       id: editingRow?.onMdtId,
       reason: editingRow?.reason,
       outcome: editingRow?.outcome || '',
-      completed: editingRow?.completed,
     }),
     [editingRow, reset],
   );
@@ -215,7 +212,6 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
       setValue('id', lockData?.lockOnMdt?.onMdt?.id);
     } else {
       setHasRowEditingLock(null);
-      // setEditingRow(null);
     }
   }, [lockData, setValue, user?.id]);
 
@@ -244,7 +240,6 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
         id: variables.id,
         reason: variables.reason,
         outcome: variables.outcome,
-        completed: !!variables.completed,
       },
     } });
     await refetch();
@@ -304,24 +299,12 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
                       }
                     </Table.Cell>
                     <Table.Cell>
-                      {
-                        (editingRow?.onMdtId === element.onMdtId && hasEditingRowLock)
-                          ? (
-                            <CheckboxBox
-                              { ...register('completed') }
-                            >
-                              &nbsp;
-                            </CheckboxBox>
-                          )
-                          : (
-                            <CheckboxBox
-                              disabled
-                              defaultChecked={ element.completed }
-                            >
-                              &nbsp;
-                            </CheckboxBox>
-                          )
-                      }
+                      <CheckboxBox
+                        disabled
+                        defaultChecked={ element.completed }
+                      >
+                        &nbsp;
+                      </CheckboxBox>
                     </Table.Cell>
                     <Table.Cell>
                       {

@@ -1,7 +1,4 @@
-from datetime import datetime
-from SdTypes import ClinicalRequestState
-from common import ReferencedItemDoesNotExistError
-from models import MDT, OnMdt, UserPathway, ClinicalRequest
+from models import MDT, OnMdt, UserPathway
 from models.db import db
 
 
@@ -18,14 +15,13 @@ async def UpdateOnMDT(
     id: int = None,
     reason: str = None,
     outcome: str = None,
-    completed: bool = None,
 ):
     if id is None:
-        raise ReferencedItemDoesNotExistError("ID not provided")
+        raise TypeError("ID is None")
     elif context is None:
-        raise ReferencedItemDoesNotExistError("Context not provided")
+        raise TypeError("Context is None")
     elif reason is None:
-        raise ReferencedItemDoesNotExistError("Reason not provided")
+        raise TypeError("Reason is None")
 
     query: str = OnMdt.join(MDT, OnMdt.mdt_id == MDT.id)\
         .join(UserPathway, MDT.pathway_id == UserPathway.pathway_id)\
@@ -50,24 +46,5 @@ async def UpdateOnMDT(
         await on_mdt.update(reason=reason, outcome=outcome).apply()
     else:
         await on_mdt.update(reason=reason).apply()
-
-    if completed is not None:
-        clinical_request_id = on_mdt.clinical_request_id
-
-        clinical_request: ClinicalRequest = await ClinicalRequest.get(
-            int(clinical_request_id)
-        )
-
-        if completed is True:
-
-            await clinical_request.update(
-                current_state=ClinicalRequestState.COMPLETED,
-                completed_at=datetime.now()
-            ).apply()
-        else:
-            await clinical_request.update(
-                current_state=ClinicalRequestState.WAITING,
-                completed_at=None
-            ).apply()
 
     return on_mdt

@@ -52,7 +52,7 @@ test('on load it autofills information as read-only', async () => {
   });
 });
 
-test('when pressing edit button text fields become text areas and checkbox enabled', async () => {
+test('when pressing edit button text fields become text areasd', async () => {
   await renderDefault();
   const { click } = userEvent.setup();
 
@@ -64,9 +64,6 @@ test('when pressing edit button text fields become text areas and checkbox enabl
 
   await waitFor(() => {
     expect(screen.queryAllByRole(/textbox/i).length).toEqual(2);
-  });
-  await waitFor(() => {
-    expect((screen.getByRole('checkbox') as HTMLInputElement).disabled).toBeFalsy();
   });
 });
 

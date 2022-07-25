@@ -21,7 +21,6 @@ async def resolve_update_on_mdt(
             context=info.context,
             id=input['id'],
             reason=input['reason'],
-            completed=input['completed'] if 'completed' in input else None,
             outcome=input['outcome'] if 'outcome' in input else '',
         )
     except OnMdtLockedByOtherUser:
