@@ -59,6 +59,7 @@ export interface DecisionPointInput {
   clinicalRequestRequests?: ClinicalRequestRequestInput[] | null;
   clinicalRequestResolutions?: string[] | null;
   mdt?: AddPatientToMdtInput | null;
+  fromMdtId?: string | null;
 }
 
 export interface FeedbackInput {
@@ -107,7 +108,6 @@ export interface UpdateOnMdtInput {
   id: string;
   reason: string;
   outcome?: string | null;
-  completed?: boolean | null;
 }
 
 export interface UpdatePathwayInput {
