@@ -1,10 +1,13 @@
 import json
+from typing import List
 import pytest
 from datetime import datetime
 from random import randint
+from tests.conftest import UserFixture
 from models import (
     Patient, OnPathway, DecisionPoint, ClinicalRequest,
-    ClinicalRequestType, PathwayClinicalRequestType
+    ClinicalRequestType, PathwayClinicalRequestType,
+    OnMdt, Pathway, MDT
 )
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, ClinicalRequestState
@@ -24,6 +27,7 @@ def decision_query() -> str:
             $mdtId: ID!
             $mdtAddReason: String!
             $clinicalRequestMdtId: ID!
+            $fromMdtId: ID
         ){
             createDecisionPoint(input: {
                 onPathwayId: $onPathwayId
@@ -45,6 +49,7 @@ def decision_query() -> str:
                     id: $mdtId
                     reason: $mdtAddReason
                 }
+                fromMdtId: $fromMdtId
             })
             {
                 decisionPoint {
@@ -103,12 +108,12 @@ def decision_query() -> str:
 # requested
 @pytest.mark.asyncio
 async def test_add_decision_point_to_patient(
-    mock_trust_adapter, test_user,
+    mock_trust_adapter, test_user: UserFixture,
     decision_create_permission,
     clinical_request_create_permission, decision_query,
-    test_pathway, test_clinical_request_type,
+    test_pathway: Pathway, test_clinical_request_type,
     httpx_test_client, httpx_login_user,
-    on_mdt_create_permission, test_mdt
+    on_mdt_create_permission, test_mdts: List[MDT]
 ):
     """
     When: we run the GraphQL mutation to add the decision point and
@@ -116,12 +121,12 @@ async def test_add_decision_point_to_patient(
     """
     mock_trust_adapter.test_connection.return_value = True
 
-    PATIENT = await Patient.create(
+    PATIENT: Patient = await Patient.create(
         hospital_number=f"fMRN{randint(100000,999999)}",
         national_number=f"fNHS{randint(100000000,999999999)}",
     )
 
-    ONPATHWAY = await OnPathway.create(
+    ONPATHWAY: OnPathway = await OnPathway.create(
         patient_id=PATIENT.id,
         pathway_id=test_pathway.id,
         is_discharged=False,
@@ -129,13 +134,13 @@ async def test_add_decision_point_to_patient(
         lock_end_time=datetime(2030, 1, 1, 3, 0, 0)
     )
 
-    FIRST_MILESTONE = await ClinicalRequest.create(
+    FIRST_MILESTONE: ClinicalRequest = await ClinicalRequest.create(
         on_pathway_id=ONPATHWAY.id,
         test_result_reference_id="1000",
         clinical_request_type_id=test_clinical_request_type.id
     )
 
-    DECISION_POINT = DecisionPoint(
+    DECISION_POINT: DecisionPoint = DecisionPoint(
         clinician_id=test_user.user.id,
         on_pathway_id=ONPATHWAY.id,
         decision_type=DecisionTypes.TRIAGE,
@@ -143,7 +148,7 @@ async def test_add_decision_point_to_patient(
         comorbidities="Test data go brrrrrrt"
     )
 
-    FIRST_TEST_RESULT = TestResult_IE(
+    FIRST_TEST_RESULT: TestResult_IE = TestResult_IE(
         id=1000,
         current_state=ClinicalRequestState.COMPLETED,
         added_at=datetime.now(),
@@ -151,7 +156,7 @@ async def test_add_decision_point_to_patient(
         description="This is a test description!",
         type_reference_name=test_clinical_request_type.ref_name,
     )
-    SECOND_TEST_RESULT = TestResult_IE(
+    SECOND_TEST_RESULT: TestResult_IE = TestResult_IE(
         id=2000,
         current_state=ClinicalRequestState.INIT,
         added_at=datetime.now(),
@@ -192,7 +197,7 @@ async def test_add_decision_point_to_patient(
         )
     mock_trust_adapter.load_patient = load_patient
 
-    mdt_type = await ClinicalRequestType.create(
+    mdt_type: ClinicalRequestType = await ClinicalRequestType.create(
         name="mdt type",
         ref_name="mdt_type",
         is_mdt=True
@@ -201,6 +206,20 @@ async def test_add_decision_point_to_patient(
     await PathwayClinicalRequestType.create(
         pathway_id=test_pathway.id,
         clinical_request_type_id=mdt_type.id
+    )
+
+    mdt_clinical_request: ClinicalRequest = await ClinicalRequest.create(
+        on_pathway_id=ONPATHWAY.id,
+        clinical_request_type_id=mdt_type.id
+    )
+
+    on_mdt: OnMdt = await OnMdt.create(
+        mdt_id=test_mdts[1].id,
+        patient_id=PATIENT.id,
+        user_id=test_user.user.id,
+        reason="test reason",
+        outcome="test outcome",
+        clinical_request_id=mdt_clinical_request.id
     )
 
     create_decision_point_result = await httpx_test_client.post(
@@ -215,8 +234,9 @@ async def test_add_decision_point_to_patient(
                 "clinicalRequestOneId": test_clinical_request_type.id,
                 "clinicalRequestResolutionId": FIRST_MILESTONE.id,
                 "mdtAddReason": "this is a test reason",
-                "mdtId": test_mdt.id,
-                "clinicalRequestMdtId": mdt_type.id
+                "mdtId": test_mdts[0].id,
+                "clinicalRequestMdtId": mdt_type.id,
+                "fromMdtId": test_mdts[1].id,
             }
         }
     )
@@ -233,7 +253,7 @@ async def test_add_decision_point_to_patient(
     )['data']['createDecisionPoint']['decisionPoint']
 
     print(decision_point)
-    
+
     assert_that(decision_point, not_none())
     assert_that(decision_point['id'], not_none())
     assert_that(decision_point['decisionType'], DECISION_POINT.decision_type)
@@ -291,6 +311,16 @@ async def test_add_decision_point_to_patient(
         equal_to("this is a test reason")
     )
 
+    check_on_mdt_clinical_request: ClinicalRequest = await ClinicalRequest.\
+        join(
+            OnMdt, OnMdt.clinical_request_id == ClinicalRequest.id
+        ).select().where(OnMdt.id == on_mdt.id).gino.one_or_none()
+
+    assert_that(
+        check_on_mdt_clinical_request.current_state,
+        equal_to(ClinicalRequestState.COMPLETED)
+    )
+
 
 async def test_user_lacks_permission(login_user, test_client, decision_query):
     """
@@ -309,7 +339,8 @@ async def test_user_lacks_permission(login_user, test_client, decision_query):
                 "clinicalRequestResolutionId": "1",
                 "mdtAddReason": "this is a test reason",
                 "mdtId": "42",
-                "clinicalRequestMdtId": "1"
+                "clinicalRequestMdtId": "1",
+                "fromMdtId": "42"
             }
         }
     )
