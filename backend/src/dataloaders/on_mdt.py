@@ -12,7 +12,7 @@ class OnMdtByIdLoader(DataLoader):
             loader_name (str): unique name of loader to cache data under
     """
 
-    loader_name = "_on_pathway_loader"
+    loader_name = "_on_mdt_by_id_loader"
     _db = None
 
     def __init__(self, db):
