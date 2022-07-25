@@ -183,6 +183,7 @@ async def CreateDecisionPoint(
             clinical_request_request.hospital_number = patient.hospital_number
             clinical_request_request.pathway_name = pathway.name
 
+            test_result = None
             if not milestone_type.is_mdt:
                 test_result = await trust_adapter.create_test_result(
                     clinical_request_request,
