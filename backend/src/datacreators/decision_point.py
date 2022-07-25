@@ -1,5 +1,4 @@
 from ctypes import Union
-
 from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
@@ -23,10 +22,8 @@ from typing import List, Dict
 from containers import SDContainer
 from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
-from datetime import datetime
 from common import (
     DataCreatorInputErrors,
-    ReferencedItemDoesNotExistError,
     UserDoesNotHavePathwayPermission
 )
 
@@ -64,7 +61,6 @@ async def CreateDecisionPoint(
     decision_type: DecisionTypes = None,
     clinic_history: str = None,
     comorbidities: str = None,
-    added_at: datetime = None,
     clinical_request_resolutions: List[int] = None,
     clinical_request_requests: List[Dict[str, int]] = None,
     mdt: Dict[str, str] = None,
@@ -84,8 +80,6 @@ async def CreateDecisionPoint(
             decision point
         comorbidities (str): the comorbidities to be linked to the decision
             point
-        added_at (datetime): the date and time of creation of the decision
-            point (used for data creation scripts to add previous data)
         clinical_request_resolutions (List[int]): a list of previous
             clinical_requests this decision point will acknowledge
         clinical_request_requests (List[Dict[str, int]]): a list of
@@ -101,7 +95,7 @@ async def CreateDecisionPoint(
     )
 
     if context is None:
-        raise ReferencedItemDoesNotExistError("Context is not provided")
+        raise TypeError("Context provided is None")
     on_pathway_id = int(on_pathway_id)
     clinician_id = int(clinician_id)
 
@@ -155,10 +149,8 @@ async def CreateDecisionPoint(
         "clinic_history": clinic_history,
         "comorbidities": comorbidities,
     }
-    if added_at:
-        decision_point_details['added_at'] = added_at
 
-    _decisionPoint: DecisionPoint = await DecisionPoint.create(
+    decision_point: DecisionPoint = await DecisionPoint.create(
         **decision_point_details
     )
 
@@ -166,6 +158,7 @@ async def CreateDecisionPoint(
         context=context,
         id=int(on_pathway.patient_id)
     )
+
     if clinical_request_requests is not None:
         pathwayId: int = on_pathway.pathway_id
 
@@ -177,34 +170,35 @@ async def CreateDecisionPoint(
         ]
 
         for request_input in clinical_request_requests:
-            milestone_type: ClinicalRequestType = await ClinicalRequestTypeLoader.load_from_id(
-                context, str(request_input['clinicalRequestTypeId']))
+            milestone_type: ClinicalRequestType = await \
+                ClinicalRequestTypeLoader.load_from_id(
+                    context, str(request_input['clinicalRequestTypeId'])
+                )
 
             if str(milestone_type.id) not in valid_clinical_request_type_ids:
                 raise ClinicalRequestTypeIdNotOnPathway(milestone_type.id)
 
-            test_result_request = TestResultRequest_IE()
-            test_result_request.type_id = milestone_type.id
-            test_result_request.hospital_number = patient.hospital_number
-            test_result_request.pathway_name = pathway.name
+            clinical_request_request = TestResultRequest_IE()
+            clinical_request_request.type_id = milestone_type.id
+            clinical_request_request.hospital_number = patient.hospital_number
+            clinical_request_request.pathway_name = pathway.name
 
-            test_result = None
             if not milestone_type.is_mdt:
                 test_result = await trust_adapter.create_test_result(
-                    test_result_request,
+                    clinical_request_request,
                     auth_token=context['request'].cookies['SDSESSION']
                 )
             kwargs_clinical_request = {}
 
-            if test_result and test_result.id:
+            if test_result is not None and test_result.id:
                 kwargs_clinical_request = {
                     "test_result_reference_id": str(test_result.id)
                 }
 
             clinical_request: ClinicalRequest = await ClinicalRequest(
-                on_pathway_id=int(_decisionPoint.on_pathway_id),
-                decision_point_id=int(_decisionPoint.id),
-                clinical_request_type_id=int(test_result_request.type_id),
+                on_pathway_id=int(decision_point.on_pathway_id),
+                decision_point_id=int(decision_point.id),
+                clinical_request_type_id=int(clinical_request_request.type_id),
                 **kwargs_clinical_request
             ).create()
 
@@ -217,9 +211,10 @@ async def CreateDecisionPoint(
                     clinical_request_id=clinical_request.id
                 )
 
-            clinical_request_type = await ClinicalRequestType.get(
-                int(test_result_request.type_id)
-            )
+            clinical_request_type: ClinicalRequestType = await \
+                ClinicalRequestType.get(
+                    int(clinical_request_request.type_id)
+                )
             if clinical_request_type.is_discharge:
                 await OnPathway.update\
                     .where(OnPathway.id == on_pathway_id)\
@@ -229,14 +224,14 @@ async def CreateDecisionPoint(
     if clinical_request_resolutions is not None:
         for clinical_request_id in clinical_request_resolutions:
             await ClinicalRequest.update.values(
-                fwd_decision_point_id=int(_decisionPoint.id)
+                fwd_decision_point_id=int(decision_point.id)
             ).where(ClinicalRequest.id == int(clinical_request_id))\
                 .gino.status()
 
     await OnPathway.update\
         .where(OnPathway.id == on_pathway_id)\
-        .where(OnPathway.under_care_of_id == None)\
+        .where(OnPathway.under_care_of_id.is_(None))\
         .values(under_care_of_id=context['request']['user'].id)\
         .gino.scalar()
 
-    return _decisionPoint
+    return decision_point
