@@ -14,9 +14,6 @@ from typing import Callable, List, Optional
 from datetime import datetime, timedelta
 from functools import wraps
 
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 class PermissionsError(HTTPException):
     """

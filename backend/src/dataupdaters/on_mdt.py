@@ -1,6 +1,7 @@
 from common import DataCreatorInputErrors, ReferencedItemDoesNotExistError
 from models import MDT, OnMdt, UserPathway
 from models.db import db
+from gino.engine import GinoConnection
 
 
 class OnMdtLockedByOtherUser(Exception):
@@ -18,6 +19,7 @@ async def UpdateOnMDT(
     outcome: str = None,
     actioned: bool = None,
     order: int = None,
+    conn: GinoConnection = None,
 ):
     if id is None:
         raise ReferencedItemDoesNotExistError("ID not provided")
@@ -34,13 +36,19 @@ async def UpdateOnMDT(
         ).distinct(UserPathway.user_id)\
         .execution_options(loader=OnMdt)
 
-    async with db.acquire(reuse=False) as conn:
+    if conn is None:
+        async with db.acquire(reuse=False) as conn:
+            on_mdt: OnMdt = await conn.one_or_none(query)
+    else:
         on_mdt: OnMdt = await conn.one_or_none(query)
 
     if on_mdt is None:
         raise PermissionError()
 
-    if on_mdt.lock_user_id != context["request"].user.id:
+    if on_mdt.lock_user_id != context["request"].user.id\
+            and reason is not None\
+            and outcome is not None\
+            and actioned is not None:
         raise OnMdtLockedByOtherUser()
 
     update_values = {}

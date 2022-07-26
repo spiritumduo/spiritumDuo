@@ -81,6 +81,7 @@ type Mutation {
     updateMdt(input:UpdateMdtInput!): MdtPayload!
     deleteMdt(id: ID!): DeletePayload!
     updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
+    updateOnMdtList(input: UpdateOnMdtListInput!): OnMdtListPayload!
     deleteOnMdt(id: ID!): DeletePayload!
     lockOnMdt(input:LockOnMdtInput!): LockOnMdtPayload!
 }
@@ -117,6 +118,11 @@ type MdtPayload{
 
 type OnMdtPayload{
     onMdt: OnMdt
+    userErrors: [UserError!]
+}
+
+type OnMdtListPayload{
+    onMdtList: [OnMdt!]
     userErrors: [UserError!]
 }
 
@@ -395,6 +401,9 @@ input UpdateOnMdtInput{
     outcome: String
     actioned: Boolean
     order: Int
+}
+input UpdateOnMdtListInput{
+    onMdtList: [UpdateOnMdtInput!]
 }
 input MdtInput{
     pathwayId: ID!

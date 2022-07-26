@@ -133,14 +133,14 @@ async def CreateDecisionPoint(
         if mdt_obj.pathway_id != on_pathway.pathway_id:
             raise DecisionPointMdtMismatchException()
 
-        highest_order = await OnMdt.query\
+        highest_order_on_mdt = await OnMdt.query\
             .where(OnMdt.mdt_id == mdt_obj.id)\
             .order_by(desc(OnMdt.order))\
             .gino\
             .first()
 
-        if highest_order is not None:
-            new_order = highest_order + 1
+        if highest_order_on_mdt is not None:
+            new_order = highest_order_on_mdt.order + 1
         else:
             new_order = 0
 
