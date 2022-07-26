@@ -44,7 +44,7 @@ def driver():
     browser_choice: str = (
         'SELENIUM_BROWSER_CLIENT' in environ
         and environ['SELENIUM_BROWSER_CLIENT']
-        or 'edge'
+        or 'firefox'
     ).lower()
 
     if browser_choice == "firefox":
@@ -56,7 +56,6 @@ def driver():
             options=options
         )
         driver.set_window_size(1920, 1080)
-        driver.maximize_window()
 
     elif browser_choice == "chromium":
         options = ChromeOptions()
@@ -78,12 +77,10 @@ def driver():
             options=options,
         )
         driver.set_window_size(1920, 1080)
-        driver.maximize_window()
 
     elif browser_choice == "safari":
         driver = webdriver.Safari()
         driver.set_window_size(1920, 1080)
-        driver.maximize_window()
         driver.switch_to.frame(0)  # set frame to default, safari fix?
 
     elif browser_choice == "edge":
@@ -106,7 +103,6 @@ def driver():
         )
 
         driver.set_window_size(1920, 1080)
-        driver.maximize_window()
 
     driver.implicitly_wait(10)
     yield driver
@@ -115,20 +111,6 @@ def driver():
 
 @pytest.fixture
 def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
-    # driver.get(endpoints.api)
-    # with httpx.Client() as client:
-    #     res: httpx.Response = client.post(
-    #         url=f'{endpoints.api}/rest/login/',
-    #         json={
-    #             "username": 'demo-1-2',
-    #             "password": '22password1',
-    #         }
-    #     )
-    # driver.add_cookie({
-    #     'name': 'SDSESSION',
-    #     'value': res.cookies['SDSESSION'],
-    #     'path': '/',
-    # })
 
     driver.get(endpoints.app)
     # username field
