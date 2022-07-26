@@ -1,5 +1,6 @@
 from ctypes import Union
 from asyncpg import UniqueViolationError
+from sqlalchemy import desc
 
 from dataloaders import (
     OnPathwayByIdLoader,
@@ -132,12 +133,24 @@ async def CreateDecisionPoint(
         if mdt_obj.pathway_id != on_pathway.pathway_id:
             raise DecisionPointMdtMismatchException()
 
+        highest_order = await OnMdt.query\
+            .where(OnMdt.mdt_id == mdt_obj.id)\
+            .order_by(desc(OnMdt.order))\
+            .gino\
+            .first()
+
+        if highest_order is not None:
+            new_order = highest_order + 1
+        else:
+            new_order = 0
+
         try:
             await OnMdt.create(
                 mdt_id=mdt_obj.id,
                 patient_id=on_pathway.patient_id,
                 user_id=context['request']['user'].id,
-                reason=mdt['reason']
+                reason=mdt['reason'],
+                order=new_order
             )
         except UniqueViolationError:
             errors.addError(

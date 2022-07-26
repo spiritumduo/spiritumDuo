@@ -17,13 +17,12 @@ async def UpdateOnMDT(
     reason: str = None,
     outcome: str = None,
     actioned: bool = None,
+    order: int = None,
 ):
     if id is None:
         raise ReferencedItemDoesNotExistError("ID not provided")
     elif context is None:
         raise ReferencedItemDoesNotExistError("Context not provided")
-    elif reason is None:
-        raise ReferencedItemDoesNotExistError("Reason not provided")
 
     query: str = OnMdt.join(MDT, OnMdt.mdt_id == MDT.id)\
         .join(UserPathway, MDT.pathway_id == UserPathway.pathway_id)\
@@ -44,12 +43,17 @@ async def UpdateOnMDT(
     if on_mdt.lock_user_id != context["request"].user.id:
         raise OnMdtLockedByOtherUser()
 
-    if outcome is not None and actioned is not None:
-        await on_mdt.update(
-            reason=reason, outcome=outcome, actioned=actioned).apply()
-    elif outcome is not None:
-        await on_mdt.update(reason=reason, outcome=outcome).apply()
-    else:
-        await on_mdt.update(reason=reason).apply()
+    update_values = {}
+    if reason is not None:
+        update_values['reason'] = reason
+    if outcome is not None:
+        update_values['outcome'] = outcome
+    if actioned is not None:
+        update_values['actioned'] = actioned
+    if order is not None:
+        update_values['order'] = order
+
+    if len(update_values.keys()) > 0:
+        await on_mdt.update(**update_values).apply()
 
     return on_mdt

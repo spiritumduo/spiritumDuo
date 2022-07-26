@@ -291,6 +291,7 @@ type OnMdt{
     lockEndTime: Date
     lockUser: User
     actioned: Boolean!
+    order: Int!
 }
 
 type OnPathway {
@@ -390,9 +391,10 @@ enum Sex {
 #### INPUT TYPES
 input UpdateOnMdtInput{
     id: ID!
-    reason: String!
+    reason: String
     outcome: String
     actioned: Boolean
+    order: Int
 }
 input MdtInput{
     pathwayId: ID!

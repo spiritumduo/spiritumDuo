@@ -47,3 +47,6 @@ class OnMdt(db.Model):
         db.Boolean(),
         default=False,
         nullable=False)
+    order = db.Column(
+        db.Integer(),
+        nullable=False)

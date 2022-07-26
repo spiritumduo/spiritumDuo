@@ -16,18 +16,21 @@ def update_on_mdt_query() -> str:
             $id: ID!
             $reason: String!
             $outcome: String
-            $actioned: Boolean!
+            $actioned: Boolean
+            $order: Int
         ){
             updateOnMdt(input: {
                 id: $id
                 reason: $reason
                 outcome: $outcome
                 actioned: $actioned
+                order: $order
             }){
                 onMdt{
                     reason
                     outcome
                     actioned
+                    order
                 }
                 userErrors{
                     field
@@ -49,6 +52,7 @@ async def test_update_on_mdt_without_lock(
     NEW_REASON = 'test reason go brrt'
     NEW_OUTCOME = 'test outcome go brrt'
     ACTIONED = True
+    ORDER = 22
 
     """
     When: we execute the query to delete an onmdt record
@@ -61,7 +65,8 @@ async def test_update_on_mdt_without_lock(
                 "id": on_mdt_to_update.id,
                 "reason": NEW_REASON,
                 "outcome": NEW_OUTCOME,
-                "actioned": ACTIONED
+                "actioned": ACTIONED,
+                "order": ORDER
             }
         }
     )
@@ -100,6 +105,7 @@ async def test_update_on_mdt_with_lock(
     NEW_REASON = 'test reason go brrt'
     NEW_OUTCOME = 'test outcome go brrt'
     ACTIONED = True
+    NEW_ORDER = 22
 
     """
     When: we execute the query to delete an onmdt record
@@ -112,7 +118,8 @@ async def test_update_on_mdt_with_lock(
                 "id": on_mdt_to_update.id,
                 "reason": NEW_REASON,
                 "outcome": NEW_OUTCOME,
-                "actioned": ACTIONED
+                "actioned": ACTIONED,
+                "order": NEW_ORDER,
             }
         }
     )
@@ -136,6 +143,10 @@ async def test_update_on_mdt_with_lock(
     assert_that(
         result['onMdt']['outcome'],
         is_(equal_to(NEW_OUTCOME))
+    )
+    assert_that(
+        result['onMdt']['order'],
+        is_(equal_to(NEW_ORDER))
     )
     assert_that(
         result['userErrors'],

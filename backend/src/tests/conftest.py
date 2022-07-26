@@ -194,12 +194,13 @@ async def test_on_mdts(
     test_patients: List[Patient]
 ):
     on_mdts: List[OnMdt] = []
-    for pt in test_patients:
+    for index, pt in enumerate(test_patients):
         on_mdts.append(await OnMdt.create(
             mdt_id=test_mdt.id,
             patient_id=pt.id,
             user_id=test_user.user.id,
-            reason="test reason"
+            reason="test reason",
+            order=index
         ))
     return on_mdts
 
