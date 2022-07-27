@@ -162,7 +162,7 @@ const CreatePathwayTab = (
           <Input role="textbox" id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
         </Fieldset>
         <Fieldset disabled={ disableForm || mutationLoading || showModal }>
-          <Fieldset.Legend>ClinicalRequest types</Fieldset.Legend>
+          <Fieldset.Legend>Clinical request types</Fieldset.Legend>
           <Controller
             name="clinicalRequestTypes"
             control={ control }
@@ -196,7 +196,7 @@ const CreatePathwayTab = (
               <SummaryList.Value>{mutationData?.createPathway?.pathway?.name}</SummaryList.Value>
             </SummaryList.Row>
             <SummaryList.Row>
-              <SummaryList.Key>Permissions</SummaryList.Key>
+              <SummaryList.Key>Clinical requests</SummaryList.Key>
               <SummaryList.Value>
                 <ul>
                   {

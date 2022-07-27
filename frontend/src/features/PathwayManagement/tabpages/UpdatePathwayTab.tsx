@@ -217,7 +217,7 @@ const UpdatePathwayTab = (
             || disableForm
           }
         >
-          <Fieldset.Legend>ClinicalRequest types</Fieldset.Legend>
+          <Fieldset.Legend>Clinical request types</Fieldset.Legend>
           <Controller
             name="clinicalRequestTypes"
             control={ control }
