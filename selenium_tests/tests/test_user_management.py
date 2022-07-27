@@ -9,7 +9,7 @@ from pytest_bdd import scenario, given, when, then
 from time import sleep
 from selenium_tests.conftest import ServerEndpoints
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
 
 @dataclass
 class UserDetails():
