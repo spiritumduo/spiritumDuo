@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from time import sleep
+from typing import List
 import pytest
 from os import environ
 from selenium import webdriver
@@ -23,6 +25,18 @@ from selenium.webdriver.common.by import By
 class ServerEndpoints():
     app: str
     api: str
+
+
+@dataclass
+class RoleDetails():
+    name: str
+    permissions: List[str]
+
+
+@dataclass
+class PathwayDetails():
+    name: str
+    clinical_requests: List[str]
 
 
 @pytest.fixture
@@ -52,7 +66,7 @@ def driver():
         options.add_argument("--headless")
         options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
-            service=FirefoxService(GeckoDriverManager().install()),
+            # service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
         driver.set_window_size(1920, 1080)
@@ -121,3 +135,94 @@ def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
 
     # submit button
     driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
+
+
+@pytest.fixture
+def test_role(
+    driver: webdriver.Remote, endpoints: ServerEndpoints,
+    login_user: None
+):
+
+    role_details = RoleDetails(
+        name="test-role",
+        permissions=["AUTHENTICATED"]
+    )
+
+    sleep(1)
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Roles management')]"
+    ).click()
+
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create role')]"
+    ).click()
+
+    driver.find_element(By.NAME, "name").send_keys(
+        role_details.name
+    )
+
+    permissions_section = driver.find_element(
+        By.XPATH, "//*[contains(text(), 'Role permissions')]/../div"
+    )
+
+    for permission in role_details.permissions:
+        permissions_section.click()
+
+        permissions_section.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{permission}')]"
+        ).click()
+
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create role')]"
+    )
+    submit.click()
+
+    return role_details
+
+
+@pytest.fixture
+def test_pathway(
+    driver: webdriver.Remote, endpoints: ServerEndpoints,
+    login_user: None
+):
+    pathway_details = PathwayDetails(
+        name="Test pathway",
+        clinical_requests=["Referral letter (Referral letter (record artifact))"]
+    )
+
+    sleep(1)
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Pathway management')]"
+    ).click()
+
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create pathway')]"
+    ).click()
+
+    driver.find_element(By.NAME, "name").send_keys(
+        pathway_details.name
+    )
+
+    requests_section = driver.find_element(
+        By.XPATH, "//*[contains(text(), 'Clinical request types')]/../div"
+    )
+
+    for requests in pathway_details.clinical_requests:
+        requests_section.click()
+
+        requests_section.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{requests}')]"
+        ).click()
+
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create pathway')]"
+    )
+    submit.click()
+
+    return pathway_details
