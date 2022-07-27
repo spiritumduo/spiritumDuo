@@ -124,7 +124,7 @@ interface OnMdtElementType {
     firstName: string;
     lastName: string;
   };
-  completed: boolean;
+  actioned: boolean;
 }
 
 const schema = yup.object({
@@ -165,7 +165,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
     id: string;
     reason: string;
     outcome?: string;
-    completed: boolean;
+    actioned: boolean;
   }
 
   const {
@@ -231,7 +231,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
         firstName: node.mdt.creator.firstName,
         lastName: node.mdt.creator.lastName,
       },
-      completed: node.clinicalRequest.currentState === 'COMPLETED',
+      actioned: node.clinicalRequest.currentState === 'COMPLETED',
     }));
   }
   async function onSaveFn(variables: UpdateOnMdtForm) {
@@ -301,7 +301,7 @@ const PatientMdtTab = ({ patientId }: PatientMdtTabProps) => {
                     <Table.Cell>
                       <CheckboxBox
                         disabled
-                        defaultChecked={ element.completed }
+                        defaultChecked={ element.actioned }
                       >
                         &nbsp;
                       </CheckboxBox>
