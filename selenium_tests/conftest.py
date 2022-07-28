@@ -39,6 +39,11 @@ class PathwayDetails():
     clinical_requests: List[str]
 
 
+@dataclass
+class MdtDetails():
+    location: str
+
+
 @pytest.fixture
 def endpoints():
     hostname: str = (
