@@ -1,3 +1,4 @@
+from hamcrest import assert_that, is_, is_not
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -37,13 +38,19 @@ def check_cookie_present(driver: webdriver.Remote):
     sleep(1)
 
     # check session cookie has been set
-    assert driver.get_cookie("SDSESSION") is not None
+    assert_that(
+        driver.get_cookie("SDSESSION"),
+        is_(None)
+    )
 
 
 @then("I should not be on the login page")
 def check_url_is_not_login(driver: webdriver.Remote):
     # check URL does not container /app/login
-    assert driver.current_url.find("/login") == -1
+    assert_that(
+        driver.current_url.find("/login"),
+        is_(-1)
+    )
 
 
 @scenario("login.feature", "Logging the user in with invalid credentials")
@@ -76,10 +83,16 @@ def check_cookie_not_present(driver: webdriver.Remote):
     sleep(1)
 
     # check session cookie has been set
-    assert driver.get_cookie("SDSESSION") is None
+    assert_that(
+        driver.get_cookie("SDSESSION"),
+        is_(None)
+    )
 
 
 @then("I should still be on the login page")
 def check_url_is_login(driver: webdriver.Remote):
     # check URL contains /app/login
-    assert driver.current_url.find("/login") != -1
+    assert_that(
+        driver.current_url.find("/login"),
+        is_not(-1)
+    )

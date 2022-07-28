@@ -89,7 +89,13 @@ def submit_create_pathway_form(driver: webdriver.Remote):
 def check_create_pathway_modal_present(
     driver: webdriver.Remote, create_pathway_details: PathwayDetails
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'Pathway created')]")
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(text(), 'Pathway created')]"
+        ).is_displayed(),
+        is_(True)
+    )
 
     modal = driver.find_element(
         By.XPATH,
@@ -167,7 +173,6 @@ def clear_and_populate_pathway_update_form(
     driver: webdriver.Remote,
     update_pathway_details: PathwayDetails
 ):
-    driver.get__as_file("./t.png")
     name_input = driver.find_element(By.NAME, "name")
     name_input.clear()
     name_input.send_keys(
@@ -187,7 +192,12 @@ def submit_edit_pathway_form(driver: webdriver.Remote):
 def check_edit_pathway_conf_modal_present(
     driver: webdriver.Remote, update_pathway_details: PathwayDetails
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'Pathway Updated')]")
+    assert_that(
+        driver.find_element(
+            By.XPATH, "//div[contains(text(), 'Pathway Updated')]"
+        ).is_displayed(),
+        is_(True)
+    )
 
     modal = driver.find_element(
         By.XPATH,
@@ -269,4 +279,9 @@ def submit_delete_pathway_form(driver: webdriver.Remote):
 def check_delete_pathway_conf_modal_present(
     driver: webdriver.Remote
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'Pathway deleted')]")
+    assert_that(
+        driver.find_element(
+            By.XPATH, "//div[contains(text(), 'Pathway deleted')]"
+        ).is_displayed(),
+        is_(True)
+    )

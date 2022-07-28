@@ -1,3 +1,4 @@
+from hamcrest import assert_that, is_not
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
@@ -36,10 +37,16 @@ def check_no_session_cookie(driver: webdriver.Remote):
     sleep(1)
 
     # check session cookie has been set
-    assert driver.get_cookie("SDSESSION") is not None
+    assert_that(
+        driver.get_cookie("SDSESSION"),
+        is_not(None)
+    )
 
 
 @then("I should be on the login page")
 def check_url_is_login(driver: webdriver.Remote):
     # check URL does not container /app/login
-    assert driver.current_url.find("/login") != -1
+    assert_that(
+        driver.current_url.find("/login"),
+        is_not(-1)
+    )

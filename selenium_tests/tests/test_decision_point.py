@@ -41,7 +41,10 @@ def insert_correct_credentials(driver: webdriver.Remote):
 
 @then("I should see the decision point modal")
 def check_modal_present(driver: webdriver.Remote):
-    driver.find_element(By.CSS_SELECTOR, '.modal-body')
+    assert_that(
+        driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
+        is_(True)
+    )
 
 
 @given("I fill the text boxes")
@@ -66,9 +69,12 @@ def submit_form(driver: webdriver.Remote):
 
 @then("I should see a confirmation of no requests selected")
 def check_no_request_confirmation(driver: webdriver.Remote):
-    driver.find_element(
-        By.XPATH,
-        "//h2[contains(text(), 'No requests selected!')]"
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//h2[contains(text(), 'No requests selected!')]"
+        ).is_displayed(),
+        is_(True)
     )
 
 
@@ -95,9 +101,12 @@ def select_requests(driver: webdriver.Remote):
 
 @then("I should see a pre-submission confirmation window")
 def check_presub_confirmation(driver: webdriver.Remote):
-    driver.find_element(
-        By.XPATH,
-        "//h2[contains(text(), 'Submit these requests')]"
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//h2[contains(text(), 'Submit these requests')]"
+        ).is_displayed(),
+        is_(True)
     )
 
 
@@ -108,9 +117,12 @@ def submit_presub_confirmation(driver: webdriver.Remote):
 
 @then("I should see the server confirmation window")
 def check_server_confirmation(driver: webdriver.Remote):
-    driver.find_element(
-        By.XPATH,
-        "//h2[contains(text(), 'Decision Submitted')]"
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//h2[contains(text(), 'Decision Submitted')]"
+        ).is_displayed(),
+        is_(True)
     )
 
 

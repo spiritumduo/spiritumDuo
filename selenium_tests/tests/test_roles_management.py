@@ -89,21 +89,32 @@ def submit_create_form(driver: webdriver.Remote):
 def check_create_modal_present(
     driver: webdriver.Remote, create_role_details: RoleDetails
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'Role created')]")
+    assert_that(
+        driver.find_element(
+            By.XPATH, "//div[contains(text(), 'Role created')]"
+        ).is_displayed(),
+        is_(True)
+    )
 
     modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
 
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{create_role_details.name}')]"
-    )
-    for permission in create_role_details.permissions:
+    assert_that(
         modal.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{permission}')]"
+            f".//*[contains(text(), '{create_role_details.name}')]"
+        ).is_displayed(),
+        is_(True)
+    )
+    for permission in create_role_details.permissions:
+        assert_that(
+            modal.find_element(
+                By.XPATH,
+                f".//*[contains(text(), '{permission}')]"
+            ).is_displayed(),
+            is_(True)
         )
 
 
@@ -193,9 +204,12 @@ def check_edit_conf_modal_present(
         "//div[contains(@class, 'modal-body')]"
     )
 
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{update_role_details.name}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{update_role_details.name}')]"
+        ).is_displayed(),
+        is_(True)
     )
 
 
@@ -266,4 +280,10 @@ def submit_delete_form(driver: webdriver.Remote):
 def check_delete_conf_modal_present(
     driver: webdriver.Remote
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'Role deleted')]")
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(text(), 'Role deleted')]"
+        ).is_displayed(),
+        is_(True)
+    )

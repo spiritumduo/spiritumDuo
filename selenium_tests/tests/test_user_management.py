@@ -142,42 +142,69 @@ def submit_form(driver: webdriver.Remote):
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'User created')]")
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(text(), 'User created')]"
+        ).is_displayed(),
+        is_(True)
+    )
 
     modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
 
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{create_user_details.firstName}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{create_user_details.firstName}')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{create_user_details.lastName}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{create_user_details.lastName}')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{create_user_details.email}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{create_user_details.email}')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        ".//*[contains(text(), 'Hidden')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            ".//*[contains(text(), 'Hidden')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{create_user_details.department}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{create_user_details.department}')]"
+        ).is_displayed(),
+        is_(True)
     )
     for role in create_user_details.roles:
-        modal.find_element(
-            By.XPATH,
-            f".//*[contains(text(), '{role}')]"
+        assert_that(
+            modal.find_element(
+                By.XPATH,
+                f".//*[contains(text(), '{role}')]"
+            ).is_displayed(),
+            is_(True)
         )
     for pathway in create_user_details.pathways:
-        modal.find_element(
-            By.XPATH,
-            f".//*[contains(text(), '{pathway}')]"
+        assert_that(
+            modal.find_element(
+                By.XPATH,
+                f".//*[contains(text(), '{pathway}')]"
+            ).is_displayed(),
+            is_(True)
         )
 
 
@@ -220,7 +247,10 @@ def select_user_row(driver: webdriver.Remote):
 
 @then("we see a modal to edit the user")
 def check_edit_modal(driver: webdriver.Remote):
-    driver.find_element(By.CLASS_NAME, "modal-content")
+    assert_that(
+        driver.find_element(By.CLASS_NAME, "modal-content").is_displayed(),
+        is_(True)
+    )
 
 
 @then("we change values in this form")
@@ -267,29 +297,47 @@ def submit_edit_form(driver: webdriver.Remote):
 def check_edit_confirmation(
     driver: webdriver.Remote, update_user_details: UserDetails
 ):
-    driver.find_element(By.XPATH, "//div[contains(text(), 'User updated')]")
+    assert_that(
+        driver.find_element(By.XPATH, "//div[contains(text(), 'User updated')]").is_displayed(),
+        is_(True)
+    )
 
     modal = driver.find_element(
         By.XPATH,
         "//*[contains(text(), 'User updated')]/../.."
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{update_user_details.firstName}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{update_user_details.firstName}')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{update_user_details.lastName}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{update_user_details.lastName}')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{update_user_details.email}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{update_user_details.email}')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        ".//*[contains(text(), 'Hidden')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            ".//*[contains(text(), 'Hidden')]"
+        ).is_displayed(),
+        is_(True)
     )
-    modal.find_element(
-        By.XPATH,
-        f".//*[contains(text(), '{update_user_details.department}')]"
+    assert_that(
+        modal.find_element(
+            By.XPATH,
+            f".//*[contains(text(), '{update_user_details.department}')]"
+        ).is_displayed(),
+        is_(True)
     )
