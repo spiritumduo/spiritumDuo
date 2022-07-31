@@ -231,3 +231,42 @@ def test_pathway(
     submit.click()
 
     return pathway_details
+
+
+@pytest.fixture
+def test_mdt(
+    driver: webdriver.Remote, endpoints: ServerEndpoints,
+    login_user: None
+): 
+    mdt_details = MdtDetails(
+        location="test location"
+    )
+    sleep(1)
+    driver.get(f"{endpoints.app}/mdt")
+    driver.find_element(
+        By.XPATH,
+        "//button[contains(text(), 'Create MDT')]"
+    ).click()
+
+    date_selector = driver.find_element(
+        By.XPATH, "//*[contains(text(), 'Date of MDT')]")
+    date_selector.click()
+
+    date_selection = driver.find_elements(
+        By.CLASS_NAME, "react-datepicker__day")
+    date_selection[-2].click()
+
+    location_input = driver.find_element(By.NAME, "location")
+    location_input.send_keys(mdt_details.location)
+
+    modal = driver.find_element(By.CLASS_NAME, "modal-content")
+
+    submit_button = modal.find_element(
+        By.XPATH, ".//button[contains(text(), 'Create')]")
+    submit_button.click()
+
+    driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Close')]"
+    ).click()
+
+    return mdt_details
