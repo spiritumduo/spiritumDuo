@@ -40,7 +40,7 @@ def check_cookie_present(driver: webdriver.Remote):
     # check session cookie has been set
     assert_that(
         driver.get_cookie("SDSESSION"),
-        is_(None)
+        is_not(None)
     )
 
 
