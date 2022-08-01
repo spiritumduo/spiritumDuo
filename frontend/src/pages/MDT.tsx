@@ -322,6 +322,7 @@ const MDTPage = (): JSX.Element => {
                       ) }
                     </Draggable>
                   ))}
+                  { droppableProvided.placeholder }
                 </tbody>
               )}
             </Droppable>
