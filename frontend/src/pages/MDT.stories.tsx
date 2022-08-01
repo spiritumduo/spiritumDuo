@@ -15,6 +15,7 @@ const onMdtEdges: {
     node: {
       id: string;
       reason: string;
+      order: number;
       patient: {
         id: string;
         firstName: string;
@@ -32,6 +33,7 @@ for (let i = 1; i < itemsPerPage + 1; ++i) {
     node: {
       id: i.toString(),
       reason: `reason goes here (${i})`,
+      order: i - 1,
       patient: {
         id: i.toString(),
         firstName: 'First',
