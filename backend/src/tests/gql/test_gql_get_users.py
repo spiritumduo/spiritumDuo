@@ -4,10 +4,9 @@ import pytest
 from models import User
 from hamcrest import (
     assert_that,
-    contains,
+    contains_exactly,
     equal_to,
     contains_string,
-    contains_inanyorder
 )
 
 
@@ -48,7 +47,7 @@ async def test_gql_get_users(
     """
     assert_that(
         users_list,
-        contains({'id': str(test_user.user.id)})
+        contains_exactly({'id': str(test_user.user.id)})
     )
 
 

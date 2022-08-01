@@ -1,5 +1,6 @@
 from models import MDT, OnMdt, UserPathway
 from models.db import db
+from gino.engine import GinoConnection
 
 
 class OnMdtLockedByOtherUser(Exception):
@@ -15,13 +16,14 @@ async def UpdateOnMDT(
     id: int = None,
     reason: str = None,
     outcome: str = None,
+    actioned: bool = None,
+    order: int = None,
+    conn: GinoConnection = None,
 ):
     if id is None:
         raise TypeError("ID is None")
     elif context is None:
-        raise TypeError("Context is None")
-    elif reason is None:
-        raise TypeError("Reason is None")
+        raise TypeError("Context not provided")
 
     query: str = OnMdt.join(MDT, OnMdt.mdt_id == MDT.id)\
         .join(UserPathway, MDT.pathway_id == UserPathway.pathway_id)\
@@ -33,18 +35,30 @@ async def UpdateOnMDT(
         ).distinct(UserPathway.user_id)\
         .execution_options(loader=OnMdt)
 
-    async with db.acquire(reuse=False) as conn:
+    if conn is None:
+        async with db.acquire(reuse=False) as conn:
+            on_mdt: OnMdt = await conn.one_or_none(query)
+    else:
         on_mdt: OnMdt = await conn.one_or_none(query)
 
     if on_mdt is None:
         raise PermissionError()
 
-    if on_mdt.lock_user_id != context["request"].user.id:
+    if on_mdt.lock_user_id != context["request"].user.id\
+            and (reason is not None or outcome is not None or actioned is not None):
         raise OnMdtLockedByOtherUser()
 
+    update_values = {}
+    if reason is not None:
+        update_values['reason'] = reason
     if outcome is not None:
-        await on_mdt.update(reason=reason, outcome=outcome).apply()
-    else:
-        await on_mdt.update(reason=reason).apply()
+        update_values['outcome'] = outcome
+    if actioned is not None:
+        update_values['actioned'] = actioned
+    if order is not None:
+        update_values['order'] = order
+
+    if len(update_values.keys()) > 0:
+        await on_mdt.update(**update_values).apply()
 
     return on_mdt

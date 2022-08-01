@@ -41,5 +41,5 @@ object_types_list = [
     MdtPayloadObjectType,
     MDTObjectType,
     OnMdtObjectType,
-    OnMdtPayloadObjectType
+    OnMdtPayloadObjectType,
 ]

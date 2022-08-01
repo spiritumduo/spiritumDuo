@@ -55,7 +55,7 @@ exports[`It should render Default correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, 1/1/1980
+                  John Doe, fMRN1234567, 01/01/1980
                 </tspan>
               </text>
             </svg>
@@ -125,7 +125,7 @@ exports[`It should render Default correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, 6/1/1970
+                  Jane Doe, fMRN7654321, 01/06/1970
                 </tspan>
               </text>
             </svg>
@@ -571,7 +571,7 @@ exports[`It should render Default correctly 1`] = `
               <td
                 headers="tdob rowname-1"
               >
-                1/1/1980
+                01/01/1980
               </td>
               <td
                 headers="pt"
@@ -780,7 +780,7 @@ exports[`It should render Default correctly 1`] = `
               <td
                 headers="tdob rowname-2"
               >
-                6/1/1970
+                01/06/1970
               </td>
               <td
                 headers="pt"
@@ -960,7 +960,7 @@ exports[`It should render Medium correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, 1/1/1980
+                  John Doe, fMRN1234567, 01/01/1980
                 </tspan>
               </text>
             </svg>
@@ -1030,7 +1030,7 @@ exports[`It should render Medium correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, 6/1/1970
+                  Jane Doe, fMRN7654321, 01/06/1970
                 </tspan>
               </text>
             </svg>
@@ -1276,7 +1276,7 @@ exports[`It should render Medium correctly 1`] = `
               <td
                 headers="tdob rowname-1"
               >
-                1/1/1980
+                01/01/1980
               </td>
               <td
                 headers="pt"
@@ -1485,7 +1485,7 @@ exports[`It should render Medium correctly 1`] = `
               <td
                 headers="tdob rowname-2"
               >
-                6/1/1970
+                01/06/1970
               </td>
               <td
                 headers="pt"
@@ -1665,7 +1665,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                  John Doe, fMRN1234567, fNHS123456789, 01/01/1980
                 </tspan>
               </text>
             </svg>
@@ -1735,7 +1735,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                  Jane Doe, fMRN7654321, fNHS987654321, 01/06/1970
                 </tspan>
               </text>
             </svg>
@@ -1981,7 +1981,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
               <td
                 headers="tdob rowname-1"
               >
-                1/1/1980
+                01/01/1980
               </td>
               <td
                 headers="pt"
@@ -2190,7 +2190,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
               <td
                 headers="tdob rowname-2"
               >
-                6/1/1970
+                01/06/1970
               </td>
               <td
                 headers="pt"
@@ -2370,7 +2370,7 @@ exports[`It should render Small correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, 1/1/1980
+                  John Doe, fMRN1234567, 01/01/1980
                 </tspan>
               </text>
             </svg>
@@ -2440,7 +2440,7 @@ exports[`It should render Small correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, 6/1/1970
+                  Jane Doe, fMRN7654321, 01/06/1970
                 </tspan>
               </text>
             </svg>
@@ -2686,7 +2686,7 @@ exports[`It should render Small correctly 1`] = `
               <td
                 headers="tdob rowname-1"
               >
-                1/1/1980
+                01/01/1980
               </td>
               <td
                 headers="pt"
@@ -2895,7 +2895,7 @@ exports[`It should render Small correctly 1`] = `
               <td
                 headers="tdob rowname-2"
               >
-                6/1/1970
+                01/06/1970
               </td>
               <td
                 headers="pt"
@@ -3075,7 +3075,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                  John Doe, fMRN1234567, fNHS123456789, 01/01/1980
                 </tspan>
               </text>
             </svg>
@@ -3145,7 +3145,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                  Jane Doe, fMRN7654321, fNHS987654321, 01/06/1970
                 </tspan>
               </text>
             </svg>
@@ -3391,7 +3391,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
               <td
                 headers="tdob rowname-1"
               >
-                1/1/1980
+                01/01/1980
               </td>
               <td
                 headers="pt"
@@ -3600,7 +3600,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
               <td
                 headers="tdob rowname-2"
               >
-                6/1/1970
+                01/06/1970
               </td>
               <td
                 headers="pt"
@@ -3780,7 +3780,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                  John Doe, fMRN1234567, fNHS123456789, 01/01/1980
                 </tspan>
               </text>
             </svg>
@@ -3850,7 +3850,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                  Jane Doe, fMRN7654321, fNHS987654321, 01/06/1970
                 </tspan>
               </text>
             </svg>
@@ -4296,7 +4296,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
               <td
                 headers="tdob rowname-1"
               >
-                1/1/1980
+                01/01/1980
               </td>
               <td
                 headers="pt"
@@ -4505,7 +4505,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
               <td
                 headers="tdob rowname-2"
               >
-                6/1/1970
+                01/06/1970
               </td>
               <td
                 headers="pt"
