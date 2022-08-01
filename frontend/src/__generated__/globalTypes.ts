@@ -105,9 +105,14 @@ export interface UpdateMdtInput {
 
 export interface UpdateOnMdtInput {
   id: string;
-  reason: string;
+  reason?: string | null;
   outcome?: string | null;
   actioned?: boolean | null;
+  order?: number | null;
+}
+
+export interface UpdateOnMdtListInput {
+  onMdtList?: UpdateOnMdtInput[] | null;
 }
 
 export interface UpdatePathwayInput {
