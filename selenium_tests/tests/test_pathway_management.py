@@ -40,7 +40,7 @@ def log_user_in_for_create_pathway(driver: webdriver.Remote, login_user: None):
     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-@given("we are on the pathway creation page")
+@given("the user is on the pathway creation page")
 def set_to_pathway_create_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -56,7 +56,7 @@ def set_to_pathway_create_page(
     ).click()
 
 
-@then("we fill the form in with valid data")
+@then("the user fills the form in with valid data")
 def populate_create_pathway_form(
     driver: webdriver.Remote,
     create_pathway_details: PathwayDetails
@@ -77,7 +77,7 @@ def populate_create_pathway_form(
         ).click()
 
 
-@when("we submit the create form")
+@when("the user submits the create form")
 def submit_create_pathway_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Create pathway')]"
@@ -85,7 +85,7 @@ def submit_create_pathway_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the creation confirmation modal")
+@then("the user should see the creation confirmation modal")
 def check_create_pathway_modal_present(
     driver: webdriver.Remote, create_pathway_details: PathwayDetails
 ):
@@ -138,7 +138,7 @@ def generate_pathway_to_update(driver: webdriver.Remote, test_pathway):
     pass
 
 
-@given("we are on the pathway update page")
+@given("the user is on the pathway update page")
 def set_to_modify_pathway_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -154,7 +154,7 @@ def set_to_modify_pathway_page(
     ).click()
 
 
-@then("we select an exiting pathway to update")
+@then("the user selects an exiting pathway to update")
 def select_pathway_to_update(
     driver: webdriver.Remote,
     test_pathway: PathwayDetails
@@ -168,7 +168,7 @@ def select_pathway_to_update(
     select.select_by_visible_text(test_pathway.name)
 
 
-@then("we clear and fill the form with valid data")
+@then("the user clears and fills the form with valid data")
 def clear_and_populate_pathway_update_form(
     driver: webdriver.Remote,
     update_pathway_details: PathwayDetails
@@ -180,7 +180,7 @@ def clear_and_populate_pathway_update_form(
     )
 
 
-@when("we submit the update form")
+@when("the user submits the update form")
 def submit_edit_pathway_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Update pathway')]"
@@ -188,7 +188,7 @@ def submit_edit_pathway_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the update confirmation modal")
+@then("the user should see the update confirmation modal")
 def check_edit_pathway_conf_modal_present(
     driver: webdriver.Remote, update_pathway_details: PathwayDetails
 ):
@@ -237,7 +237,7 @@ def generate_pathway_to_delete(
     pass
 
 
-@given("we are on the pathway delete page")
+@given("the user is on the pathway delete page")
 def set_to_delete_pathway_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -253,7 +253,7 @@ def set_to_delete_pathway_page(
     ).click()
 
 
-@then("we select an existing pathway to delete")
+@then("the user selects an existing pathway to delete")
 def select_pathway_to_delete(
     driver: webdriver.Remote,
     test_pathway: PathwayDetails
@@ -267,7 +267,7 @@ def select_pathway_to_delete(
     select.select_by_visible_text(test_pathway.name)
 
 
-@when("we submit the delete form")
+@when("the user submits the delete form")
 def submit_delete_pathway_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Delete pathway')]"
@@ -275,7 +275,7 @@ def submit_delete_pathway_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the delete confirmation modal")
+@then("the user should see the delete confirmation modal")
 def check_delete_pathway_conf_modal_present(
     driver: webdriver.Remote
 ):

@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
 )
-
+from selenium.webdriver.remote.webelement import WebElement
 
 @scenario(
     "decision_point.feature",
@@ -28,7 +28,7 @@ def check_is_on_homepage(driver: webdriver.Remote):
     assert_that(driver.current_url.endswith("/app/"), is_(equal_to(True)))
 
 
-@when("I click on a patient row")
+@when("the user clicks on a patient row")
 def insert_correct_credentials(driver: webdriver.Remote):
     patient_list = driver.find_elements(By.CLASS_NAME, 'sd-hidden-button')
     assert_that(len(patient_list), is_(greater_than(0)))
@@ -39,7 +39,7 @@ def insert_correct_credentials(driver: webdriver.Remote):
             break
 
 
-@then("I should see the decision point modal")
+@then("the user should see the decision point modal")
 def check_modal_present(driver: webdriver.Remote):
     assert_that(
         driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
@@ -47,27 +47,29 @@ def check_modal_present(driver: webdriver.Remote):
     )
 
 
-@given("I fill the text boxes")
+@given("the user fills the text boxes")
 def complete_form(driver: webdriver.Remote):
-    clinical_history = WebDriverWait(driver, 10).until(
+    clinical_history: WebElement = WebDriverWait(driver, 10).until(
         lambda d: d.find_element(By.NAME, "clinicHistory")
     )
+    clinical_history.clear()
     clinical_history.send_keys("clinical_history")
 
-    comorbidities = WebDriverWait(driver, 10).until(
+    comorbidities: WebElement = WebDriverWait(driver, 10).until(
         lambda d: d.find_element(By.NAME, "comorbidities")
     )
+    comorbidities.clear()
     comorbidities.send_keys("comorbidities")
 
 
-@when("I submit the form")
+@when("the user submits the form")
 def submit_form(driver: webdriver.Remote):
     driver.find_element(
         By.XPATH, "//button[contains(text(), 'Submit')]"
     ).click()
 
 
-@then("I should see a confirmation of no requests selected")
+@then("the user should see a confirmation of no requests selected")
 def check_no_request_confirmation(driver: webdriver.Remote):
     assert_that(
         driver.find_element(
@@ -78,7 +80,7 @@ def check_no_request_confirmation(driver: webdriver.Remote):
     )
 
 
-@when("I go back, select a request and resubmit")
+@when("the user presses the back button, selects a request and resubmits")
 def select_requests(driver: webdriver.Remote):
     driver.find_element(
         By.XPATH, "//button[contains(text(), 'Cancel')]"
@@ -99,7 +101,7 @@ def select_requests(driver: webdriver.Remote):
     ).click()
 
 
-@then("I should see a pre-submission confirmation window")
+@then("the user should see a pre-submission confirmation window")
 def check_presub_confirmation(driver: webdriver.Remote):
     assert_that(
         driver.find_element(
@@ -110,12 +112,12 @@ def check_presub_confirmation(driver: webdriver.Remote):
     )
 
 
-@when("I submit the pre-submission confirmation")
+@when("the user submits the pre-submission confirmation")
 def submit_presub_confirmation(driver: webdriver.Remote):
     driver.find_element(By.XPATH, "//button[contains(text(), 'OK')]").click()
 
 
-@then("I should see the server confirmation window")
+@then("the user should see the server confirmation window")
 def check_server_confirmation(driver: webdriver.Remote):
     assert_that(
         driver.find_element(
@@ -126,7 +128,7 @@ def check_server_confirmation(driver: webdriver.Remote):
     )
 
 
-@when("I submit the server confirmation")
+@when("the user submits the server confirmation")
 def submit_server_confirmation(driver: webdriver.Remote):
     driver.find_element(By.XPATH, "//button[contains(text(), 'OK')]").click()
 

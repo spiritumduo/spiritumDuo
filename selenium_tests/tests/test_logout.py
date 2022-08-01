@@ -15,7 +15,10 @@ def test_logout():
 @given("the user is logged in")
 def set_user_logged_in(login_user: None, driver: webdriver.Remote):
     sleep(1)
-    assert driver.get_cookie("SDSESSION") is not None
+    assert_that(
+        driver.get_cookie("SDSESSION"),
+        is_not(None)
+    )
 
 
 @given("the user is on the home page")
@@ -25,13 +28,13 @@ def set_client_on_homepage(
     driver.get(endpoints.app)
 
 
-@when("I press the logout button")
+@when("the user presses the logout button")
 def press_logout_btn(driver: webdriver.Remote):
     # logout button on header
     driver.find_element(By.ID, "logoutBtn").click()
 
 
-@then("I should not be assigned a session cookie")
+@then("the user should not be assigned a session cookie")
 def check_no_session_cookie(driver: webdriver.Remote):
     # we wait what we think is a timely amount of time
     sleep(1)
@@ -43,7 +46,7 @@ def check_no_session_cookie(driver: webdriver.Remote):
     )
 
 
-@then("I should be on the login page")
+@then("the user should remain on the login page")
 def check_url_is_login(driver: webdriver.Remote):
     # check URL does not container /app/login
     assert_that(

@@ -65,7 +65,7 @@ def log_user_in(driver: webdriver.Remote, login_user: None):
     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-@given("we are on the user creation page")
+@given("the user is on the user creation page")
 def set_to_admin_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -81,7 +81,7 @@ def set_to_admin_page(
     ).click()
 
 
-@then("we fill the form in with valid data")
+@then("the user fills the form in with valid data")
 def populate_form(
     driver: webdriver.Remote,
     create_user_details: UserDetails
@@ -130,7 +130,7 @@ def populate_form(
     pathway.click()
 
 
-@when("we submit the form")
+@when("the user submits the form")
 def submit_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Create User')]"
@@ -138,7 +138,7 @@ def submit_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the confirmation modal")
+@then("the user should see the confirmation modal")
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
@@ -222,7 +222,7 @@ def log_user_in(driver: webdriver.Remote, login_user: None):
     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-@given("we are on the users list page")
+@given("the user is on the users list page")
 def set_to_users_admin_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -238,14 +238,14 @@ def set_to_users_admin_page(
     ).click()
 
 
-@when("we select a user")
+@when("the user selects a user")
 def select_user_row(driver: webdriver.Remote):
     table_body = driver.find_element(By.CLASS_NAME, "nhsuk-table__body")
     user_row = table_body.find_elements(By.CLASS_NAME, "nhsuk-table__row")[0]
     user_row.click()
 
 
-@then("we see a modal to edit the user")
+@then("the user should see a modal to edit the user")
 def check_edit_modal(driver: webdriver.Remote):
     assert_that(
         driver.find_element(By.CLASS_NAME, "modal-content").is_displayed(),
@@ -253,7 +253,7 @@ def check_edit_modal(driver: webdriver.Remote):
     )
 
 
-@then("we change values in this form")
+@then("the user changes values in this form")
 def clear_and_populate_form(
     driver: webdriver.Remote, update_user_details: UserDetails
 ):
@@ -283,7 +283,7 @@ def clear_and_populate_form(
     )
 
 
-@when("we submit the edit form")
+@when("the user submits the edit form")
 def submit_edit_form(driver: webdriver.Remote):
     submit = WebDriverWait(driver, 10).until(
         lambda d: d.find_element(
@@ -293,7 +293,7 @@ def submit_edit_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we get a confirmation modal")
+@then("the user is shown a confirmation modal")
 def check_edit_confirmation(
     driver: webdriver.Remote, update_user_details: UserDetails
 ):

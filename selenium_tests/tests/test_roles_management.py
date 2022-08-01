@@ -40,7 +40,7 @@ def log_user_in_for_create(driver: webdriver.Remote, login_user: None):
     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-@given("we are on the role creation page")
+@given("the user is on the role creation page")
 def set_to_role_create_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -56,7 +56,7 @@ def set_to_role_create_page(
     ).click()
 
 
-@then("we fill the form in with valid data")
+@then("the user fills the form in with valid data")
 def populate_form(
     driver: webdriver.Remote,
     create_role_details: RoleDetails
@@ -77,7 +77,7 @@ def populate_form(
         ).click()
 
 
-@when("we submit the create form")
+@when("the user submits the create form")
 def submit_create_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Create role')]"
@@ -85,7 +85,7 @@ def submit_create_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the creation confirmation modal")
+@then("the user should see the creation confirmation modal")
 def check_create_modal_present(
     driver: webdriver.Remote, create_role_details: RoleDetails
 ):
@@ -143,7 +143,7 @@ def generate_role_to_update(driver: webdriver.Remote, test_role: RoleDetails):
     pass
 
 
-@given("we are on the role update page")
+@given("the user is on the role update page")
 def set_to_modify_role_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -159,7 +159,7 @@ def set_to_modify_role_page(
     ).click()
 
 
-@then("we select an exiting role to update")
+@then("the user selects an exiting role to update")
 def select_role_to_update(
     driver: webdriver.Remote,
     test_role: RoleDetails
@@ -173,7 +173,7 @@ def select_role_to_update(
     role_select.select_by_visible_text(test_role.name)
 
 
-@then("we clear and fill the form with valid data")
+@then("the user clears and fills the form with valid data")
 def clear_and_populate_form(
     driver: webdriver.Remote,
     update_role_details: RoleDetails
@@ -185,7 +185,7 @@ def clear_and_populate_form(
     )
 
 
-@when("we submit the update form")
+@when("the user submits the update form")
 def submit_edit_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Update role')]"
@@ -193,7 +193,7 @@ def submit_edit_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the update confirmation modal")
+@then("the user should see the update confirmation modal")
 def check_edit_conf_modal_present(
     driver: webdriver.Remote, update_role_details: RoleDetails
 ):
@@ -238,7 +238,7 @@ def generate_role_to_delete(driver: webdriver.Remote, test_role: RoleDetails):
     pass
 
 
-@given("we are on the role delete page")
+@given("the user is on the role delete page")
 def set_to_delete_role_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
@@ -254,7 +254,7 @@ def set_to_delete_role_page(
     ).click()
 
 
-@then("we select an existing role to delete")
+@then("the user selects an existing role to delete")
 def select_role_to_delete(
     driver: webdriver.Remote,
     test_role: RoleDetails
@@ -268,7 +268,7 @@ def select_role_to_delete(
     role_select.select_by_visible_text(test_role.name)
 
 
-@when("we submit the delete form")
+@when("the user submits the delete form")
 def submit_delete_form(driver: webdriver.Remote):
     submit = driver.find_element(
         By.XPATH, "//button[contains(text(), 'Delete role')]"
@@ -276,7 +276,7 @@ def submit_delete_form(driver: webdriver.Remote):
     submit.click()
 
 
-@then("we should see the delete confirmation modal")
+@then("the user should see the delete confirmation modal")
 def check_delete_conf_modal_present(
     driver: webdriver.Remote
 ):
