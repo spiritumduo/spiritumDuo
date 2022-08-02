@@ -28,5 +28,14 @@ Feature: Pathway management
         Given a pathway exists
         Given the user is on the pathway create page
         When the user fills the form in with the duplicate name
-        When the user submits the form
+        When the user submits the creation form
+        Then the user should be presented with a duplication error
+
+    Scenario: A pathway is updated with a name that already exists
+        Given the user is logged in
+        And a pathway exists
+        And the user is on the pathway update page
+        And a pathway is selected
+        When the user fills the form in with the duplicate name
+        When the user submits the form to update the pathway
         Then the user should be presented with a duplication error
