@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from random import randint
 from time import sleep
 from typing import List
 import pytest
@@ -42,6 +43,18 @@ class PathwayDetails():
 @dataclass
 class MdtDetails():
     location: str
+
+
+@dataclass
+class UserDetails():
+    username: str
+    password: str
+    department: str
+    email: str
+    firstName: str
+    lastName: str
+    roles: List[str]
+    pathways: List[str]
 
 
 @pytest.fixture
@@ -270,3 +283,82 @@ def test_mdt(
     ).click()
 
     return mdt_details
+
+
+@pytest.fixture
+def test_user(
+    driver: webdriver.Remote, endpoints: ServerEndpoints,
+    login_user: None
+):
+    user_details = UserDetails(
+        username="test_user_" + str(randint(1, 100)),
+        password="test password",
+        department="test department",
+        email=f"test{randint(1, 100)}@test.com",
+        firstName="test",
+        lastName="runner",
+        roles=["admin"],
+        pathways=["cancer demo 1"],
+    )
+
+    sleep(1)
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Users')]"
+    ).click()
+
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create user')]"
+    ).click()
+
+    driver.find_element(By.NAME, "firstName").send_keys(
+        user_details.firstName
+    )
+    driver.find_element(By.NAME, "lastName").send_keys(
+        user_details.lastName
+    )
+    driver.find_element(By.NAME, "username").send_keys(
+        user_details.username
+    )
+    driver.find_element(By.NAME, "password").send_keys(
+        user_details.password
+    )
+    driver.find_element(By.NAME, "email").send_keys(
+        user_details.email
+    )
+    driver.find_element(By.NAME, "department").send_keys(
+        user_details.department
+    )
+    driver.find_element(By.NAME, 'isActive').click()
+
+    roles_section = driver.find_element(
+        By.XPATH, "//label[contains(text(), 'Roles')]"
+    )
+    roles_input = roles_section.find_element(By.XPATH, "./div")
+
+    for role in user_details.roles:
+        roles_input.click()
+        roles_input.find_element(
+            By.XPATH, f".//*[contains(text(), '{role}')]"
+        ).click()
+
+    pathways_section = driver.find_element(
+        By.XPATH, "//label[contains(text(), 'Pathways')]"
+    )
+    pathways_input = pathways_section.find_element(By.XPATH, "./div")
+    for pathway in user_details.pathways:
+        pathways_input.click()
+        pathway = pathways_input.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{pathway}')]"
+        )
+
+    pathway.click()
+
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create User')]"
+    )
+    submit.click()
+
+    return user_details
