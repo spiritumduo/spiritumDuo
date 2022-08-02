@@ -285,3 +285,86 @@ def check_delete_pathway_conf_modal_present(
         ).is_displayed(),
         is_(True)
     )
+
+
+###################################
+###################################
+###################################
+###################################
+
+
+@scenario(
+    "pathway_management.feature",
+    "A pathway is added but that name already exists"
+)
+def test_create_duplicate_pathway():
+    pass
+
+
+@given("the user is logged in")
+def log_user_in_for_create_pathway(driver: webdriver.Remote, login_user: None):
+    sleep(1)
+    assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
+
+
+@given("a pathway exists")
+def create_pathway(driver: webdriver.Remote, test_pathway: PathwayDetails):
+    pass
+
+
+@given("the user is on the pathway create page")
+def set_to_pathway_creation_page(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Pathway management')]"
+    ).click()
+
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create pathway')]"
+    ).click()
+
+
+@when("the user fills the form in with the duplicate name")
+def populate_create_with_duplicate_name(
+    driver: webdriver.Remote,
+    test_pathway: PathwayDetails
+):
+    driver.find_element(By.NAME, "name").send_keys(
+        test_pathway.name
+    )
+
+    requests_section = driver.find_element(
+        By.XPATH, "//*[contains(text(), 'Clinical request types')]/../div"
+    )
+
+    for request in test_pathway.clinical_requests:
+        requests_section.click()
+
+        requests_section.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{request}')]"
+        ).click()
+
+
+@when("the user submits the form")
+def submit_create_pathway_form(driver: webdriver.Remote):
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create pathway')]"
+    )
+    submit.click()
+
+
+@then("the user should be presented with a duplication error")
+def check_error_present(
+    driver: webdriver.Remote, create_pathway_details: PathwayDetails
+):
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//*[contains(text(), 'A pathway with this name already exists')]"
+        ).is_displayed(),
+        is_(True)
+    )

@@ -22,3 +22,11 @@ Feature: Pathway management
         Then the user selects an existing pathway to delete
         When the user submits the delete form
         Then the user should see the delete confirmation modal
+
+    Scenario: A pathway is added but that name already exists
+        Given the user is logged in
+        Given a pathway exists
+        Given the user is on the pathway create page
+        When the user fills the form in with the duplicate name
+        When the user submits the form
+        Then the user should be presented with a duplication error

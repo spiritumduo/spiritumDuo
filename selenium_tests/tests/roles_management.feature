@@ -22,3 +22,11 @@ Feature: Roles management
         Then the user selects an existing role to delete
         When the user submits the delete form
         Then the user should see the delete confirmation modal
+
+    Scenario: A user attempted to create a role by a name that already exists
+        Given the user is logged in
+        Given a role already exists
+        Given the user is on the role creation page
+        When the user fills the form in with the name of the existing role
+        When the user submits the form
+        Then the user should be presented with an error message

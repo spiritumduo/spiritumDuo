@@ -9,18 +9,9 @@ from pytest_bdd import scenario, given, when, then
 from time import sleep
 from selenium_tests.conftest import ServerEndpoints
 from selenium.webdriver.support.ui import WebDriverWait
+from conftest import UserDetails
 
 
-@dataclass
-class UserDetails():
-    username: str
-    password: str
-    department: str
-    email: str
-    firstName: str
-    lastName: str
-    roles: List[str]
-    pathways: List[str]
 
 
 @pytest.fixture
@@ -208,6 +199,12 @@ def check_modal_present(
         )
 
 
+###################
+###################
+###################
+###################
+
+
 @scenario(
     "user_management.feature",
     "A user needs to be updated"
@@ -338,6 +335,118 @@ def check_edit_confirmation(
         modal.find_element(
             By.XPATH,
             f".//*[contains(text(), '{update_user_details.department}')]"
+        ).is_displayed(),
+        is_(True)
+    )
+
+
+###################
+###################
+###################
+###################
+
+
+@scenario(
+    "user_management.feature",
+    "A user attempts to create a user with a pre-existing username"
+)
+def test_create_existing_user():
+    pass
+
+
+@given("the user is logged in")
+def log_user_in(driver: webdriver.Remote, login_user: None):
+    sleep(1)
+    assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
+
+
+@given("a user already exists")
+def add_user(driver: webdriver.Remote, test_user: UserDetails):
+    pass
+
+
+@given("the user is on the user creation page")
+def set_to_user_create_page(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Users')]"
+    ).click()
+
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create user')]"
+    ).click()
+
+
+@when("the user fills the form in with an existing username")
+def populate_form_with_existing_data(
+    driver: webdriver.Remote,
+    create_user_details: UserDetails,
+    test_user: UserDetails
+):
+    driver.find_element(By.NAME, "firstName").send_keys(
+        test_user.firstName
+    )
+    driver.find_element(By.NAME, "lastName").send_keys(
+        test_user.lastName
+    )
+    driver.find_element(By.NAME, "username").send_keys(
+        test_user.username
+    )
+    driver.find_element(By.NAME, "password").send_keys(
+        test_user.password
+    )
+    driver.find_element(By.NAME, "email").send_keys(
+        test_user.email
+    )
+    driver.find_element(By.NAME, "department").send_keys(
+        test_user.department
+    )
+    driver.find_element(By.NAME, 'isActive').click()
+
+    roles_section = driver.find_element(
+        By.XPATH, "//label[contains(text(), 'Roles')]"
+    )
+    roles_input = roles_section.find_element(By.XPATH, "./div")
+
+    for role in test_user.roles:
+        roles_input.click()
+        roles_input.find_element(
+            By.XPATH, f".//*[contains(text(), '{role}')]"
+        ).click()
+
+    pathways_section = driver.find_element(
+        By.XPATH, "//label[contains(text(), 'Pathways')]"
+    )
+    pathways_input = pathways_section.find_element(By.XPATH, "./div")
+    for pathway in test_user.pathways:
+        pathways_input.click()
+        pathway = pathways_input.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{pathway}')]"
+        )
+
+    pathway.click()
+
+
+@when("the user submits the form")
+def submit_form(driver: webdriver.Remote):
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create User')]"
+    )
+    submit.click()
+
+
+@then("the user should be presented with an error message")
+def check_error_present(
+    driver: webdriver.Remote
+):
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//*[contains(text(), 'An account with this email already exists')]"
         ).is_displayed(),
         is_(True)
     )

@@ -287,3 +287,86 @@ def check_delete_conf_modal_present(
         ).is_displayed(),
         is_(True)
     )
+
+
+###################################
+###################################
+###################################
+###################################
+
+
+@scenario(
+    "roles_management.feature",
+    "A user attempted to create a role by a name that already exists"
+)
+def test_create_duplicate_role():
+    pass
+
+
+@given("the user is logged in")
+def log_user_in(driver: webdriver.Remote, login_user: None):
+    sleep(1)
+    assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
+
+
+@given("a role already exists")
+def add_role(driver: webdriver.Remote, test_role: RoleDetails):
+    pass
+
+
+@given("the user is on the role creation page")
+def set_to_role_create_page(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Roles management')]"
+    ).click()
+
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create role')]"
+    ).click()
+
+
+@when("the user fills the form in with the name of the existing role")
+def populate_form_with_duplicate_data(
+    driver: webdriver.Remote,
+    test_role: RoleDetails
+):
+    driver.find_element(By.NAME, "name").send_keys(
+        test_role.name
+    )
+
+    permissions_section = driver.find_element(
+        By.XPATH, "//*[contains(text(), 'Role permissions')]/../div"
+    )
+
+    for permission in test_role.permissions:
+        permissions_section.click()
+
+        permissions_section.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{permission}')]"
+        ).click()
+
+
+@when("the user submits the form")
+def submit_form(driver: webdriver.Remote):
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create role')]"
+    )
+    submit.click()
+
+
+@then("the user should be presented with an error message")
+def check_error_present(
+    driver: webdriver.Remote, create_role_details: RoleDetails
+):
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//*[contains(text(), 'a role with this name already exists')]"
+        ).is_displayed(),
+        is_(True)
+    )
