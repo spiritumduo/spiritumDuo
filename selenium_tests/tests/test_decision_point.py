@@ -9,6 +9,7 @@ from selenium.webdriver.support import (
 )
 from selenium.webdriver.remote.webelement import WebElement
 
+
 @scenario(
     "decision_point.feature",
     "Creating a decision point"
