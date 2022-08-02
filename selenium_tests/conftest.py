@@ -202,46 +202,57 @@ def test_role(
 
 
 @pytest.fixture
-def test_pathway(
+def test_pathways(
     driver: webdriver.Remote, endpoints: ServerEndpoints,
     login_user: None
 ):
-    pathway_details = PathwayDetails(
-        name="Test pathway",
-        clinical_requests=["Referral letter (Referral letter (record artifact))"]
-    )
+    pathway_details = [
+        PathwayDetails(
+            name="Test pathway",
+            clinical_requests=[
+                "Referral letter (Referral letter (record artifact))"
+            ]
+        ),
+        PathwayDetails(
+            name="Test pathway two",
+            clinical_requests=[
+                "Referral letter (Referral letter (record artifact))"
+            ]
+        )
+    ]
 
     sleep(1)
-    driver.get(f"{endpoints.app}/admin")
-    driver.find_element(
-        By.XPATH,
-        "//li[contains(text(), 'Pathway management')]"
-    ).click()
-
-    driver.find_element(
-        By.XPATH,
-        "//li[contains(text(), 'Create pathway')]"
-    ).click()
-
-    driver.find_element(By.NAME, "name").send_keys(
-        pathway_details.name
-    )
-
-    requests_section = driver.find_element(
-        By.XPATH, "//*[contains(text(), 'Clinical request types')]/../div"
-    )
-
-    for requests in pathway_details.clinical_requests:
-        requests_section.click()
-
-        requests_section.find_element(
-            By.XPATH, f".//div/*[contains(text(), '{requests}')]"
+    for pathway in pathway_details:
+        driver.get(f"{endpoints.app}/admin")
+        driver.find_element(
+            By.XPATH,
+            "//li[contains(text(), 'Pathway management')]"
         ).click()
 
-    submit = driver.find_element(
-        By.XPATH, "//button[contains(text(), 'Create pathway')]"
-    )
-    submit.click()
+        driver.find_element(
+            By.XPATH,
+            "//li[contains(text(), 'Create pathway')]"
+        ).click()
+
+        driver.find_element(By.NAME, "name").send_keys(
+            pathway.name
+        )
+
+        requests_section = driver.find_element(
+            By.XPATH, "//*[contains(text(), 'Clinical request types')]/../div"
+        )
+
+        for requests in pathway.clinical_requests:
+            requests_section.click()
+
+            requests_section.find_element(
+                By.XPATH, f".//div/*[contains(text(), '{requests}')]"
+            ).click()
+
+        submit = driver.find_element(
+            By.XPATH, "//button[contains(text(), 'Create pathway')]"
+        )
+        submit.click()
 
     return pathway_details
 
