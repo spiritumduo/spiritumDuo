@@ -10,8 +10,8 @@ Feature: MDT implementations
 
     Scenario: an MDT needs to be updated
         Given the user is logged in
-        Given the user is on the MDT list page
         Given an MDT exists to update
+        Given the user is on the MDT list page
         When the user clicks the edit link
         Then a modal to update the MDT is shown
         When the edit form is populated correctly
@@ -20,8 +20,8 @@ Feature: MDT implementations
 
     Scenario: an MDT needs to be deleted
         Given the user is logged in
-        Given the user is on the MDT list page
         Given an MDT exists to delete
+        Given the user is on the MDT list page
         When the user clicks on the edit link
         Then a modal to update the MDT is shown
         When the tab is changed to delete

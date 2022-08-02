@@ -127,6 +127,12 @@ def check_mdt_confirmation_modal_shown(
     )
 
 
+###########################
+###########################
+###########################
+###########################
+
+
 @scenario(
     "mdt_management.feature",
     "an MDT needs to be updated"
@@ -141,6 +147,11 @@ def log_user_in_for_update_mdt(driver: webdriver.Remote, login_user: None):
     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
+@given("an MDT exists to update")
+def add_mdt_to_update(driver: webdriver.Remote, test_mdt: MdtDetails):
+    pass
+
+
 @given("the user is on the MDT list page")
 def set_to_mdt_update_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
@@ -148,9 +159,7 @@ def set_to_mdt_update_page(
     driver.get(f"{endpoints.app}/mdt")
 
 
-@given("an MDT exists to update")
-def add_mdt_to_update(test_mdt: MdtDetails):
-    pass
+
 
 
 @when("the user clicks the edit link")
@@ -242,6 +251,13 @@ def check_mdt_update_confirmation_modal_shown(
     )
 
 
+###########################
+###########################
+###########################
+###########################
+###########################
+
+
 @scenario(
     "mdt_management.feature",
     "an MDT needs to be deleted"
@@ -256,16 +272,16 @@ def log_user_in_for_delete_mdt(driver: webdriver.Remote, login_user: None):
     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
+@given("an MDT exists to delete")
+def add_mdt_to_delete(test_mdt: MdtDetails):
+    pass
+
+
 @given("the user is on the MDT list page")
 def set_to_mdt_delete_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
     driver.get(f"{endpoints.app}/mdt")
-
-
-@given("an MDT exists to delete")
-def add_mdt_to_delete(test_mdt: MdtDetails):
-    pass
 
 
 @when("the user clicks on the edit link")
