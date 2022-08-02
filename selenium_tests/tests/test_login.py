@@ -77,6 +77,17 @@ def insert_incorrect_credentials(driver: webdriver.Remote):
     driver.find_element(By.ID, "submit").click()
 
 
+@then("the user should see an error")
+def check_error_present(driver: webdriver.Remote):
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//*[contains(text(), 'Incorrect username and/or password')]"
+        ).is_displayed(),
+        is_(True)
+    )
+
+
 @then("the user should not be assigned a session cookie")
 def check_cookie_not_present(driver: webdriver.Remote):
     # we wait what we think is a timely amount of time

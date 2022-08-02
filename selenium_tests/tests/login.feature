@@ -8,5 +8,6 @@ Feature: Login
     Scenario: Logging the user in with invalid credentials
         Given the login page is displayed
         When the user inserts an incorrect username and password and submits
-        Then the user should not be assigned a session cookie
+        Then the user should see an error
+        And the user should not be assigned a session cookie
         And the user should still be on the login page
