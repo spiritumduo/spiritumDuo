@@ -142,12 +142,14 @@ const CreatePathwayTab = (
   return (
     <>
       { mutationError ? <ErrorMessage>{mutationError.message}</ErrorMessage> : null}
-      { mutationData?.createPathway?.userErrors
-        ? (
-          mutationData?.createPathway?.userErrors?.map((userError) => (
-            <ErrorMessage key={ userError.field }>{userError.message}</ErrorMessage>
-          ))
-        ) : null}
+      {
+        mutationData?.createPathway?.userErrors
+          ? (
+            mutationData?.createPathway?.userErrors?.map((userError) => (
+              <ErrorMessage key={ userError.field }>{userError.message}</ErrorMessage>
+            ))
+          ) : null
+      }
       <Form
         onSubmit={ handleSubmit( () => {
           onSubmit(createPathwayFunc, getValues());

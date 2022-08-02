@@ -162,17 +162,14 @@ const UpdatePathwayTab = (
   return (
     <>
       { mutationError ? <ErrorMessage>{mutationError.message}</ErrorMessage> : null}
-      { mutationData?.updatePathway?.userErrors
-        ? (
-          <ErrorMessage>
-            An error occured:&nbsp;
-            {
-              mutationData?.updatePathway?.userErrors?.map((userError) => (
-                `${userError.message}`
-              ))
-            }
-          </ErrorMessage>
-        ) : null}
+      {
+        mutationData?.updatePathway?.userErrors
+          ? (
+            mutationData?.updatePathway?.userErrors?.map((userError) => (
+              <ErrorMessage key={ userError.field }>{userError.message}</ErrorMessage>
+            ))
+          ) : null
+      }
       <Form
         onSubmit={ handleSubmit( () => {
           onSubmit(updatePathwayFunc, getValues());
