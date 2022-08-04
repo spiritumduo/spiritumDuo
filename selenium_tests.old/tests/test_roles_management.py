@@ -5,10 +5,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
-from conftest import RoleDetails, ServerEndpoints
+from selenium_tests.conftest import RoleDetails, ServerEndpoints
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from conftest import change_url
 
 
 @pytest.fixture
@@ -45,8 +44,7 @@ def log_user_in_for_create(driver: webdriver.Remote, login_user: None):
 def set_to_role_create_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}admin")
-
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Roles management')]"
@@ -149,7 +147,7 @@ def generate_role_to_update(driver: webdriver.Remote, test_role: RoleDetails):
 def set_to_modify_role_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}admin")
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Roles management')]"
@@ -215,160 +213,160 @@ def check_edit_conf_modal_present(
     )
 
 
-# ###################################
-# ###################################
-# ###################################
-# ###################################
+###################################
+###################################
+###################################
+###################################
 
 
-# @scenario(
-#     "roles_management.feature",
-#     "A role needs to be deleted"
-# )
-# def test_delete_role():
-#     pass
+@scenario(
+    "roles_management.feature",
+    "A role needs to be deleted"
+)
+def test_delete_role():
+    pass
 
 
-# @given("the user is logged in")
-# def log_user_in_for_delete(driver: webdriver.Remote, login_user: None):
-#     sleep(1)
-#     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
+@given("the user is logged in")
+def log_user_in_for_delete(driver: webdriver.Remote, login_user: None):
+    sleep(1)
+    assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-# @given("a role to delete exists")
-# def generate_role_to_delete(driver: webdriver.Remote, test_role: RoleDetails):
-#     pass
+@given("a role to delete exists")
+def generate_role_to_delete(driver: webdriver.Remote, test_role: RoleDetails):
+    pass
 
 
-# @given("the user is on the role delete page")
-# def set_to_delete_role_page(
-#     driver: webdriver.Remote, endpoints: ServerEndpoints
-# ):
-#     change_url(driver, f"{endpoints.app}admin")
-#     driver.find_element(
-#         By.XPATH,
-#         "//li[contains(text(), 'Roles management')]"
-#     ).click()
+@given("the user is on the role delete page")
+def set_to_delete_role_page(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Roles management')]"
+    ).click()
 
-#     driver.find_element(
-#         By.XPATH,
-#         "//li[contains(text(), 'Delete role')]"
-#     ).click()
-
-
-# @then("the user selects an existing role to delete")
-# def select_role_to_delete(
-#     driver: webdriver.Remote,
-#     test_role: RoleDetails
-# ):
-#     role_index = WebDriverWait(driver, 10).until(
-#         lambda d: d.find_element(
-#             By.NAME, "roleIndex"
-#         )
-#     )
-#     role_select = Select(role_index)
-#     role_select.select_by_visible_text(test_role.name)
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Delete role')]"
+    ).click()
 
 
-# @when("the user submits the delete form")
-# def submit_delete_form(driver: webdriver.Remote):
-#     submit = driver.find_element(
-#         By.XPATH, "//button[contains(text(), 'Delete role')]"
-#     )
-#     submit.click()
+@then("the user selects an existing role to delete")
+def select_role_to_delete(
+    driver: webdriver.Remote,
+    test_role: RoleDetails
+):
+    role_index = WebDriverWait(driver, 10).until(
+        lambda d: d.find_element(
+            By.NAME, "roleIndex"
+        )
+    )
+    role_select = Select(role_index)
+    role_select.select_by_visible_text(test_role.name)
 
 
-# @then("the user should see the delete confirmation modal")
-# def check_delete_conf_modal_present(
-#     driver: webdriver.Remote
-# ):
-#     assert_that(
-#         driver.find_element(
-#             By.XPATH,
-#             "//div[contains(text(), 'Role deleted')]"
-#         ).is_displayed(),
-#         is_(True)
-#     )
+@when("the user submits the delete form")
+def submit_delete_form(driver: webdriver.Remote):
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Delete role')]"
+    )
+    submit.click()
 
 
-# ###################################
-# ###################################
-# ###################################
-# ###################################
+@then("the user should see the delete confirmation modal")
+def check_delete_conf_modal_present(
+    driver: webdriver.Remote
+):
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(text(), 'Role deleted')]"
+        ).is_displayed(),
+        is_(True)
+    )
 
 
-# @scenario(
-#     "roles_management.feature",
-#     "A user attempted to create a role by a name that already exists"
-# )
-# def test_create_duplicate_role():
-#     pass
+###################################
+###################################
+###################################
+###################################
 
 
-# @given("the user is logged in")
-# def log_user_in(driver: webdriver.Remote, login_user: None):
-#     sleep(1)
-#     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
+@scenario(
+    "roles_management.feature",
+    "A user attempted to create a role by a name that already exists"
+)
+def test_create_duplicate_role():
+    pass
 
 
-# @given("a role already exists")
-# def add_role(driver: webdriver.Remote, test_role: RoleDetails):
-#     pass
+@given("the user is logged in")
+def log_user_in(driver: webdriver.Remote, login_user: None):
+    sleep(1)
+    assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-# @given("the user is on the role creation page")
-# def set_to_role_create_page(
-#     driver: webdriver.Remote, endpoints: ServerEndpoints
-# ):
-#     change_url(driver, f"{endpoints.app}admin")
-#     driver.find_element(
-#         By.XPATH,
-#         "//li[contains(text(), 'Roles management')]"
-#     ).click()
-
-#     driver.find_element(
-#         By.XPATH,
-#         "//li[contains(text(), 'Create role')]"
-#     ).click()
+@given("a role already exists")
+def add_role(driver: webdriver.Remote, test_role: RoleDetails):
+    pass
 
 
-# @when("the user fills the form in with the name of the existing role")
-# def populate_form_with_duplicate_data(
-#     driver: webdriver.Remote,
-#     test_role: RoleDetails
-# ):
-#     driver.find_element(By.NAME, "name").send_keys(
-#         test_role.name
-#     )
+@given("the user is on the role creation page")
+def set_to_role_create_page(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    driver.get(f"{endpoints.app}/admin")
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Roles management')]"
+    ).click()
 
-#     permissions_section = driver.find_element(
-#         By.XPATH, "//*[contains(text(), 'Role permissions')]/../div"
-#     )
-
-#     for permission in test_role.permissions:
-#         permissions_section.click()
-
-#         permissions_section.find_element(
-#             By.XPATH, f".//div/*[contains(text(), '{permission}')]"
-#         ).click()
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Create role')]"
+    ).click()
 
 
-# @when("the user submits the form")
-# def submit_form(driver: webdriver.Remote):
-#     submit = driver.find_element(
-#         By.XPATH, "//button[contains(text(), 'Create role')]"
-#     )
-#     submit.click()
+@when("the user fills the form in with the name of the existing role")
+def populate_form_with_duplicate_data(
+    driver: webdriver.Remote,
+    test_role: RoleDetails
+):
+    driver.find_element(By.NAME, "name").send_keys(
+        test_role.name
+    )
+
+    permissions_section = driver.find_element(
+        By.XPATH, "//*[contains(text(), 'Role permissions')]/../div"
+    )
+
+    for permission in test_role.permissions:
+        permissions_section.click()
+
+        permissions_section.find_element(
+            By.XPATH, f".//div/*[contains(text(), '{permission}')]"
+        ).click()
 
 
-# @then("the user should be presented with an error message")
-# def check_error_present(
-#     driver: webdriver.Remote, create_role_details: RoleDetails
-# ):
-#     assert_that(
-#         driver.find_element(
-#             By.XPATH,
-#             "//*[contains(text(), 'a role with this name already exists')]"
-#         ).is_displayed(),
-#         is_(True)
-#     )
+@when("the user submits the form")
+def submit_form(driver: webdriver.Remote):
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Create role')]"
+    )
+    submit.click()
+
+
+@then("the user should be presented with an error message")
+def check_error_present(
+    driver: webdriver.Remote, create_role_details: RoleDetails
+):
+    assert_that(
+        driver.find_element(
+            By.XPATH,
+            "//*[contains(text(), 'a role with this name already exists')]"
+        ).is_displayed(),
+        is_(True)
+    )

@@ -7,10 +7,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
-from conftest import ServerEndpoints
+from selenium_tests.conftest import ServerEndpoints
 from selenium.webdriver.support.ui import WebDriverWait
 from conftest import UserDetails
-from conftest import change_url
+
 
 
 
@@ -60,7 +60,7 @@ def log_user_in(driver: webdriver.Remote, login_user: None):
 def set_to_admin_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}admin")
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Users')]"
@@ -223,7 +223,7 @@ def log_user_in(driver: webdriver.Remote, login_user: None):
 def set_to_users_admin_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}admin")
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Users')]"
@@ -369,7 +369,7 @@ def add_user(driver: webdriver.Remote, test_user: UserDetails):
 def set_to_user_create_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}admin")
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Users')]"

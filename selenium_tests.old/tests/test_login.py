@@ -4,13 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import (
-    expected_conditions as ExpectedConditions,
-)
-from conftest import ServerEndpoints
-from selenium.common.exceptions import NoSuchElementException
-from conftest import change_url
+
+from selenium_tests.conftest import ServerEndpoints
+
 
 @scenario("login.feature", "Logging the user in with valid credentials")
 def test_login_correct_creds():
@@ -21,7 +17,7 @@ def test_login_correct_creds():
 def set_login_page_for_correct_credentials_test(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, endpoints.app)
+    driver.get(endpoints.app)
 
 
 @when("the user inserts a correct username and password and submits")
@@ -66,8 +62,7 @@ def test_login_incorrect_creds():
 def set_login_page_for_incorrect_credentials_test(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, endpoints.app)
-
+    driver.get(endpoints.app)
 
 
 @when("the user inserts an incorrect username and password and submits")

@@ -5,13 +5,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
-from conftest import MdtDetails, ServerEndpoints
+from selenium_tests.conftest import MdtDetails, ServerEndpoints
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from conftest import change_url
-from selenium.webdriver.support import (
-    expected_conditions as ExpectedConditions,
-)
+
 
 @pytest.fixture
 def create_mdt_details():
@@ -25,12 +22,6 @@ def update_mdt_details():
     return MdtDetails(
         location=f"custom mdt{randint(1001, 2000)}"
     )
-
-
-###########################
-###########################
-###########################
-###########################
 
 
 @scenario(
@@ -51,7 +42,7 @@ def log_user_in_for_create_mdt(driver: webdriver.Remote, login_user: None):
 def set_to_mdt_create_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}mdt")
+    driver.get(f"{endpoints.app}/mdt")
 
 
 @when("the user clicks the create MDT button")
@@ -165,7 +156,10 @@ def add_mdt_to_update(driver: webdriver.Remote, test_mdt: MdtDetails):
 def set_to_mdt_update_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}mdt")
+    driver.get(f"{endpoints.app}/mdt")
+
+
+
 
 
 @when("the user clicks the edit link")
@@ -182,19 +176,11 @@ def click_update_mdt_button(driver: webdriver.Remote, test_mdt: MdtDetails):
 
 @then("a modal to update the MDT is shown")
 def check_mdt_update_modal_shown(driver: webdriver.Remote):
-    modal =  driver.find_element(
-        By.XPATH,
-        "//div[contains(@class, 'modal-body')]"
-    )
-
-    WebDriverWait(driver, 10).until(
-        ExpectedConditions.visibility_of(
-            modal
-        )
-    )
-
     assert_that(
-        modal.is_displayed(),
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(@class, 'modal-body')]"
+        ).is_displayed(),
         is_(True)
     )
 
@@ -295,7 +281,7 @@ def add_mdt_to_delete(test_mdt: MdtDetails):
 def set_to_mdt_delete_page(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
-    change_url(driver, f"{endpoints.app}mdt")
+    driver.get(f"{endpoints.app}/mdt")
 
 
 @when("the user clicks on the edit link")
@@ -310,15 +296,13 @@ def click_edit_mdt_button(driver: webdriver.Remote, test_mdt: MdtDetails):
     ).click()
 
 
-@then("a modal to delete the MDT is shown")
+@then("a modal to update the MDT is shown")
 def check_mdt_delete_modal_shown(driver: webdriver.Remote):
-    modal =  driver.find_element(
-        By.XPATH,
-        "//div[contains(@class, 'modal-body')]"
-    )
-
     assert_that(
-        modal.is_displayed(),
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(@class, 'modal-body')]"
+        ).is_displayed(),
         is_(True)
     )
 

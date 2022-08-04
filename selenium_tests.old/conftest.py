@@ -17,13 +17,9 @@ from selenium.webdriver.safari.options import Options as SafariOptions
 from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
+
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import (
-    expected_conditions as ExpectedConditions,
-)
-from selenium.common.exceptions import NoSuchElementException
 
 
 @dataclass
@@ -61,34 +57,17 @@ class UserDetails():
     pathways: List[str]
 
 
-def change_url(driver: webdriver.Remote, url):
-    driver.get(url)
-
-    WebDriverWait(driver, 10).until(
-        ExpectedConditions.url_to_be(url)
-    )
-
-    WebDriverWait(
-        driver, 10,
-        ignored_exceptions=[NoSuchElementException]
-    ).until(
-        ExpectedConditions.visibility_of(
-            driver.find_element(By.ID, "root")
-        )
-    )
-
-
 @pytest.fixture
 def endpoints():
     hostname: str = (
             'SELENIUM_HOSTNAME' in environ
             and (
                 environ['SELENIUM_HOSTNAME']
-            ) or 'http://192.168.0.45'
+            ) or 'http://localhost'
         )
     return ServerEndpoints(
-        app=hostname + "/app/",
-        api=hostname + "/api/"
+        app=hostname + "/app",
+        api=hostname + "/api"
     )
 
 
@@ -97,7 +76,7 @@ def driver():
     browser_choice: str = (
         'SELENIUM_BROWSER_CLIENT' in environ
         and environ['SELENIUM_BROWSER_CLIENT']
-        or 'chromium'
+        or 'firefox'
     ).lower()
 
     if browser_choice == "firefox":
@@ -105,14 +84,15 @@ def driver():
         options.add_argument("--headless")
         options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
-            service=FirefoxService(GeckoDriverManager().install()),
+            # service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
+        driver.set_window_size(1920, 1080)
 
     elif browser_choice == "chromium":
         options = ChromeOptions()
         options.add_argument("--no-sandbox")
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
         options.add_argument("--disable-setuid-sandbox")
         options.add_argument("--remote-debugging-port=9222")
         options.add_argument("--disable-dev-shm-using")
@@ -128,14 +108,18 @@ def driver():
             ),
             options=options,
         )
+        driver.set_window_size(1920, 1080)
 
     elif browser_choice == "safari":
         options = SafariOptions()
 
         driver = webdriver.Safari(
-            service=SafariService(),
+            service=SafariService(quiet=True),
             options=options
         )
+        options.add_argument("--headless")
+
+        driver.set_window_size(1920, 1080)
 
     elif browser_choice == "edge":
         options = EdgeOptions()
@@ -156,8 +140,8 @@ def driver():
             options=options,
         )
 
-    # driver.maximize_window()
-    driver.set_window_size(1920, 1080)
+        driver.set_window_size(1920, 1080)
+
     driver.implicitly_wait(10)
     yield driver
     driver.close()
@@ -166,17 +150,7 @@ def driver():
 @pytest.fixture
 def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
 
-    change_url(driver, endpoints.app)
-
-    WebDriverWait(
-        driver, 10,
-        ignored_exceptions=[NoSuchElementException]
-    ).until(
-        ExpectedConditions.visibility_of(
-            driver.find_element(By.ID, "root")
-        )
-    )
-
+    driver.get(endpoints.app)
     # username field
     driver.find_element(By.NAME, "username").send_keys("demo-1-2")
 
@@ -185,12 +159,6 @@ def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
 
     # submit button
     driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
-
-    WebDriverWait(driver, 10).until(
-        ExpectedConditions.url_to_be(
-            endpoints.app
-        )
-    )
 
 
 @pytest.fixture
@@ -205,7 +173,7 @@ def test_role(
     )
 
     sleep(1)
-    change_url(driver, f"{endpoints.app}admin")
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Roles management')]"
@@ -261,7 +229,7 @@ def test_pathways(
 
     sleep(1)
     for pathway in pathway_details:
-        change_url(driver, f"{endpoints.app}admin")
+        driver.get(f"{endpoints.app}/admin")
         driver.find_element(
             By.XPATH,
             "//li[contains(text(), 'Pathway management')]"
@@ -304,7 +272,7 @@ def test_mdt(
         location="test location"
     )
     sleep(1)
-    change_url(driver, f"{endpoints.app}mdt")
+    driver.get(f"{endpoints.app}/mdt")
     driver.find_element(
         By.XPATH,
         "//button[contains(text(), 'Create MDT')]"
@@ -327,6 +295,10 @@ def test_mdt(
         By.XPATH, ".//button[contains(text(), 'Create')]")
     submit_button.click()
 
+    driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Close')]"
+    ).click()
+
     return mdt_details
 
 
@@ -347,7 +319,7 @@ def test_user(
     )
 
     sleep(1)
-    change_url(driver, f"{endpoints.app}admin")
+    driver.get(f"{endpoints.app}/admin")
     driver.find_element(
         By.XPATH,
         "//li[contains(text(), 'Users')]"

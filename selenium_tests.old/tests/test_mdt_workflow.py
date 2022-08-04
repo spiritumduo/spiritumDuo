@@ -9,11 +9,10 @@ from conftest import MdtDetails, ServerEndpoints
 from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
 )
-from conftest import change_url
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 
 
-SELECTED_MDT_DATE = ""
+SELECTED_MDT = ""
 
 
 @scenario(
@@ -31,16 +30,13 @@ def log_user_in(driver: webdriver.Remote, login_user: None):
 
 
 @given("an MDT exists")
-def add_mdt(
-    driver: webdriver.Remote,
-    test_mdt: MdtDetails
-):
+def add_mdt(driver: webdriver.Remote, test_mdt: MdtDetails):
     pass
 
 
 @given("the user is on the home page")
 def set_on_homepage(driver: webdriver.Remote, endpoints: ServerEndpoints):
-    change_url(driver, endpoints.app)
+    driver.get(endpoints.app)
 
 
 @when("the user clicks on a patient row")
@@ -97,31 +93,14 @@ def populate_mdt_details(driver: webdriver.Remote):
 
 @when("this is filled and submitted")
 def populate_and_submit_form(driver: webdriver.Remote):
-    # https://stackoverflow.com/questions/46738214/selenium-select-value-from-dropdown-not-working-in-edge-safari-but-works-in-othe
-    # https://stackoverflow.com/questions/42575464/selenium-with-safari-cant-select-option-from-select-input
-        
-    global SELECTED_MDT_DATE
-
-    WebDriverWait(driver, 10).until(
-        ExpectedConditions.element_to_be_clickable(
-            driver.find_element(By.NAME, 'mdtReason')
-        )
-    )
-
-    driver.find_element(By.NAME, 'mdtSessionId').click()
-
+    global SELECTED_MDT
+    reasonTxt = driver.find_element(By.NAME, 'mdtReason')
     mdtSelection = Select(driver.find_element(By.NAME, 'mdtSessionId'))
 
-    Select(WebDriverWait(driver, 10).until(
-        ExpectedConditions.element_to_be_clickable(
-            driver.find_element(By.NAME, 'mdtSessionId')
-        )
-    )).select_by_index(1)
+    mdtSelection.select_by_index(1)
 
+    SELECTED_MDT = mdtSelection.first_selected_option.text
 
-    SELECTED_MDT_DATE = mdtSelection.first_selected_option.text
-
-    reasonTxt = driver.find_element(By.NAME, 'mdtReason')
     reasonTxt.clear()
     reasonTxt.send_keys("reasons go here")
 
@@ -179,7 +158,6 @@ def submit_sub_modal(driver: webdriver.Remote):
     driver.find_element(By.XPATH, "//button[contains(text(), 'OK')]").click()
 
 
-
 @then("it should close the modal")
 def close_sub_modal(driver: webdriver.Remote):
     assert_that(
@@ -191,16 +169,6 @@ def close_sub_modal(driver: webdriver.Remote):
 @when("the user clicks on the MDT nav link")
 def click_on_mdt_nav(driver: webdriver.Remote):
     driver.find_element(By.XPATH, "//a[contains(text(), 'MDT')]").click()
-
-    sleep(1)
-    WebDriverWait(
-        driver, 10,
-        ignored_exceptions=[NoSuchElementException]
-    ).until(
-        ExpectedConditions.visibility_of(
-            driver.find_element(By.ID, "root")
-        )
-    )
 
 
 @then("the user should be presented with a list of MDTs")
@@ -215,20 +183,21 @@ def check_list_of_mdts(driver: webdriver.Remote):
 
 
 @when("the user clicks on an MDT")
-def select_mdt(
-    driver: webdriver.Remote,
-):
-    print(SELECTED_MDT_DATE)
-    row: WebElement = WebDriverWait(driver, 10).until(
-        ExpectedConditions.element_to_be_clickable(
-            driver.find_element(
-                By.XPATH,
-                f"//*[contains(text(), '{SELECTED_MDT_DATE}')]"
-            )
-        )
+def select_mdt(driver: webdriver.Remote, test_mdt: MdtDetails):
+    row = driver.find_element(
+        By.XPATH,
+        f"//*[contains(text(), '{SELECTED_MDT}')]/.."
     )
-    print(row.get_attribute("class"))
-    row.click()
+
+    WebDriverWait(driver, 30).until(
+        ExpectedConditions.element_to_be_clickable(row)
+    )
+
+    # table_rows[0].click() # for an unknown reason, this doesn't work.
+    # using ActionChains below, does. They run w3c actions so I can't
+    # think that it'd be interacting in an unusual way
+
+    ActionChains(driver).click(row).perform()
 
 
 @then("the user should be presented with a list of patients")
