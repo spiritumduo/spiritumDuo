@@ -1,7 +1,10 @@
 import asyncio
 import datetime
+import getopt
 import sys
 from operator import and_, not_
+
+import argparse
 
 from common import DataCreatorInputErrors
 from models import (
@@ -543,11 +546,18 @@ async def insert_demo_data():
         )
 
 
+def main(argv):
+    parser = argparse.ArgumentParser(description="Demo Management Script")
+    parser.add_argument('--onlyclear', action='store_true', default=False)
+    arguments = parser.parse_args()
+    loop = asyncio.get_event_loop()
+    engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
+    loop.run_until_complete(check_connection())
+    loop.run_until_complete(clear_existing_data())
+    if not arguments.onlyclear:
+        loop.run_until_complete(asyncio.sleep(2))
+        loop.run_until_complete(insert_demo_data())
 
 
-loop = asyncio.get_event_loop()
-engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
-loop.run_until_complete(check_connection())
-loop.run_until_complete(clear_existing_data())
-loop.run_until_complete(asyncio.sleep(2))
-loop.run_until_complete(insert_demo_data())
+if __name__ == "__main__":
+    main(sys.argv[1:])
