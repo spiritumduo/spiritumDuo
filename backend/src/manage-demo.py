@@ -1,6 +1,8 @@
 import asyncio
 import datetime
 import sys
+from operator import and_, not_
+
 from common import DataCreatorInputErrors
 from models import (
     Pathway,
@@ -157,7 +159,7 @@ async def clear_existing_data():
         print("Table `UserPathway` not found. Continuing")
 
     try:
-        await User.delete.where(User.id >= 0).gino.status()
+        await User.delete.where(and_(User.id >= 0, User.username.contains('demo-'))).gino.status()
         print("Table `User` deleted")
     except UndefinedTableError:
         print("Table `User` not found. Continuing")
@@ -190,7 +192,7 @@ async def clear_existing_data():
 
 async def create_roles():
     doctor_role = await Role.create(
-        name="GP"
+        name="Doctor"
     )
     admin_role = await Role.create(
         name="admin"
@@ -520,6 +522,27 @@ async def insert_demo_data():
                     completed_at=datetime.datetime.now(),
                     clinical_request_type_id=general_clinical_request_types["ct_chest"].id,
                 )
+
+    custom_users = await User.query.where(User.username.notlike('demo-%')).gino.all()
+    pathways = await Pathway.query.gino.all()
+
+    num_pathways = len(pathways)
+    for user in custom_users:
+        pathway_index = randint(0, num_pathways - 1)
+        await UserRole.create(
+            user_id=user.id,
+            role_id=roles['doctor'].id
+        )
+        await UserRole.create(
+            user_id=user.id,
+            role_id=roles['admin'].id
+        )
+        await UserPathway.create(
+            user_id=user.id,
+            pathway_id=pathways[pathway_index].id
+        )
+
+
 
 
 loop = asyncio.get_event_loop()
