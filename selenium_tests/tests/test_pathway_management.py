@@ -126,112 +126,112 @@ def check_create_pathway_modal_present(
         )
 
 
-# ###################################
-# ###################################
-# ###################################
-# ###################################
+###################################
+###################################
+###################################
+###################################
 
 
-# @scenario(
-#     "pathway_management.feature",
-#     "A pathway needs to be updated"
-# )
-# def test_update_pathway():
-#     pass
+@scenario(
+    "pathway_management.feature",
+    "A pathway needs to be updated"
+)
+def test_update_pathway():
+    pass
 
 
-# @given("the user is logged in")
-# def log_user_in_for_update_pathway(driver: webdriver.Remote, login_user: None):
-#     sleep(1)
-#     assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
+@given("the user is logged in")
+def log_user_in_for_update_pathway(driver: webdriver.Remote, login_user: None):
+    sleep(1)
+    assert_that(driver.get_cookie("SDSESSION"), is_(not_none()))
 
 
-# @given("a pathway to update exists")
-# def generate_pathway_to_update(
-#     driver: webdriver.Remote,
-#     test_pathways: List[PathwayDetails]
-# ):
-#     pass
+@given("a pathway to update exists")
+def generate_pathway_to_update(
+    driver: webdriver.Remote,
+    test_pathways: List[PathwayDetails]
+):
+    pass
 
 
-# @given("the user is on the pathway update page")
-# def set_to_modify_pathway_page(
-#     driver: webdriver.Remote, endpoints: ServerEndpoints
-# ):
-#     change_url(driver, f"{endpoints.app}admin")
+@given("the user is on the pathway update page")
+def set_to_modify_pathway_page(
+    driver: webdriver.Remote, endpoints: ServerEndpoints
+):
+    change_url(driver, f"{endpoints.app}admin")
 
-#     driver.find_element(
-#         By.XPATH,
-#         "//li[contains(text(), 'Pathway management')]"
-#     ).click()
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Pathway management')]"
+    ).click()
 
-#     driver.find_element(
-#         By.XPATH,
-#         "//li[contains(text(), 'Update pathway')]"
-#     ).click()
-
-
-# @then("the user selects an exiting pathway to update")
-# def select_pathway_to_update(
-#     driver: webdriver.Remote,
-#     test_pathways: List[PathwayDetails]
-# ):
-#     selector = WebDriverWait(driver, 10).until(
-#         lambda d: d.find_element(
-#             By.NAME, "pathwayIndex"
-#         )
-#     )
-#     select = Select(selector)
-#     select.select_by_visible_text(test_pathways[0].name)
-#     print(select.options)
+    driver.find_element(
+        By.XPATH,
+        "//li[contains(text(), 'Update pathway')]"
+    ).click()
 
 
-# @then("the user clears and fills the form with valid data")
-# def clear_and_populate_pathway_update_form(
-#     driver: webdriver.Remote,
-#     update_pathway_details: PathwayDetails
-# ):
-#     name_input = driver.find_element(By.NAME, "name")
-#     name_input.clear()
-#     name_input.send_keys(
-#         update_pathway_details.name
-#     )
+@then("the user selects an exiting pathway to update")
+def select_pathway_to_update(
+    driver: webdriver.Remote,
+    test_pathways: List[PathwayDetails]
+):
+    selector = WebDriverWait(driver, 10).until(
+        lambda d: d.find_element(
+            By.NAME, "pathwayIndex"
+        )
+    )
+    select = Select(selector)
+    select.select_by_visible_text(test_pathways[0].name)
+    print(select.options)
 
 
-# @when("the user submits the update form")
-# def submit_update_pathway_form(driver: webdriver.Remote):
-#     submit = driver.find_element(
-#         By.XPATH, "//button[contains(text(), 'Update pathway')]"
-#     )
-#     submit.click()
+@then("the user clears and fills the form with valid data")
+def clear_and_populate_pathway_update_form(
+    driver: webdriver.Remote,
+    update_pathway_details: PathwayDetails
+):
+    name_input = driver.find_element(By.NAME, "name")
+    name_input.clear()
+    name_input.send_keys(
+        update_pathway_details.name
+    )
 
 
-# @then("the user should see the update confirmation modal")
-# def check_edit_pathway_conf_modal_present(
-#     driver: webdriver.Remote, update_pathway_details: PathwayDetails
-# ):
-#     success_text = driver.find_element(
-#         By.XPATH, "//div[contains(text(), 'Pathway Updated')]"
-#     )
+@when("the user submits the update form")
+def submit_update_pathway_form(driver: webdriver.Remote):
+    submit = driver.find_element(
+        By.XPATH, "//button[contains(text(), 'Update pathway')]"
+    )
+    submit.click()
+
+
+@then("the user should see the update confirmation modal")
+def check_edit_pathway_conf_modal_present(
+    driver: webdriver.Remote, update_pathway_details: PathwayDetails
+):
+    success_text = driver.find_element(
+        By.XPATH, "//div[contains(text(), 'Pathway Updated')]"
+    )
     
-#     WebDriverWait(driver, 10).until(
-#         lambda d: success_text.is_displayed()
-#     )
+    WebDriverWait(driver, 10).until(
+        lambda d: success_text.is_displayed()
+    )
 
-#     assert_that(
-#         success_text.is_displayed(),
-#         is_(True)
-#     )
+    assert_that(
+        success_text.is_displayed(),
+        is_(True)
+    )
 
-#     modal = driver.find_element(
-#         By.XPATH,
-#         "//div[contains(@class, 'modal-body')]"
-#     )
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
 
-#     modal.find_element(
-#         By.XPATH,
-#         f".//*[contains(text(), '{update_pathway_details.name}')]"
-#     )
+    modal.find_element(
+        By.XPATH,
+        f".//*[contains(text(), '{update_pathway_details.name}')]"
+    )
 
 
 ###################################
