@@ -141,3 +141,21 @@ I spent this week catching up with administrative tasks that have built up over 
 ## 20th - 24th June 2022
 
 I spent this week working on the MDT functionality of the project. An MDT (multi-disciplinary team meeting) is a meeting wherein clinicians from different specialities discuss patients, appropriate care plans, and results. The aim is to be able to provide MDT management and recording in our project. This is an initial iteration and will largely change by the time we're happy with it. It's quite a big task so I'm happy to be trying to tackle it. I'll likely be taking some of, if not wholly, next week to continue working on this. There are a few implementation issues and technicalities I've had to work out, for example if there *could* be more than one MDT in a day.
+
+## 27th June - 1st July 2022
+
+This week I've been working on MDT meeting features (multi-disciplinary team meetings). Our goal is to support adding a patient to a meeting as a step in their pathway as well as adding tests as a result of this meeting. This is quite a complicated aspect of the software so I don't anticipate it being done quickly. The hardest part isn't necessarily programming it, but the logic surrounding it and implementation specificalities. This feature will include the ability to create, update and delete MDTs, as well as the ability to add and remove a patient to and from an MDT.
+
+## 4th - 8th July 2022
+
+This week is a continuation of the last, working on MDT features. I have to learn around dispatches in React (a way to store state in relation to a component). There is an existing dispatch so I imagine I'll play with that alongside docs to work out how it should work. We'll also have to implement a locking feature so two clinicians can't edit an MDT at the same time. We've implemented this elsewhere so I imagine we'll be fine using the same backend logic for both. One of our backend dependancies has been marked as containing a security vulnerability (HTTPX) so it'l important we updated that as soon as we can.
+
+## 11th - 15th July 2022
+
+This week was quite busy. I only had Monday to work on our project, where I've been working on developing our email adapter to support both Microsoft Exchange and SMTP servers. We discussed this and I thought we should add both because some MS Exchange hosts (NHS Digital for example) won't allow authentication using SMTP because it's 'legacy'. Implementing Exchange was easy, SMTP less so. I had to do a lot of reading on documentation but it's working now. I tested it with a self-hosted SMTP server and one public host, I can't remember which.
+
+Tuesday and Wednesday I took as annual leave to prepare for a job interview on the Weds working on a Systems Analyst at Oxford University Hospitals NHSFT after this placement has finished (I got the job!). And finally, Thursday and Friday I was attended Digital Health's NHS Summer School where I met a lot of other systems engineers and executives (CIO/CCIO/CDIO/ACIO/CNIO, etc) and was able to discuss our project and issues we've all encountered with many people.
+
+## 18th - 22nd July 2022
+
+This week I've been working on implementing Selenium to our CI/CD pipeline with the aim of deploying our software to our production server when we push/merge changed to our main branch. I have a good set of Selenium tests as well as implementing into our workflows but I think I could do with adding tests to check some error states that have been problematic before.

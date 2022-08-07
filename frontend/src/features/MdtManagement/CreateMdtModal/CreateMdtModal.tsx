@@ -84,15 +84,18 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
   } = useForm<CreateMdtForm>({ resolver: yupResolver(createMdtFormSchema) });
 
   const submitFormFn = (values: CreateMdtInputs) => {
-    const formattedDate = new Date();
-    if (values.plannedAt) {
-      formattedDate.setUTCHours(0, 0, 0);
-      formattedDate.setUTCDate(values.plannedAt.getDate());
-    }
+    const dateTimeWithOffset = new Date(
+      Date.UTC(
+        values.plannedAt.getFullYear(),
+        values.plannedAt.getMonth(),
+        values.plannedAt.getDate(),
+      ),
+    );
+
     createMdtMutation({
       variables: {
         input: {
-          plannedAt: formattedDate,
+          plannedAt: dateTimeWithOffset,
           pathwayId: values.pathwayId,
           location: values.location,
         },

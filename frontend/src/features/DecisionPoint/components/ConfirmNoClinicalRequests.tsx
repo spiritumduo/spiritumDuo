@@ -28,15 +28,13 @@ const ConfirmNoClinicalRequests = (
     };
   }, [dispatch]);
   return (
-    <Container>
-      <Row>
-        <strong>No requests selected!</strong>
+    <Container className="d-flex align-items-center justify-content-left mt-5">
+      <div>
+        <h2>No requests selected!</h2>
         <p>
           No requests have been selected. Are you sure
           you want to continue?
         </p>
-      </Row>
-      <Row>
         {
           clinicalRequestResolutions
             ? (
@@ -52,28 +50,28 @@ const ConfirmNoClinicalRequests = (
             )
             : false
         }
-      </Row>
-      <Button
-        className="float-end w-25 mt-lg-4 ms-4"
-        disabled={ disabledState }
-        onClick={ () => {
-          setDisabledState(true);
-          confirmFn();
-          submitFn();
-        } }
-        secondary
-      >
-        Submit
-      </Button>
-      <Button
-        disabled={ disabledState }
-        onClick={ () => {
-          cancelFn();
-        } }
-        className="float-end w-25 mt-lg-4"
-      >
-        Cancel
-      </Button>
+        <Button
+          disabled={ disabledState }
+          onClick={ () => {
+            cancelFn();
+          } }
+          className="float-end mt-lg-4"
+          secondary
+        >
+          Cancel
+        </Button>
+        <Button
+          className="float-end mt-lg-4 me-1"
+          disabled={ disabledState }
+          onClick={ () => {
+            setDisabledState(true);
+            confirmFn();
+            submitFn();
+          } }
+        >
+          Submit
+        </Button>
+      </div>
     </Container>
   );
 };

@@ -124,16 +124,19 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
     values.users.forEach((user) => {
       selectedUsers.push( user.value );
     });
+
+    const dateTimeWithOffset = new Date(
+      Date.UTC(
+        values.plannedAt.getFullYear(),
+        values.plannedAt.getMonth(),
+        values.plannedAt.getDate(),
+      ),
+    );
+
     updateMdtMutation({
       variables: {
         input: {
-          plannedAt: new Date(
-            Date.UTC(
-              values.plannedAt.getFullYear(),
-              values.plannedAt.getMonth(),
-              values.plannedAt.getDate(),
-            ),
-          ),
+          plannedAt: dateTimeWithOffset,
           id: values.id,
           location: values.location,
           users: selectedUsers,

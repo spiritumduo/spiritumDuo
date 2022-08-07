@@ -142,17 +142,14 @@ const CreatePathwayTab = (
   return (
     <>
       { mutationError ? <ErrorMessage>{mutationError.message}</ErrorMessage> : null}
-      { mutationData?.createPathway?.userErrors
-        ? (
-          <ErrorMessage>
-            An error occured:&nbsp;
-            {
-              mutationData?.createPathway?.userErrors?.map((userError) => (
-                `${userError.message}`
-              ))
-            }
-          </ErrorMessage>
-        ) : null}
+      {
+        mutationData?.createPathway?.userErrors
+          ? (
+            mutationData?.createPathway?.userErrors?.map((userError) => (
+              <ErrorMessage key={ userError.field }>{userError.message}</ErrorMessage>
+            ))
+          ) : null
+      }
       <Form
         onSubmit={ handleSubmit( () => {
           onSubmit(createPathwayFunc, getValues());
@@ -162,7 +159,7 @@ const CreatePathwayTab = (
           <Input role="textbox" id="name" label="Pathway name" error={ formErrors.name?.message } { ...register('name', { required: true }) } />
         </Fieldset>
         <Fieldset disabled={ disableForm || mutationLoading || showModal }>
-          <Fieldset.Legend>ClinicalRequest types</Fieldset.Legend>
+          <Fieldset.Legend>Clinical request types</Fieldset.Legend>
           <Controller
             name="clinicalRequestTypes"
             control={ control }
@@ -196,7 +193,7 @@ const CreatePathwayTab = (
               <SummaryList.Value>{mutationData?.createPathway?.pathway?.name}</SummaryList.Value>
             </SummaryList.Row>
             <SummaryList.Row>
-              <SummaryList.Key>Permissions</SummaryList.Key>
+              <SummaryList.Key>Clinical requests</SummaryList.Key>
               <SummaryList.Value>
                 <ul>
                   {
