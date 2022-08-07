@@ -1,6 +1,5 @@
 from typing import List
 import pytest
-from random import randint
 from hamcrest import assert_that, is_, not_none
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,7 +9,7 @@ from conftest import PathwayDetails, ServerEndpoints
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from conftest import change_url
-from selenium.webdriver.remote.webelement import WebElement
+# from selenium.webdriver.remote.webelement import WebElement
 
 @pytest.fixture
 def create_pathway_details():

@@ -118,7 +118,6 @@ def populate_and_submit_form(driver: webdriver.Remote):
         )
     )).select_by_index(1)
 
-
     SELECTED_MDT_DATE = mdtSelection.first_selected_option.text
 
     reasonTxt = driver.find_element(By.NAME, 'mdtReason')
@@ -179,7 +178,6 @@ def submit_sub_modal(driver: webdriver.Remote):
     driver.find_element(By.XPATH, "//button[contains(text(), 'OK')]").click()
 
 
-
 @then("it should close the modal")
 def close_sub_modal(driver: webdriver.Remote):
     assert_that(
@@ -235,7 +233,6 @@ def select_mdt(
 def check_patient_list(driver: webdriver.Remote):
     table_body = driver.find_element(By.CLASS_NAME, "nhsuk-table__body")
     patients = table_body.find_elements(By.CLASS_NAME, "nhsuk-table__row")
-
 
     assert_that(
         len(patients),

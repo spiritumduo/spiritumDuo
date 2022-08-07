@@ -1,13 +1,12 @@
 from typing import List
 import pytest
-from random import randint
 from hamcrest import assert_that, is_, not_none
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
 from conftest import RoleDetails, ServerEndpoints
-from selenium.webdriver.support.ui import Select
+# from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from conftest import change_url
 from selenium.webdriver.support import (

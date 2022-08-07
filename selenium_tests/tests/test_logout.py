@@ -2,7 +2,6 @@ from hamcrest import assert_that, is_not
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
-from time import sleep
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
@@ -46,8 +45,6 @@ def set_client_on_homepage(
 def press_logout_btn(driver: webdriver.Remote):
     logoutButton = driver.find_element(By.ID, "logoutBtn")
     logoutButton.click()
-
-
 
 
 @then("the user should remain on the login page")

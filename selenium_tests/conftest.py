@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from random import randint
 from time import sleep
 from typing import List
 import pytest
@@ -13,8 +12,6 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.safari.options import Options as SafariOptions
-from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.common.keys import Keys
@@ -65,11 +62,16 @@ class UserDetails():
 def change_url(driver: webdriver.Remote, url):
     driver.get(url)
 
-    WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+    WebDriverWait(driver, 10).until(
+        lambda driver: driver.execute_script(
+            'return document.readyState'
+        ) == 'complete'
+    )
 
     WebDriverWait(driver, 10).until(
         ExpectedConditions.visibility_of(driver.find_element(By.ID, "root"))
     )
+
 
 @pytest.fixture
 def endpoints():
@@ -90,7 +92,7 @@ def driver():
     browser_choice: str = (
         'SELENIUM_BROWSER_CLIENT' in environ
         and environ['SELENIUM_BROWSER_CLIENT']
-        or 'firefox'
+        or 'chromium'
     ).lower()
 
     if browser_choice == "firefox":
@@ -314,7 +316,7 @@ def test_pathways(
 def test_mdt(
     driver: webdriver.Remote, endpoints: ServerEndpoints,
     login_user: None
-): 
+):
     mdt_details = MdtDetails(
         location="test location",
         index=-2
@@ -355,7 +357,7 @@ def test_user(
         username="fixture_test_user",
         password="test password",
         department="test department",
-        email=f"fixturetest@test.com",
+        email="fixturetest@test.com",
         firstName="test",
         lastName="runner",
         roles=["admin"],

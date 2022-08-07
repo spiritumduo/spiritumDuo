@@ -1,12 +1,11 @@
 import pytest
-from random import randint
 from hamcrest import assert_that, is_, not_none
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
 from conftest import MdtDetails, ServerEndpoints
-from selenium.webdriver.support.ui import Select
+# from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from conftest import change_url
 from selenium.webdriver.support import (
@@ -191,7 +190,7 @@ def click_update_mdt_button(driver: webdriver.Remote, test_mdt: MdtDetails):
 
 @then("a modal to update the MDT is shown")
 def check_mdt_update_modal_shown(driver: webdriver.Remote):
-    modal =  driver.find_element(
+    modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )

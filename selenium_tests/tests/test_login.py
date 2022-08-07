@@ -1,15 +1,9 @@
 from hamcrest import assert_that, is_, is_not
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
 from time import sleep
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import (
-    expected_conditions as ExpectedConditions,
-)
 from conftest import ServerEndpoints
-from selenium.common.exceptions import NoSuchElementException
 from conftest import change_url
 
 @scenario("login.feature", "Logging the user in with valid credentials")
@@ -67,7 +61,6 @@ def set_login_page_for_incorrect_credentials_test(
     driver: webdriver.Remote, endpoints: ServerEndpoints
 ):
     change_url(driver, endpoints.app)
-
 
 
 @when("the user inserts an incorrect username and password and submits")
