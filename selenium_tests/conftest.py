@@ -47,6 +47,7 @@ class PathwayDetails():
 @dataclass
 class MdtDetails():
     location: str
+    index: int
 
 
 @dataclass
@@ -64,19 +65,11 @@ class UserDetails():
 def change_url(driver: webdriver.Remote, url):
     driver.get(url)
 
+    WebDriverWait(driver, 10).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+
     WebDriverWait(driver, 10).until(
-        ExpectedConditions.url_to_be(url)
+        ExpectedConditions.visibility_of(driver.find_element(By.ID, "root"))
     )
-
-    WebDriverWait(
-        driver, 10,
-        ignored_exceptions=[NoSuchElementException]
-    ).until(
-        ExpectedConditions.visibility_of(
-            driver.find_element(By.ID, "root")
-        )
-    )
-
 
 @pytest.fixture
 def endpoints():
@@ -84,7 +77,7 @@ def endpoints():
             'SELENIUM_HOSTNAME' in environ
             and (
                 environ['SELENIUM_HOSTNAME']
-            ) or 'http://192.168.0.45'
+            ) or 'http://localhost'
         )
     return ServerEndpoints(
         app=hostname + "/app/",
@@ -97,7 +90,7 @@ def driver():
     browser_choice: str = (
         'SELENIUM_BROWSER_CLIENT' in environ
         and environ['SELENIUM_BROWSER_CLIENT']
-        or 'chromium'
+        or 'firefox'
     ).lower()
 
     if browser_choice == "firefox":
@@ -112,7 +105,7 @@ def driver():
     elif browser_choice == "chromium":
         options = ChromeOptions()
         options.add_argument("--no-sandbox")
-        # options.add_argument("--headless")
+        options.add_argument("--headless")
         options.add_argument("--disable-setuid-sandbox")
         options.add_argument("--remote-debugging-port=9222")
         options.add_argument("--disable-dev-shm-using")
@@ -130,12 +123,7 @@ def driver():
         )
 
     elif browser_choice == "safari":
-        options = SafariOptions()
-
-        driver = webdriver.Safari(
-            service=SafariService(),
-            options=options
-        )
+        driver = webdriver.Safari()
 
     elif browser_choice == "edge":
         options = EdgeOptions()
@@ -194,49 +182,64 @@ def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
 
 
 @pytest.fixture
-def test_role(
+def test_roles(
     driver: webdriver.Remote, endpoints: ServerEndpoints,
     login_user: None
 ):
 
-    role_details = RoleDetails(
-        name="test-role",
-        permissions=["AUTHENTICATED"]
-    )
+    roles = [
+        RoleDetails(
+            name="fixture-test-role-one",
+            permissions=["AUTHENTICATED"]
+        ),
+        RoleDetails(
+            name="fixture-test-role-two",
+            permissions=["AUTHENTICATED"]
+        ),
+        RoleDetails(
+            name="fixture-test-role-three",
+            permissions=["AUTHENTICATED"]
+        ),
+        RoleDetails(
+            name="fixture-test-role-four",
+            permissions=["AUTHENTICATED"]
+        ),
+    ]
 
     sleep(1)
-    change_url(driver, f"{endpoints.app}admin")
-    driver.find_element(
-        By.XPATH,
-        "//li[contains(text(), 'Roles management')]"
-    ).click()
-
-    driver.find_element(
-        By.XPATH,
-        "//li[contains(text(), 'Create role')]"
-    ).click()
-
-    driver.find_element(By.NAME, "name").send_keys(
-        role_details.name
-    )
-
-    permissions_section = driver.find_element(
-        By.XPATH, "//*[contains(text(), 'Role permissions')]/../div"
-    )
-
-    for permission in role_details.permissions:
-        permissions_section.click()
-
-        permissions_section.find_element(
-            By.XPATH, f".//div/*[contains(text(), '{permission}')]"
+    for role in roles:
+        change_url(driver, f"{endpoints.app}admin")
+        driver.find_element(
+            By.XPATH,
+            "//li[contains(text(), 'Roles management')]"
         ).click()
 
-    submit = driver.find_element(
-        By.XPATH, "//button[contains(text(), 'Create role')]"
-    )
-    submit.click()
+        driver.find_element(
+            By.XPATH,
+            "//li[contains(text(), 'Create role')]"
+        ).click()
 
-    return role_details
+        driver.find_element(By.NAME, "name").send_keys(
+            role.name
+        )
+
+        permissions_section = driver.find_element(
+            By.XPATH, "//*[contains(text(), 'Role permissions')]/../div"
+        )
+
+        for permission in role.permissions:
+            permissions_section.click()
+
+            permissions_section.find_element(
+                By.XPATH, f".//div/*[contains(text(), '{permission}')]"
+            ).click()
+
+        submit = driver.find_element(
+            By.XPATH, "//button[contains(text(), 'Create role')]"
+        )
+        submit.click()
+
+    return roles
 
 
 @pytest.fixture
@@ -246,13 +249,25 @@ def test_pathways(
 ):
     pathway_details = [
         PathwayDetails(
-            name="Test pathway",
+            name="Fixture test pathway",
             clinical_requests=[
                 "Referral letter (Referral letter (record artifact))"
             ]
         ),
         PathwayDetails(
-            name="Test pathway two",
+            name="Fixture test pathway two",
+            clinical_requests=[
+                "Referral letter (Referral letter (record artifact))"
+            ]
+        ),
+        PathwayDetails(
+            name="Fixture test pathway three",
+            clinical_requests=[
+                "Referral letter (Referral letter (record artifact))"
+            ]
+        ),
+        PathwayDetails(
+            name="Fixture test pathway four",
             clinical_requests=[
                 "Referral letter (Referral letter (record artifact))"
             ]
@@ -301,7 +316,8 @@ def test_mdt(
     login_user: None
 ): 
     mdt_details = MdtDetails(
-        location="test location"
+        location="test location",
+        index=-2
     )
     sleep(1)
     change_url(driver, f"{endpoints.app}mdt")
@@ -316,7 +332,7 @@ def test_mdt(
 
     date_selection = driver.find_elements(
         By.CLASS_NAME, "react-datepicker__day")
-    date_selection[-2].click()
+    date_selection[mdt_details.index].click()
 
     location_input = driver.find_element(By.NAME, "location")
     location_input.send_keys(mdt_details.location)
@@ -336,10 +352,10 @@ def test_user(
     login_user: None
 ):
     user_details = UserDetails(
-        username="test_user_" + str(randint(1, 100)),
+        username="fixture_test_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
+        email=f"fixturetest@test.com",
         firstName="test",
         lastName="runner",
         roles=["admin"],
