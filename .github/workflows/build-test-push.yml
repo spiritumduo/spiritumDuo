@@ -50,7 +50,7 @@ jobs:
             curl https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg --output googlechrome.dmg
           fi
           open googlechrome.dmg
-          cp '/volume/googlechrome/Google\' Chrome.app /Applications/
+          cp -R /Volumes/Google\ Chrome/Google\ Chrome.app /Applications/
       - name: Configure Safari testing environment
         run: |
           defaults write com.apple.Safari IncludeDevelopMenu YES
