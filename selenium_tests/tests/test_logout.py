@@ -1,4 +1,4 @@
-from hamcrest import assert_that, is_not, is_, none
+from hamcrest import assert_that, is_not
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from pytest_bdd import scenario, given, when, then
@@ -8,7 +8,6 @@ from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
 )
 from conftest import ServerEndpoints
-from selenium.common.exceptions import NoSuchElementException
 from conftest import change_url
 
 
@@ -24,7 +23,7 @@ def set_user_logged_in(
     driver: webdriver.Remote,
     endpoints: ServerEndpoints
 ):
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 2).until(
         ExpectedConditions.url_to_be(
             endpoints.app
         )
@@ -49,30 +48,12 @@ def press_logout_btn(driver: webdriver.Remote):
     logoutButton.click()
 
 
-@then("the user should not be assigned a session cookie")
-def check_no_session_cookie(
-    driver: webdriver.Remote,
-    endpoints: ServerEndpoints
-):
-    # check session cookie has been set
-    WebDriverWait(driver, 10).until(
-        ExpectedConditions.url_to_be(
-            f"{endpoints.app}login"
-        )
-    )
-
-    sleep(1)
-
-    assert_that(
-        driver.get_cookie("SDSESSION"),
-        is_(none())
-    )
 
 
 @then("the user should remain on the login page")
-def check_url_is_login(driver: webdriver.Remote):
-    # check URL does not container /app/login
-    WebDriverWait(driver, 10).until(
+def check_url_is_login(driver: webdriver.Remote, endpoints: ServerEndpoints):
+    # check URL is /app/login
+    WebDriverWait(driver, 2).until(
         ExpectedConditions.url_to_be(
             f"{endpoints.app}login"
         )
