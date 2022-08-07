@@ -1,3 +1,4 @@
+from argparse import ArgumentError
 from dataclasses import dataclass
 from time import sleep
 from typing import List
@@ -59,6 +60,10 @@ class UserDetails():
     pathways: List[str]
 
 
+def pytest_addoption(parser):
+    parser.addoption("--driver", action="store", default="chromium")
+
+
 def change_url(driver: webdriver.Remote, url):
     driver.get(url)
 
@@ -88,12 +93,10 @@ def endpoints():
 
 
 @pytest.fixture
-def driver():
-    browser_choice: str = (
-        'SELENIUM_BROWSER_CLIENT' in environ
-        and environ['SELENIUM_BROWSER_CLIENT']
-        or 'chromium'
-    ).lower()
+def driver(pytestconfig):
+    browser_choice: str = pytestconfig.getoption("driver")
+    if browser_choice.lower() not in ["chromium", "firefox", "edge", "safari"]:
+        raise ArgumentError(None, "Driver argument provided is not a valid driver")
 
     if browser_choice == "firefox":
         options = FirefoxOptions()
