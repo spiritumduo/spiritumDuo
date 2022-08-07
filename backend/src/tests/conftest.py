@@ -212,7 +212,7 @@ async def test_on_mdts(
     test_clinical_request_type: ClinicalRequestType
 ):
     on_mdts: List[OnMdt] = []
-    for op in test_patients_on_pathway:
+    for index, op in enumerate(test_patients_on_pathway):
         clinical_request: ClinicalRequest = await ClinicalRequest.create(
             on_pathway_id=op.id,
             current_state=ClinicalRequestState.COMPLETED,
@@ -224,7 +224,8 @@ async def test_on_mdts(
             patient_id=op.patient_id,
             user_id=test_user.user.id,
             reason="test reason",
-            clinical_request_id=clinical_request.id
+            clinical_request_id=clinical_request.id,
+            order=index
         ))
     return on_mdts
 

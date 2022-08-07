@@ -47,3 +47,6 @@ class OnMdt(db.Model):
         db.Integer(),
         db.ForeignKey('tbl_clinical_request.id'),
         nullable=False)
+    order = db.Column(
+        db.Integer(),
+        nullable=False)

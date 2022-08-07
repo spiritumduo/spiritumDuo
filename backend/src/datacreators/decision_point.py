@@ -1,4 +1,7 @@
 from ctypes import Union
+from asyncpg import UniqueViolationError
+from sqlalchemy import desc
+
 from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
@@ -140,8 +143,7 @@ async def CreateDecisionPoint(
                 MDT.join(OnMdt, MDT.id == OnMdt.mdt_id).select()
                 .where(OnMdt.patient_id == on_pathway.patient_id)
                 .where(MDT.pathway_id == on_pathway.pathway_id)
-                .where(MDT.id == mdt_obj.id)
-            )
+                .where(MDT.id == mdt_obj.id))
 
         if patient_has_on_mdt:
             errors.addError(
@@ -238,12 +240,29 @@ async def CreateDecisionPoint(
             ).create()
 
             if milestone_type.is_mdt:
+                mdt_obj: MDT = await MDT.get(int(mdt['id']))
+
+                if mdt_obj.pathway_id != on_pathway.pathway_id:
+                    raise DecisionPointMdtMismatchException()
+
+                highest_order_on_mdt = await OnMdt.query \
+                    .where(OnMdt.mdt_id == mdt_obj.id) \
+                    .order_by(desc(OnMdt.order)) \
+                    .gino \
+                    .first()
+
+                if highest_order_on_mdt is not None:
+                    new_order = highest_order_on_mdt.order + 1
+                else:
+                    new_order = 0
+
                 await OnMdt.create(
                     mdt_id=mdt_obj.id,
                     patient_id=on_pathway.patient_id,
                     user_id=context['request']['user'].id,
                     reason=mdt['reason'],
-                    clinical_request_id=clinical_request.id
+                    clinical_request_id=clinical_request.id,
+                    order=new_order
                 )
 
             clinical_request_type: ClinicalRequestType = await \

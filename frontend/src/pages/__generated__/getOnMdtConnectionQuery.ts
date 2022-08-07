@@ -27,6 +27,7 @@ export interface getOnMdtConnectionQuery_getOnMdtConnection_edges_node {
   __typename: "OnMdt";
   id: string;
   reason: string;
+  order: number;
   patient: getOnMdtConnectionQuery_getOnMdtConnection_edges_node_patient;
 }
 

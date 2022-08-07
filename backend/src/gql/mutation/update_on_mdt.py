@@ -22,6 +22,7 @@ async def resolve_update_on_mdt(
             id=input['id'],
             reason=input['reason'],
             outcome=input['outcome'] if 'outcome' in input else '',
+            order=input['order'] if 'order' in input else None,
         )
     except OnMdtLockedByOtherUser:
         errors.addError(

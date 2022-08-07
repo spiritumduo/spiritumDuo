@@ -219,7 +219,8 @@ async def test_add_decision_point_to_patient(
         user_id=test_user.user.id,
         reason="test reason",
         outcome="test outcome",
-        clinical_request_id=mdt_clinical_request.id
+        clinical_request_id=mdt_clinical_request.id,
+        order=0,
     )
 
     create_decision_point_result = await httpx_test_client.post(

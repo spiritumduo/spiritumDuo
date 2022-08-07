@@ -4,7 +4,8 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { MockPathwayProvider } from 'test/mocks/mockContext';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { Default as DefaultPatientOnMdtManagement } from 'features/PatientOnMdtManagement/PatientOnMdtManagement.stories';
-import MDTPage, { GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY, LOCK_ON_MDT_MUTATION } from './MDT';
+import MDTPage, { GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY, LOCK_ON_MDT_MUTATION, REORDER_ON_MDT_MUTATION } from './MDT';
+import { reorderOnMdt, reorderOnMdtVariables } from './__generated__/reorderOnMdt';
 
 const itemsPerPage = 9;
 
@@ -14,6 +15,7 @@ const onMdtEdges: {
     node: {
       id: string;
       reason: string;
+      order: number;
       patient: {
         id: string;
         firstName: string;
@@ -31,6 +33,7 @@ for (let i = 1; i < itemsPerPage + 1; ++i) {
     node: {
       id: i.toString(),
       reason: `reason goes here (${i})`,
+      order: i - 1,
       patient: {
         id: i.toString(),
         firstName: 'First',
@@ -74,6 +77,24 @@ const lockOnMdtFailResult = {
   }],
 };
 
+const reorderOnMdtResult = async (
+  { input: { onMdtList } }: reorderOnMdtVariables,
+): Promise<reorderOnMdt> => ({
+  updateOnMdtList: {
+    __typename: 'OnMdtListPayload',
+    onMdtList: onMdtList?.flatMap(
+      (item) => {
+        if (!item.order) return [];
+        return {
+          __typename: 'OnMdt',
+          id: item.id,
+          order: item.order
+        };
+      },
+    ) || null,
+  },
+});
+
 export default {
   title: 'Pages/MDT page',
   component: MDTPage,
@@ -94,6 +115,10 @@ export const Default: ComponentStory<typeof MDTPage> = () => (
   <NewMockSdApolloProvider
     mocks={
       [
+        {
+          query: REORDER_ON_MDT_MUTATION,
+          mockFn: reorderOnMdtResult,
+        },
         {
           query: GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY,
           mockFn: () => Promise.resolve({
@@ -129,6 +154,10 @@ export const Locked: ComponentStory<typeof MDTPage> = () => (
   <NewMockSdApolloProvider
     mocks={
       [
+        {
+          query: REORDER_ON_MDT_MUTATION,
+          mockFn: reorderOnMdtResult,
+        },
         {
           query: GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY,
           mockFn: () => Promise.resolve({

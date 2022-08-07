@@ -25,10 +25,11 @@ type PatientListTabProps = React.PropsWithChildren<{
   patientsPerPage: number;
   outstanding?: boolean;
   underCareOf?: boolean;
+  allPatients?: boolean;
 }>;
 
 const PatientListTab = (
-  { pathwayId, patientsPerPage, outstanding, underCareOf, children }: PatientListTabProps,
+  { pathwayId, patientsPerPage, outstanding, underCareOf, allPatients }: PatientListTabProps,
 ) => {
   const [isTimelineView, setIsTimelineView] = useState<boolean>(false);
   return (
@@ -54,14 +55,21 @@ const PatientListTab = (
               />
             </div>
           )
-          : (
-            <WrappedPatientList
-              pathwayId={ pathwayId }
-              patientsToDisplay={ patientsPerPage }
-              outstanding={ outstanding }
-              underCareOf={ underCareOf }
-            />
-          )
+          : allPatients
+            ? (
+              <AllPatients
+                pathwayId={ pathwayId }
+                patientsPerPage={ patientsPerPage }
+              />
+            )
+            : (
+              <WrappedPatientList
+                pathwayId={ pathwayId }
+                patientsToDisplay={ patientsPerPage }
+                outstanding={ outstanding }
+                underCareOf={ underCareOf }
+              />
+            )
         }
     </>
   );
@@ -124,7 +132,11 @@ const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps)
             />
           </TabPanel>
           <TabPanel>
-            <PatientListTab pathwayId={ pathwayId } patientsPerPage={ patientsPerPage } />
+            <PatientListTab
+              pathwayId={ pathwayId }
+              patientsPerPage={ patientsPerPage }
+              allPatients
+            />
           </TabPanel>
         </Tabs>
       </Container>

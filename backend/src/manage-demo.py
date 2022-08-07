@@ -1,6 +1,11 @@
 import asyncio
 import datetime
+import getopt
 import sys
+from operator import and_, not_
+
+import argparse
+
 from common import DataCreatorInputErrors
 from models import (
     Pathway,
@@ -157,7 +162,7 @@ async def clear_existing_data():
         print("Table `UserPathway` not found. Continuing")
 
     try:
-        await User.delete.where(User.id >= 0).gino.status()
+        await User.delete.where(and_(User.id >= 0, User.username.contains('demo-'))).gino.status()
         print("Table `User` deleted")
     except UndefinedTableError:
         print("Table `User` not found. Continuing")
@@ -190,7 +195,7 @@ async def clear_existing_data():
 
 async def create_roles():
     doctor_role = await Role.create(
-        name="GP"
+        name="Doctor"
     )
     admin_role = await Role.create(
         name="admin"
@@ -521,10 +526,38 @@ async def insert_demo_data():
                     clinical_request_type_id=general_clinical_request_types["ct_chest"].id,
                 )
 
+    custom_users = await User.query.where(User.username.notlike('demo-%')).gino.all()
+    pathways = await Pathway.query.gino.all()
 
-loop = asyncio.get_event_loop()
-engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
-loop.run_until_complete(check_connection())
-loop.run_until_complete(clear_existing_data())
-loop.run_until_complete(asyncio.sleep(2))
-loop.run_until_complete(insert_demo_data())
+    num_pathways = len(pathways)
+    for user in custom_users:
+        pathway_index = randint(0, num_pathways - 1)
+        await UserRole.create(
+            user_id=user.id,
+            role_id=roles['doctor'].id
+        )
+        await UserRole.create(
+            user_id=user.id,
+            role_id=roles['admin'].id
+        )
+        await UserPathway.create(
+            user_id=user.id,
+            pathway_id=pathways[pathway_index].id
+        )
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(description="Demo Management Script")
+    parser.add_argument('--onlyclear', action='store_true', default=False)
+    arguments = parser.parse_args()
+    loop = asyncio.get_event_loop()
+    engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
+    loop.run_until_complete(check_connection())
+    loop.run_until_complete(clear_existing_data())
+    if not arguments.onlyclear:
+        loop.run_until_complete(asyncio.sleep(2))
+        loop.run_until_complete(insert_demo_data())
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
