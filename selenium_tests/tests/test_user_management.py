@@ -17,7 +17,7 @@ from conftest import change_url
 @pytest.fixture
 def create_user_details():
     return UserDetails(
-        username="test_user_" + str(randint(1, 100)),
+        username="test_create_user",
         password="test password",
         department="test department",
         email=f"test{randint(1, 100)}@test.com",
@@ -31,7 +31,7 @@ def create_user_details():
 @pytest.fixture
 def update_user_details():
     return UserDetails(
-        username="test_user_" + str(randint(1, 100)),
+        username="test_update_user",
         password="test password",
         department="test department",
         email=f"test{randint(1, 100)}@test.com",

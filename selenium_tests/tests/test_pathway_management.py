@@ -15,7 +15,7 @@ from conftest import change_url
 @pytest.fixture
 def create_pathway_details():
     return PathwayDetails(
-        name=f"custom pathway{randint(1, 100)}",
+        name="create_pathway_test",
         clinical_requests=["Referral letter"]
     )
 
@@ -23,7 +23,7 @@ def create_pathway_details():
 @pytest.fixture
 def update_pathway_details():
     return PathwayDetails(
-        name=f"custom pathway{randint(1, 100)}",
+        name="update_pathway_test",
         clinical_requests=["Referral letter"]
     )
 

@@ -99,7 +99,7 @@ def populate_mdt_details(driver: webdriver.Remote):
 def populate_and_submit_form(driver: webdriver.Remote):
     # https://stackoverflow.com/questions/46738214/selenium-select-value-from-dropdown-not-working-in-edge-safari-but-works-in-othe
     # https://stackoverflow.com/questions/42575464/selenium-with-safari-cant-select-option-from-select-input
-        
+
     global SELECTED_MDT_DATE
 
     WebDriverWait(driver, 10).until(

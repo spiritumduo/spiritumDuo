@@ -16,14 +16,16 @@ from selenium.webdriver.support import (
 @pytest.fixture
 def create_mdt_details():
     return MdtDetails(
-        location=f"custom mdt{randint(1, 1000)}"
+        location="create_mdt_test",
+        index=-2
     )
 
 
 @pytest.fixture
 def update_mdt_details():
     return MdtDetails(
-        location=f"custom mdt{randint(1001, 2000)}"
+        location="update_mdt_test",
+        index=-3
     )
 
 
@@ -201,7 +203,8 @@ def check_mdt_update_modal_shown(driver: webdriver.Remote):
 
 @when("the edit form is populated correctly")
 def populate_update_mdt_form(
-    driver: webdriver.Remote, update_mdt_details: MdtDetails
+    driver: webdriver.Remote, update_mdt_details: MdtDetails,
+    test_mdt: MdtDetails
 ):
     modal = driver.find_element(By.CLASS_NAME, "modal-content")
 
@@ -212,7 +215,7 @@ def populate_update_mdt_form(
     date_selection = modal.find_elements(
         By.CLASS_NAME, "react-datepicker__day")
 
-    date_selection[-1].click()
+    date_selection[test_mdt.index].click()
 
     location_input = modal.find_element(By.NAME, "location")
     location_input.clear()
@@ -354,7 +357,7 @@ def submit_delete_mdt_form(driver: webdriver.Remote):
 
 @then("a delete confirmation modal is shown")
 def check_mdt_delete_confirmation_modal_shown(
-    driver: webdriver.Remote, update_mdt_details: MdtDetails
+    driver: webdriver.Remote
 ):
     assert_that(
         driver.find_element(

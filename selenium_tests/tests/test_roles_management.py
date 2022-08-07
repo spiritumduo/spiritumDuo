@@ -14,7 +14,7 @@ from conftest import change_url
 @pytest.fixture
 def create_role_details():
     return RoleDetails(
-        name=f"custom role{randint(1, 100)}",
+        name="test_create_role",
         permissions=["AUTHENTICATED"]
     )
 
@@ -22,7 +22,7 @@ def create_role_details():
 @pytest.fixture
 def update_role_details():
     return RoleDetails(
-        name=f"custom role{randint(1, 100)}",
+        name="test_update_role",
         permissions=["AUTHENTICATED"]
     )
 
