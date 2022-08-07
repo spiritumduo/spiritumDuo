@@ -56,8 +56,17 @@ def click_patient_row(driver: webdriver.Remote):
 
 @then("the user should see the decision point modal")
 def check_modal_present(driver: webdriver.Remote):
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
     assert_that(
-        driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
+        modal.is_displayed(),
         is_(True)
     )
 

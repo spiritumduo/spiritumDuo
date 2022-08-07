@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-from typing import List
 import pytest
 from random import randint
 from hamcrest import assert_that, is_, not_none
@@ -135,17 +133,18 @@ def submit_form(driver: webdriver.Remote):
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
-    assert_that(
-        driver.find_element(
-            By.XPATH,
-            "//div[contains(text(), 'User created')]"
-        ).is_displayed(),
-        is_(True)
-    )
-
     modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
+    )
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
+    assert_that(
+        modal.is_displayed(),
+        is_(True)
     )
 
     assert_that(
@@ -246,13 +245,17 @@ def select_user_row(driver: webdriver.Remote):
 
 @then("the user should see a modal to edit the user")
 def check_edit_modal(driver: webdriver.Remote):
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
     WebDriverWait(driver, 10).until(
         ExpectedConditions.visibility_of(
-            driver.find_element(By.CLASS_NAME, "modal-content")
+            modal
         )
     )
     assert_that(
-        driver.find_element(By.CLASS_NAME, "modal-content").is_displayed(),
+        modal.is_displayed(),
         is_(True)
     )
 
@@ -302,7 +305,10 @@ def check_edit_confirmation(
     driver: webdriver.Remote, update_user_details: UserDetails
 ):
     assert_that(
-        driver.find_element(By.XPATH, "//div[contains(text(), 'User updated')]").is_displayed(),
+        driver.find_element(
+            By.XPATH,
+            "//div[contains(text(), 'User updated')]"
+        ).is_displayed(),
         is_(True)
     )
 

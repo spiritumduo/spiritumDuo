@@ -65,7 +65,7 @@ def click_create_mdt_button(driver: webdriver.Remote):
 
 @then("a modal to create an MDT is shown")
 def check_mdt_shown(driver: webdriver.Remote):
-    modal =  driver.find_element(
+    modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
@@ -119,6 +119,16 @@ def submit_create_mdt_form(driver: webdriver.Remote):
 def check_mdt_confirmation_modal_shown(
     driver: webdriver.Remote, create_mdt_details: MdtDetails
 ):
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
+
     assert_that(
         driver.find_element(
             By.XPATH,
@@ -249,6 +259,16 @@ def submit_update_mdt_form(driver: webdriver.Remote):
 def check_mdt_update_confirmation_modal_shown(
     driver: webdriver.Remote, update_mdt_details: MdtDetails
 ):
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
+
     assert_that(
         driver.find_element(
             By.XPATH,
@@ -321,11 +341,15 @@ def click_edit_mdt_button(driver: webdriver.Remote, test_mdt: MdtDetails):
 
 @then("a modal to delete the MDT is shown")
 def check_mdt_delete_modal_shown(driver: webdriver.Remote):
-    modal =  driver.find_element(
+    modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
-
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
     assert_that(
         modal.is_displayed(),
         is_(True)

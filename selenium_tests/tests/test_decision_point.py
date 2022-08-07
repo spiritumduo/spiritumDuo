@@ -42,6 +42,11 @@ def insert_correct_credentials(driver: webdriver.Remote):
 
 @then("the user should see the decision point modal")
 def check_modal_present(driver: webdriver.Remote):
+    WebDriverWait(driver, 4).until(
+        ExpectedConditions.visibility_of(
+            driver.find_element(By.CSS_SELECTOR, '.modal-body')
+        )
+    )
     assert_that(
         driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
         is_(True)
