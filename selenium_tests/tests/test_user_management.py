@@ -11,7 +11,9 @@ from conftest import ServerEndpoints
 from selenium.webdriver.support.ui import WebDriverWait
 from conftest import UserDetails
 from conftest import change_url
-
+from selenium.webdriver.support import (
+    expected_conditions as ExpectedConditions,
+)
 
 
 @pytest.fixture
@@ -239,11 +241,16 @@ def set_to_users_admin_page(
 def select_user_row(driver: webdriver.Remote):
     table_body = driver.find_element(By.CLASS_NAME, "nhsuk-table__body")
     user_row = table_body.find_elements(By.CLASS_NAME, "nhsuk-table__row")[0]
-    user_row.click()
+    user_row.find_element(By.XPATH, ".//button").click()
 
 
 @then("the user should see a modal to edit the user")
 def check_edit_modal(driver: webdriver.Remote):
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            driver.find_element(By.CLASS_NAME, "modal-content")
+        )
+    )
     assert_that(
         driver.find_element(By.CLASS_NAME, "modal-content").is_displayed(),
         is_(True)

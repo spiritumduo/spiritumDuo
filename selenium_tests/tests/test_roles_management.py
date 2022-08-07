@@ -9,6 +9,9 @@ from conftest import RoleDetails, ServerEndpoints
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from conftest import change_url
+from selenium.webdriver.support import (
+    expected_conditions as ExpectedConditions,
+)
 
 
 @pytest.fixture
@@ -91,16 +94,22 @@ def submit_create_form(driver: webdriver.Remote):
 def check_create_modal_present(
     driver: webdriver.Remote, create_role_details: RoleDetails
 ):
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
+
     assert_that(
         driver.find_element(
             By.XPATH, "//div[contains(text(), 'Role created')]"
         ).is_displayed(),
         is_(True)
-    )
-
-    modal = driver.find_element(
-        By.XPATH,
-        "//div[contains(@class, 'modal-body')]"
     )
 
     assert_that(

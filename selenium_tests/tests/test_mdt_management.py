@@ -66,11 +66,18 @@ def click_create_mdt_button(driver: webdriver.Remote):
 
 @then("a modal to create an MDT is shown")
 def check_mdt_shown(driver: webdriver.Remote):
+    modal =  driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+    WebDriverWait(driver, 10).until(
+        ExpectedConditions.visibility_of(
+            modal
+        )
+    )
+
     assert_that(
-        driver.find_element(
-            By.XPATH,
-            "//div[contains(@class, 'modal-body')]"
-        ).is_displayed(),
+        modal.is_displayed(),
         is_(True)
     )
 

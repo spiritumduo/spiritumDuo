@@ -97,11 +97,13 @@ def submit_create_pathway_form(driver: webdriver.Remote):
 def check_create_pathway_modal_present(
     driver: webdriver.Remote, create_pathway_details: PathwayDetails
 ):
-    driver.get_screenshot_as_file("./a.png")
-
     success_text = driver.find_element(
         By.XPATH,
         "//div[contains(text(), 'Pathway created')]"
+    )
+
+    WebDriverWait(driver, 10).until(
+        lambda d: success_text.is_displayed()
     )
 
     assert_that(
