@@ -207,79 +207,79 @@ jobs:
         name: Add demo data
         run: ssh staging 'docker exec sd-backend python manage-demo.py'
 
-  selenium_linux:
-    defaults:
-      run:
-        working-directory: selenium_tests
-    runs-on: ubuntu-latest
-    environment: staging
-    needs: deploy
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install test prerequisites
-        run: python3 -m pip install -r requirements.txt
-      - name: Run tests
-        run: python3 -m pytest --driver firefox && python3 -m pytest --driver chromium
-        env:
-          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+#   selenium_linux:
+#     defaults:
+#       run:
+#         working-directory: selenium_tests
+#     runs-on: ubuntu-latest
+#     environment: staging
+#     needs: deploy
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: 3.9
+#       - name: Install test prerequisites
+#         run: python3 -m pip install -r requirements.txt
+#       - name: Run tests
+#         run: python3 -m pytest --driver firefox && python3 -m pytest --driver chromium
+#         env:
+#           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
   
-  selenium_macos:
-    defaults:
-      run:
-        working-directory: selenium_tests
-    runs-on: macos-12
-    environment: staging
-    needs: deploy
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install test prerequisites
-        run: python3 -m pip install -r requirements.txt
-      - name: Install Chromium
-        run: |
-          if
-            [[ `arch` == arm64 ]]; then
-            curl https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg --output googlechrome.dmg
-          else
-            curl https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg --output googlechrome.dmg
-          fi
-          open googlechrome.dmg
-          cp '/volume/googlechrome/Google\' Chrome.app /Applications/
-      - name: Configure Safari testing environment
-        run: |
-          defaults write com.apple.Safari IncludeDevelopMenu YES
-          defaults write com.apple.Safari AllowRemoteAutomation 1
-          sudo safaridriver --enable
-      - name: Run tests
-        run: |
-          safaridriver -p 0 &
-          python3 -m pytest --driver safari && python3 -m pytest --driver chromium
-        env:
-          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+#   selenium_macos:
+#     defaults:
+#       run:
+#         working-directory: selenium_tests
+#     runs-on: macos-12
+#     environment: staging
+#     needs: deploy
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: 3.9
+#       - name: Install test prerequisites
+#         run: python3 -m pip install -r requirements.txt
+#       - name: Install Chromium
+#         run: |
+#           if
+#             [[ `arch` == arm64 ]]; then
+#             curl https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg --output googlechrome.dmg
+#           else
+#             curl https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg --output googlechrome.dmg
+#           fi
+#           open googlechrome.dmg
+#           cp '/volume/googlechrome/Google\' Chrome.app /Applications/
+#       - name: Configure Safari testing environment
+#         run: |
+#           defaults write com.apple.Safari IncludeDevelopMenu YES
+#           defaults write com.apple.Safari AllowRemoteAutomation 1
+#           sudo safaridriver --enable
+#       - name: Run tests
+#         run: |
+#           safaridriver -p 0 &
+#           python3 -m pytest --driver safari && python3 -m pytest --driver chromium
+#         env:
+#           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
 
-  selenium_windows:
-    defaults:
-      run:
-        working-directory: selenium_tests
-    runs-on: windows-latest
-    environment: staging
-    needs: deploy
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-      - name: Install test prerequisites
-        run: python3 -m pip install -r requirements.txt
-      - name: Run tests
-        run: python3 -m pytest --driver edge
-        env:
-          SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+#   selenium_windows:
+#     defaults:
+#       run:
+#         working-directory: selenium_tests
+#     runs-on: windows-latest
+#     environment: staging
+#     needs: deploy
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: 3.9
+#       - name: Install test prerequisites
+#         run: python3 -m pip install -r requirements.txt
+#       - name: Run tests
+#         run: python3 -m pytest --driver edge
+#         env:
+#           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
