@@ -6,7 +6,8 @@ interface MDT {
     plannedAt: Date;
     updatedAt?: Date;
     location: string;
-    clinicians?: ({id: string; firstName: string; lastName: string; username: string;} | null)[];
+    clinicians: ({id: string; firstName: string; lastName: string; username: string;} | null)[];
+    patients: ({id: string; firstName: string; lastName: string; hospitalNumber: string;} | null)[];
 }
 
 export default MDT;
