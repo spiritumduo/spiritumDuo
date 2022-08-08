@@ -79,7 +79,7 @@ type Mutation {
     submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
     createMdt(input:MdtInput!): MdtPayload!
     updateMdt(input:UpdateMdtInput!): MdtPayload!
-    deleteMdt(id: ID!): DeletePayload!
+    deleteMdt(input: DeleteMdtInput!): DeletePayload!
     updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
     updateOnMdtList(input: UpdateOnMdtListInput!): OnMdtListPayload!
     deleteOnMdt(id: ID!): DeletePayload!
@@ -415,6 +415,10 @@ input UpdateMdtInput{
     plannedAt: Date!
     location: String!
     users: [ID]!
+}
+input DeleteMdtInput{
+    id: ID!
+    movePatientsToMdtId: ID
 }
 
 input TestResultInput{
