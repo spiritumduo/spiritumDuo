@@ -79,8 +79,9 @@ type Mutation {
     submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
     createMdt(input:MdtInput!): MdtPayload!
     updateMdt(input:UpdateMdtInput!): MdtPayload!
-    deleteMdt(id: ID!): DeletePayload!
+    deleteMdt(input: DeleteMdtInput!): DeletePayload!
     updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
+    updateOnMdtList(input: UpdateOnMdtListInput!): OnMdtListPayload!
     deleteOnMdt(id: ID!): DeletePayload!
     lockOnMdt(input:LockOnMdtInput!): LockOnMdtPayload!
 }
@@ -117,6 +118,11 @@ type MdtPayload{
 
 type OnMdtPayload{
     onMdt: OnMdt
+    userErrors: [UserError!]
+}
+
+type OnMdtListPayload{
+    onMdtList: [OnMdt!]
     userErrors: [UserError!]
 }
 
@@ -291,6 +297,7 @@ type OnMdt{
     lockEndTime: Date
     lockUser: User
     clinicalRequest: ClinicalRequest!
+    order: Int!
 }
 
 type OnPathway {
@@ -391,8 +398,12 @@ enum Sex {
 #### INPUT TYPES
 input UpdateOnMdtInput{
     id: ID!
-    reason: String!
+    reason: String
     outcome: String
+    order: Int
+}
+input UpdateOnMdtListInput{
+    onMdtList: [UpdateOnMdtInput!]
 }
 input MdtInput{
     pathwayId: ID!
@@ -404,6 +415,10 @@ input UpdateMdtInput{
     plannedAt: Date!
     location: String!
     users: [ID]!
+}
+input DeleteMdtInput{
+    id: ID!
+    movePatientsToMdtId: ID
 }
 
 input TestResultInput{

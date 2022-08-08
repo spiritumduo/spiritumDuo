@@ -15,10 +15,19 @@ export interface getMdt_getMdt_clinicians {
   username: string;
 }
 
+export interface getMdt_getMdt_patients {
+  __typename: "Patient";
+  id: string;
+  firstName: string;
+  lastName: string;
+  hospitalNumber: string;
+}
+
 export interface getMdt_getMdt {
   __typename: "MDT";
   id: string;
   clinicians: (getMdt_getMdt_clinicians | null)[];
+  patients: (getMdt_getMdt_patients | null)[];
   createdAt: any;
   plannedAt: any;
   updatedAt: any;
