@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+
+// LIBRARIES
 import { Button, SummaryList, ErrorMessage } from 'nhsuk-react-components';
 import { Modal } from 'react-bootstrap';
 import { BsX } from 'react-icons/bs';
@@ -6,13 +8,18 @@ import { Tabs, Tab, TabPanel, TabList } from 'react-tabs';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Textarea } from 'components/nhs-style';
 import { gql, useMutation } from '@apollo/client';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
+// APP
+import { useHospitalNumberFormat, useNationalNumberFormat } from 'app/hooks/format-identifier';
+
+// COMPONENTS
+import { Textarea } from 'components/nhs-style';
+
+// LOCAL
 import { updateOnMdt } from './__generated__/updateOnMdt';
 import { deleteOnMdt } from './__generated__/deleteOnMdt';
-import { lockOnMdtForManagement } from './__generated__/lockOnMdtForManagement';
 
 export const UPDATE_ON_MDT_MUTATION = gql`
   mutation updateOnMdt($input: UpdateOnMdtInput!){

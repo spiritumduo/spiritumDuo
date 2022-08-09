@@ -1,21 +1,29 @@
 import React, { useEffect, useMemo, useState } from 'react';
+
+// LIBRARIES
 import { Breadcrumb, Container, ErrorMessage, Table } from 'nhsuk-react-components';
 import ReactPaginate from 'react-paginate';
 import { useNavigate } from 'react-router';
 import { useParams } from 'react-router-dom';
-import { useAppDispatch } from 'app/hooks';
-import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
-import '../components/patientlist.css';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import edgesToNodes from 'app/pagination';
-import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
-import PatientOnMdtManagement from 'features/PatientOnMdtManagement/PatientOnMdtManagement';
-
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 
+// APP
+import { useAppDispatch } from 'app/hooks';
+import edgesToNodes from 'app/pagination';
+
+// COMPONENTS
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
+import PatientOnMdtManagement from 'features/PatientOnMdtManagement/PatientOnMdtManagement';
+import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
+import { useHospitalNumberFormat, useNationalNumberFormat } from 'app/hooks/format-identifier';
+
+// LOCAL IMPORTS
 import { getOnMdtConnectionQuery } from './__generated__/getOnMdtConnectionQuery';
 import { lockOnMdtForManagement } from './__generated__/lockOnMdtForManagement';
 import { reorderOnMdt, reorderOnMdtVariables } from './__generated__/reorderOnMdt';
+// bruh
+import '../components/patientlist.css';
 
 export const GET_ON_PATIENTS_ON_MDT_CONNECTION_QUERY = gql`
   query getOnMdtConnectionQuery(
