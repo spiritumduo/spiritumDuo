@@ -3,7 +3,6 @@ import datetime
 from starlette.config import environ
 environ['TESTING'] = "True"
 
-
 from typing import List
 from SdTypes import ClinicalRequestState, Permissions
 from sdpubsub import SdPubSub
@@ -13,7 +12,6 @@ from async_asgi_testclient import TestClient
 from gino_starlette import Gino
 from httpx import AsyncClient, Response
 import pytest
-import pytest_asyncio
 from unittest.mock import AsyncMock
 from bcrypt import hashpw, gensalt
 from models.db import db, TEST_DATABASE_URL
@@ -32,7 +30,6 @@ from models import (
     OnMdt,
     ClinicalRequest
 )
-
 from api import app
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from trustadapter import TrustAdapter
@@ -89,7 +86,10 @@ async def test_pathway(db_start_transaction) -> Pathway:
 
 
 @pytest.fixture
-async def test_clinical_request_type(db_start_transaction, test_pathway) -> ClinicalRequestType:
+async def test_clinical_request_type(
+    db_start_transaction,
+    test_pathway
+) -> ClinicalRequestType:
     mT: ClinicalRequestType = await ClinicalRequestType.create(
         name="Test ClinicalRequest",
         ref_name="ref_test_clinical_request",
@@ -123,7 +123,9 @@ async def test_patients(db_start_transaction) -> List[Patient]:
 
 @pytest.fixture
 async def test_patients_on_pathway(
-        test_patients: List[Patient], test_pathway: Pathway, db_start_transaction
+    test_patients: List[Patient],
+    test_pathway: Pathway,
+    db_start_transaction
 ) -> List[OnPathway]:
     on_pathway_list = []
     for p in test_patients:
@@ -144,7 +146,11 @@ class UserFixture:
 
 
 @pytest.fixture
-async def test_user(test_pathway: Pathway, db_start_transaction, test_role: Role) -> UserFixture:
+async def test_user(
+    test_pathway: Pathway,
+    db_start_transaction,
+    test_role: Role
+) -> UserFixture:
     user_info = {
         "username": "testuser",
         "password": "testPassword"
@@ -231,7 +237,9 @@ async def test_on_mdts(
 
 
 @pytest.fixture
-async def httpx_login_user(test_user: UserFixture, httpx_test_client) -> Response:
+async def httpx_login_user(
+    test_user: UserFixture, httpx_test_client
+) -> Response:
     client = httpx_test_client
     user_fixture = test_user
     res = await client.post(
@@ -494,6 +502,14 @@ async def mdt_read_permission(test_role) -> RolePermission:
     return await RolePermission(
         role_id=test_role.id,
         permission=Permissions.MDT_READ
+    ).create()
+
+
+@pytest.fixture
+async def mdt_delete_permission(test_role) -> RolePermission:
+    return await RolePermission(
+        role_id=test_role.id,
+        permission=Permissions.MDT_DELETE
     ).create()
 
 

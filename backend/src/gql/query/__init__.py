@@ -11,7 +11,6 @@ from .get_patient_connection import query
 from .patient_search import query
 from .get_role_permissions import query
 from .get_roles import query
-from .get_mdt import query
 from .get_mdt_connection import query
 from .get_on_mdt_connection import query
 from .get_users import query

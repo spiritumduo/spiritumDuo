@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: getMdt
+// GraphQL query operation: getMdtsOnThisPathway
 // ====================================================
 
-export interface getMdt_getMdt_clinicians {
+export interface getMdtsOnThisPathway_getMdts_clinicians {
   __typename: "User";
   id: string;
   firstName: string;
@@ -15,7 +15,7 @@ export interface getMdt_getMdt_clinicians {
   username: string;
 }
 
-export interface getMdt_getMdt_patients {
+export interface getMdtsOnThisPathway_getMdts_patients {
   __typename: "Patient";
   id: string;
   firstName: string;
@@ -23,21 +23,19 @@ export interface getMdt_getMdt_patients {
   hospitalNumber: string;
 }
 
-export interface getMdt_getMdt {
+export interface getMdtsOnThisPathway_getMdts {
   __typename: "MDT";
   id: string;
-  clinicians: (getMdt_getMdt_clinicians | null)[];
-  patients: (getMdt_getMdt_patients | null)[];
-  createdAt: any;
   plannedAt: any;
-  updatedAt: any;
+  clinicians: (getMdtsOnThisPathway_getMdts_clinicians | null)[];
+  patients: (getMdtsOnThisPathway_getMdts_patients | null)[];
   location: string;
 }
 
-export interface getMdt {
-  getMdt: getMdt_getMdt | null;
+export interface getMdtsOnThisPathway {
+  getMdts: (getMdtsOnThisPathway_getMdts | null)[];
 }
 
-export interface getMdtVariables {
-  id: string;
+export interface getMdtsOnThisPathwayVariables {
+  pathwayId: string;
 }
