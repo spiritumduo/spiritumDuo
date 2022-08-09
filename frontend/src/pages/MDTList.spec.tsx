@@ -81,8 +81,8 @@ const renderEditModalDeleteTab = async () => {
   click(screen.getByRole('tab', { name: /delete mdt/i }));
 
   await waitFor(() => {
-    expect(screen.getByText(/delete mdt/i)).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /delete mdt/i })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('button', { name: /delete mdt/i })).toBeInTheDocument();
   });
 };
 
@@ -138,7 +138,7 @@ test('Delete MDT: valid inputs should show success page', async () => {
   const { click } = userEvent.setup();
   await renderEditModalDeleteTab();
 
-  click(screen.getByRole('button', { name: /delete/i }));
+  click(screen.getByRole('button', { name: /delete mdt/i }));
 
   await waitFor(() => {
     expect(screen.getByText(/success/i));
