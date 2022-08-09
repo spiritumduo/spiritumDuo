@@ -5,7 +5,7 @@ import fetchMock from 'fetch-mock';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { Routes, Route, useNavigate, MemoryRouter } from 'react-router-dom';
-import LoginPage from './Login';
+import LoginPage, { LoginData } from './Login';
 
 const MockHome = () => {
   const navigate = useNavigate();
@@ -35,13 +35,6 @@ export default {
  * MOCK RESPONSES
  */
 
-type LoginPayload = {
-  user?: User;
-  pathways?: PathwayOption[];
-  token?: string;
-  error: string | null;
-};
-
 const mockPathways: PathwayOption[] = [
   {
     id: '1',
@@ -56,7 +49,7 @@ const mockPathways: PathwayOption[] = [
 /**
  * Successful login
  */
-const successfulLoginMock: LoginPayload = {
+const successfulLoginMock: LoginData = {
   user: {
     id: '1',
     firstName: 'John',
@@ -73,7 +66,7 @@ const successfulLoginMock: LoginPayload = {
 /**
  * Invalid login
  */
-const invalidLoginMock: LoginPayload = {
+const invalidLoginMock: LoginData = {
   error: 'Incorrect username and/or password',
 };
 
