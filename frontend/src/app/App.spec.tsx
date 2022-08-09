@@ -12,7 +12,11 @@ import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { MemoryRouter } from 'react-router';
 import store from 'app/store';
-import { Provider } from 'react-redux';
+
+// COMPONENTS
+import { ConfigProvider } from 'components/ConfigContext';
+
+// LOCAL
 import App from './App';
 
 const fakePathways: PathwayOption[] = [
@@ -66,17 +70,19 @@ interface AppElementProps {
 const renderApp = async (props?: AppElementProps) => {
   render(
     <Provider store={ store }>
-      <MockedProvider>
-        <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
-          <PathwayContext.Provider
-            value={ props?.pathwayProviderProps || mockPathwayProviderProps }
-          >
-            <MemoryRouter>
-              <App />
-            </MemoryRouter>
-          </PathwayContext.Provider>
-        </AuthContext.Provider>
-      </MockedProvider>
+      <ConfigProvider>
+        <MockedProvider>
+          <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
+            <PathwayContext.Provider
+              value={ props?.pathwayProviderProps || mockPathwayProviderProps }
+            >
+              <MemoryRouter>
+                <App />
+              </MemoryRouter>
+            </PathwayContext.Provider>
+          </AuthContext.Provider>
+        </MockedProvider>
+      </ConfigProvider>
     </Provider>,
   );
   await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));
