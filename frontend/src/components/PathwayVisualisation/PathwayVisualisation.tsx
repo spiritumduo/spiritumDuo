@@ -14,6 +14,9 @@ import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withToolti
 // GENERATED TYPES
 import { ClinicalRequestState } from '__generated__/globalTypes';
 
+// APP
+import { useHospitalNumberFormat, useNationalNumberFormat } from 'app/hooks/format-identifier';
+
 // LOCAL
 import { GrpPatientFields } from './__generated__/GrpPatientFields';
 import {
@@ -266,6 +269,8 @@ const PathwayVisualisation = withTooltip<PathwayVisualisationProps, TooltipData>
     hideTooltip,
     showTooltip,
   }: PathwayVisualisationProps & WithTooltipProvidedProps<TooltipData>) => {
+    const hospitalNumberFormat = useHospitalNumberFormat();
+    const nationalNumberFormat = useNationalNumberFormat();
     if (data.length === 0) return <></>; // we don't want to render an empty graph
     // memoise all this to prevent scale recalculation on re-render
     // bounds
@@ -497,8 +502,8 @@ const PathwayVisualisation = withTooltip<PathwayVisualisationProps, TooltipData>
                                 >
                                   {
                                     showNationalNumber
-                                      ? `${b.bar.data.name}, ${b.bar.data.hospitalNumber}, ${b.bar.data.nationalNumber}, ${b.bar.data.dateOfBirth.toLocaleDateString()}`
-                                      : `${b.bar.data.name}, ${b.bar.data.hospitalNumber}, ${b.bar.data.dateOfBirth.toLocaleDateString()}`
+                                      ? `${b.bar.data.name}, ${hospitalNumberFormat(b.bar.data.hospitalNumber)}, ${nationalNumberFormat(b.bar.data.nationalNumber)}, ${b.bar.data.dateOfBirth.toLocaleDateString()}`
+                                      : `${b.bar.data.name}, ${hospitalNumberFormat(b.bar.data.hospitalNumber)}, ${b.bar.data.dateOfBirth.toLocaleDateString()}`
                                   }
                                 </Text>
                               )

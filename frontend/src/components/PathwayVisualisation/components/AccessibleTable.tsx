@@ -1,3 +1,4 @@
+import { useHospitalNumberFormat } from 'app/hooks/format-identifier';
 import React from 'react';
 
 import { friendlyNames, ResultPeriod, PatientVisData, PatientPeriod, RequestPeriod } from '../util';
@@ -43,73 +44,76 @@ export interface AccessibleTableProps {
 
 export const AccessibleTable = ({
   id, data, sortedKeys, className, onClick,
-}: AccessibleTableProps) => (
-  <div className={ className } id={ id }>
-    <table aria-label="Pathway Table">
-      <thead>
-        <tr>
-          <th id="tname" scope="col" rowSpan={ 2 }>Name</th>
-          <th id="thosp" scope="col" rowSpan={ 2 }>Hospital Number</th>
-          <th id="tdob" scope="col" rowSpan={ 2 }>Date Of Birth</th>
-          <th colSpan={ 4 } scope="colgroup" style={ { textAlign: 'center' } }>Periods</th>
-        </tr>
-        <tr>
-          <th id="pt" scope="colgroup">Period Type</th>
-          <th id="pt" scope="colgroup">Duration</th>
-          <th id="preq" scope="colgroup">Outstanding Requests</th>
-          <th id="pres" scope="colgroup">Awaiting Results</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((d) => (
-          <React.Fragment key={ d.id }>
-            <tr>
-              <th
-                id={ `rowname-${d.id}` }
-                headers="tname"
-                scope="rowgroup"
-                rowSpan={ Object.keys(d.periods).length }
-                role="rowheader"
-              >
-                <button
-                  type="button"
-                  tabIndex={ 0 }
-                  onClick={ onClick ? () => onClick(d) : undefined }
-                  role="link"
+}: AccessibleTableProps) => {
+  const hospitalNumberFormat = useHospitalNumberFormat();
+  return (
+    <div className={ className } id={ id }>
+      <table aria-label="Pathway Table">
+        <thead>
+          <tr>
+            <th id="tname" scope="col" rowSpan={ 2 }>Name</th>
+            <th id="thosp" scope="col" rowSpan={ 2 }>Hospital Number</th>
+            <th id="tdob" scope="col" rowSpan={ 2 }>Date Of Birth</th>
+            <th colSpan={ 4 } scope="colgroup" style={ { textAlign: 'center' } }>Periods</th>
+          </tr>
+          <tr>
+            <th id="pt" scope="colgroup">Period Type</th>
+            <th id="pt" scope="colgroup">Duration</th>
+            <th id="preq" scope="colgroup">Outstanding Requests</th>
+            <th id="pres" scope="colgroup">Awaiting Results</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((d) => (
+            <React.Fragment key={ d.id }>
+              <tr>
+                <th
+                  id={ `rowname-${d.id}` }
+                  headers="tname"
+                  scope="rowgroup"
+                  rowSpan={ Object.keys(d.periods).length }
+                  role="rowheader"
                 >
-                  {d.name}
-                </button>
-              </th>
-              <td headers={ `thosp rowname-${d.id}` }>{d.hospitalNumber}</td>
-              <td headers={ `tdob rowname-${d.id}` }>{d.dateOfBirth.toLocaleDateString()}</td>
-              {
-                d.periods[sortedKeys[0]] !== undefined
-                  ? (
-                    <PeriodElement period={ d.periods[sortedKeys[0]] } />
-                  )
-                  : null
-              }
-            </tr>
-            {
-              Object.keys(d.periods).length > 1
-                ? sortedKeys.map((k, index) => (
-                  d.periods[k] !== undefined && index !== 0
+                  <button
+                    type="button"
+                    tabIndex={ 0 }
+                    onClick={ onClick ? () => onClick(d) : undefined }
+                    role="link"
+                  >
+                    {d.name}
+                  </button>
+                </th>
+                <td headers={ `thosp rowname-${d.id}` }>{hospitalNumberFormat(d.hospitalNumber)}</td>
+                <td headers={ `tdob rowname-${d.id}` }>{d.dateOfBirth.toLocaleDateString()}</td>
+                {
+                  d.periods[sortedKeys[0]] !== undefined
                     ? (
-                      // The array index is stable in this case
-                      // eslint-disable-next-line react/no-array-index-key
-                      <tr key={ `period-${d.id}-${index}` }>
-                        <td>-</td>
-                        <td>-</td>
-                        <PeriodElement period={ d.periods[k] } />
-                      </tr>
+                      <PeriodElement period={ d.periods[sortedKeys[0]] } />
                     )
                     : null
-                ))
-                : null
-            }
-          </React.Fragment>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
+                }
+              </tr>
+              {
+                Object.keys(d.periods).length > 1
+                  ? sortedKeys.map((k, index) => (
+                    d.periods[k] !== undefined && index !== 0
+                      ? (
+                        // The array index is stable in this case
+                        // eslint-disable-next-line react/no-array-index-key
+                        <tr key={ `period-${d.id}-${index}` }>
+                          <td>-</td>
+                          <td>-</td>
+                          <PeriodElement period={ d.periods[k] } />
+                        </tr>
+                      )
+                      : null
+                  ))
+                  : null
+              }
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};

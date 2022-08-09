@@ -41,8 +41,8 @@ describe('When the page loads', () => {
 
     await waitFor(() => {
       expect(screen.getByText('First Last (1)')).toBeInTheDocument();
-      expect(screen.getByText('fMRN0000001')).toBeInTheDocument();
-      expect(screen.getByText('fNHS0000001')).toBeInTheDocument();
+      expect(screen.getByText('fMRN: 0000001L')).toBeInTheDocument();
+      expect(screen.getByText('fNHS: 000-000-1L')).toBeInTheDocument();
       expect(screen.getByText(new Date('01/01/2000').toLocaleDateString())).toBeInTheDocument();
       expect(screen.getByText('reason goes here (1)')).toBeInTheDocument();
     });

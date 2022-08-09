@@ -1,18 +1,27 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+
+// LIBRARIES
 import { render, screen, waitFor } from '@testing-library/react';
 // we want fetchMock to prevent any accidental logins, even though we
 // don't test login here
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import fetchMock from 'fetch-mock';
 import { MockedProvider } from '@apollo/client/testing';
+import { MemoryRouter } from 'react-router';
+import { Provider } from 'react-redux';
+
+// APP
 import { AuthContext, AuthContextInterface, PathwayContext, PathwayContextInterface } from 'app/context';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
-import { MemoryRouter } from 'react-router';
 import store from 'app/store';
-import { Provider } from 'react-redux';
+
+// COMPONENTS
+import { ConfigProvider } from 'components/ConfigContext';
+
+// LOCAL
 import App from './App';
 
 const fakePathways: PathwayOption[] = [
@@ -66,17 +75,19 @@ interface AppElementProps {
 const renderApp = async (props?: AppElementProps) => {
   render(
     <Provider store={ store }>
-      <MockedProvider>
-        <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
-          <PathwayContext.Provider
-            value={ props?.pathwayProviderProps || mockPathwayProviderProps }
-          >
-            <MemoryRouter>
-              <App />
-            </MemoryRouter>
-          </PathwayContext.Provider>
-        </AuthContext.Provider>
-      </MockedProvider>
+      <ConfigProvider>
+        <MockedProvider>
+          <AuthContext.Provider value={ props?.authProviderProps || mockAuthProviderProps }>
+            <PathwayContext.Provider
+              value={ props?.pathwayProviderProps || mockPathwayProviderProps }
+            >
+              <MemoryRouter>
+                <App />
+              </MemoryRouter>
+            </PathwayContext.Provider>
+          </AuthContext.Provider>
+        </MockedProvider>
+      </ConfigProvider>
     </Provider>,
   );
   await waitFor(() => new Promise((resolve) => setTimeout(resolve, 1)));

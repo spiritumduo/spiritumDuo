@@ -7,13 +7,18 @@ import { MockedProvider } from '@apollo/client/testing';
 import { cache } from '../src/app/cache';
 import { Provider } from 'react-redux';
 import store from '../src/app/store';
+import MockConfigProvider from 'test/mocks/mockConfig';
 
 export const decorators = [
-  (Story) => (
-    <Provider store= { store }>
-      <Story />
-    </Provider>
-  ),
+  (Story) => {
+    return (
+      <Provider store= { store }>
+        <MockConfigProvider>
+          <Story />
+        </MockConfigProvider>
+      </Provider>
+    );
+  },
 ];
 
 export const parameters = {

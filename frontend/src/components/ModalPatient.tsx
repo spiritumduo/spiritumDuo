@@ -10,6 +10,7 @@ import { BsX } from 'react-icons/bs';
 import { DecisionPointType } from 'types/DecisionPoint';
 import { AuthContext, PathwayContext } from 'app/context';
 import { useAppSelector } from 'app/hooks';
+import { useHospitalNumberFormat, useNationalNumberFormat } from 'app/hooks/format-identifier';
 import { RootState } from 'app/store';
 
 // PAGES
@@ -72,6 +73,8 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
   const { currentPathwayId } = useContext(PathwayContext);
   const { user } = useContext(AuthContext);
   const [currentTab, setCurrentTab] = useState<number>(0);
+  const formatHospitalNumber = useHospitalNumberFormat();
+  const formatNationalNumber = useNationalNumberFormat();
 
   const [
     lockOnPathwayMutation, { data },
@@ -153,7 +156,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
             <Row>
               <Col xs="11">
                 <div className="visually-hidden">
-                  {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${currentPatient?.hospitalNumber},    ${currentPatient?.nationalNumber},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
+                  {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${formatHospitalNumber(currentPatient?.hospitalNumber)},    ${formatNationalNumber(currentPatient?.nationalNumber)},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
                 </div>
                 <PatientPathway
                   hospitalNumber={ hospitalNumber }

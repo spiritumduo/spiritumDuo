@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import React, { useState } from 'react';
+import React, { ElementType, useState } from 'react';
 import User from 'types/Users';
 import { currentPathwayIdVar, loggedInUserVar } from 'app/cache';
 
@@ -8,7 +8,9 @@ export interface AuthContextInterface {
     updateUser: (user: User | undefined) => void;
 }
 export const AuthContext = React.createContext<AuthContextInterface>({ updateUser: () => { } });
-export const AuthProvider = ({ children }: React.ComponentPropsWithRef<any>): JSX.Element => {
+export const AuthProvider = (
+  { children }: React.ComponentPropsWithRef<ElementType>,
+): JSX.Element => {
   const [user, updateContextUser] = useState<User | undefined>();
 
   if (!user) {
