@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { BsX } from 'react-icons/bs';
@@ -49,13 +49,19 @@ const MDTManagementPage = (
 ): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
 
-  const { data: mdtData, error: mdtError, loading: mdtLoading } = useQuery<getMdtsOnThisPathway>(
+  const {
+    data: mdtData, error: mdtError, loading: mdtLoading, refetch: mdtRefetch,
+  } = useQuery<getMdtsOnThisPathway>(
     GET_MDTS_QUERY, {
       variables: {
         pathwayId: currentPathwayId,
       },
     },
   );
+
+  useEffect(() => {
+    mdtRefetch();
+  }, [mdtId, mdtRefetch]);
 
   const mdt = mdtData?.getMdts.find((_mdt) => _mdt?.id.toString() === mdtId.toString());
 
