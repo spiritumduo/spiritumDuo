@@ -1,24 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { BsX } from 'react-icons/bs';
 import { gql, useQuery } from '@apollo/client';
-import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import { ErrorMessage } from 'nhsuk-react-components';
+
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
+import { PathwayContext } from 'app/context';
 
 import UpdateMdtTab from './tabpages/UpdateMdtTab';
 import DeleteMdtTab from './tabpages/DeleteMdtTab';
-import { getMdt } from './__generated__/getMdt';
 
-export const GET_MDT_QUERY = gql`
-  query getMdt($id: ID!){
-    getMdt(id: $id){
+import { getMdtsOnThisPathway } from './__generated__/getMdtsOnThisPathway';
+
+export const GET_MDTS_QUERY = gql`
+  query getMdtsOnThisPathway($pathwayId: ID!){
+    getMdts(pathwayId: $pathwayId){
       id
       clinicians{
         id
         firstName
         lastName
         username
+      }
+      patients{
+        id
+        firstName
+        lastName
+        hospitalNumber
       }
       createdAt
       plannedAt
@@ -38,14 +47,20 @@ interface MDTListPageProps{
 const MDTManagementPage = (
   { showModal, setShowModal, mdtId, refetch }: MDTListPageProps,
 ): JSX.Element => {
-  const { data, loading, error } = useQuery<getMdt>(GET_MDT_QUERY, {
-    variables: {
-      id: mdtId,
+  const { currentPathwayId } = useContext(PathwayContext);
+
+  const { data: mdtData, error: mdtError, loading: mdtLoading } = useQuery<getMdtsOnThisPathway>(
+    GET_MDTS_QUERY, {
+      variables: {
+        pathwayId: currentPathwayId,
+      },
     },
-  });
+  );
+
+  const mdt = mdtData?.getMdts.find((_mdt) => _mdt?.id.toString() === mdtId.toString());
 
   return (
-    <Modal size="lg" show={ !!(showModal && data?.getMdt) } onHide={ () => setShowModal(false) }>
+    <Modal size="lg" show={ !!(showModal && mdt) } onHide={ () => setShowModal(false) }>
       <Modal.Header>
         <Modal.Title>MDT Management</Modal.Title>
         <button
@@ -61,11 +76,11 @@ const MDTManagementPage = (
       </Modal.Header>
       <Modal.Body>
         {
-          error
-            ? <ErrorMessage>{error.message}</ErrorMessage>
+          mdtError
+            ? <ErrorMessage>{mdtError.message}</ErrorMessage>
             : ''
         }
-        <LoadingSpinner loading={ loading }>
+        <LoadingSpinner loading={ mdtLoading }>
           <Tabs>
             <TabList>
               <Tab>Update MDT</Tab>
@@ -73,10 +88,10 @@ const MDTManagementPage = (
             </TabList>
             <TabPanel>
               {
-                data?.getMdt
+                mdt
                   ? (
                     <UpdateMdtTab
-                      mdt={ data.getMdt }
+                      mdt={ mdt }
                       successCallback={ () => { setShowModal(false); if (refetch) refetch(); } }
                     />
                   )
@@ -85,10 +100,11 @@ const MDTManagementPage = (
             </TabPanel>
             <TabPanel>
               {
-                data?.getMdt
+                (mdt && mdtData?.getMdts)
                   ? (
                     <DeleteMdtTab
-                      mdt={ data.getMdt }
+                      mdt={ mdt }
+                      allMdts={ mdtData.getMdts }
                       successCallback={ () => { setShowModal(false); if (refetch) refetch(); } }
                     />
                   )
