@@ -98,7 +98,10 @@ def endpoints():
 def browser_name(pytestconfig):
     browser_choice: str = pytestconfig.getoption("driver")
     if browser_choice.lower() not in ["chromium", "firefox", "edge", "safari"]:
-        raise ArgumentError(None, "Driver argument provided is not a valid driver")
+        raise ArgumentError(
+            None,
+            "Driver argument provided is not a valid driver"
+        )
 
     return browser_choice
 
@@ -115,28 +118,28 @@ def get_test_credentials(browser_name: str) -> str:
 
     credentials: dict = {
         "darwinsafari": Credentials(
-            username="demo-1-2",
-            password="22password1"
+            username="demo-10-2",
+            password="22password10"
         ),
         "darwinchromium": Credentials(
-            username="demo-2-2",
-            password="22password2"
+            username="demo-11-2",
+            password="22password11"
         ),
         "win32chromium": Credentials(
-            username="demo-3-2",
-            password="22password3"
+            username="demo-12-2",
+            password="22password12"
         ),
         "win32edge": Credentials(
-            username="demo-4-2",
-            password="22password4"
+            username="demo-13-2",
+            password="22password13"
         ),
         "linuxfirefox": Credentials(
-            username="demo-5-2",
-            password="22password5"
+            username="demo-14-2",
+            password="22password14"
         ),
         "linuxchromium": Credentials(
-            username="demo-6-2",
-            password="22password6"
+            username="demo-15-2",
+            password="22password15"
         )
     }
 
@@ -214,7 +217,6 @@ def login_user(
     endpoints: ServerEndpoints,
     get_test_credentials: Credentials
 ):
-
     change_url(driver, endpoints.app)
 
     WebDriverWait(
