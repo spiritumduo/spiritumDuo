@@ -75,8 +75,10 @@ def change_url(driver: webdriver.Remote, url):
         ) == 'complete'
     )
 
+    root = driver.find_element(By.ID, "root")
+
     WebDriverWait(driver, 10).until(
-        ExpectedConditions.visibility_of(driver.find_element(By.ID, "root"))
+        ExpectedConditions.visibility_of(root)
     )
 
 
