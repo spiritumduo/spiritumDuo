@@ -80,6 +80,8 @@ interface PatientOnMdtProps{
 
 const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtProps) => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const formatHospitalNumber = useHospitalNumberFormat();
+  const formatNationalNumber = useNationalNumberFormat();
 
   const [
     updateMutation, { data: updateData, error: updateError, loading: updateLoading },
@@ -129,7 +131,7 @@ const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtP
       <Modal.Header>
         <Modal.Title>
           MDT Management -&nbsp;
-          { `${onMdt?.firstName} ${onMdt?.lastName}, ${onMdt?.hospitalNumber}, ${onMdt?.nationalNumber}` }
+          { `${onMdt?.firstName} ${onMdt?.lastName}, ${formatHospitalNumber(onMdt?.hospitalNumber)}, ${formatNationalNumber(onMdt?.nationalNumber)}` }
         </Modal.Title>
         <button
           type="button"

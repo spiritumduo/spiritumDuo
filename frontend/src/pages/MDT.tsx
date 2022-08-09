@@ -141,6 +141,8 @@ const MDTPage = (): JSX.Element => {
   const [hasLock, setHasLock] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const hospitalNumberFormat = useHospitalNumberFormat();
+  const nationalNumberFormat = useNationalNumberFormat();
   dispatch(setOnMdtWorkflow( mdtId ));
   if (!mdtId) {
     navigate('/mdt');
@@ -303,8 +305,8 @@ const MDTPage = (): JSX.Element => {
                               {`${element.firstName} ${element.lastName}`}
                             </button>
                           </td>
-                          <td>{element.hospitalNumber}</td>
-                          <td>{element.nationalNumber}</td>
+                          <td>{hospitalNumberFormat(element.hospitalNumber)}</td>
+                          <td>{nationalNumberFormat(element.nationalNumber)}</td>
                           <td>{new Date(element.dateOfBirth).toLocaleDateString()}</td>
                           <td>{element.mdtReason}</td>
                           <td>

@@ -61,7 +61,7 @@ exports[`It should render Default correctly 1`] = `
                       dy="0em"
                       x="0"
                     >
-                      John Doe, fMRN1234567, 10/10/1970
+                      John Doe, fMRN: 1234567L, 10/10/1970
                     </tspan>
                   </text>
                 </svg>
@@ -270,7 +270,7 @@ exports[`It should render Default correctly 1`] = `
                   <td
                     headers="thosp rowname-1"
                   >
-                    fMRN1234567
+                    fMRN: 1234567L
                   </td>
                   <td
                     headers="tdob rowname-1"

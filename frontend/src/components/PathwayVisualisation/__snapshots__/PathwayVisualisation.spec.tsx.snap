@@ -55,7 +55,7 @@ exports[`It should render Default correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, 1/1/1980
+                  John Doe, fMRN: 1234567L, 1/1/1980
                 </tspan>
               </text>
             </svg>
@@ -125,7 +125,7 @@ exports[`It should render Default correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, 6/1/1970
+                  Jane Doe, fMRN: 7654321L, 6/1/1970
                 </tspan>
               </text>
             </svg>
@@ -566,7 +566,7 @@ exports[`It should render Default correctly 1`] = `
               <td
                 headers="thosp rowname-1"
               >
-                fMRN1234567
+                fMRN: 1234567L
               </td>
               <td
                 headers="tdob rowname-1"
@@ -775,7 +775,7 @@ exports[`It should render Default correctly 1`] = `
               <td
                 headers="thosp rowname-2"
               >
-                fMRN7654321
+                fMRN: 7654321L
               </td>
               <td
                 headers="tdob rowname-2"
@@ -960,7 +960,7 @@ exports[`It should render Medium correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, 1/1/1980
+                  John Doe, fMRN: 1234567L, 1/1/1980
                 </tspan>
               </text>
             </svg>
@@ -1030,7 +1030,7 @@ exports[`It should render Medium correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, 6/1/1970
+                  Jane Doe, fMRN: 7654321L, 6/1/1970
                 </tspan>
               </text>
             </svg>
@@ -1271,7 +1271,7 @@ exports[`It should render Medium correctly 1`] = `
               <td
                 headers="thosp rowname-1"
               >
-                fMRN1234567
+                fMRN: 1234567L
               </td>
               <td
                 headers="tdob rowname-1"
@@ -1480,7 +1480,7 @@ exports[`It should render Medium correctly 1`] = `
               <td
                 headers="thosp rowname-2"
               >
-                fMRN7654321
+                fMRN: 7654321L
               </td>
               <td
                 headers="tdob rowname-2"
@@ -1665,7 +1665,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                  John Doe, fMRN: 1234567L, fNHS: 123-456-789L, 1/1/1980
                 </tspan>
               </text>
             </svg>
@@ -1735,7 +1735,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                  Jane Doe, fMRN: 7654321L, fNHS: 987-654-321L, 6/1/1970
                 </tspan>
               </text>
             </svg>
@@ -1976,7 +1976,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
               <td
                 headers="thosp rowname-1"
               >
-                fMRN1234567
+                fMRN: 1234567L
               </td>
               <td
                 headers="tdob rowname-1"
@@ -2185,7 +2185,7 @@ exports[`It should render MediumWithNationalNumber correctly 1`] = `
               <td
                 headers="thosp rowname-2"
               >
-                fMRN7654321
+                fMRN: 7654321L
               </td>
               <td
                 headers="tdob rowname-2"
@@ -2370,7 +2370,7 @@ exports[`It should render Small correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, 1/1/1980
+                  John Doe, fMRN: 1234567L, 1/1/1980
                 </tspan>
               </text>
             </svg>
@@ -2440,7 +2440,7 @@ exports[`It should render Small correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, 6/1/1970
+                  Jane Doe, fMRN: 7654321L, 6/1/1970
                 </tspan>
               </text>
             </svg>
@@ -2681,7 +2681,7 @@ exports[`It should render Small correctly 1`] = `
               <td
                 headers="thosp rowname-1"
               >
-                fMRN1234567
+                fMRN: 1234567L
               </td>
               <td
                 headers="tdob rowname-1"
@@ -2890,7 +2890,7 @@ exports[`It should render Small correctly 1`] = `
               <td
                 headers="thosp rowname-2"
               >
-                fMRN7654321
+                fMRN: 7654321L
               </td>
               <td
                 headers="tdob rowname-2"
@@ -3075,7 +3075,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                  John Doe, fMRN: 1234567L, fNHS: 123-456-789L, 1/1/1980
                 </tspan>
               </text>
             </svg>
@@ -3145,7 +3145,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                  Jane Doe, fMRN: 7654321L, fNHS: 987-654-321L, 6/1/1970
                 </tspan>
               </text>
             </svg>
@@ -3386,7 +3386,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
               <td
                 headers="thosp rowname-1"
               >
-                fMRN1234567
+                fMRN: 1234567L
               </td>
               <td
                 headers="tdob rowname-1"
@@ -3595,7 +3595,7 @@ exports[`It should render SmallWithNationalNumber correctly 1`] = `
               <td
                 headers="thosp rowname-2"
               >
-                fMRN7654321
+                fMRN: 7654321L
               </td>
               <td
                 headers="tdob rowname-2"
@@ -3780,7 +3780,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  John Doe, fMRN1234567, fNHS123456789, 1/1/1980
+                  John Doe, fMRN: 1234567L, fNHS: 123-456-789L, 1/1/1980
                 </tspan>
               </text>
             </svg>
@@ -3850,7 +3850,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
                   dy="0em"
                   x="0"
                 >
-                  Jane Doe, fMRN7654321, fNHS987654321, 6/1/1970
+                  Jane Doe, fMRN: 7654321L, fNHS: 987-654-321L, 6/1/1970
                 </tspan>
               </text>
             </svg>
@@ -4291,7 +4291,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
               <td
                 headers="thosp rowname-1"
               >
-                fMRN1234567
+                fMRN: 1234567L
               </td>
               <td
                 headers="tdob rowname-1"
@@ -4500,7 +4500,7 @@ exports[`It should render WithNationalNumber correctly 1`] = `
               <td
                 headers="thosp rowname-2"
               >
-                fMRN7654321
+                fMRN: 7654321L
               </td>
               <td
                 headers="tdob rowname-2"

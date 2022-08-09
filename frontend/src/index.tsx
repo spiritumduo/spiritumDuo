@@ -17,6 +17,8 @@ import SdApolloProvider from 'app/SdApolloProvider';
 import { AuthProvider, PathwayProvider } from 'app/context';
 import store from 'app/store';
 
+import { ConfigProvider } from 'components/ConfigContext/ConfigContext';
+
 // LOCAL IMPORT
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import './index.css';
@@ -28,11 +30,13 @@ render(
     <Provider store={ store }>
       <AuthProvider>
         <PathwayProvider>
-          <SdApolloProvider>
-            <BrowserRouter basename={ process.env.PUBLIC_URL }>
-              <App />
-            </BrowserRouter>
-          </SdApolloProvider>
+          <ConfigProvider>
+            <SdApolloProvider>
+              <BrowserRouter basename={ process.env.PUBLIC_URL }>
+                <App />
+              </BrowserRouter>
+            </SdApolloProvider>
+          </ConfigProvider>
         </PathwayProvider>
       </AuthProvider>
     </Provider>

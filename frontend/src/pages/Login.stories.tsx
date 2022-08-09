@@ -5,6 +5,7 @@ import fetchMock from 'fetch-mock';
 import User from 'types/Users';
 import PathwayOption from 'types/PathwayOption';
 import { Routes, Route, useNavigate, MemoryRouter } from 'react-router-dom';
+import { ConfigProvider } from 'components/ConfigContext/ConfigContext';
 import LoginPage, { LoginData } from './Login';
 
 const MockHome = () => {
@@ -22,12 +23,14 @@ export default {
   title: 'Pages/Login',
   component: LoginPage,
   decorators: [(LoginStory) => (
-    <MemoryRouter initialEntries={ ['/login'] }>
-      <Routes>
-        <Route path="/" element={ <MockHome /> } />
-        <Route path="/login" element={ <LoginStory /> } />
-      </Routes>
-    </MemoryRouter>
+    <ConfigProvider>
+      <MemoryRouter initialEntries={ ['/login'] }>
+        <Routes>
+          <Route path="/" element={ <MockHome /> } />
+          <Route path="/login" element={ <LoginStory /> } />
+        </Routes>
+      </MemoryRouter>
+    </ConfigProvider>
   )],
 } as Meta<typeof LoginPage>;
 
@@ -60,7 +63,11 @@ const successfulLoginMock: LoginData = {
     token: 'authToken',
     pathways: mockPathways,
   },
-  error: null,
+  config: {
+    hospitalNumberFormat: 'f@@@:@@@@@@@l',
+    nationalNumberFormat: 'f@@@:@@@-@@@-@@@@l',
+  },
+  error: undefined,
 };
 
 /**

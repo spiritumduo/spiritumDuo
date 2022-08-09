@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -11,13 +11,13 @@ import { Container } from 'react-bootstrap';
 import { Input } from 'components/nhs-style';
 import './login.css';
 import useRESTSubmit from 'app/hooks/rest-submit';
+import { ConfigInterface, useConfig } from 'components/ConfigContext';
 
-export type LoginData = {
+export interface LoginData {
   user?: User;
-  pathways?: PathwayOption[];
-  token?: string;
+  config?: ConfigInterface;
   error?: string;
-};
+}
 
 export interface LoginFormInputs {
   username: string;
@@ -38,13 +38,17 @@ const LoginPage = (): JSX.Element => {
     formState: { errors },
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
+
   const navigate = useNavigate();
   const { updateUser } = useContext(AuthContext);
   const { updateCurrentPathwayId } = useContext(PathwayContext);
+  const { updateConfig } = useConfig();
+
   useEffect(() => {
-    if (data?.user) {
+    if (data?.user && data?.config) {
       updateUser(data.user);
       updateCurrentPathwayId(data.user.defaultPathway?.id || data.user.pathways[0]?.id || '1');
+      updateConfig(data.config);
       navigate('/', { replace: true });
     }
   });

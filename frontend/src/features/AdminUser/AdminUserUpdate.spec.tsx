@@ -45,18 +45,15 @@ const renderLoading = () => render(
 test('Submitting should disable form input', async () => {
   renderLoading();
   const { click, type } = userEvent.setup();
-  const usernameInput = screen.getByLabelText(/username/i);
   const passwordInput = screen.getByLabelText(/password/i);
   const createUserBtn = screen.getByRole('button', { name: /create\s+user/i });
-  await waitFor(async () => {
-    type(screen.getByRole('textbox', { name: /first\s+name/i }), 'New First name');
-    type(screen.getByRole('textbox', { name: /last\s+name/i }), 'New Last name');
-    type(screen.getByRole('textbox', { name: /email/i }), 'New-Email@email');
-    type(screen.getByRole('textbox', { name: /department/i }), 'NewDepartment');
-    type(screen.getByLabelText(/password/i), 'NewPassword');
+  await waitFor(() => type(screen.getByRole('textbox', { name: /first\s+name/i }), 'New First name'));
+  await waitFor(() => type(screen.getByRole('textbox', { name: /last\s+name/i }), 'New Last name'));
+  await waitFor(() => type(screen.getByRole('textbox', { name: /email/i }), 'New-Email@email'));
+  await waitFor(() => type(screen.getByRole('textbox', { name: /department/i }), 'NewDepartment'));
+  await waitFor(() => type(screen.getByLabelText(/password/i), 'NewPassword'));
+  await waitFor(() => click(createUserBtn));
 
-    await click(createUserBtn);
-  });
   expect(passwordInput).toBeDisabled();
   expect(createUserBtn).toBeDisabled();
 });
