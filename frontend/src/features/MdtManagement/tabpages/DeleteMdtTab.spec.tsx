@@ -1,32 +1,87 @@
 import React from 'react';
-import { waitFor, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { waitFor, render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { composeStories } from '@storybook/testing-react';
+import MDT from 'types/MDT';
 import * as stories from './DeleteMdtTab.stories';
 
-const { Default, MdtHasRelations } = composeStories(stories);
+const { MdtWithNoPatients, MdtWithPatients, MdtHasUserErrors } = composeStories(stories);
 
-test('valid inputs should show success page', async () => {
-  render(<Default />);
+describe('The MDT does not have OnMDT/patient records', () => {
+  async function renderPage() {
+    render(<MdtWithNoPatients />);
+  }
 
-  const { click } = userEvent.setup();
+  it('Should show a notice no patients are on the MDT', async () => {
+    await renderPage();
+    expect(screen.getByText(/there are no patients on this mdt/i)).toBeInTheDocument();
+  });
 
-  await click(screen.getByRole('button', { name: /delete/i }));
+  it('Should show success when the form is submitted', async () => {
+    await renderPage();
+    const { click } = userEvent.setup();
+    await click(screen.getByRole('button', { name: /delete mdt/i }));
 
-  await waitFor(() => {
-    expect(screen.getByText(/success/i));
+    await waitFor(() => {
+      expect(screen.getByText(/success/i));
+    });
   });
 });
 
-test('error state displayed properly', async () => {
-  render(<MdtHasRelations />);
+describe('The MDT has OnMdt/patient records', () => {
+  async function renderPage() {
+    render(<MdtWithPatients />);
+  }
 
-  const { click } = userEvent.setup();
+  it('Should show a list of patients on the MDT', async () => {
+    await renderPage();
+    MdtWithPatients.parameters?.mdt.patients.forEach(
+      (pt: {firstName: string; lastName: string; hospitalNumber: string;}) => {
+        expect(screen.getByText(`${pt.firstName} ${pt.lastName} (${pt.hospitalNumber})`)).toBeInTheDocument();
+      },
+    );
+  });
 
-  await click(screen.getByRole('button', { name: /delete/i }));
+  it('Should show a dropdown with a list of other MDTs', async () => {
+    await renderPage();
+    const mdtSelectorOptions = Array.from(
+      (screen.getByRole(
+        'combobox',
+        { name: /select mdt to move patients to/i },
+      ) as HTMLSelectElement).options,
+    );
+    const mdtDateList = MdtWithPatients.parameters?.listOfMdts;
 
-  await waitFor(() => {
-    expect(screen.getByText(/you cannot delete an mdt with a relation/i));
+    mdtDateList.forEach((mdt: MDT) => {
+      expect(
+        mdtSelectorOptions.find((option) => option.value === mdt.id),
+      );
+    });
+  });
+});
+
+describe('If the server is in an error state', () => {
+  async function renderPage() {
+    render(<MdtHasUserErrors />);
+  }
+
+  it('should show the error when the form is submitted', async () => {
+    await renderPage();
+    const { click } = userEvent.setup();
+    await click(screen.getByRole('button', { name: /delete mdt/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/an error has occured/i));
+    });
+  });
+
+  it('Should show success when the form is submitted', async () => {
+    await renderPage();
+    const { click } = userEvent.setup();
+    await click(screen.getByRole('button', { name: /delete mdt/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/an error has occured/i));
+    });
   });
 });

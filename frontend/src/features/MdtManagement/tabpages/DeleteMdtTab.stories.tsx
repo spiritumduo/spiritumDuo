@@ -7,7 +7,94 @@ import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import DeleteMdtTab, { DELETE_MDT_MUTATION } from './DeleteMdtTab';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const mdt = {
+const listOfMdts = [
+  {
+    id: '1',
+    pathway: {
+      id: '1',
+      name: 'test pathway',
+    },
+    creator: {
+      id: '1',
+      username: 'test username',
+      firstName: 'test',
+      lastName: 'user',
+    },
+    createdAt: new Date('2000-01-01T00:00:00'),
+    plannedAt: new Date('2025-01-01T00:00:00'),
+    updatedAt: new Date('2000-01-01T00:00:00'),
+    location: 'test location',
+    clinicians: [],
+    patients: [
+      {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        hospitalNumber: 'MRN1234567',
+      },
+      {
+        id: '2',
+        firstName: 'Sammy',
+        lastName: 'Seahorse',
+        hospitalNumber: 'MRN7654321',
+      },
+    ],
+  },
+  {
+    id: '2',
+    pathway: {
+      id: '1',
+      name: 'test pathway',
+    },
+    creator: {
+      id: '1',
+      username: 'test username',
+      firstName: 'test',
+      lastName: 'user',
+    },
+    createdAt: new Date('2000-01-01T00:00:00'),
+    plannedAt: new Date('2025-02-01T00:00:00'),
+    updatedAt: new Date('2000-01-01T00:00:00'),
+    location: 'test location',
+    clinicians: [],
+    patients: [
+      {
+        id: '3',
+        firstName: 'Jane',
+        lastName: 'Doe',
+        hospitalNumber: 'MRN1111111',
+      },
+    ],
+  },
+  {
+    id: '3',
+    pathway: {
+      id: '1',
+      name: 'test pathway',
+    },
+    creator: {
+      id: '1',
+      username: 'test username',
+      firstName: 'test',
+      lastName: 'user',
+    },
+    createdAt: new Date('2000-01-01T00:00:00'),
+    plannedAt: new Date('2025-04-01T00:00:00'),
+    updatedAt: new Date('2000-01-01T00:00:00'),
+    location: 'test location',
+    clinicians: [],
+    patients: [
+      {
+        id: '4',
+        firstName: 'Janet',
+        lastName: 'Doe',
+        hospitalNumber: 'MRN2222222',
+      },
+    ],
+  },
+];
+
+const mdtWithPatients = {
   id: '1',
   pathway: {
     id: '1',
@@ -20,10 +107,44 @@ const mdt = {
     lastName: 'user',
   },
   createdAt: new Date('2000-01-01T00:00:00'),
-  plannedAt: new Date('2022-01-01T00:00:00'),
+  plannedAt: listOfMdts[0].plannedAt,
   updatedAt: new Date('2000-01-01T00:00:00'),
   location: 'test location',
   clinicians: [],
+  patients: [
+    {
+      id: '1',
+      firstName: 'John',
+      lastName: 'Doe',
+      hospitalNumber: 'MRN1234567',
+    },
+    {
+      id: '2',
+      firstName: 'Sammy',
+      lastName: 'Seahorse',
+      hospitalNumber: 'MRN7654321',
+    },
+  ],
+};
+
+const mdtWithNoPatients = {
+  id: '1',
+  pathway: {
+    id: '1',
+    name: 'test pathway',
+  },
+  creator: {
+    id: '1',
+    username: 'test username',
+    firstName: 'test',
+    lastName: 'user',
+  },
+  createdAt: new Date('2000-01-01T00:00:00'),
+  plannedAt: listOfMdts[0].plannedAt,
+  updatedAt: new Date('2000-01-01T00:00:00'),
+  location: 'test location',
+  clinicians: [],
+  patients: [],
 };
 
 const successfulMutation = {
@@ -35,7 +156,7 @@ const errorMutation = {
   success: null,
   userErrors: [{
     field: 'id',
-    message: 'You cannot delete an MDT with a relation',
+    message: 'An error has occured!',
   }],
 };
 
@@ -67,7 +188,7 @@ export default {
   ],
 } as ComponentMeta<typeof DeleteMdtTab>;
 
-export const Default: ComponentStory<typeof DeleteMdtTab> = () => (
+export const MdtWithNoPatients: ComponentStory<typeof DeleteMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
       [
@@ -75,27 +196,61 @@ export const Default: ComponentStory<typeof DeleteMdtTab> = () => (
       ]
     }
   >
-    <DeleteMdtTab mdt={ mdt } successCallback={ () => ({}) } />
+    <DeleteMdtTab
+      mdt={ mdtWithNoPatients }
+      successCallback={ () => ({}) }
+      allMdts={ listOfMdts }
+    />
   </NewMockSdApolloProvider>
 );
 
-Default.parameters = {
-  mocks: [successfulDeleteMock],
+MdtWithNoPatients.parameters = {
+  mdt: mdtWithNoPatients,
+  successfulDeleteMock: successfulDeleteMock,
+  listOfMdts: listOfMdts,
 };
 
-export const MdtHasRelations: ComponentStory<typeof DeleteMdtTab> = () => (
+export const MdtWithPatients: ComponentStory<typeof DeleteMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={
-      [{
-        query: DELETE_MDT_MUTATION,
-        mockFn: () => Promise.resolve({
-          data: {
-            deleteMdt: errorMutation,
-          },
-        }),
-      }]
+      [
+        successfulDeleteMock,
+      ]
     }
   >
-    <DeleteMdtTab mdt={ mdt } successCallback={ () => ({}) } />
+    <DeleteMdtTab
+      mdt={ mdtWithPatients }
+      successCallback={ () => ({}) }
+      allMdts={ listOfMdts }
+    />
+  </NewMockSdApolloProvider>
+);
+
+MdtWithPatients.parameters = {
+  mdt: mdtWithPatients,
+  successfulDeleteMock: successfulDeleteMock,
+  listOfMdts: listOfMdts,
+};
+
+export const MdtHasUserErrors: ComponentStory<typeof DeleteMdtTab> = () => (
+  <NewMockSdApolloProvider
+    mocks={
+      [
+        {
+          query: DELETE_MDT_MUTATION,
+          mockFn: () => Promise.resolve({
+            data: {
+              deleteMdt: errorMutation,
+            },
+          }),
+        },
+      ]
+    }
+  >
+    <DeleteMdtTab
+      mdt={ mdtWithNoPatients }
+      successCallback={ () => ({}) }
+      allMdts={ listOfMdts }
+    />
   </NewMockSdApolloProvider>
 );

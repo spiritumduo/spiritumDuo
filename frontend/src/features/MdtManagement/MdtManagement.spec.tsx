@@ -76,10 +76,10 @@ test('valid inputs should show success page', async () => {
   click(screen.getByRole('tab', { name: /delete mdt/i }));
 
   await waitFor(() => {
-    expect(screen.getByText(/delete mdt/i)).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: /delete mdt/i })).toHaveAttribute('aria-selected', 'true');
   });
 
-  await click(screen.getByRole('button', { name: /delete/i }));
+  await click(screen.getByRole('button', { name: /delete mdt/i }));
 
   await waitFor(() => {
     expect(screen.getByText(/success/i));

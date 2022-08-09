@@ -29,6 +29,7 @@ const mdt = {
     lastName: 'Dummy',
     username: 'tdummy',
   }],
+  patients: [],
 };
 
 const successfulMutation = {
