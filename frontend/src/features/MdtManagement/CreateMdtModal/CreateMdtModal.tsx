@@ -81,6 +81,7 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
     formState: { errors: formErrors },
     getValues,
     setValue,
+    reset,
   } = useForm<CreateMdtForm>({ resolver: yupResolver(createMdtFormSchema) });
 
   const submitFormFn = (values: CreateMdtInputs) => {
@@ -105,9 +106,18 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
 
   const datePickerFormControl = register('plannedAt');
 
+  function onModalClose() {
+    setShowConfirmation(false); setShowModal(false);
+    reset({ location: '', plannedAt: undefined }); setSelectedDate(undefined);
+  }
+
   if (data?.createMdt?.mdt?.id && showConfirmation) {
     return (
-      <Modal size="lg" show={ showModal } onHide={ () => setShowModal(false) }>
+      <Modal
+        size="lg"
+        show={ showModal }
+        onHide={ () => onModalClose() }
+      >
         <Modal.Header>
           <Modal.Title>Create MDT</Modal.Title>
           <button
@@ -115,7 +125,7 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
             className="bg-transparent"
             name="Close"
             style={ { border: 'none' } }
-            onClick={ () => setShowModal(false) }
+            onClick={ () => onModalClose() }
           >
             <p className="nhsuk-u-visually-hidden">Close</p>
             <BsX size="2rem" />
@@ -131,7 +141,7 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
             <SummaryList.Row>
               <SummaryList.Key>Date Planned</SummaryList.Key>
               <SummaryList.Value>
-                { new Date(data?.createMdt?.mdt?.plannedAt).toLocaleDateString() }
+                { data?.createMdt?.mdt?.plannedAt.toLocaleDateString() }
               </SummaryList.Value>
             </SummaryList.Row>
             <SummaryList.Row>
@@ -139,14 +149,23 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
               <SummaryList.Value>{ data?.createMdt?.mdt?.location }</SummaryList.Value>
             </SummaryList.Row>
           </SummaryList>
-          <Button className="mt-0 mb-0 float-end" onClick={ () => { if (refetch) refetch(); setShowModal(false); setShowConfirmation(false); } }>Close</Button>
+          <Button
+            className="mt-0 mb-0 float-end"
+            onClick={ () => onModalClose() }
+          >
+            Close
+          </Button>
         </Modal.Body>
       </Modal>
     );
   }
 
   return (
-    <Modal size="lg" show={ showModal } onHide={ () => setShowModal(false) }>
+    <Modal
+      size="lg"
+      show={ showModal }
+      onHide={ () => onModalClose()}
+    >
       <Modal.Header>
         <Modal.Title>Create MDT</Modal.Title>
         <button
@@ -154,7 +173,7 @@ const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProp
           className="bg-transparent"
           name="Close"
           style={ { border: 'none' } }
-          onClick={ () => setShowModal(false) }
+          onClick={ () => onModalClose() }
         >
           <p className="nhsuk-u-visually-hidden">Close</p>
           <BsX size="2rem" />
