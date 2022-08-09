@@ -62,6 +62,11 @@ export interface DecisionPointInput {
   fromMdtId?: string | null;
 }
 
+export interface DeleteMdtInput {
+  id: string;
+  movePatientsToMdtId?: string | null;
+}
+
 export interface FeedbackInput {
   screenshotBase64: string;
   feedback: string;
