@@ -213,6 +213,11 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
           ? <ErrorMessage>{ formErrors?.location?.message }</ErrorMessage>
           : ''
       }
+      {
+        error
+          ? <ErrorMessage>{error.message}</ErrorMessage>
+          : ''
+      }
       <Form
         onSubmit={ handleSubmit(() => { submitFormFn(getValues()); setShowConfirmation(true); }) }
         disabled={ updateLoading }
