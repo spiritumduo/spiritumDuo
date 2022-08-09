@@ -17,7 +17,6 @@ type Query {
     getClinicalRequestTypes(pathwayId: ID): [ClinicalRequestType!]
     getRolePermissions: [RolePermission!]
     getRoles: [Role!]!
-    getMdt(id: ID, pathwayId: ID, plannedAt: Date): MDT
     getMdts(pathwayId: ID!, includePast: Boolean = False): [MDT]!
 
     """
