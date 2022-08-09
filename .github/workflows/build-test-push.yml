@@ -70,7 +70,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Install test prerequisites
-        run: python3 -m pip install -r requirements.txt
+        run: python3 -m pip install -r requirements.txt && python3 -m pip install windows-curses
       - name: Install Chrome
         uses: browser-actions/setup-chrome@latest
       - name: Run tests
