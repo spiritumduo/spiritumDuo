@@ -2,8 +2,9 @@ import json
 import pytest
 from tests.conftest import UserFixture
 from models import User, UserPathway
-from hamcrest import assert_that, equal_to, not_none
+from hamcrest import assert_that, equal_to, not_none, has_entries
 from bcrypt import hashpw, gensalt
+from config import config
 from httpx import Response
 
 
@@ -107,6 +108,14 @@ async def test_login_user(
     assert_that(
         login_result['user']['pathways'][0]['name'],
         equal_to(test_pathway.name)
+    )
+
+    assert_that(
+        login_result['config'],
+        has_entries({
+            "hospitalNumberFormat": config['HOSPITAL_NUMBER_FORMAT'],
+            "nationalNumberFormat": config['NATIONAL_NUMBER_FORMAT'],
+        })
     )
 
 

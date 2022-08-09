@@ -157,6 +157,10 @@ class LoginController:
                 "roles": role_dicts,
                 "pathways": user_pathways
             },
+            "config": {
+                "hospitalNumberFormat": config['HOSPITAL_NUMBER_FORMAT'],
+                "nationalNumberFormat": config['NATIONAL_NUMBER_FORMAT'],
+            }
         })
 
         signer = itsdangerous.TimestampSigner(
