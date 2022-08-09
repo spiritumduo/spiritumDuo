@@ -1,5 +1,7 @@
 from argparse import ArgumentError
+from curses import use_default_colors
 from dataclasses import dataclass
+import sys
 from time import sleep
 from typing import List
 import pytest
@@ -93,12 +95,62 @@ def endpoints():
 
 
 @pytest.fixture
-def driver(pytestconfig):
+def browser_name(pytestconfig):
     browser_choice: str = pytestconfig.getoption("driver")
     if browser_choice.lower() not in ["chromium", "firefox", "edge", "safari"]:
         raise ArgumentError(None, "Driver argument provided is not a valid driver")
 
-    if browser_choice == "firefox":
+    return browser_choice
+
+
+@dataclass
+class Credentials():
+    username: str
+    password: str
+
+
+@pytest.fixture
+def get_test_credentials(browser_name: str) -> str:
+    platform = sys.platform
+
+    credentials: dict = {
+        "darwinsafari": Credentials(
+            username="demo-1-2",
+            password="22password1"
+        ),
+        "darwinchromium": Credentials(
+            username="demo-2-2",
+            password="22password2"
+        ),
+        "win32chromium": Credentials(
+            username="demo-3-2",
+            password="22password3"
+        ),
+        "win32edge": Credentials(
+            username="demo-4-2",
+            password="22password4"
+        ),
+        "linuxfirefox": Credentials(
+            username="demo-5-2",
+            password="22password5"
+        ),
+        "linuxchromium": Credentials(
+            username="demo-6-2",
+            password="22password6"
+        )
+    }
+
+    if f"{platform}{browser_name}" in credentials:
+        return credentials[f"{platform}{browser_name}"]
+
+    raise Exception(
+        f"No credentials for browser-platform combo ({platform}:{browser_name})"
+    )
+
+
+@pytest.fixture
+def driver(browser_name: str):
+    if browser_name == "firefox":
         options = FirefoxOptions()
         options.add_argument("--headless")
         options.add_argument("--start-maximized")
@@ -107,7 +159,7 @@ def driver(pytestconfig):
             options=options
         )
 
-    elif browser_choice == "chromium":
+    elif browser_name == "chromium":
         options = ChromeOptions()
         options.add_argument("--no-sandbox")
         options.add_argument("--headless")
@@ -127,10 +179,10 @@ def driver(pytestconfig):
             options=options,
         )
 
-    elif browser_choice == "safari":
+    elif browser_name == "safari":
         driver = webdriver.Safari()
 
-    elif browser_choice == "edge":
+    elif browser_name == "edge":
         options = EdgeOptions()
 
         options.add_argument("--no-sandbox")
@@ -157,7 +209,11 @@ def driver(pytestconfig):
 
 
 @pytest.fixture
-def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
+def login_user(
+    driver: webdriver.Remote,
+    endpoints: ServerEndpoints,
+    get_test_credentials: Credentials
+):
 
     change_url(driver, endpoints.app)
 
@@ -171,10 +227,12 @@ def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
     )
 
     # username field
-    driver.find_element(By.NAME, "username").send_keys("demo-1-2")
+    driver.find_element(By.NAME, "username").send_keys(
+        get_test_credentials.username)
 
     # password field
-    driver.find_element(By.NAME, "password").send_keys("22password1")
+    driver.find_element(By.NAME, "password").send_keys(
+        get_test_credentials.password)
 
     # submit button
     driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
