@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { Button, ErrorMessage, Form } from 'nhsuk-react-components';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -7,11 +6,13 @@ import { gql, useMutation } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import MDT from 'types/MDT';
+import { Select } from 'components/nhs-style';
+
 import { deleteMdt } from './__generated__/deleteMdt';
 
 export const DELETE_MDT_MUTATION = gql`
-  mutation deleteMdt($id: ID!){
-    deleteMdt(id: $id){
+  mutation deleteMdt($input: DeleteMdtInput!){
+    deleteMdt(input: $input){
       success
       userErrors{
         field
@@ -23,27 +24,36 @@ export const DELETE_MDT_MUTATION = gql`
 
 type DeleteMdtForm = {
   id: string;
+  movePatientsRequired: boolean;
+  movePatientsToMdtId?: string;
 };
 
-export interface UpdateMdtInputs {
+export interface DeleteMdtInputs {
   id: string;
+  movePatientsToMdtId?: string;
 }
 
 const updateMdtFormSchema = yup.object({
   id: yup.string().required(),
+  movePatientsRequired: yup.boolean(),
+  movePatientsToMdtId: yup.number().when('movePatientsRequired', {
+    is: true,
+    then: yup.number().required('This is a required field').integer().positive('A valid MDT must be selected'),
+  }),
 });
 
 interface DeleteMdtTabProps {
   mdt: MDT;
+  allMdts: (MDT | null)[];
   successCallback: () => void;
 }
 
-const DeleteMdtTabPage = ({ mdt, successCallback }: DeleteMdtTabProps): JSX.Element => {
+const DeleteMdtTabPage = ({ mdt, successCallback, allMdts }: DeleteMdtTabProps): JSX.Element => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
-
   const {
     register,
     handleSubmit,
+    formState,
     getValues,
     setValue,
   } = useForm<DeleteMdtForm>({ resolver: yupResolver(updateMdtFormSchema) });
@@ -52,16 +62,20 @@ const DeleteMdtTabPage = ({ mdt, successCallback }: DeleteMdtTabProps): JSX.Elem
     deleteMdtMutation, { data: deleteData, error: deleteError, loading: deleteLoading },
   ] = useMutation<deleteMdt>(DELETE_MDT_MUTATION);
 
-  const submitFormFn = (values: UpdateMdtInputs) => {
+  const submitFormFn = (values: DeleteMdtInputs) => {
     deleteMdtMutation({
       variables: {
-        id: values.id,
+        input: {
+          id: values.id,
+          movePatientsToMdtId: values.movePatientsToMdtId,
+        },
       },
     });
   };
 
   useEffect(() => {
     setValue('id', mdt.id);
+    setValue('movePatientsRequired', mdt.patients ? mdt.patients.length > 0 : false);
   }, [mdt, setValue]);
 
   if (deleteData?.deleteMdt?.success && showConfirmation) {
@@ -72,7 +86,7 @@ const DeleteMdtTabPage = ({ mdt, successCallback }: DeleteMdtTabProps): JSX.Elem
       </>
     );
   }
-
+  const patientsOnMdt = mdt.patients ? mdt.patients.length > 0 : false;
   return (
     <>
       {
@@ -90,8 +104,47 @@ const DeleteMdtTabPage = ({ mdt, successCallback }: DeleteMdtTabProps): JSX.Elem
         disabled={ deleteLoading }
       >
         <input type="hidden" value={ mdt.id } { ...register('id') } />
-        <p>NOTE: you cannot delete an MDT with patients associated.</p>
-        <Button className="mt-4 mb-0 float-end" disabled={ deleteLoading }>Delete</Button>
+        {
+          patientsOnMdt ? (
+            <>
+              <p><strong>The following patients need to be moved to another MDT:</strong></p>
+              {
+                mdt.patients?.map(
+                  (pt) => (
+                    <p key={ pt?.id }>
+                      { `${pt?.firstName} ${pt?.lastName} (${pt?.hospitalNumber})` }
+                    </p>
+                  ),
+                )
+              }
+              <Select
+                error={ formState.errors?.movePatientsToMdtId?.message }
+                label="Select MDT to move patients to"
+                { ...register('movePatientsToMdtId') }
+              >
+                <option value="-1">Select MDT</option>
+                {
+                  allMdts.map((_mdt) => (
+                    mdt.plannedAt !== _mdt?.plannedAt
+                      ? (
+                        <option key={ _mdt?.id } value={ _mdt?.id }>
+                          {_mdt?.plannedAt.toLocaleDateString()}
+                        </option>
+                      ) : ''
+                  ))
+                }
+              </Select>
+            </>
+          )
+            : <p>There are no patients on this MDT.</p>
+        }
+        <Button className="mt-4 mb-0 float-end" disabled={ deleteLoading }>
+          {
+            patientsOnMdt
+              ? 'Move patients and delete MDT'
+              : 'Delete MDT'
+          }
+        </Button>
       </Form>
     </>
   );
