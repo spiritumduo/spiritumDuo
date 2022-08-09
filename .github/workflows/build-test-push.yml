@@ -98,6 +98,8 @@ jobs:
           -e SMTP_PORT=${{ secrets.SMTP_PORT }}
           -e FEEDBACK_EMAIL_RECIPIENTS=${{ secrets.FEEDBACK_EMAIL_RECIPIENTS }}
           -e EMAIL_ADAPTER=${{ secrets.EMAIL_ADAPTER }}
+          -e HOSPITAL_NUMBER_FORMAT="@@@@: @@@++++L"
+          -e NATIONAL_NUMBER_FORMAT="@@@@: @@@-@@@-@+++L"
           staging-test test
       -
         name: Build and push using primary dockerfile
