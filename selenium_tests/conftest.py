@@ -1,5 +1,4 @@
 from argparse import ArgumentError
-from curses import use_default_colors
 from dataclasses import dataclass
 import sys
 from time import sleep
@@ -385,12 +384,16 @@ def test_mdts(
 ):
     mdts = [
         MdtDetails(
-            location="test location",
-            index=-2
+            location="test_location",
+            index=-4
         ),
         MdtDetails(
-            location="another test location",
-            index=-3
+            location="another_test_location",
+            index=-5
+        ),
+        MdtDetails(
+            location="another_test_location_2",
+            index=-6
         )
     ]
 
