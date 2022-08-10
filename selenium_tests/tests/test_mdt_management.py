@@ -1,3 +1,4 @@
+from typing import List
 import pytest
 from hamcrest import assert_that, is_, not_none
 from selenium import webdriver
@@ -175,7 +176,7 @@ def log_user_in_for_update_mdt(driver: webdriver.Remote, login_user: None):
 
 
 @given("an MDT exists to update")
-def add_mdt_to_update(driver: webdriver.Remote, test_mdt: MdtDetails):
+def add_mdt_to_update(driver: webdriver.Remote, test_mdts: List[MdtDetails]):
     pass
 
 
@@ -187,10 +188,10 @@ def set_to_mdt_update_page(
 
 
 @when("the user clicks the edit link")
-def click_update_mdt_button(driver: webdriver.Remote, test_mdt: MdtDetails):
+def click_update_mdt_button(driver: webdriver.Remote, test_mdts: List[MdtDetails]):
     row = driver.find_element(
         By.XPATH,
-        f"//*[contains(text(), '{test_mdt.location}')]/.."
+        f"//*[contains(text(), '{test_mdts[0].location}')]/.."
     )
     row.find_element(
         By.XPATH,
@@ -220,7 +221,7 @@ def check_mdt_update_modal_shown(driver: webdriver.Remote):
 @when("the edit form is populated correctly")
 def populate_update_mdt_form(
     driver: webdriver.Remote, update_mdt_details: MdtDetails,
-    test_mdt: MdtDetails
+    test_mdts: List[MdtDetails]
 ):
     modal = driver.find_element(By.CLASS_NAME, "modal-content")
 
@@ -231,7 +232,7 @@ def populate_update_mdt_form(
     date_selection = modal.find_elements(
         By.CLASS_NAME, "react-datepicker__day")
 
-    date_selection[test_mdt.index].click()
+    date_selection[test_mdts[0].index].click()
 
     location_input = modal.find_element(By.NAME, "location")
     location_input.clear()
@@ -316,7 +317,7 @@ def log_user_in_for_delete_mdt(driver: webdriver.Remote, login_user: None):
 
 
 @given("an MDT exists to delete")
-def add_mdt_to_delete(test_mdt: MdtDetails):
+def add_mdt_to_delete(test_mdts: List[MdtDetails]):
     pass
 
 
@@ -328,10 +329,10 @@ def set_to_mdt_delete_page(
 
 
 @when("the user clicks on the edit link")
-def click_edit_mdt_button(driver: webdriver.Remote, test_mdt: MdtDetails):
+def click_edit_mdt_button(driver: webdriver.Remote, test_mdts: List[MdtDetails]):
     row = driver.find_element(
         By.XPATH,
-        f"//*[contains(text(), '{test_mdt.location}')]/.."
+        f"//*[contains(text(), '{test_mdts[1].location}')]/.."
     )
     row.find_element(
         By.XPATH,

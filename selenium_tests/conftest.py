@@ -379,39 +379,46 @@ def test_pathways(
 
 
 @pytest.fixture
-def test_mdt(
+def test_mdts(
     driver: webdriver.Remote, endpoints: ServerEndpoints,
     login_user: None
 ):
-    mdt_details = MdtDetails(
-        location="test location",
-        index=-2
-    )
-    sleep(1)
-    change_url(driver, f"{endpoints.app}mdt")
-    driver.find_element(
-        By.XPATH,
-        "//button[contains(text(), 'Create MDT')]"
-    ).click()
+    mdts = [
+        MdtDetails(
+            location="test location",
+            index=-2
+        ),
+        MdtDetails(
+            location="another test location",
+            index=-3
+        )
+    ]
 
-    date_selector = driver.find_element(
-        By.XPATH, "//*[contains(text(), 'Date of MDT')]")
-    date_selector.click()
+    for mdt in mdts:
+        change_url(driver, f"{endpoints.app}mdt")
+        driver.find_element(
+            By.XPATH,
+            "//button[contains(text(), 'Create MDT')]"
+        ).click()
 
-    date_selection = driver.find_elements(
-        By.CLASS_NAME, "react-datepicker__day")
-    date_selection[mdt_details.index].click()
+        date_selector = driver.find_element(
+            By.XPATH, "//*[contains(text(), 'Date of MDT')]")
+        date_selector.click()
 
-    location_input = driver.find_element(By.NAME, "location")
-    location_input.send_keys(mdt_details.location)
+        date_selection = driver.find_elements(
+            By.CLASS_NAME, "react-datepicker__day")
+        date_selection[mdt.index].click()
 
-    modal = driver.find_element(By.CLASS_NAME, "modal-content")
+        location_input = driver.find_element(By.NAME, "location")
+        location_input.send_keys(mdt.location)
 
-    submit_button = modal.find_element(
-        By.XPATH, ".//button[contains(text(), 'Create')]")
-    submit_button.click()
+        modal = driver.find_element(By.CLASS_NAME, "modal-content")
 
-    return mdt_details
+        submit_button = modal.find_element(
+            By.XPATH, ".//button[contains(text(), 'Create')]")
+        submit_button.click()
+
+    return mdts
 
 
 @pytest.fixture
