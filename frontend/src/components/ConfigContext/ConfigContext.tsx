@@ -23,14 +23,28 @@ const ConfigContext = React.createContext<ConfigContextType | undefined>(undefin
 export const ConfigProvider = (
   { children, value }: React.PropsWithChildren<{ value?: ConfigInterface }>,
 ): JSX.Element => {
-  const initialState = value || {
+  const localStorageConfig = localStorage.getItem('config');
+  const parsedConfig: ConfigInterface = localStorageConfig
+    ? JSON.parse(localStorageConfig)
+    : undefined;
+  const initialState = value || parsedConfig || {
     hospitalNumberFormat: '',
     nationalNumberFormat: '',
   };
-  const [config, updateConfig] = useState<ConfigInterface>(initialState);
+  const [configState, updateConfigState] = useState<ConfigInterface>(initialState);
+
+  const updateConfig = (config: ConfigInterface) => {
+    try {
+      localStorage.setItem('config', JSON.stringify(config));
+      updateConfigState(config);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    }
+  };
 
   return (
-    <ConfigContext.Provider value={ { ...config, updateConfig } }>
+    <ConfigContext.Provider value={ { ...configState, updateConfig } }>
       { children }
     </ConfigContext.Provider>
   );
