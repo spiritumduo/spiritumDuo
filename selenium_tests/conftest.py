@@ -107,6 +107,11 @@ def browser_name(pytestconfig):
     return browser_choice
 
 
+@pytest.fixture
+def platform_browser_string(browser_name: str) -> str:
+    return f"{sys.platform}{browser_name}"
+
+
 @dataclass
 class Credentials():
     username: str
@@ -114,8 +119,7 @@ class Credentials():
 
 
 @pytest.fixture
-def get_test_credentials(browser_name: str) -> str:
-    platform = sys.platform
+def get_test_credentials(platform_browser_string: str) -> str:
 
     credentials: dict = {
         "darwinsafari": Credentials(
@@ -144,12 +148,12 @@ def get_test_credentials(browser_name: str) -> str:
         )
     }
 
-    if f"{platform}{browser_name}" in credentials:
-        return credentials[f"{platform}{browser_name}"]
+    if platform_browser_string in credentials:
+        return credentials[platform_browser_string]
 
     # TODO: make this a custom exception class
     raise Exception(
-        f"No credentials for browser-platform combo ({platform}:{browser_name})"
+        f"No credentials for browser-platform combo ({platform_browser_string})"
     )
 
 

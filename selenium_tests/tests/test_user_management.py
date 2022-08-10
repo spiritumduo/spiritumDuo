@@ -12,30 +12,30 @@ from conftest import change_url
 from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
 )
-from selenium.common.exceptions import TimeoutException
+
 
 @pytest.fixture
-def create_user_details():
+def create_user_details(platform_browser_string: str) -> str:
     return UserDetails(
-        username="test_create_user",
+        username=f"{platform_browser_string}_test_user",
         password="test password",
         department="test department",
-        email="test_create@test.com",
-        firstName="test",
-        lastName="create",
+        email=f"{platform_browser_string}@test.com",
+        firstName=f"{platform_browser_string}",
+        lastName="testcreate",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
 
 
 @pytest.fixture
-def update_user_details():
+def update_user_details(platform_browser_string: str):
     return UserDetails(
-        username="test_update_user",
+        username=f"{platform_browser_string}_update_user",
         password="test password",
         department="test department",
-        email="test_update@test.com",
-        firstName="test",
+        email=f"{platform_browser_string}_update@test.com",
+        firstName=f"{platform_browser_string}_update",
         lastName="update",
         roles=["admin"],
         pathways=["cancer demo 1"],
@@ -133,13 +133,11 @@ def submit_form(driver: webdriver.Remote):
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
-    driver.get_screenshot_as_file("./create_user.png")
-
     modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
-    
+
     WebDriverWait(driver, 10).until(
         ExpectedConditions.visibility_of(
             modal
