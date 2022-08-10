@@ -15,28 +15,28 @@ from selenium.webdriver.support import (
 
 
 @pytest.fixture
-def create_user_details():
+def create_user_details(platform_browser_string: str) -> str:
     return UserDetails(
-        username="test_create_user",
+        username=f"{platform_browser_string}_test_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
-        firstName="test",
-        lastName="runner",
+        email=f"{platform_browser_string}@test.com",
+        firstName=f"{platform_browser_string}",
+        lastName="testcreate",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
 
 
 @pytest.fixture
-def update_user_details():
+def update_user_details(platform_browser_string: str):
     return UserDetails(
-        username="test_update_user",
+        username=f"{platform_browser_string}_update_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
-        firstName="test",
-        lastName="runner",
+        email=f"{platform_browser_string}_update@test.com",
+        firstName=f"{platform_browser_string}_update",
+        lastName="update",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
@@ -137,11 +137,18 @@ def check_modal_present(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
+
     WebDriverWait(driver, 10).until(
         ExpectedConditions.visibility_of(
             modal
         )
     )
+
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+
     assert_that(
         modal.is_displayed(),
         is_(True)

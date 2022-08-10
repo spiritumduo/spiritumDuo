@@ -274,8 +274,8 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
                     onChange={ field.onChange }
                     ref={ field.ref }
                     value={ field.value }
-                    options={ roles?.map((pW) => (
-                      { label: pW.name, value: pW.id }
+                    options={ roles?.map((r) => (
+                      { label: r.name, value: r.id }
                     )) }
                   />
                 ) }
