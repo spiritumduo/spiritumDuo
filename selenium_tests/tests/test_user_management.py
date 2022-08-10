@@ -12,7 +12,7 @@ from conftest import change_url
 from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
 )
-
+from selenium.common.exceptions import TimeoutException
 
 @pytest.fixture
 def create_user_details():
@@ -20,9 +20,9 @@ def create_user_details():
         username="test_create_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
+        email="test_create@test.com",
         firstName="test",
-        lastName="runner",
+        lastName="create",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
@@ -34,9 +34,9 @@ def update_user_details():
         username="test_update_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
+        email="test_update@test.com",
         firstName="test",
-        lastName="runner",
+        lastName="update",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
@@ -133,15 +133,24 @@ def submit_form(driver: webdriver.Remote):
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
+    driver.get_screenshot_as_file("./create_user.png")
+
     modal = driver.find_element(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
+    
     WebDriverWait(driver, 10).until(
         ExpectedConditions.visibility_of(
             modal
         )
     )
+
+    modal = driver.find_element(
+        By.XPATH,
+        "//div[contains(@class, 'modal-body')]"
+    )
+
     assert_that(
         modal.is_displayed(),
         is_(True)
