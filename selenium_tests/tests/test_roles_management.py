@@ -94,15 +94,14 @@ def submit_create_form(driver: webdriver.Remote):
 def check_create_modal_present(
     driver: webdriver.Remote, create_role_details: RoleDetails
 ):
-    modal = driver.find_element(
-        By.XPATH,
-        "//div[contains(@class, 'modal-body')]"
-    )
-
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 4).until(
         ExpectedConditions.visibility_of(
-            modal
+            driver.find_element(By.CSS_SELECTOR, '.modal-body')
         )
+    )
+    assert_that(
+        driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
+        is_(True)
     )
 
     assert_that(
@@ -113,18 +112,18 @@ def check_create_modal_present(
     )
 
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{create_role_details.name}')]"
+            f"//*[contains(text(), '{create_role_details.name}')]"
         ).is_displayed(),
         is_(True)
     )
 
     for permission in create_role_details.permissions:
         assert_that(
-            modal.find_element(
+            driver.find_element(
                 By.XPATH,
-                f".//*[contains(text(), '{permission}')]"
+                f"//*[contains(text(), '{permission}')]"
             ).is_displayed(),
             is_(True)
         )
