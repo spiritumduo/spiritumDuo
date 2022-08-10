@@ -15,17 +15,17 @@ from selenium.webdriver.support import (
 
 
 @pytest.fixture
-def create_role_details():
+def create_role_details(platform_browser_string: str):
     return RoleDetails(
-        name="test_create_role",
+        name=f"test_create_role_{platform_browser_string}",
         permissions=["AUTHENTICATED"]
     )
 
 
 @pytest.fixture
-def update_role_details():
+def update_role_details(platform_browser_string: str):
     return RoleDetails(
-        name="test_update_role",
+        name=f"test_update_role_{platform_browser_string}",
         permissions=["AUTHENTICATED"]
     )
 

@@ -14,17 +14,17 @@ from selenium.webdriver.support import (
     expected_conditions as ExpectedConditions,
 )
 @pytest.fixture
-def create_pathway_details():
+def create_pathway_details(platform_browser_string: str):
     return PathwayDetails(
-        name="create_pathway_test",
+        name=f"create_pathway_test_{platform_browser_string}",
         clinical_requests=["Referral letter"]
     )
 
 
 @pytest.fixture
-def update_pathway_details():
+def update_pathway_details(platform_browser_string: str):
     return PathwayDetails(
-        name="update_pathway_test",
+        name=f"update_pathway_test_{platform_browser_string}",
         clinical_requests=["Referral letter"]
     )
 

@@ -14,17 +14,17 @@ from selenium.webdriver.support import (
 )
 
 @pytest.fixture
-def create_mdt_details():
+def create_mdt_details(platform_browser_string: str):
     return MdtDetails(
-        location="create_mdt_test",
+        location=f"create_mdt_test_{platform_browser_string}",
         index=-2
     )
 
 
 @pytest.fixture
-def update_mdt_details():
+def update_mdt_details(platform_browser_string: str):
     return MdtDetails(
-        location="update_mdt_test",
+        location=f"create_mdt_test_{platform_browser_string}",
         index=-3
     )
 
