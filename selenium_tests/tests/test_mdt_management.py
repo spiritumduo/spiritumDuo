@@ -235,7 +235,7 @@ def populate_update_mdt_form(
     date_selection = modal.find_elements(
         By.CLASS_NAME, "react-datepicker__day")
 
-    date_selection[test_mdts[0].index].click()
+    date_selection[update_mdt_details.index].click()
 
     location_input = modal.find_element(By.NAME, "location")
     location_input.clear()
@@ -267,19 +267,26 @@ def check_mdt_update_confirmation_modal_shown(
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
+
     WebDriverWait(driver, 10).until(
         ExpectedConditions.visibility_of(
             modal
         )
     )
 
-    assert_that(
-        driver.find_element(
-            By.XPATH,
-            "//div[contains(@class, 'modal-body')]"
-        ).is_displayed(),
-        is_(True)
-    )
+    # modal = WebDriverWait(driver, 10).until(
+    #     lambda d: d.find_element(
+    #         By.XPATH,
+    #         "//div[contains(@class, 'modal-body')]"
+    #     )
+    # )
+
+    # assert_that(
+    #     modal.is_displayed(),
+    #     is_(True)
+    # )
+
+    driver.get_screenshot_as_file("./testetst.png")
 
     assert_that(
         driver.find_element(
