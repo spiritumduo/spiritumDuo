@@ -1,5 +1,6 @@
 from argparse import ArgumentError
 from dataclasses import dataclass
+import sys
 from time import sleep
 from typing import List
 import pytest
@@ -73,8 +74,10 @@ def change_url(driver: webdriver.Remote, url):
         ) == 'complete'
     )
 
+    root = driver.find_element(By.ID, "root")
+
     WebDriverWait(driver, 10).until(
-        ExpectedConditions.visibility_of(driver.find_element(By.ID, "root"))
+        ExpectedConditions.visibility_of(root)
     )
 
 
@@ -93,12 +96,70 @@ def endpoints():
 
 
 @pytest.fixture
-def driver(pytestconfig):
+def browser_name(pytestconfig):
     browser_choice: str = pytestconfig.getoption("driver")
     if browser_choice.lower() not in ["chromium", "firefox", "edge", "safari"]:
-        raise ArgumentError(None, "Driver argument provided is not a valid driver")
+        raise ArgumentError(
+            None,
+            "Driver argument provided is not a valid driver"
+        )
 
-    if browser_choice == "firefox":
+    return browser_choice
+
+
+@pytest.fixture
+def platform_browser_string(browser_name: str) -> str:
+    return f"{sys.platform}{browser_name}"
+
+
+@dataclass
+class Credentials():
+    username: str
+    password: str
+
+
+@pytest.fixture
+def get_test_credentials(platform_browser_string: str) -> str:
+
+    credentials: dict = {
+        "darwinsafari": Credentials(
+            username="demo-10-2",
+            password="22password10"
+        ),
+        "darwinchromium": Credentials(
+            username="demo-11-2",
+            password="22password11"
+        ),
+        "win32chromium": Credentials(
+            username="demo-12-2",
+            password="22password12"
+        ),
+        "win32edge": Credentials(
+            username="demo-13-2",
+            password="22password13"
+        ),
+        "linuxfirefox": Credentials(
+            username="demo-14-2",
+            password="22password14"
+        ),
+        "linuxchromium": Credentials(
+            username="demo-15-2",
+            password="22password15"
+        )
+    }
+
+    if platform_browser_string in credentials:
+        return credentials[platform_browser_string]
+
+    # TODO: make this a custom exception class
+    raise Exception(
+        f"No credentials for browser-platform combo ({platform_browser_string})"
+    )
+
+
+@pytest.fixture
+def driver(browser_name: str):
+    if browser_name == "firefox":
         options = FirefoxOptions()
         options.add_argument("--headless")
         options.add_argument("--start-maximized")
@@ -107,7 +168,7 @@ def driver(pytestconfig):
             options=options
         )
 
-    elif browser_choice == "chromium":
+    elif browser_name == "chromium":
         options = ChromeOptions()
         options.add_argument("--no-sandbox")
         options.add_argument("--headless")
@@ -127,10 +188,10 @@ def driver(pytestconfig):
             options=options,
         )
 
-    elif browser_choice == "safari":
+    elif browser_name == "safari":
         driver = webdriver.Safari()
 
-    elif browser_choice == "edge":
+    elif browser_name == "edge":
         options = EdgeOptions()
 
         options.add_argument("--no-sandbox")
@@ -157,8 +218,11 @@ def driver(pytestconfig):
 
 
 @pytest.fixture
-def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
-
+def login_user(
+    driver: webdriver.Remote,
+    endpoints: ServerEndpoints,
+    get_test_credentials: Credentials
+):
     change_url(driver, endpoints.app)
 
     WebDriverWait(
@@ -171,10 +235,12 @@ def login_user(driver: webdriver.Remote, endpoints: ServerEndpoints):
     )
 
     # username field
-    driver.find_element(By.NAME, "username").send_keys("demo-1-2")
+    driver.find_element(By.NAME, "username").send_keys(
+        get_test_credentials.username)
 
     # password field
-    driver.find_element(By.NAME, "password").send_keys("22password1")
+    driver.find_element(By.NAME, "password").send_keys(
+        get_test_credentials.password)
 
     # submit button
     driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
@@ -316,39 +382,50 @@ def test_pathways(
 
 
 @pytest.fixture
-def test_mdt(
+def test_mdts(
     driver: webdriver.Remote, endpoints: ServerEndpoints,
     login_user: None
 ):
-    mdt_details = MdtDetails(
-        location="test location",
-        index=-2
-    )
-    sleep(1)
-    change_url(driver, f"{endpoints.app}mdt")
-    driver.find_element(
-        By.XPATH,
-        "//button[contains(text(), 'Create MDT')]"
-    ).click()
+    mdts = [
+        MdtDetails(
+            location="test_location",
+            index=-4
+        ),
+        MdtDetails(
+            location="another_test_location",
+            index=-5
+        ),
+        MdtDetails(
+            location="another_test_location_2",
+            index=-6
+        )
+    ]
 
-    date_selector = driver.find_element(
-        By.XPATH, "//*[contains(text(), 'Date of MDT')]")
-    date_selector.click()
+    for mdt in mdts:
+        change_url(driver, f"{endpoints.app}mdt")
+        driver.find_element(
+            By.XPATH,
+            "//button[contains(text(), 'Create MDT')]"
+        ).click()
 
-    date_selection = driver.find_elements(
-        By.CLASS_NAME, "react-datepicker__day")
-    date_selection[mdt_details.index].click()
+        date_selector = driver.find_element(
+            By.XPATH, "//*[contains(text(), 'Date of MDT')]")
+        date_selector.click()
 
-    location_input = driver.find_element(By.NAME, "location")
-    location_input.send_keys(mdt_details.location)
+        date_selection = driver.find_elements(
+            By.CLASS_NAME, "react-datepicker__day")
+        date_selection[mdt.index].click()
 
-    modal = driver.find_element(By.CLASS_NAME, "modal-content")
+        location_input = driver.find_element(By.NAME, "location")
+        location_input.send_keys(mdt.location)
 
-    submit_button = modal.find_element(
-        By.XPATH, ".//button[contains(text(), 'Create')]")
-    submit_button.click()
+        modal = driver.find_element(By.CLASS_NAME, "modal-content")
 
-    return mdt_details
+        submit_button = modal.find_element(
+            By.XPATH, ".//button[contains(text(), 'Create')]")
+        submit_button.click()
+
+    return mdts
 
 
 @pytest.fixture
