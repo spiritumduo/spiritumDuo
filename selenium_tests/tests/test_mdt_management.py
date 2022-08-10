@@ -376,13 +376,13 @@ def submit_delete_mdt_form(driver: webdriver.Remote):
     assert_that(
         driver.find_element(
             By.XPATH,
-            ".//button[contains(text(), 'Delete')]"
+            ".//button[contains(text(), 'Delete MDT')]"
         ).is_displayed(),
         is_(True)
     )
 
     submit_button = modal.find_element(
-        By.XPATH, ".//button[contains(text(), 'Delete')]")
+        By.XPATH, ".//button[contains(text(), 'Delete MDT')]")
     submit_button.click()
 
 
