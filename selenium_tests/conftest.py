@@ -61,6 +61,13 @@ class UserDetails():
     pathways: List[str]
 
 
+class TestCredentialsNotFound(Exception):
+    """
+    Raised when a set of credentials isn't
+    found when searching by driver name and platform
+    """
+
+
 def pytest_addoption(parser):
     parser.addoption("--driver", action="store", default="chromium")
 
@@ -151,10 +158,7 @@ def get_test_credentials(platform_browser_string: str) -> str:
     if platform_browser_string in credentials:
         return credentials[platform_browser_string]
 
-    # TODO: make this a custom exception class
-    raise Exception(
-        f"No credentials for browser-platform combo ({platform_browser_string})"
-    )
+    raise TestCredentialsNotFound(platform_browser_string)
 
 
 @pytest.fixture
@@ -164,7 +168,7 @@ def driver(browser_name: str):
         options.add_argument("--headless")
         options.add_argument("--start-maximized")
         driver = webdriver.Firefox(
-            service=FirefoxService(GeckoDriverManager().install()),
+            # service=FirefoxService(GeckoDriverManager().install()),
             options=options
         )
 
