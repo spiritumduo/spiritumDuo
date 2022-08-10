@@ -51,7 +51,7 @@ function useRESTSubmit<T, V>(url: string): RestSubmitHook<T, V> {
           ? decoded.detail
           : decoded?.error
             ? decoded.error
-            : 'unknown error';
+            : `Error: Response status ${response.status} ${response.statusText}`;
         setError({
           message: message,
           statusCode: response.status,

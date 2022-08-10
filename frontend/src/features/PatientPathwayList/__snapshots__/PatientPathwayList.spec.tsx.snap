@@ -62,7 +62,7 @@ exports[`It should render Default correctly 1`] = `
                         dy="0em"
                         x="0"
                       >
-                        John Doe 1, fMRN1234567, 10/31/1970
+                        John Doe 1, fMRN: 1234567L, 10/31/1970
                       </tspan>
                     </text>
                   </svg>
@@ -132,7 +132,7 @@ exports[`It should render Default correctly 1`] = `
                         dy="0em"
                         x="0"
                       >
-                        John Doe 2, fMRN1234567, 10/31/1970
+                        John Doe 2, fMRN: 1234567L, 10/31/1970
                       </tspan>
                     </text>
                   </svg>
@@ -202,7 +202,7 @@ exports[`It should render Default correctly 1`] = `
                         dy="0em"
                         x="0"
                       >
-                        John Doe 3, fMRN1234567, 10/31/1970
+                        John Doe 3, fMRN: 1234567L, 10/31/1970
                       </tspan>
                     </text>
                   </svg>
@@ -272,7 +272,7 @@ exports[`It should render Default correctly 1`] = `
                         dy="0em"
                         x="0"
                       >
-                        John Doe 4, fMRN1234567, 10/31/1970
+                        John Doe 4, fMRN: 1234567L, 10/31/1970
                       </tspan>
                     </text>
                   </svg>
@@ -342,7 +342,7 @@ exports[`It should render Default correctly 1`] = `
                         dy="0em"
                         x="0"
                       >
-                        John Doe 5, fMRN1234567, 10/31/1970
+                        John Doe 5, fMRN: 1234567L, 10/31/1970
                       </tspan>
                     </text>
                   </svg>
@@ -871,7 +871,7 @@ exports[`It should render Default correctly 1`] = `
                     <td
                       headers="thosp rowname-1"
                     >
-                      fMRN1234567
+                      fMRN: 1234567L
                     </td>
                     <td
                       headers="tdob rowname-1"
@@ -1141,7 +1141,7 @@ exports[`It should render Default correctly 1`] = `
                     <td
                       headers="thosp rowname-2"
                     >
-                      fMRN1234567
+                      fMRN: 1234567L
                     </td>
                     <td
                       headers="tdob rowname-2"
@@ -1411,7 +1411,7 @@ exports[`It should render Default correctly 1`] = `
                     <td
                       headers="thosp rowname-3"
                     >
-                      fMRN1234567
+                      fMRN: 1234567L
                     </td>
                     <td
                       headers="tdob rowname-3"
@@ -1681,7 +1681,7 @@ exports[`It should render Default correctly 1`] = `
                     <td
                       headers="thosp rowname-4"
                     >
-                      fMRN1234567
+                      fMRN: 1234567L
                     </td>
                     <td
                       headers="tdob rowname-4"
@@ -1951,7 +1951,7 @@ exports[`It should render Default correctly 1`] = `
                     <td
                       headers="thosp rowname-5"
                     >
-                      fMRN1234567
+                      fMRN: 1234567L
                     </td>
                     <td
                       headers="tdob rowname-5"

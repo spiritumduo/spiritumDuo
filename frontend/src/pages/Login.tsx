@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -10,62 +10,22 @@ import { Button, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-rea
 import { Container } from 'react-bootstrap';
 import { Input } from 'components/nhs-style';
 import './login.css';
+import useRESTSubmit from 'app/hooks/rest-submit';
+import { ConfigInterface, useConfig } from 'components/ConfigContext';
 
-export type LoginData = {
+export interface LoginData {
   user?: User;
-  pathways?: PathwayOption[];
-  token?: string;
+  config?: ConfigInterface;
   error?: string;
-};
+}
 
 export interface LoginFormInputs {
   username: string;
   password: string;
 }
 
-type LoginSubmitHook = [
-  boolean,
-  any,
-  LoginData | undefined,
-  (variables: LoginFormInputs) => void
-];
-
-export function useLoginSubmit(): LoginSubmitHook {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<unknown>(undefined);
-  const [data, setData] = useState<LoginData | undefined>(undefined);
-
-  async function doLogin(variables: LoginFormInputs) {
-    setLoading(true);
-    try {
-      const { location } = window;
-      const uriPrefix = `${location.protocol}//${location.host}`;
-      const response = await window.fetch(`${uriPrefix}/api/rest/login/`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json;charset=UTF-8',
-        },
-        body: JSON.stringify(variables),
-      });
-      if (!response.ok) {
-        throw new Error(`Error: Response ${response.status} ${response.statusText}`);
-      }
-      const decoded: LoginData = await response.json();
-      if (decoded.error) {
-        setError({ message: decoded.error }); // e.g. invalid password
-      } else {
-        setData(decoded);
-      }
-    } catch (err) {
-      setError(err);
-    }
-    setLoading(false);
-  }
-  return [loading, error, data, doLogin];
-}
-
 const LoginPage = (): JSX.Element => {
-  const [loading, error, data, doLogin] = useLoginSubmit();
+  const [loading, error, data, doLogin] = useRESTSubmit<LoginData, LoginFormInputs>('/api/rest/login/');
 
   const loginSchema = yup.object({
     username: yup.string().required(),
@@ -78,13 +38,17 @@ const LoginPage = (): JSX.Element => {
     formState: { errors },
     getValues,
   } = useForm<LoginFormInputs>({ resolver: yupResolver(loginSchema) });
+
   const navigate = useNavigate();
   const { updateUser } = useContext(AuthContext);
   const { updateCurrentPathwayId } = useContext(PathwayContext);
+  const { updateConfig } = useConfig();
+
   useEffect(() => {
-    if (data?.user) {
+    if (data?.user && data?.config) {
       updateUser(data.user);
       updateCurrentPathwayId(data.user.defaultPathway?.id || data.user.pathways[0]?.id || '1');
+      updateConfig(data.config);
       navigate('/', { replace: true });
     }
   });

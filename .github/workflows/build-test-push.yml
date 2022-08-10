@@ -8,6 +8,206 @@ on:
 concurrency: staging-environment
 
 jobs:
+  frontend-test:
+    defaults:
+      run:
+        working-directory: frontend
+
+    runs-on: ubuntu-latest
+    environment: staging
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'yarn'
+        cache-dependency-path: frontend/yarn.lock
+    - run: yarn install --frozen-lockfile
+    - run: yarn test
+
+  backend:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    services:
+      # Label used to access the service container
+      testdb:
+        # Docker Hub image
+        image: postgres:14.0-alpine
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
+        name: Build using testing dockerfile
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}:backend"
+          load: true
+          tags: staging-test
+          file: "./Dockerfile.dev"
+      -
+        name: Test
+        run: > # folded style for multiline run
+          docker run --rm
+          --network ${{ job.services.testdb.network }}
+          -e DATABASE_HOSTNAME=testdb
+          -e DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          -e DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+          -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          -e DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+          -e HOSPITAL_NUMBER_NAME=${{ secrets.HOSPITAL_NUMBER_NAME }}
+          -e HOSPITAL_NUMBER_REGEX=${{ secrets.HOSPITAL_NUMBER_REGEX }}
+          -e NATIONAL_NUMBER_NAME=${{ secrets.NATIONAL_NUMBER_NAME }}
+          -e NATIONAL_NUMBER_REGEX=${{ secrets.NATIONAL_NUMBER_REGEX }}
+          -e SESSION_SECRET_KEY=${{ secrets.SESSION_SECRET_KEY }}
+          -e SESSION_EXPIRY_LENGTH=${{ secrets.SESSION_EXPIRY_LENGTH }}
+          -e TRUST_ADAPTER_NAME=${{ secrets.TRUST_ADAPTER_NAME }}
+          -e UPDATE_ENDPOINT_KEY=${{ secrets.UPDATE_ENDPOINT_KEY }}
+          -e DECISION_POINT_LOCKOUT_DURATION=${{ secrets.DECISION_POINT_LOCKOUT_DURATION }}
+          -e EXCHANGE_USER_EMAIL=${{ secrets.EXCHANGE_USER_EMAIL }}
+          -e EXCHANGE_USER_PASSWORD=${{ secrets.EXCHANGE_USER_PASSWORD }}
+          -e EXCHANGE_SERVER_ADDRESS=${{ secrets.EXCHANGE_SERVER_ADDRESS }}
+          -e ON_MDT_EDIT_LOCKOUT_DURATION=${{ secrets.ON_MDT_EDIT_LOCKOUT_DURATION }}
+          -e SMTP_USER_EMAIL=${{ secrets.SMTP_USER_EMAIL }}
+          -e SMTP_USER_PASSWORD=${{ secrets.SMTP_USER_PASSWORD }}
+          -e SMTP_SERVER_ADDRESS=${{ secrets.SMTP_SERVER_ADDRESS }}
+          -e SMTP_PORT=${{ secrets.SMTP_PORT }}
+          -e FEEDBACK_EMAIL_RECIPIENTS=${{ secrets.FEEDBACK_EMAIL_RECIPIENTS }}
+          -e EMAIL_ADAPTER=${{ secrets.EMAIL_ADAPTER }}
+          -e HOSPITAL_NUMBER_FORMAT="@@@@: @@@++++L"
+          -e NATIONAL_NUMBER_FORMAT="@@@@: @@@-@@@-@+++L"
+          staging-test test
+      -
+        name: Build and push using primary dockerfile
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}:backend"
+          push: true
+          tags: spiritumduo/sd-backend:latest
+          file: "./Dockerfile"
+
+  pseudotie:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
+        name: Build and push using primary dockerfile
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}:pseudotie"
+          push: true
+          tags: spiritumduo/sd-pseudotie:latest
+          file: "./Dockerfile"
+
+  nginx:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: frontend-test
+
+    steps:
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: "{{defaultContext}}"
+          push: true
+          tags: spiritumduo/sd-nginx:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: [nginx, backend, pseudotie]
+    
+    steps:
+      -
+        name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/staging.key
+          END
+          echo "$SSH_HOST_KEY" >> ~/.ssh/known_hosts
+        env:
+          SSH_USER: ${{ secrets.STAGING_SERVER_USERNAME }}
+          SSH_KEY: ${{ secrets.STAGING_SERVER_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_SERVER_HOSTNAME }}
+          SSH_HOST_KEY: ${{ secrets.STAGING_SERVER_HOST_KEY }}
+      -
+        name: Login to Docker
+        run: ssh staging 'docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}'
+      -
+        name: Pull containers
+        run: ssh staging 'docker pull spiritumduo/sd-nginx && docker pull spiritumduo/sd-backend && docker pull spiritumduo/sd-pseudotie'
+      -
+        name: Stop services
+        run: ssh staging 'cd spiritumDuo && docker-compose down'
+      -
+        name: Remove existing databases
+        run: ssh staging 'docker volume rm spiritumduo_sd_postgres_data spiritumduo_sd_alembic_backend_data spiritumduo_sd_alembic_pseudotie_data'
+      -
+        name: Start services
+        run: ssh staging 'cd spiritumDuo && docker-compose up -d'
+      -
+        name: Migrate databases
+        run: >
+          ssh staging 'docker exec sd-backend alembic revision -m commit-${{ github.ref }}-${{ github.sha }} --autogenerate --head head
+          && docker exec sd-backend alembic upgrade head
+          && docker exec sd-pseudotie alembic revision -m commit-${{ github.ref }}-${{ github.sha }} --autogenerate --head head
+          && docker exec sd-pseudotie alembic upgrade head'
+      -
+        name: Restart services
+        run: ssh staging 'cd spiritumDuo && docker-compose restart'
+      -
+        name: Add demo data
+        run: ssh staging 'docker exec sd-backend python manage-demo.py'
+
   selenium_linux:
     defaults:
       run:
@@ -15,9 +215,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
         with:
           python-version: 3.9
       - name: Install test prerequisites
@@ -29,51 +226,51 @@ jobs:
         env:
           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
   
-  # selenium_macos:
-  #   defaults:
-  #     run:
-  #       working-directory: selenium_tests
-  #   runs-on: macos-12
-  #   environment: staging
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.9
-  #     - name: Install test prerequisites
-  #       run: python3 -m pip install -r requirements.txt
-  #     - name: Install Chrome
-  #       uses: browser-actions/setup-chrome@latest
-  #     - name: Configure Safari testing environment
-  #       run: |
-  #         defaults write com.apple.Safari IncludeDevelopMenu YES
-  #         defaults write com.apple.Safari AllowRemoteAutomation 1
-  #         sudo safaridriver --enable
-  #     - name: Run tests
-  #       run: |
-  #         safaridriver -p 0 &
-  #         python3 -m pytest --driver safari && python3 -m pytest --driver chromium
-  #       env:
-  #         SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+   selenium_macos:
+     defaults:
+       run:
+         working-directory: selenium_tests
+     runs-on: macos-12
+     environment: staging
+     steps:
+       - uses: actions/checkout@v2
+       - name: Set up Python
+         uses: actions/setup-python@v2
+         with:
+           python-version: 3.9
+       - name: Install test prerequisites
+         run: python3 -m pip install -r requirements.txt
+       - name: Install Chrome
+         uses: browser-actions/setup-chrome@latest
+       - name: Configure Safari testing environment
+         run: |
+           defaults write com.apple.Safari IncludeDevelopMenu YES
+           defaults write com.apple.Safari AllowRemoteAutomation 1
+           sudo safaridriver --enable
+       - name: Run tests
+         run: |
+           safaridriver -p 0 &
+           python3 -m pytest --driver safari && python3 -m pytest --driver chromium
+         env:
+           SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
 
-  # selenium_windows:
-  #   defaults:
-  #     run:
-  #       working-directory: selenium_tests
-  #   runs-on: windows-latest
-  #   environment: staging
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.9
-  #     - name: Install test prerequisites
-  #       run: python3 -m pip install -r requirements.txt && python3 -m pip install windows-curses
-  #     - name: Install Chrome
-  #       uses: browser-actions/setup-chrome@latest
-  #     - name: Run tests
-  #       run: python3 -m pytest --driver edge
-  #       env:
-  #         SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}
+    selenium_windows:
+      defaults:
+        run:
+          working-directory: selenium_tests
+      runs-on: windows-latest
+      environment: staging
+      steps:
+        - uses: actions/checkout@v2
+        - name: Set up Python
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.9
+        - name: Install test prerequisites
+          run: python3 -m pip install -r requirements.txt && python3 -m pip install windows-curses
+        - name: Install Chrome
+          uses: browser-actions/setup-chrome@latest
+        - name: Run tests
+          run: python3 -m pytest --driver edge
+          env:
+            SELENIUM_HOSTNAME: ${{ secrets.SELENIUM_HOSTNAME }}

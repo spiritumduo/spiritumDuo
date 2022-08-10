@@ -12,6 +12,7 @@ import { Provider } from 'react-redux';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import store from 'app/store';
+import MockConfigProvider from 'test/mocks/mockConfig';
 
 // COMPONENTS
 import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPoints.stories';
@@ -58,13 +59,15 @@ async function renderWithTestMocks() {
     <Provider store={ store }>
       <MockAuthProvider>
         <MockPathwayProvider>
-          <NewMockSdApolloProvider mocks={ mocks }>
-            <ModalPatient
-              hospitalNumber={ Default.parameters?.patient.hospitalNumber }
-              closeCallback={ () => ({}) }
-              lock
-            />
-          </NewMockSdApolloProvider>
+          <MockConfigProvider>
+            <NewMockSdApolloProvider mocks={ mocks }>
+              <ModalPatient
+                hospitalNumber={ Default.parameters?.patient.hospitalNumber }
+                closeCallback={ () => ({}) }
+                lock
+              />
+            </NewMockSdApolloProvider>
+          </MockConfigProvider>
         </MockPathwayProvider>
       </MockAuthProvider>
     </Provider>,
@@ -83,7 +86,11 @@ async function renderWithTestMocks() {
 
 async function renderDefaultNoClinicalRequests() {
   jest.useFakeTimers();
-  render(<Default />);
+  render(
+    <MockConfigProvider>
+      <Default />
+    </MockConfigProvider>,
+  );
   expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
 
   await act(async () => {
@@ -119,7 +126,11 @@ async function renderDefaultNoClinicalRequests() {
 }
 
 async function renderViaMdtWorkflow() {
-  render(<LoadedViaMdtWorkflow />);
+  render(
+    <MockConfigProvider>
+      <LoadedViaMdtWorkflow />
+    </MockConfigProvider>,
+  );
 }
 
 describe('When page loads and user gets the lock', () => {
@@ -139,10 +150,10 @@ describe('When page loads and user gets the lock', () => {
   it('Should display the patient\'s demographic information', async () => {
     await renderWithTestMocks();
     const patient = Default.parameters?.patient;
-    // Victoria Robles, fMRN412811, fNHS646164711, 16/07/1969
+    // Victoria Robles, fMRN: 1234567L, fNHS: 123-456-78L, 16/07/1969
     await waitFor(() => {
       expect(screen.getByText(
-        new RegExp(`${patient.firstName} ${patient.lastName}, ${patient.hospitalNumber}, ${patient.nationalNumber}, ${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
+        new RegExp(`${patient.firstName} ${patient.lastName}, fMRN: 1234567L, fNHS: 123-456-78L, ${patient.dateOfBirth.toLocaleDateString()}`, 'i'),
       )).toBeInTheDocument();
     });
   });
@@ -202,9 +213,7 @@ describe('When page loads and a user submits a decision without clinicalRequests
     await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
   });
 
@@ -212,14 +221,10 @@ describe('When page loads and a user submits a decision without clinicalRequests
     await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
 
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument());
   });
 
@@ -227,14 +232,10 @@ describe('When page loads and a user submits a decision without clinicalRequests
     await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
 
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Cancel' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Cancel' })));
     await waitFor(() => {
       expect(screen.getByRole('textbox', { name: /clinical history/i })).toBeInTheDocument();
     });
@@ -244,13 +245,9 @@ describe('When page loads and a user submits a decision without clinicalRequests
     await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
 
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/No requests have been selected/i)).toBeInTheDocument());
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
 
     await waitFor(() => {
       expect(screen.getByText(/Your decision has now been submitted/i)).toBeInTheDocument();
@@ -262,9 +259,7 @@ describe('When page loads and a user submits a decision without clinicalRequests
   it('Should disable the tabs', async () => {
     await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Submit' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => {
       expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'true');
       expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'true');
@@ -274,9 +269,7 @@ describe('When page loads and a user submits a decision without clinicalRequests
   it('Should re-enable the tabs when the user cancels', async () => {
     await renderDefaultNoClinicalRequests();
     const { click } = userEvent.setup();
-    await act(() => {
-      click(screen.getByRole('button', { name: 'Close' }));
-    });
+    await waitFor(() => click(screen.getByRole('button', { name: 'Close' })));
     await waitFor(() => {
       expect(screen.getByRole('tab', { name: /new decision/i })).toHaveAttribute('aria-disabled', 'false');
       expect(screen.getByRole('tab', { name: /previous decisions/i })).toHaveAttribute('aria-disabled', 'false');
@@ -298,7 +291,7 @@ async function renderDefaultWithClinicalRequests() {
     screen.getByLabelText('Clinical history'),
   ).toBeInTheDocument());
 
-  await act(() => {
+  await waitFor(() => {
     click(screen.getByLabelText('Clinical history'));
     keyboard('{Control>}A{/Control}New Clinic History');
     click(screen.getByLabelText('Co-morbidities'));
@@ -313,9 +306,7 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
     const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithClinicalRequests();
 
-    await waitFor(() => {
-      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
-    });
+    await waitFor(() => expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0));
 
     screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
 
@@ -326,13 +317,11 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
 
     await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
-    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+    await waitFor(() => selectOptions(screen.getByLabelText(/mdt session/i), ['1']));
 
     await click(screen.getByRole('button', { name: 'Submit' }));
 
-    await waitFor(() => {
-      expect(screen.getByText(/submit these requests\?/i)).toBeInTheDocument();
-    });
+    await waitFor(() => expect(screen.getByText(/submit these requests\?/i)).toBeInTheDocument());
   });
 
   it('Should succeed when user confirms submission', async () => {
@@ -352,7 +341,7 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
 
     await click(screen.getByLabelText(/discussion points/i));
     await keyboard('test data goes brrrt');
-    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+    await waitFor(() => selectOptions(screen.getByLabelText(/mdt session/i), ['1']));
 
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
@@ -364,9 +353,7 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
     const { click, keyboard, selectOptions } = userEvent.setup();
     await renderDefaultWithClinicalRequests();
 
-    await waitFor(() => {
-      expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0);
-    });
+    await waitFor(() => expect(screen.queryAllByRole('checkbox')).not.toHaveLength(0));
 
     screen.queryAllByRole('checkbox').forEach((cb) => click(cb));
 
@@ -375,9 +362,9 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
       expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/discussion points/i));
-    await keyboard('test data goes brrrt');
-    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+    await waitFor(() => click(screen.getByLabelText(/discussion points/i)));
+    await waitFor(() => keyboard('test data goes brrrt'));
+    await waitFor(() => selectOptions(screen.getByLabelText(/mdt session/i), ['1']));
 
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
@@ -400,9 +387,9 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
       expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/discussion points/i));
-    await keyboard('test data goes brrrt');
-    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+    await waitFor(() => click(screen.getByLabelText(/discussion points/i)));
+    await waitFor(() => keyboard('test data goes brrrt'));
+    await waitFor(() => selectOptions(screen.getByLabelText(/mdt session/i), ['1']));
 
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
@@ -425,9 +412,9 @@ describe('When page loads and a user submits a decision with clinicalRequests', 
       expect(screen.getByLabelText(/discussion points/i));
     });
 
-    await click(screen.getByLabelText(/discussion points/i));
-    await keyboard('test data goes brrrt');
-    selectOptions(screen.getByLabelText(/mdt session/i), ['1']);
+    await waitFor(() => click(screen.getByLabelText(/discussion points/i)));
+    await waitFor(() => keyboard('test data goes brrrt'));
+    await waitFor(() => selectOptions(screen.getByLabelText(/mdt session/i), ['1']));
 
     await waitFor(() => click(screen.getByRole('button', { name: 'Submit' })));
     await waitFor(() => expect(screen.getByText(/Submit these requests/i)).toBeInTheDocument());
