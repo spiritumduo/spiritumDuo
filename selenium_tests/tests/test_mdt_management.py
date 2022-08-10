@@ -228,10 +228,10 @@ def populate_update_mdt_form(
 ):
     modal = driver.find_element(By.CLASS_NAME, "modal-content")
 
-    date_selector = modal.find_element(
-        By.XPATH, ".//*[contains(text(), 'Date')]")
-    date_selector.click()
-
+    WebDriverWait(driver, 10).until(
+        lambda d: d.find_element(By.NAME, "plannedAt")
+    ).click()
+    
     date_selection = modal.find_elements(
         By.CLASS_NAME, "react-datepicker__day")
 
