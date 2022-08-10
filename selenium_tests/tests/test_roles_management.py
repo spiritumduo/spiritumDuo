@@ -136,6 +136,13 @@ def check_create_modal_present(
 ###################################
 
 
+# NOTE: tests involving selecting an item to
+# update it are broken on Safari. It works outside
+# of Safari, and in Safari manually, but not using the runner.
+# It'll select an item from the list, but won't send the new value
+# with the form submission/gql mutation.
+
+
 # @scenario(
 #     "roles_management.feature",
 #     "A role needs to be updated"

@@ -148,6 +148,7 @@ def get_test_credentials(browser_name: str) -> str:
     if f"{platform}{browser_name}" in credentials:
         return credentials[f"{platform}{browser_name}"]
 
+    # TODO: make this a custom exception class
     raise Exception(
         f"No credentials for browser-platform combo ({platform}:{browser_name})"
     )
