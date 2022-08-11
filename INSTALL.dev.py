@@ -140,6 +140,26 @@ ENV_DEFS = {
             default=600000,
             description="Length of cookie lifespan in milliseconds"
         ),
+        "EXCHANGE_USER_EMAIL": EnvironmentVariable(
+            name="EXCHANGE_USER_EMAIL",
+            default="test@testing.null",
+            description="Email address to send from"
+        ),
+        "EXCHANGE_USER_PASSWORD": EnvironmentVariable(
+            name="EXCHANGE_USER_PASSWORD",
+            default="supersecretpassword",
+            description="Exchange password"
+        ),
+        "EXCHANGE_USER_ADDRESS": EnvironmentVariable(
+            name="EXCHANGE_USER_ADDRESS",
+            default="exchangeemailserver.null",
+            description="Exchange server hostname"
+        ),
+        "FEEDBACK_EMAIL_RECIPIENTS": EnvironmentVariable(
+            name="FEEDBACK_EMAIL_RECIPIENTS",
+            default="test@emailserver.null;otheruser@emailserver.null",
+            description="Recipients to send feedback to"
+        ),
         "HOSPITAL_NUMBER_NAME": EnvironmentVariable(
             name="HOSPITAL_NUMBER_NAME",
             default="MRN",
@@ -147,8 +167,13 @@ ENV_DEFS = {
         ),
         "HOSPITAL_NUMBER_REGEX": EnvironmentVariable(
             name="HOSPITAL_NUMBER_REGEX",
-            default="^fMRN[0-9]{6}$",
+            default="^MRN[0-9]{6}$",
             description="Username of database account"
+        ),
+        "HOSPITAL_NUMBER_FORMAT": EnvironmentVariable(
+            name="HOSPITAL_NUMBER_FORMAT",
+            default="@@@: @@@@@++l",
+            description="Format string for hospitalNumber"
         ),
         "NATIONAL_NUMBER_NAME": EnvironmentVariable(
             name="NATIONAL_NUMBER_NAME",
@@ -157,8 +182,38 @@ ENV_DEFS = {
         ),
         "NATIONAL_NUMBER_REGEX": EnvironmentVariable(
             name="NATIONAL_NUMBER_REGEX",
-            default="^fNHS[0-9]{9}$",
+            default="^NHS[0-9]{9}$",
             description="Length of cookie lifespan in milliseconds"
+        ),
+        "NATIONAL_NUMBER_FORMAT": EnvironmentVariable(
+            name="NATIONAL_NUMBER_FORMAT",
+            default="@@@: @@@-@@@-@@++l",
+            description="Format string for nationalNumber"
+        ),
+        "ON_MDT_EDIT_LOCKOUT_DURATION": EnvironmentVariable(
+            name="ON_MDT_EDIT_LOCKOUT_DURATION",
+            default="36000",
+            description="lock duration for editing onMdt"
+        ),
+        "SMTP_USER_EMAIL": EnvironmentVariable(
+            name="SMTP_USER_EMAIL",
+            default="test@testing.null",
+            description="Email address to send from"
+        ),
+        "SMTP_USER_PASSWORD": EnvironmentVariable(
+            name="SMTP_USER_PASSWORD",
+            default="supersecretpassword",
+            description="SMTP password"
+        ),
+        "SMTP_USER_ADDRESS": EnvironmentVariable(
+            name="SMTP_USER_ADDRESS",
+            default="smtpemailserver.null",
+            description="SMTP server hostname"
+        ),
+        "SMTP_PORT": EnvironmentVariable(
+            name="SMTP_PORT",
+            default="587",
+            description="SMTP port"
         ),
     },
     "pseudotie": {
