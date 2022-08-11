@@ -182,7 +182,7 @@ def check_modal_present(
         assert_that(
             driver.find_element(
                 By.XPATH,
-                f"//*[contains(text(), '{role}')]"
+                f"//li[contains(text(), '{role}')]"
             ).is_displayed(),
             is_(True)
         )
@@ -190,7 +190,7 @@ def check_modal_present(
         assert_that(
             driver.find_element(
                 By.XPATH,
-                f"//*[contains(text(), '{pathway}')]"
+                f"//li[contains(text(), '{pathway}')]"
             ).is_displayed(),
             is_(True)
         )
