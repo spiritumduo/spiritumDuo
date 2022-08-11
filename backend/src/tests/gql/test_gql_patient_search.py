@@ -1,4 +1,3 @@
-import pytest
 from hamcrest import assert_that, has_item
 from trustadapter.trustadapter import Patient_IE
 

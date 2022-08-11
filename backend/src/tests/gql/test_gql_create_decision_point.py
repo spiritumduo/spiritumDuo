@@ -2,7 +2,6 @@ import json
 from typing import List
 import pytest
 from datetime import datetime
-from random import randint
 from tests.conftest import UserFixture
 from models import (
     Patient, OnPathway, DecisionPoint, ClinicalRequest,
@@ -122,8 +121,8 @@ async def test_add_decision_point_to_patient(
     mock_trust_adapter.test_connection.return_value = True
 
     PATIENT: Patient = await Patient.create(
-        hospital_number=f"fMRN{randint(100000,999999)}",
-        national_number=f"fNHS{randint(100000000,999999999)}",
+        hospital_number="MRN999999",
+        national_number="NHS999999999",
     )
 
     ONPATHWAY: OnPathway = await OnPathway.create(

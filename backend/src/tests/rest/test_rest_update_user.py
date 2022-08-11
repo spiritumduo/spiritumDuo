@@ -1,6 +1,5 @@
-from typing import List
 import pytest
-
+from typing import List
 from models import Role, UserRole, User, Pathway, UserPathway
 from tests.conftest import UserFixture
 from hamcrest import (

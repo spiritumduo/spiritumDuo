@@ -33,7 +33,7 @@ def log_user_in(driver: webdriver.Remote, login_user: None):
 @given("an MDT exists")
 def add_mdt(
     driver: webdriver.Remote,
-    test_mdt: MdtDetails
+    test_mdts: MdtDetails
 ):
     pass
 

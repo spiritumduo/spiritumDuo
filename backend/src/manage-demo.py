@@ -192,6 +192,13 @@ async def clear_existing_data():
     except UndefinedTableError:
         print("Table `ClinicalRequestType` not found. Continuing")
 
+async def clear_all_users():
+    try:
+        await User.delete.where(User.id >= 0).gino.status()
+        print("Table `User` deleted entirely")
+    except UndefinedTableError:
+        print("Table `User` not found. Continuing")
+
 
 async def create_roles():
     doctor_role = await Role.create(
@@ -549,11 +556,14 @@ async def insert_demo_data():
 def main(argv):
     parser = argparse.ArgumentParser(description="Demo Management Script")
     parser.add_argument('--onlyclear', action='store_true', default=False)
+    parser.add_argument('--clearall', action='store_true', default=False)
     arguments = parser.parse_args()
     loop = asyncio.get_event_loop()
     engine = loop.run_until_complete(db.set_bind(DATABASE_URL))
     loop.run_until_complete(check_connection())
     loop.run_until_complete(clear_existing_data())
+    if arguments.clearall:
+        loop.run_until_complete(clear_all_users())
     if not arguments.onlyclear:
         loop.run_until_complete(asyncio.sleep(2))
         loop.run_until_complete(insert_demo_data())

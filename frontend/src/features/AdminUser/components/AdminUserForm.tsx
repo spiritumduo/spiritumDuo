@@ -178,8 +178,8 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
       <Form
         onSubmit={ handleSubmit( () => {
           const formValues: UserFormInput = getValues();
-          const selectedPathways = formValues.pathways?.map((pW) => (pW.value));
-          const selectedRoles = formValues.roles?.map((r) => (r.value));
+          const selectedPathways = formValues.pathways?.map((pW) => (pW.value)) || [];
+          const selectedRoles = formValues.roles?.map((r) => (r.value)) || [];
 
           const restValues: UserRestInput = {
             id: formValues.id,
@@ -274,8 +274,8 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
                     onChange={ field.onChange }
                     ref={ field.ref }
                     value={ field.value }
-                    options={ roles?.map((pW) => (
-                      { label: pW.name, value: pW.id }
+                    options={ roles?.map((r) => (
+                      { label: r.name, value: r.id }
                     )) }
                   />
                 ) }

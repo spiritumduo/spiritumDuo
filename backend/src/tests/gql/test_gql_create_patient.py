@@ -107,8 +107,8 @@ async def test_add_new_patient_to_system(
     mock_trust_adapter.test_connection.return_value = True
 
     PATIENT = await Patient.create(
-        hospital_number="fMRN123456",
-        national_number="fNHS123456789",
+        hospital_number="MRN123456",
+        national_number="NHS123456789",
     )
 
     PATIENT_IE = Patient_IE(

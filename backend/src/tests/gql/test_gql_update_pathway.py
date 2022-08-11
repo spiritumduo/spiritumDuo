@@ -1,5 +1,4 @@
 from typing import List
-import pytest
 from models import Pathway, PathwayClinicalRequestType, ClinicalRequestType
 from hamcrest import assert_that, equal_to, not_none, none, contains_string
 

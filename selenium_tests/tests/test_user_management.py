@@ -15,28 +15,28 @@ from selenium.webdriver.support import (
 
 
 @pytest.fixture
-def create_user_details():
+def create_user_details(platform_browser_string: str) -> str:
     return UserDetails(
-        username="test_create_user",
+        username=f"{platform_browser_string}_test_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
-        firstName="test",
-        lastName="runner",
+        email=f"{platform_browser_string}@test.com",
+        firstName=f"{platform_browser_string}",
+        lastName="testcreate",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
 
 
 @pytest.fixture
-def update_user_details():
+def update_user_details(platform_browser_string: str):
     return UserDetails(
-        username="test_update_user",
+        username=f"{platform_browser_string}_update_user",
         password="test password",
         department="test department",
-        email=f"test{randint(1, 100)}@test.com",
-        firstName="test",
-        lastName="runner",
+        email=f"{platform_browser_string}_update@test.com",
+        firstName=f"{platform_browser_string}_update",
+        lastName="update",
         roles=["admin"],
         pathways=["cancer demo 1"],
     )
@@ -133,68 +133,64 @@ def submit_form(driver: webdriver.Remote):
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
-    modal = driver.find_element(
-        By.XPATH,
-        "//div[contains(@class, 'modal-body')]"
-    )
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 4).until(
         ExpectedConditions.visibility_of(
-            modal
+            driver.find_element(By.CSS_SELECTOR, '.modal-body')
         )
     )
     assert_that(
-        modal.is_displayed(),
+        driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
         is_(True)
     )
 
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{create_user_details.firstName}')]"
+            f"//*[contains(text(), '{create_user_details.firstName}')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{create_user_details.lastName}')]"
+            f"//*[contains(text(), '{create_user_details.lastName}')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{create_user_details.email}')]"
+            f"//*[contains(text(), '{create_user_details.email}')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            ".//*[contains(text(), 'Hidden')]"
+            "//*[contains(text(), 'Hidden')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{create_user_details.department}')]"
+            f"//*[contains(text(), '{create_user_details.department}')]"
         ).is_displayed(),
         is_(True)
     )
     for role in create_user_details.roles:
         assert_that(
-            modal.find_element(
+            driver.find_element(
                 By.XPATH,
-                f".//*[contains(text(), '{role}')]"
+                f"//li[contains(text(), '{role}')]"
             ).is_displayed(),
             is_(True)
         )
     for pathway in create_user_details.pathways:
         assert_that(
-            modal.find_element(
+            driver.find_element(
                 By.XPATH,
-                f".//*[contains(text(), '{pathway}')]"
+                f"//li[contains(text(), '{pathway}')]"
             ).is_displayed(),
             is_(True)
         )
@@ -304,50 +300,48 @@ def submit_edit_form(driver: webdriver.Remote):
 def check_edit_confirmation(
     driver: webdriver.Remote, update_user_details: UserDetails
 ):
+    WebDriverWait(driver, 4).until(
+        ExpectedConditions.visibility_of(
+            driver.find_element(By.CSS_SELECTOR, '.modal-body')
+        )
+    )
     assert_that(
-        driver.find_element(
-            By.XPATH,
-            "//div[contains(text(), 'User updated')]"
-        ).is_displayed(),
+        driver.find_element(By.CSS_SELECTOR, '.modal-body').is_displayed(),
         is_(True)
     )
 
-    modal = driver.find_element(
-        By.XPATH,
-        "//*[contains(text(), 'User updated')]/../.."
-    )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{update_user_details.firstName}')]"
+            f"//*[contains(text(), '{update_user_details.firstName}')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{update_user_details.lastName}')]"
+            f"//*[contains(text(), '{update_user_details.lastName}')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{update_user_details.email}')]"
+            f"//*[contains(text(), '{update_user_details.email}')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            ".//*[contains(text(), 'Hidden')]"
+            "//*[contains(text(), 'Hidden')]"
         ).is_displayed(),
         is_(True)
     )
     assert_that(
-        modal.find_element(
+        driver.find_element(
             By.XPATH,
-            f".//*[contains(text(), '{update_user_details.department}')]"
+            f"//*[contains(text(), '{update_user_details.department}')]"
         ).is_displayed(),
         is_(True)
     )

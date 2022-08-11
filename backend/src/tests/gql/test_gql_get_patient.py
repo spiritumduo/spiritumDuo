@@ -1,7 +1,6 @@
 import json
 import pytest
 from datetime import datetime
-from random import randint
 from models import Patient, OnPathway, DecisionPoint, ClinicalRequest
 from trustadapter.trustadapter import Patient_IE, TestResult_IE
 from SdTypes import DecisionTypes, ClinicalRequestState
@@ -125,8 +124,8 @@ async def test_search_for_patient(
     """
 
     PATIENT = await Patient.create(
-        hospital_number=f"fMRN{randint(100000,999999)}",
-        national_number=f"fNHS{randint(100000000,999999999)}",
+        hospital_number="MRN999999",
+        national_number="NHS999999999",
     )
 
     PATIENT_IE = Patient_IE(
