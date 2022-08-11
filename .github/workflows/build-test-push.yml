@@ -225,6 +225,10 @@ jobs:
         run: python3 -m pip install -r requirements.txt
       - name: Install Chrome
         uses: browser-actions/setup-chrome@latest
+      - name: Delay for 20 seconds to ensure staging is running
+        run: sleep 20s
+        shell: bash
+
       - name: Run tests
         run: python3 -m pytest --driver firefox && python3 -m pytest --driver chromium
         env:
@@ -247,6 +251,9 @@ jobs:
   #       run: python3 -m pip install -r requirements.txt
   #     - name: Install Chrome
   #       uses: browser-actions/setup-chrome@latest
+        # - name: Delay for 20 seconds to ensure staging is running
+        # run: sleep 20s
+        # shell: bash
   #     - name: Configure Safari testing environment
   #       run: |
   #         defaults write com.apple.Safari IncludeDevelopMenu YES
@@ -276,6 +283,9 @@ jobs:
         run: python3 -m pip install -r requirements.txt && python3 -m pip install windows-curses
       - name: Install Chrome
         uses: browser-actions/setup-chrome@latest
+      - name: Delay for 20 seconds to ensure staging is running
+        run: Start-Sleep -s 20
+        shell: powershell
       - name: Run tests
         run: python3 -m pytest --driver edge
         env:
