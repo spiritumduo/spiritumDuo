@@ -274,19 +274,6 @@ def check_mdt_update_confirmation_modal_shown(
         )
     )
 
-    # modal = WebDriverWait(driver, 10).until(
-    #     lambda d: d.find_element(
-    #         By.XPATH,
-    #         "//div[contains(@class, 'modal-body')]"
-    #     )
-    # )
-
-    # assert_that(
-    #     modal.is_displayed(),
-    #     is_(True)
-    # )
-
-    driver.get_screenshot_as_file("./testetst.png")
 
     assert_that(
         driver.find_element(
