@@ -1,5 +1,4 @@
 import json
-import sys
 from typing import List
 import pytest
 from hamcrest import (

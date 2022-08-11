@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 from typing import List
 import pytest

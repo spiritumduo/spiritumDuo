@@ -1,11 +1,9 @@
-from typing import List
-
-import pytest
 import asyncio
 
 from models import Role, RolePermission
 from SdTypes import Permissions
 from hamcrest import assert_that, equal_to, not_none, is_in, not_
+from typing import List
 
 
 async def test_update_role(login_user, test_client, role_update_permission):
