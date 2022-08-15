@@ -42,6 +42,21 @@ class UserDoesNotHavePathwayPermission(Exception):
     """
 
 
+@dataclass
+class SafeUser:
+    """
+    This is the the user object with no password field.
+    Safe to return to users
+    """
+    id: int = None,
+    username: str = None,
+    email: str = None,
+    first_name: str = None,
+    last_name: str = None,
+    department: str = None,
+    default_pathway_id: int = None,
+    is_active: bool = None
+
 
 @dataclass
 class MutationUserError:
