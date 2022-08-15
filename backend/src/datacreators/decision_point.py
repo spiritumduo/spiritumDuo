@@ -1,7 +1,4 @@
-from ctypes import Union
-from asyncpg import UniqueViolationError
 from sqlalchemy import desc
-
 from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
@@ -21,12 +18,13 @@ from models import (
     db
 )
 from SdTypes import ClinicalRequestState, DecisionTypes
-from typing import List, Dict
+from typing import List, Dict, Union
 from containers import SDContainer
 from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from common import (
-    DataCreatorInputErrors,
+    DecisionPointPayload,
+    MutationUserErrorHandler,
     ReferencedItemDoesNotExistError,
     UserDoesNotHavePathwayPermission
 )
@@ -34,9 +32,9 @@ from common import (
 
 class UserDoesNotOwnLock(Exception):
     """
-    This is raised when the user attempts to
-    submit a decision point whilst not owning
-    the OnPathway lock
+    This is raised when the user attempts an
+    operation whilst not owning the appropriate
+    OnPathway lock
     """
 
 
@@ -52,8 +50,7 @@ class DecisionPointMdtMismatchException(Exception):
     """
     This is raised when an MDT is added using the `createDecisionPoint`
     mutation, however the MDT specified is not on the same pathway
-    as the decision point's OnPathway object. If this is triggered, it
-    could indicate tampering.
+    as the decision point's OnPathway object.
     """
 
 
@@ -70,7 +67,7 @@ async def CreateDecisionPoint(
     mdt: Dict[str, str] = None,
     from_mdt_id: int = None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
-):
+) -> DecisionPointPayload:
     """
     Creates a decision point object in local and external databases
 
@@ -94,10 +91,11 @@ async def CreateDecisionPoint(
         from_mdt_id (int): the ID of the MDT this decision point is
             created from
     Returns:
-        DecisionPoint: newly created decision point object
+        DecisionPointPayload: payload containing the
+        DecisionPoint object and/or UserErrors object
     """
 
-    errors = DataCreatorInputErrors()
+    errors = MutationUserErrorHandler()
 
     await trust_adapter.test_connection(
         auth_token=context['request'].cookies['SDSESSION']
@@ -150,7 +148,9 @@ async def CreateDecisionPoint(
                 'mdt',
                 'This patient is already on the MDT specified'
             )
-            return errors
+            return DecisionPointPayload(
+                user_errors=errors.errorList,
+            )
 
     decision_point_details = {
         "on_pathway_id": on_pathway_id,
@@ -288,4 +288,6 @@ async def CreateDecisionPoint(
         .values(under_care_of_id=context['request']['user'].id)\
         .gino.scalar()
 
-    return decision_point
+    return DecisionPointPayload(
+        decision_point=decision_point,
+    )

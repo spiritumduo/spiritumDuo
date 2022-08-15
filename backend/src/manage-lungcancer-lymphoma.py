@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import sys
-from common import DataCreatorInputErrors
+from common import MutationUserErrorHandler
 from models import (
     Pathway,
     Patient,
@@ -572,7 +572,7 @@ async def insert_demo_data():
                     clinical_request_type_id=general_clinical_request_types["ct_chest"].id,
                 )
 
-                if isinstance(sd_patient, DataCreatorInputErrors):
+                if isinstance(sd_patient, MutationUserErrorHandler):
                     raise Exception(sd_patient.errorList)
 
 loop = asyncio.get_event_loop()

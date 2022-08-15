@@ -16,7 +16,10 @@ from trustadapter.trustadapter import (
     TestResultRequestImmediately_IE,
     TrustAdapter
 )
-from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
+from common import (
+    MutationUserErrorHandler,
+    PatientPayload
+)
 from asyncpg.exceptions import UniqueViolationError
 
 
@@ -51,11 +54,10 @@ async def CreatePatient(
             importing patients)
         awaiting_decision_type (DecisionType): next decision type (used for
             importing patients)
-        clinical_requests (List[ClinicalRequest]): list of clinical_requests to import when a
-            patient enters the pathway (referral letter, ex)
+        clinical_requests (List[ClinicalRequest]): list of clinical_requests
+            to import when a patient enters the pathway (referral letter, ex)
     Returns:
-        Patient/DataCreatorInputErrors: newly created decision point
-            object/list of errors
+        PatientPayload: contains Patient object and/or UserErrors object
     """
 
     await trust_adapter.test_connection(
@@ -67,8 +69,10 @@ async def CreatePatient(
     if pathwayId is None:
         raise TypeError("Pathway ID not provided.")
 
-    auth_token = context['request'].cookies['SDSESSION']
-    errors = DataCreatorInputErrors()
+    auth_token = context['request'].cookies['SDSESSION']  
+    # pull session cookie, used to auth w/ trust adapter
+
+    errors = MutationUserErrorHandler()
 
     clinicalRequestTypesFromClinicalRequests = await ClinicalRequestTypeLoader.load_many_from_id(
         context=context,
@@ -80,7 +84,7 @@ async def CreatePatient(
             does not exist
         """)
 
-    _pathway: Pathway = await PathwayByIdLoader.load_from_id(
+    pathway: Pathway = await PathwayByIdLoader.load_from_id(
         context=context,
         id=pathwayId
     )
@@ -103,7 +107,7 @@ async def CreatePatient(
         )
 
     if errors.hasErrors():
-        return errors
+        return PatientPayload(user_errors=errors.errorList)
 
     patientFromTrustAdapter: Patient_IE = await trust_adapter.load_patient(
         hospitalNumber=hospital_number,
@@ -134,7 +138,7 @@ async def CreatePatient(
                 message="Input does not match patient from external system"
             )
         if errors.hasErrors():
-            return errors
+            return PatientPayload(user_errors=errors.errorList)
     else:
         """
         The patient does not exist via trust adapter and needs to be created
@@ -183,7 +187,7 @@ async def CreatePatient(
     patientOnPathway: Union[OnPathway, None] = await OnPathwaysByPatient.load_from_id(
         context=context,
         id=patientFromLocal.id,
-        pathwayId=_pathway.id,
+        pathwayId=pathway.id,
         includeDischarged=False
     )
     if patientOnPathway is not None and len(patientOnPathway) > 0:
@@ -195,18 +199,18 @@ async def CreatePatient(
                 pathway and is not discharged
             """
         )
-        return errors
+        return PatientPayload(user_errors=errors.errorList)
 
     onPathwayInformation = {
         'patient_id': patientFromLocal.id,
-        'pathway_id': _pathway.id,
+        'pathway_id': pathway.id,
         'awaiting_decision_type': awaiting_decision_type,
         'is_discharged': False,
     }
     if referred_at:
         onPathwayInformation['referred_at'] = referred_at
 
-    _pathwayInstance: OnPathway = await OnPathway.create(
+    pathwayInstance: OnPathway = await OnPathway.create(
         **onPathwayInformation
     )
 
@@ -216,13 +220,13 @@ async def CreatePatient(
                 type_id=clinical_request["clinicalRequestTypeId"],
                 current_state=clinical_request["currentState"],
                 hospital_number=hospital_number,
-                pathway_name=_pathway.name
+                pathway_name=pathway.name
             ),
             auth_token=auth_token
         )
 
         await ClinicalRequest.create(
-            on_pathway_id=int(_pathwayInstance.id),
+            on_pathway_id=int(pathwayInstance.id),
             current_state=clinical_request["currentState"],
             clinical_request_type_id=int(clinical_request["clinicalRequestTypeId"]),
             test_result_reference_id=str(test_result.id)
@@ -230,4 +234,4 @@ async def CreatePatient(
 
     returnPatient = patientFromTrustAdapter
     returnPatient.id = patientFromLocal.id
-    return returnPatient
+    return PatientPayload(patient=returnPatient)

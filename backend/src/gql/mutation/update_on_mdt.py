@@ -1,5 +1,5 @@
 from SdTypes import Permissions
-from common import DataCreatorInputErrors
+from common import MutationUserErrorHandler
 from dataupdaters.on_mdt import OnMdtLockedByOtherUser
 from models import OnMdt
 from dataupdaters import UpdateOnMDT
@@ -15,18 +15,10 @@ async def resolve_update_on_mdt(
     info: GraphQLResolveInfo = None,
     input: dict = None,
 ) -> OnMdt:
-    errors: DataCreatorInputErrors = DataCreatorInputErrors()
-    try:
-        return await UpdateOnMDT(
-            context=info.context,
-            id=input['id'],
-            reason=input['reason'],
-            outcome=input['outcome'] if 'outcome' in input else '',
-            order=input['order'] if 'order' in input else None,
-        )
-    except OnMdtLockedByOtherUser:
-        errors.addError(
-            'lock_user_id',
-            'This is locked by another user'
-        )
-        return errors
+    return await UpdateOnMDT(
+        context=info.context,
+        id=input['id'],
+        reason=input['reason'],
+        outcome=input['outcome'] if 'outcome' in input else '',
+        order=input['order'] if 'order' in input else None,
+    )

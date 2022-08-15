@@ -1,7 +1,7 @@
 from sqlalchemy import and_
 from typing import Dict, List, Set
 from models import Pathway, PathwayClinicalRequestType
-from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
+from common import MutationUserErrorHandler, PathwayPayload
 from asyncpg.exceptions import UniqueViolationError
 
 
@@ -10,9 +10,9 @@ async def UpdatePathway(
     id: int = None,
     name: str = None,
     clinical_request_types: List[Dict[str, int]] = None,
-    userErrors: DataCreatorInputErrors = None
+    userErrors: MutationUserErrorHandler = None
 ):
-    userErrors = DataCreatorInputErrors()
+    userErrors = MutationUserErrorHandler()
     if id is None:
         raise ReferencedItemDoesNotExistError("ID not provided")
     elif name is None:
@@ -25,7 +25,7 @@ async def UpdatePathway(
         await pathway.update(name=name).apply()
     except UniqueViolationError:
         userErrors.addError("Name", "A pathway with this name already exists")
-        return userErrors
+        return PathwayPayload(user_errors=userErrors.errorList)
 
     current_clinical_request_types = await PathwayClinicalRequestType.query.where(
         PathwayClinicalRequestType.pathway_id == int(id)).gino.all()
@@ -50,4 +50,4 @@ async def UpdatePathway(
             clinical_request_type_id=mT_ID
         )
 
-    return pathway
+    return PathwayPayload(pathway=pathway)

@@ -1,6 +1,6 @@
 from typing import List, Set
 from models import MDT, UserMDT, User
-from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
+from common import MutationUserErrorHandler, MdtPayload
 from asyncpg.exceptions import UniqueViolationError
 from datetime import date
 
@@ -11,9 +11,9 @@ async def UpdateMDT(
     plannedAt: date = None,
     location: str = None,
     users: List[str] = None,
-    userErrors: DataCreatorInputErrors = None
+    userErrors: MutationUserErrorHandler = None
 ):
-    userErrors = DataCreatorInputErrors()
+    userErrors = MutationUserErrorHandler()
     if id is None:
         raise ReferencedItemDoesNotExistError("ID not provided")
     elif plannedAt is None:
@@ -50,6 +50,6 @@ async def UpdateMDT(
             .update(location=location).apply()
     except UniqueViolationError:
         userErrors.addError("Name", "An MDT exists for this date already")
-        return userErrors
+        return MdtPayload(user_errors=userErrors.errorList)
 
-    return mdt
+    return MdtPayload(mdt=mdt)

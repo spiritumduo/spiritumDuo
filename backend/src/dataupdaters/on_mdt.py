@@ -1,3 +1,4 @@
+from common import MutationUserErrorHandler, OnMdtPayload
 from models import MDT, OnMdt, UserPathway
 from models.db import db
 from gino.engine import GinoConnection
@@ -20,6 +21,8 @@ async def UpdateOnMDT(
     order: int = None,
     conn: GinoConnection = None,
 ):
+    errors = MutationUserErrorHandler()
+
     if id is None:
         raise TypeError("ID is None")
     elif context is None:
@@ -46,7 +49,11 @@ async def UpdateOnMDT(
 
     if on_mdt.lock_user_id != context["request"].user.id\
             and (reason is not None or outcome is not None or actioned is not None):
-        raise OnMdtLockedByOtherUser()
+        errors.addError(
+            'lock_user_id',
+            'This is locked by another user'
+        )
+        return OnMdtPayload(user_errors=errors.errorList)
 
     update_values = {}
     if reason is not None:
@@ -61,4 +68,4 @@ async def UpdateOnMDT(
     if len(update_values.keys()) > 0:
         await on_mdt.update(**update_values).apply()
 
-    return on_mdt
+    return OnMdtPayload(on_mdt=on_mdt)

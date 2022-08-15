@@ -1,4 +1,4 @@
-from common import DataCreatorInputErrors
+from common import MutationUserErrorHandler, DeletePayload
 from .mutation_type import mutation
 from models import MDT, OnMdt, UserPathway
 from authentication.authentication import needsAuthorization
@@ -12,7 +12,7 @@ from models.db import db
 async def resolve_remove_pt_from_mdt(
     obj=None, info: GraphQLResolveInfo = None, id: str = None
 ) -> bool:
-    errors: DataCreatorInputErrors = DataCreatorInputErrors()
+    errors: MutationUserErrorHandler = MutationUserErrorHandler()
 
     query: str = OnMdt.join(MDT, OnMdt.mdt_id == MDT.id)\
         .join(UserPathway, MDT.pathway_id == UserPathway.pathway_id)\
@@ -35,8 +35,8 @@ async def resolve_remove_pt_from_mdt(
             'lock_user_id',
             'This is locked by another user'
         )
-        return errors
+        return DeletePayload(user_errors=errors.errorList)
 
     await on_mdt.delete()
 
-    return True
+    return DeletePayload(success=True)

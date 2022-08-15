@@ -1,7 +1,10 @@
 from datetime import date
 from asyncpg import UniqueViolationError
 from models import MDT
-from common import DataCreatorInputErrors, ReferencedItemDoesNotExistError
+from common import (
+    MutationUserErrorHandler,
+    MdtPayload
+)
 
 
 async def CreateMDT(
@@ -9,18 +12,19 @@ async def CreateMDT(
     plannedAt: date = None,
     pathwayId: int = None,
     location: str = None,
-    errors: DataCreatorInputErrors = None
+    errors: MutationUserErrorHandler = None
 ):
-    errors = DataCreatorInputErrors()
+    errors = MutationUserErrorHandler()
     """
     Creates an MDT object in the local database
 
     Keyword arguments:
         context (dict): the current request context
         plannedAt (date): date of MDT
+        pathwayId (int): ID of pathway the MDT is on
+        location (str): Display value of location of event
     Returns:
-        MDT/DataCreatorInputErrors: newly created MDT object/errors
-            object
+        MDTPayload: contains new MDT object and/or UserErrors
     """
     if not context:
         raise ReferencedItemDoesNotExistError("Context is not provided.")
@@ -29,7 +33,7 @@ async def CreateMDT(
     if not pathwayId:
         raise ReferencedItemDoesNotExistError("pathwayId is not provided.")
     try:
-        newMDT: MDT = await MDT.create(
+        mdt: MDT = await MDT.create(
             planned_at=plannedAt,
             pathway_id=int(pathwayId),
             creator_user_id=context['request'].user.id,
@@ -40,6 +44,6 @@ async def CreateMDT(
             "plannedAt, pathwayId",
             "An MDT already exists on this date for this pathway"
         )
-        return errors
+        return MdtPayload(user_errors=errors.errorList)
 
-    return newMDT
+    return MdtPayload(mdt=mdt)
