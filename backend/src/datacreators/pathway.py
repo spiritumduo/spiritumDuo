@@ -23,6 +23,11 @@ async def CreatePathway(
     Returns:
         PathwayPayload: contains Pathway object and/or UserErrors object
     """
+    if context is None:
+        raise TypeError("Context cannot be None type.")
+    if name is None:
+        raise TypeError("Name cannot be None type.")
+    
     errors = MutationUserErrorHandler()
 
     try:

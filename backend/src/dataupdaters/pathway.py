@@ -14,11 +14,11 @@ async def UpdatePathway(
 ):
     userErrors = MutationUserErrorHandler()
     if id is None:
-        raise ReferencedItemDoesNotExistError("ID not provided")
+        raise TypeError("id cannot be none type")
     elif name is None:
-        raise ReferencedItemDoesNotExistError("Name not provided")
+        raise TypeError("name cannot be none type")
     elif context is None:
-        raise ReferencedItemDoesNotExistError("Context not provided")
+        raise TypeError("context cannot be none type")
 
     try:
         pathway: Pathway = await Pathway.get(int(id))

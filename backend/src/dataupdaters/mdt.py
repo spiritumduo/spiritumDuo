@@ -15,15 +15,15 @@ async def UpdateMDT(
 ):
     userErrors = MutationUserErrorHandler()
     if id is None:
-        raise ReferencedItemDoesNotExistError("ID not provided")
+        raise TypeError("id cannot be none type")
     elif plannedAt is None:
-        raise ReferencedItemDoesNotExistError("plannedAt not provided")
+        raise TypeError("plannedAt cannot be none type")
     elif location is None:
-        raise ReferencedItemDoesNotExistError("location not provided")
+        raise TypeError("location cannot be none type")
     elif context is None:
-        raise ReferencedItemDoesNotExistError("Context not provided")
+        raise TypeError("context cannot be none type")
     elif users is None:
-        raise ReferencedItemDoesNotExistError("Users list not provided")
+        raise TypeError("users cannot be none type")
 
     mdt: MDT = await MDT.get(int(id))
 

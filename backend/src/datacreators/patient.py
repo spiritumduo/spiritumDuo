@@ -65,9 +65,9 @@ async def CreatePatient(
     )
 
     if context is None:
-        raise TypeError("Context is not provided.")
+        raise TypeError("context cannot be None type.")
     if pathwayId is None:
-        raise TypeError("Pathway ID not provided.")
+        raise TypeError("pathwayId cannot be None type.")
 
     auth_token = context['request'].cookies['SDSESSION']  
     # pull session cookie, used to auth w/ trust adapter
@@ -79,19 +79,14 @@ async def CreatePatient(
         ids=[int(cr['clinicalRequestTypeId']) for cr in clinical_requests]
     )
     if None in clinicalRequestTypesFromClinicalRequests:
-        raise ReferencedItemDoesNotExistError("""
-            ClinicalRequest type specified
-            does not exist
-        """)
+        raise TypeError("ClinicalRequest type specified is None")
 
     pathway: Pathway = await PathwayByIdLoader.load_from_id(
         context=context,
         id=pathwayId
     )
-    if _pathway is None:
-        raise ReferencedItemDoesNotExistError("""
-            Pathway provided does not exist.
-        """)
+    if pathway is None:
+        raise TypeError("Returned pathway is None")
 
     # check if hospital number provided matches regex in configuration
     if re.search(SdConfig["HOSPITAL_NUMBER_REGEX"], hospital_number) is None:
