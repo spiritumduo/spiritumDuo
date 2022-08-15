@@ -13,7 +13,6 @@ type Query {
     getPathways: [Pathway!]!
     getUser(id:ID, username:String): User
     getUsers(pathwayId: ID): [User]!
-    getPatientsOnPathway(pathwayId: ID!, awaitingDecisionType: DecisionType, isDischarged: Boolean = False): [Patient]
     getClinicalRequestTypes(pathwayId: ID): [ClinicalRequestType!]
     getRolePermissions: [RolePermission!]
     getRoles: [Role!]!
