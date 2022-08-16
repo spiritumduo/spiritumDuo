@@ -41,9 +41,7 @@ class DecisionPointLoader(DataLoader):
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id: int = None
+        cls, context=None, id: int = None
     ) -> Union[DecisionPoint, None]:
         """
             Load a single entry from its record ID
@@ -55,8 +53,12 @@ class DecisionPointLoader(DataLoader):
                 DecisionPoint/None
         """
 
-        if not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load(id)
@@ -74,8 +76,15 @@ class DecisionPointLoader(DataLoader):
                 context (dict): request context
                 id (List[int]): IDs to find
             Returns:
-                List[DecisionPoint]/None
+                List[DecisionPoint/None]
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
@@ -92,11 +101,8 @@ class DecisionPointsByPatient:
 
     @staticmethod
     async def load_from_id(
-        context=None,
-        id: int = None,
-        pathwayId: int = None,
-        decisionType: DecisionTypes = None,
-        limit: Union[int, None] = None
+        context=None, id: int = None, pathwayId: int = None,
+        decisionType: DecisionTypes = None, limit: Union[int, None] = None
     ) -> Union[List[DecisionPoint], None]:
         """
             Load all decision points by a patient's record ID
@@ -112,7 +118,10 @@ class DecisionPointsByPatient:
                 List[DecisionPoint]/None
         """
 
-        if not context or not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if not id:
             return None
 
         query = DecisionPoint.query.where(
@@ -134,7 +143,7 @@ class DecisionPointsByPatient:
 
         _gino = context['db']
         async with _gino.acquire(reuse=False) as conn:
-            decisionPoints = await conn.all(query)
+            decisionPoints: List[DecisionPoint] = await conn.all(query)
         if DecisionPointLoader.loader_name not in context:
             context[DecisionPointLoader.loader_name] = DecisionPointLoader(
                 db=context['db']
@@ -165,10 +174,13 @@ class DecisionPointsByOnPathway:
                 context (dict): request context
                 id (List[int]): IDs of OnPathway records
             Returns:
-                List[DecisionPoint]/None
+                List[DecisionPoint/None]
         """
 
-        if not context or not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if not id:
             return None
 
         query = DecisionPoint.query.where(
@@ -177,7 +189,7 @@ class DecisionPointsByOnPathway:
 
         _gino = context['db']
         async with _gino.acquire(reuse=False) as conn:
-            decisionPoints = await conn.all(query)
+            decisionPoints: List[DecisionPoint] = await conn.all(query)
         if DecisionPointLoader.loader_name not in context:
             context[DecisionPointLoader.loader_name] = DecisionPointLoader(
                 db=context['db']

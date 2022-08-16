@@ -5,7 +5,7 @@ from typing import List, Union
 
 class OnMdtByIdLoader(DataLoader):
     """
-        This is class for loading OnPathway records
+        This is class for loading OnMdt records
         by their IDs
 
         Attributes:
@@ -23,7 +23,7 @@ class OnMdtByIdLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = OnMdt.query.where(OnMdt.id.in_(keys))
-            result = await conn.all(query)
+            result: List[OnMdt] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -41,9 +41,7 @@ class OnMdtByIdLoader(DataLoader):
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id=None
+        cls, context=None, id=None
     ) -> Union[OnMdt, None]:
         """
             Load a single entry from its record ID
@@ -55,17 +53,19 @@ class OnMdtByIdLoader(DataLoader):
                 OnMdt/None
         """
 
+        if context is None:
+            raise TypeError("context cannot be None type")
+
         if not id:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load(id)
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
+        cls, context=None, ids=None
     ) -> Union[List[OnMdt], None]:
         """
             Loads many entries from their record ID
@@ -77,12 +77,23 @@ class OnMdtByIdLoader(DataLoader):
                 List[OnPathway]/None
         """
 
+        if context is None:
+            raise TypeError("context cannot be None type")
+        if ids is None:
+            return []
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if key is None:
+            raise TypeError("key cannot be None type")
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return super(OnMdtByIdLoader, context[cls.loader_name]).prime(

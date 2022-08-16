@@ -22,7 +22,7 @@ class UserByIdLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = User.query.where(User.id.in_(keys))
-            result = await conn.all(query)
+            result: List[User] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -49,12 +49,19 @@ class UserByIdLoader(DataLoader):
             Returns:
                 User/None
         """
-        if not id:
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
-        user = await context[cls.loader_name].load(id)
-        if user:
+
+        user: Union[User, None] = await context[cls.loader_name].load(id)
+
+        if user is not None:
             if UserByUsernameLoader.loader_name not in context:
                 context[UserByUsernameLoader.loader_name] = \
                     UserByUsernameLoader(db=context['db'])
@@ -62,6 +69,7 @@ class UserByIdLoader(DataLoader):
                 user.username,
                 user
             )
+
         return user
 
     @classmethod
@@ -79,12 +87,25 @@ class UserByIdLoader(DataLoader):
             Returns:
                 List[User]/None
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if key is None:
+            raise TypeError("key cannot be None type")
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return super(cls, context[cls.loader_name]).prime(key=key, value=value)
@@ -110,7 +131,7 @@ class UserByUsernameLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = User.query.where(User.username.in_(keys))
-            result = await conn.all(query)
+            result: List[User] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -137,8 +158,13 @@ class UserByUsernameLoader(DataLoader):
             Returns:
                 User/None
         """
-        if not id:
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         user = await context[cls.loader_name].load(id)
@@ -154,9 +180,7 @@ class UserByUsernameLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
+        cls, context=None, ids=None
     ) -> Union[List[User], None]:
         """
             Loads many entries from their usernames
@@ -167,6 +191,13 @@ class UserByUsernameLoader(DataLoader):
             Returns:
                 List[User]/None
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)

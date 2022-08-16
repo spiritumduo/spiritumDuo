@@ -22,7 +22,7 @@ class PathwayByIdLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = Pathway.query.where(Pathway.id.in_(keys))
-            result = await conn.all(query)
+            result: List[Pathway] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -49,13 +49,17 @@ class PathwayByIdLoader(DataLoader):
             Returns:
                 Pathway/None
         """
-        if not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
-        pathway = await context[cls.loader_name].load(id)
+        pathway: Union[Pathway, None] = await context[cls.loader_name].load(id)
 
-        if pathway:
+        if pathway is not None:
             if PathwayByNameLoader.loader_name not in context:
                 context[PathwayByNameLoader.loader_name] = PathwayByNameLoader(
                     db=context['db']
@@ -69,9 +73,7 @@ class PathwayByIdLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
+        cls, context=None, ids=None
     ) -> Union[List[Pathway], None]:
         """
             Loads many entries from their record IDs
@@ -82,6 +84,12 @@ class PathwayByIdLoader(DataLoader):
             Returns:
                 List[Pathway]/None
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
 
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
@@ -97,10 +105,14 @@ class PathwayByIdLoader(DataLoader):
             Returns:
                 List[Pathway]/None
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
         db = context['db']
         result = None
         async with db.acquire(reuse=False) as conn:
-            result = await conn.all(Pathway.query)
+            result: List[Pathway] = await conn.all(Pathway.query)
 
         return result
 
@@ -126,7 +138,7 @@ class PathwayByNameLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = Pathway.query.where(Pathway.name.in_(keys))
-            result = await conn.all(query)
+            result: List[Pathway] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -154,11 +166,15 @@ class PathwayByNameLoader(DataLoader):
                 Pathway/None
         """
 
-        if not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
-        pathway = await context[cls.loader_name].load(id)
+        pathway: Union[Pathway, None] = await context[cls.loader_name].load(id)
 
         if pathway is not None:
             if PathwayByIdLoader.loader_name not in context:
@@ -171,9 +187,7 @@ class PathwayByNameLoader(DataLoader):
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
+        cls, context=None, ids=None
     ) -> Union[List[Pathway], None]:
         """
             Loads many entries from their names
@@ -184,6 +198,12 @@ class PathwayByNameLoader(DataLoader):
             Returns:
                 List[Pathway]/None
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return None
 
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
@@ -202,9 +222,7 @@ class PathwayLoaderByClinicalRequestType(DataLoader):
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id=None
+        cls, context=None, id=None
     ) -> Union[Pathway, None]:
         """
             Loads ClinicalRequestTypes from their associated
@@ -217,7 +235,11 @@ class PathwayLoaderByClinicalRequestType(DataLoader):
             Returns:
                 [Pathway]/None
         """
-        if not id or not context:
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
 
         _gino = context['db']
@@ -231,9 +253,12 @@ class PathwayLoaderByClinicalRequestType(DataLoader):
                         Pathway.id == PathwayClinicalRequestType.pathway_id
                     )
                 )\
-                .where(PathwayClinicalRequestType.clinical_request_type_id == int(id))
+                .where(
+                    PathwayClinicalRequestType.clinical_request_type_id ==
+                    int(id)
+                )
 
-            result = await conn.all(query)
+            result: List[Pathway] = await conn.all(query)
 
             if PathwayByIdLoader.loader_name not in context:
                 context[PathwayByIdLoader.loader_name] = PathwayByIdLoader(
@@ -243,4 +268,3 @@ class PathwayLoaderByClinicalRequestType(DataLoader):
                 context[PathwayByIdLoader.loader_name].prime(pW.id, pW)
 
             return result
-

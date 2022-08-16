@@ -44,18 +44,19 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
 
     @classmethod
     def _get_loader_from_context(
-        cls,
-        context
+        cls, context=None
     ) -> "TestResultByReferenceIdFromIELoader":
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(context=context)
         return context[cls.loader_name]
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id=None
+        cls, context=None, id=None
     ) -> Optional[TestResult_IE]:
         """
             Load a single entry from its reference ID
@@ -67,8 +68,12 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
                 TestResult_IE/None
         """
 
-        if not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         return await cls._get_loader_from_context(context).load(int(id))
 
     @classmethod
@@ -86,8 +91,12 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
             Returns:
                 List[TestResult_IE]/None
         """
-        if not ids:
-            return None
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
+
         return await cls._get_loader_from_context(context).load_many(
             [int(x) for x in ids]
         )

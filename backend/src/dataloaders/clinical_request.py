@@ -3,13 +3,10 @@ from dataclasses import dataclass
 from typing import List, Dict, Optional, Any
 from aiodataloader import DataLoader
 from operator import and_
-
 from sqlalchemy import desc
-
 from SdTypes import ClinicalRequestState
 from models import ClinicalRequest
 from typing import Union
-from abc import abstractmethod
 
 
 class ClinicalRequestByDecisionPointLoader(DataLoader):
@@ -42,11 +39,11 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
             query = ClinicalRequest.query.where(
                 ClinicalRequest.decision_point_id.in_(keys)
             )
-            result = await conn.all(query)
+            result: List[ClinicalRequest] = await conn.all(query)
 
         returnData = {}
-        for patient_clinical_request in result:
-            returnData[patient_clinical_request.decision_point_id] = patient_clinical_request
+        for cR in result:
+            returnData[cR.decision_point_id] = cR
 
         return returnData
 
@@ -58,7 +55,9 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
         return sortedData
 
     @classmethod
-    async def load_from_id(cls, context=None, id=None) -> Optional[ClinicalRequest]:
+    async def load_from_id(
+        cls, context=None, id=None
+    ) -> Optional[ClinicalRequest]:
         """
             Load a single entry from its DecisionPoint ID
 
@@ -68,16 +67,19 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
             Returns:
                 ClinicalRequest/None
         """
-        if not id:
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
-    ) -> Optional[List[ClinicalRequest]]:
+        cls, context=None, ids=None
+    ) -> List[Union[ClinicalRequest, None]]:
         """
             Loads multiple entries from their DecisionPoint IDs
 
@@ -85,19 +87,26 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
                 context (dict): request context
                 id (List[int]): IDs to find
             Returns:
-                List[ClinicalRequest]/None
+                List[ClinicalRequest/None]
         """
-        if not ids:
-            return None
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
+
         return await cls._get_loader_from_context(context).load_many(ids)
 
     @classmethod
     def prime_with_context(
-        cls,
-        context=None,
-        id=None,
-        value=None
+        cls, context=None, id=None, value=None
     ) -> "ClinicalRequestByDecisionPointLoader":
+        if context is None:
+            raise TypeError("context cannot be None type")
+        if id is None:
+            raise TypeError("id cannot be None type")
+
         return cls._get_loader_from_context(context).prime(id, value)
 
 
@@ -109,13 +118,20 @@ class SdDataLoader(DataLoader):
         self._loader_name = loader_name
 
     @classmethod
-    def _get_loader_from_context(cls, loader_name: str, context: dict) -> "SdDataLoader":
+    def _get_loader_from_context(
+        cls, loader_name: str, context: dict
+    ) -> "SdDataLoader":
         if loader_name not in context:
-            context[loader_name] = cls(db=context['db'], loader_name=loader_name)
+            context[loader_name] = cls(
+                db=context['db'], loader_name=loader_name
+            )
         return context[loader_name]
 
     @classmethod
-    async def _load_from_id(cls, loader_name: str = None, context: dict = None, id: Any = None) -> Optional[Any]:
+    async def _load_from_id(
+        cls, loader_name: str = None,
+        context: dict = None, id: Any = None
+    ) -> Optional[Any]:
         """
             Load a single entry from its ID
 
@@ -125,12 +141,22 @@ class SdDataLoader(DataLoader):
             :returns Any
 
         """
-        if not id:
+        if loader_name is None:
+            raise TypeError("loader_name cannot be None type")
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
-        return await cls._get_loader_from_context(loader_name, context).load(id)
+
+        return await cls._get_loader_from_context(
+            loader_name, context).load(id)
 
     @classmethod
-    async def _load_many_from_id(cls, loader_name: str = None, context: dict = None, ids: Any = None) -> List:
+    async def _load_many_from_id(
+        cls, loader_name: str = None,
+        context: dict = None, ids: Any = None
+    ) -> List:
         """
             Loads multiple entries from their IDs
 
@@ -140,9 +166,16 @@ class SdDataLoader(DataLoader):
             :return List of items found
 
         """
-        if not ids:
+        if loader_name is None:
+            raise TypeError("loader_name cannot be None type")
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
             return []
-        return await cls._get_loader_from_context(loader_name, context).load_many(ids)
+
+        return await cls._get_loader_from_context(
+            loader_name, context).load_many(ids)
 
 
 class ClinicalRequestByOnPathwayIdLoader(SdDataLoader):
@@ -150,35 +183,53 @@ class ClinicalRequestByOnPathwayIdLoader(SdDataLoader):
         This is class for loading clinical_requests and
         caching the result in the request context
     """
+    loader_name = "_clinical_request_by_on_pathway_loader"
+
     @dataclass(frozen=True, eq=True)
     class ClinicalRequestByOnPathwayKey:
         id: int
         outstanding: bool
         limit: int
 
-    loader_name = "_clinical_request_by_on_pathway_loader"
+    async def fetch(
+        self, key: ClinicalRequestByOnPathwayKey
+    ) -> Dict[ClinicalRequestByOnPathwayKey, List[ClinicalRequest]]:
 
-    async def fetch(self, key: ClinicalRequestByOnPathwayKey) -> Dict[ClinicalRequestByOnPathwayKey, List[ClinicalRequest]]:
         async with self._db.acquire(reuse=False) as conn:
-            query = ClinicalRequest.query.where(ClinicalRequest.on_pathway_id == key.id)
+            query = ClinicalRequest.query.where(
+                ClinicalRequest.on_pathway_id == key.id)
+
             if key.outstanding:
                 query = query.where(and_(
-                    ClinicalRequest.fwd_decision_point_id.is_(None), ClinicalRequest.current_state == ClinicalRequestState.COMPLETED
+                    ClinicalRequest.fwd_decision_point_id.is_(None),
+                    ClinicalRequest.current_state ==
+                    ClinicalRequestState.COMPLETED
                 ))
             if key.limit != 0:
-                query = query.order_by(desc(ClinicalRequest.updated_at)).limit(key.limit)
+                query = query.order_by(
+                    desc(ClinicalRequest.updated_at)).limit(key.limit)
             return await conn.all(query)
 
-    async def batch_load_fn(self, keys: List[ClinicalRequestByOnPathwayKey]) -> List[List[ClinicalRequest]]:
-        # So this currently queries in a loop, which is very bad. However, this could be batched into two loads - those
-        # outstanding, and those not, and then filtering. In case of a limit flag, those might be the greatest-N per
-        # group problem? So there could be a solution involving grouping and limiting by ID.
+    async def batch_load_fn(
+        self, keys: List[ClinicalRequestByOnPathwayKey]
+    ) -> List[List[ClinicalRequest]]:
+        # So this currently queries in a loop, which is very bad.
+        # However, this could be batched into two loads - those
+        # outstanding, and those not, and then filtering.
+        # In case of a limit flag, those might be the greatest-N per
+        # group problem? So there could be a solution involving grouping
+        # and limiting by ID.
+
         results = await asyncio.gather(*[self.fetch(k) for k in keys])
-        return list(map(lambda r: r if not isinstance(r, Exception) else None, results))
+        return list(map(
+            lambda r: r if not isinstance(r, Exception) else None,
+            results
+        ))
 
     @classmethod
     async def load_from_id(
-            cls, context=None, id: int = None, outstanding: bool = False, limit: int = None
+            cls, context=None, id: int = None,
+            outstanding: bool = False, limit: int = None
     ) -> List[ClinicalRequest]:
         """
             Load a multiple entries from their record ID
@@ -190,15 +241,22 @@ class ClinicalRequestByOnPathwayIdLoader(SdDataLoader):
                 List[ClinicalRequest]
         """
 
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
+            return []
+
         key = cls.ClinicalRequestByOnPathwayKey(
             id=id, outstanding=outstanding, limit=limit
         )
-        return await cls._get_loader_from_context(cls.loader_name, context).load(key)
+        return await cls._get_loader_from_context(
+            cls.loader_name, context).load(key)
 
 
 class ClinicalRequestByIdLoader(SdDataLoader):
     """
-        This is class for loading clinical_requests and
+        This is class for loading ClinicalRequests and
         caching the result in the request context
     """
 
@@ -208,15 +266,17 @@ class ClinicalRequestByIdLoader(SdDataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = ClinicalRequest.query.where(ClinicalRequest.id.in_(keys))
-            result = await conn.all(query)
+            result: List[ClinicalRequest] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
         for row in result:
             returnData[row.id] = row
         return returnData
-    
-    async def batch_load_fn(self, keys: List[int]) -> List[List[ClinicalRequest]]:
+
+    async def batch_load_fn(
+        self, keys: List[int]
+    ) -> List[List[ClinicalRequest]]:
         fetchDict = await self.fetch([int(i) for i in keys])
         sortedData = []
         for key in keys:
@@ -226,16 +286,22 @@ class ClinicalRequestByIdLoader(SdDataLoader):
     @classmethod
     async def load_from_id(
             cls, context=None, id: int = None
-    ) -> List[ClinicalRequest]:
+    ) -> Union[ClinicalRequest, None]:
         """
-            Load a multiple entries from their record ID
+            Load an entry from their record ID
 
             Parameters:
                 context (dict): request context
-                id (List[int]): IDs to find
+                id (int): IDs to find
             Returns:
-                List[ClinicalRequest]
+                ClinicalRequest/None
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
+            return None
 
         return await cls._get_loader_from_context(
             cls.loader_name, context).load(id)

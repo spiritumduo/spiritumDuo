@@ -95,14 +95,25 @@ async def CreateDecisionPoint(
         DecisionPoint object and/or UserErrors object
     """
 
+    if context is None:
+        raise TypeError("context cannot be None type")
+    if on_pathway_id is None:
+        raise TypeError("on_pathway_id cannot be None type")
+    if clinician_id is None:
+        raise TypeError("clinician_id cannot be None type")
+    if decision_type is None:
+        raise TypeError("decision_type cannot be None type")
+    if clinic_history is None:
+        raise TypeError("clinic_history cannot be None type")
+    if comorbidities is None:
+        raise TypeError("comorbidities cannot be None type")
+
     errors = MutationUserErrorHandler()
 
     await trust_adapter.test_connection(
         auth_token=context['request'].cookies['SDSESSION']
     )
 
-    if context is None:
-        raise TypeError("Context provided is None")
     on_pathway_id = int(on_pathway_id)
     clinician_id = int(clinician_id)
 
@@ -115,11 +126,12 @@ async def CreateDecisionPoint(
         context, on_pathway.pathway_id)
 
     async with db.acquire(reuse=False) as conn:
-        user_has_pathway_permission = await conn.one_or_none(
-            UserPathway
-            .query.where(UserPathway.user_id == clinician_id)
-            .where(UserPathway.pathway_id == on_pathway.pathway_id)
-        )
+        user_has_pathway_permission: Union[UserPathway, None] = await conn.\
+            one_or_none(
+                UserPathway
+                .query.where(UserPathway.user_id == clinician_id)
+                .where(UserPathway.pathway_id == on_pathway.pathway_id)
+            )
 
     if user_has_pathway_permission is None:
         raise UserDoesNotHavePathwayPermission(
@@ -130,7 +142,7 @@ async def CreateDecisionPoint(
     if on_pathway.lock_user_id != clinician_id:
         raise UserDoesNotOwnLock()
 
-    if mdt:
+    if mdt is not None:
         mdt_obj: MDT = await MDT.get(int(mdt['id']))
 
         if mdt_obj.pathway_id != on_pathway.pathway_id:
@@ -143,7 +155,7 @@ async def CreateDecisionPoint(
                 .where(MDT.pathway_id == on_pathway.pathway_id)
                 .where(MDT.id == mdt_obj.id))
 
-        if patient_has_on_mdt:
+        if patient_has_on_mdt is not None:
             errors.addError(
                 'mdt',
                 'This patient is already on the MDT specified'
@@ -248,8 +260,7 @@ async def CreateDecisionPoint(
                 highest_order_on_mdt = await OnMdt.query \
                     .where(OnMdt.mdt_id == mdt_obj.id) \
                     .order_by(desc(OnMdt.order)) \
-                    .gino \
-                    .first()
+                    .gino.first()
 
                 if highest_order_on_mdt is not None:
                     new_order = highest_order_on_mdt.order + 1

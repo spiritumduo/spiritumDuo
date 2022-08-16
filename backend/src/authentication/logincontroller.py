@@ -1,5 +1,5 @@
 from base64 import b64encode
-from typing import Union
+from typing import List, Union
 from gino.loader import ModelLoader
 from gino import Gino
 from starlette.responses import JSONResponse
@@ -80,8 +80,8 @@ class LoginController:
         sdUser = SDUser(
             id=user.id,
             username=user.username,
-            firstName=user.first_name,
-            lastName=user.last_name,
+            first_name=user.first_name,
+            last_name=user.last_name,
             department=user.department,
             default_pathway_id=user.default_pathway_id,
         )
@@ -92,20 +92,20 @@ class LoginController:
                 .select()\
                 .where(User.id == user.id)\
                 .execution_options(loader=ModelLoader(Role))
-            roles = await conn.all(role_query)
+            roles: List[Role] = await conn.all(role_query)
 
             pathway_query = Pathway.outerjoin(UserPathway)\
                 .outerjoin(User)\
                 .select()\
                 .where(User.id == user.id)\
                 .execution_options(loader=ModelLoader(Pathway))
-            pathways = await conn.all(pathway_query)
+            pathways: List[Pathway] = await conn.all(pathway_query)
 
             default_pathway: Union[Pathway, None] = await conn.one_or_none(
                 Pathway.query.where(Pathway.id == sdUser.default_pathway_id)
             )
             default_pathway_dict = None
-            if default_pathway:
+            if default_pathway is not None:
                 default_pathway_dict = {
                     "id": default_pathway.id,
                     "name": default_pathway.name
@@ -129,10 +129,10 @@ class LoginController:
         async with self._context['db'].acquire(reuse=False) as conn:
             while sessionKey is None:
                 tempKey = getrandbits(64)
-                result = await conn.one_or_none(
+                result: Union[Session, None] = await conn.one_or_none(
                     Session.query.where(Session.session_key == str(tempKey))
                 )
-                if not result:
+                if result is not None:
                     sessionKey = tempKey
 
         sessionExpiry = datetime.now()+timedelta(
@@ -149,8 +149,8 @@ class LoginController:
             "user": {
                 "id": sdUser.id,
                 "username": sdUser.username.lower(),
-                "firstName": sdUser.firstName,
-                "lastName": sdUser.lastName,
+                "firstName": sdUser.first_name,
+                "lastName": sdUser.last_name,
                 "department": sdUser.department,
                 "defaultPathway": default_pathway_dict,
                 "token": str(sessionKey),

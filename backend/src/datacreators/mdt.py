@@ -26,12 +26,14 @@ async def CreateMDT(
     Returns:
         MDTPayload: contains new MDT object and/or UserErrors
     """
-    if not context:
-        raise TypeError("Context cannot be None type.")
-    if not plannedAt:
-        raise TypeError("plannedAt cannot be None type.")
-    if not pathwayId:
-        raise TypeError("pathwayId cannot be None type.")
+    if context is None:
+        raise TypeError("context cannot be None type")
+    if plannedAt is None:
+        raise TypeError("plannedAt cannot be None type")
+    if pathwayId is None:
+        raise TypeError("pathwayId cannot be None type")
+    if location is None:
+        raise TypeError("pathwayId cannot be None type")
 
     try:
         mdt: MDT = await MDT.create(

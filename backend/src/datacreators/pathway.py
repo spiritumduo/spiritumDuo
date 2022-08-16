@@ -27,7 +27,7 @@ async def CreatePathway(
         raise TypeError("Context cannot be None type.")
     if name is None:
         raise TypeError("Name cannot be None type.")
-    
+
     errors = MutationUserErrorHandler()
 
     try:
