@@ -55,8 +55,8 @@ class SDUser(BaseUser):
     ) -> None:
         self.id = id
         self.username = username
-        self.firstName = first_name
-        self.lastName = last_name
+        self.first_name = first_name
+        self.last_name = last_name
         self.department = department
         self.default_pathway_id = default_pathway_id
         self.email = email

@@ -132,7 +132,7 @@ class LoginController:
                 result: Union[Session, None] = await conn.one_or_none(
                     Session.query.where(Session.session_key == str(tempKey))
                 )
-                if result is not None:
+                if result is None:
                     sessionKey = tempKey
 
         sessionExpiry = datetime.now()+timedelta(

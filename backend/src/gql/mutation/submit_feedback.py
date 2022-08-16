@@ -17,7 +17,6 @@ async def resolve_submit_feedback(
     obj=None, info: GraphQLResolveInfo = None, input: dict = None,
     email_service: EmailAdapter = Provide[SDContainer.email_service]
 ) -> bool:
-    
     feedback_image = EmailAttachment(
         name="feedback_image.png",
         data=base64.b64decode(
@@ -30,13 +29,13 @@ async def resolve_submit_feedback(
         is_inline=False,
     )
 
-    message_body=(
+    message_body = (
         f"""
         <html>
             <body>
                 <b>User information</b><br />
-                <b>Username:</b> {info.context['request']['user'].username}<br />
-                <b>Name:</b> {info.context['request']['user'].firstName}&nbsp{info.context['request']['user'].lastName}<br />
+                <b>Username:</b>{info.context['request']['user'].username}<br />
+                <b>Name:</b> {info.context['request']['user'].first_name}&nbsp{info.context['request']['user'].last_name}<br />
                 <b>Email address:</b> {info.context['request']['user'].email}<br />
                 <b>Department:</b> {info.context['request']['user'].department}<br />
                 <hr />
