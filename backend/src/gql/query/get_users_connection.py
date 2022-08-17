@@ -10,7 +10,8 @@ from .query_type import query
 @query.field("getUserConnection")
 @needsAuthorization([Permissions.USER_READ])
 async def get_patient_connection(
-        obj=None, info: GraphQLResolveInfo = None, first=None, after=None, last=None, before=None
+        obj=None, info: GraphQLResolveInfo = None,
+        first=None, after=None, last=None, before=None
 ):
     validate_parameters(first, after, last, before)
     users = await User.query.gino.all()

@@ -23,7 +23,9 @@ async def get_patient_connection(
         .where(OnPathway.pathway_id == int(pathwayId))\
 
     if includeDischarged is False:
-        db_query = db_query.where(OnPathway.is_discharged == False)
+        db_query = db_query.where(
+            OnPathway.is_discharged == False
+        )
 
     if outstanding:
         db_query = db_query.select_from(
@@ -42,7 +44,8 @@ async def get_patient_connection(
                 or_(
                     and_(
                         ClinicalRequest.fwd_decision_point_id.is_(None),
-                        ClinicalRequest.current_state == ClinicalRequestState.COMPLETED
+                        ClinicalRequest.current_state ==
+                        ClinicalRequestState.COMPLETED
                     ),
                     DecisionPoint.id.is_(None)
                 )

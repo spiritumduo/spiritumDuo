@@ -8,6 +8,7 @@ from models import MDT
 from .query_type import query
 from models.db import db
 
+
 @query.field("getMdtConnection")
 @needsAuthorization([Permissions.MDT_READ])
 async def get_mdt_connection(
