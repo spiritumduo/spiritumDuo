@@ -132,18 +132,20 @@ const NewPatientPage = (): JSX.Element => {
                   </div>
 
                   <div className="float-start">
-                    { error }
-                    {
-                      loading
-                        ? 'Loading'
-                        : ''
-                    }
-                    { errorElements }
-                    {
-                      data
-                        ? 'Success!'
-                        : ''
-                    }
+                    <>
+                      { error }
+                      {
+                        loading
+                          ? 'Loading'
+                          : ''
+                      }
+                      { errorElements }
+                      {
+                        data
+                          ? 'Success!'
+                          : ''
+                      }
+                    </>
                   </div>
                   <button type="submit" name="loginBtn" className="btn btn-outline-secondary w-25 float-end ms-1">Register patient</button>
                   <Link to="/home" className="btn btn-outline-secondary w-25 float-end">Cancel</Link>
