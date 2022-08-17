@@ -73,7 +73,7 @@ const ContextMenu = ({ takeScreenshotFn }: ContextMenuProps): JSX.Element => {
   }
 
   const handleContextMenu = useCallback(
-    (event) => {
+    (event: MouseEvent) => {
       // I've had to put this check in because RTL/JestDOM doesn't have layouts to
       // support this function
       const overElement: Element | null = document.elementFromPoint
