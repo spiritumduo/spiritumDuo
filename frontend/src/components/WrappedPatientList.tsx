@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 
 // LIBRARIES
 import { gql, useQuery, useSubscription } from '@apollo/client';
@@ -10,12 +10,11 @@ import edgesToNodes from 'app/pagination';
 
 // COMPONENTS
 import PatientList, { PatientListProps } from 'components/PatientList';
-import { useAppDispatch } from 'app/hooks';
-import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
 
 // GENERATED TYPES
 import { onPathwayUpdated } from 'components/__generated__/onPathwayUpdated';
 import { getPatientOnPathwayConnection } from 'components/__generated__/getPatientOnPathwayConnection';
+import { useNavigate } from 'react-router';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -130,6 +129,8 @@ const WrappedPatientList = ({
     !!underCareOf, !!includeDischarged,
   );
 
+  const navigate = useNavigate();
+
   const {
     data: subscrData,
   } = useSubscription<onPathwayUpdated>(ON_PATHWAY_UPDATED_SUBSCRIPTION, {
@@ -142,7 +143,6 @@ const WrappedPatientList = ({
   const [currentPage, setCurrentPage] = useState(0);
   const { user: contextUser } = useContext(AuthContext);
   const user = contextUser as User;
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     refetch();
@@ -193,9 +193,10 @@ const WrappedPatientList = ({
     listElements = [];
   }
 
-  const onClickCallback = (hospitalNumber: string) => {
-    dispatch(setModalPatientHospitalNumber(hospitalNumber));
-  };
+  const onClickCallback = useCallback(
+    (hospitalNumber: string) => navigate(`/patient/${hospitalNumber}`),
+    [navigate],
+  );
 
   return (
     <>

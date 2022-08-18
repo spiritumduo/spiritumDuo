@@ -23,7 +23,7 @@ const LoggedInRoutes = () => (
         <Route
           path="/patient/:hospitalNumber"
           element={ (
-            <HomePage patientsPerPage={ 20 } modalPatient />
+            <HomePage patientsPerPage={ 20 } />
           ) }
         />
         <Route

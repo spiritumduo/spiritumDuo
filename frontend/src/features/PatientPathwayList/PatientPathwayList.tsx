@@ -1,13 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import edgesToNodes from 'app/pagination';
 
 import PathwayVisualisation, { PATIENT_PARTS_FOR_GRP, patientToVisData, PatientVisData } from 'components/PathwayVisualisation';
 import { ParentSize } from '@visx/responsive';
 import ReactPaginate from 'react-paginate';
+import { useNavigate } from 'react-router';
 
-import { useAppDispatch } from 'app/hooks';
-import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
 import { getPatientOnPathwayConnectionForGrp } from './__generated__/getPatientOnPathwayConnectionForGrp';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
@@ -61,7 +60,7 @@ const PatientPathwayList = ({
     } },
   );
 
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   type PatientNode = getPatientOnPathwayConnectionForGrp['getPatientOnPathwayConnection']['edges'][0]['node'];
   const { nodes, pageCount, pageInfo } = edgesToNodes<PatientNode>(
@@ -69,9 +68,11 @@ const PatientPathwayList = ({
   );
 
   const patientData = useMemo(() => nodes?.map((n) => patientToVisData(n)), [nodes]);
-  const rowClicked = (patient: PatientVisData): void => {
-    dispatch(setModalPatientHospitalNumber(patient.hospitalNumber));
-  };
+  const rowClicked = useCallback(
+    (patient: PatientVisData): void => navigate(`/patient/${patient.hospitalNumber}`),
+    [navigate],
+  );
+
   if (patientData) {
     return (
       <div>

@@ -5,6 +5,7 @@ import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { DocumentNode } from 'graphql';
 import { RequestHandler } from 'mock-apollo-client';
 import { ClinicalRequestState } from '__generated__/globalTypes';
+import { BrowserRouter } from 'react-router-dom';
 
 import {
   getPatientOnPathwayConnectionForGrp,
@@ -174,9 +175,11 @@ export default {
   component: PatientPathwayList,
   decorators: [(Story) => (
     <NewMockSdApolloProvider mocks={ apolloMock }>
-      <div style={ { width: '90vw', height: '100vh', minWidth: '300px' } }>
-        <Story />
-      </div>
+      <BrowserRouter>
+        <div style={ { width: '90vw', height: '100vh', minWidth: '300px' } }>
+          <Story />
+        </div>
+      </BrowserRouter>
     </NewMockSdApolloProvider>
   )],
 } as ComponentMeta<typeof PatientPathwayList>;

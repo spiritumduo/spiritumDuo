@@ -1,11 +1,11 @@
 import React, { useContext, useMemo, useState, useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from 'app/hooks';
+import { useAppSelector } from 'app/hooks';
 import { RootState } from 'app/store';
 import WrappedPatientList from 'components/WrappedPatientList';
 import PatientList, { PatientListProps, PatientListUpdateDataFn } from 'components/PatientList';
 import { gql, useQuery } from '@apollo/client';
 import { AuthContext, PathwayContext } from 'app/context';
-import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
+import { useNavigate } from 'react-router';
 
 import { patientSearch } from './__generated__/patientSearch';
 
@@ -53,7 +53,7 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
   const { currentPathwayId } = useContext(PathwayContext);
   const { user } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(0);
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const { data, loading, error } = useQuery<patientSearch>(PATIENT_SEARCH_QUERY, { variables: {
     query: query,
@@ -61,8 +61,8 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
   } });
 
   const onClickCallback = useCallback((hospitalNumber: string) => {
-    dispatch(setModalPatientHospitalNumber(hospitalNumber));
-  }, [dispatch]);
+    navigate(`/patients/${hospitalNumber}`);
+  }, [navigate]);
 
   const updateDataCallback: PatientListUpdateDataFn = useCallback(
     ({ selected }) => {

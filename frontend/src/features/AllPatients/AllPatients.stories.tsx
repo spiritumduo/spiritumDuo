@@ -11,6 +11,7 @@ import { GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY } from 'components/WrappedPatie
 import Patient from 'types/Patient';
 import { MockPathwayProvider } from 'test/mocks/mockContext';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
+import { BrowserRouter } from 'react-router-dom';
 import AllPatients, { PATIENT_SEARCH_QUERY } from './AllPatients';
 
 // Dummy data for display
@@ -84,6 +85,13 @@ const edges = patientArray.map((p) => ({
 export default {
   title: 'Features/AllPatients',
   component: AllPatients,
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
 } as ComponentMeta<typeof AllPatients>;
 
 const Template: ComponentStory<typeof AllPatients> = (args) => <AllPatients { ...args } />;

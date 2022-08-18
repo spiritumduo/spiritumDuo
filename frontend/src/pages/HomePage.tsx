@@ -7,8 +7,6 @@ import { useParams, useNavigate } from 'react-router';
 
 // APP
 import { PathwayContext } from 'app/context';
-import { useAppDispatch, useAppSelector } from 'app/hooks';
-import { RootState } from 'app/store';
 
 // COMPONENTS
 import WrappedPatientList from 'components/WrappedPatientList';
@@ -18,7 +16,6 @@ import PatientPathwayList from 'features/PatientPathwayList/PatientPathwayList';
 
 // LOCAL IMPORT
 import './homepage.css';
-import { setModalPatientHospitalNumber } from './HomePage.slice';
 
 type PatientListTabProps = React.PropsWithChildren<{
   pathwayId: string;
@@ -77,24 +74,17 @@ const PatientListTab = (
 
 export interface HomePageProps {
   patientsPerPage: number;
-  modalPatient?: boolean;
   allPatients?: boolean;
 }
 
-const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps): JSX.Element => {
+const HomePage = ({ patientsPerPage, allPatients }: HomePageProps): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
   const pathwayId = currentPathwayId as string;
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { hospitalNumber } = useParams();
-  const modalPatientNumber = useAppSelector(
-    (state: RootState) => state.homePage.modalPatientHospitalNumber,
-  );
-
-  if (modalPatient) dispatch(setModalPatientHospitalNumber(hospitalNumber));
+  const modalPatientNumber = hospitalNumber;
 
   const modalCloseCallback = () => {
-    dispatch(setModalPatientHospitalNumber(undefined));
     navigate('/');
   };
 
