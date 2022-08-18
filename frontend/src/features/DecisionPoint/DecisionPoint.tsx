@@ -23,7 +23,8 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
 // GENERATED TYPES
 import { createDecisionPointVariables, createDecisionPoint } from 'features/DecisionPoint/__generated__/createDecisionPoint';
-import { GetPatient } from 'features/DecisionPoint/__generated__/GetPatient';
+import { GetPatient, GetPatientVariables } from 'features/DecisionPoint/__generated__/GetPatient';
+import { getMdts, getMdtsVariables } from './__generated__/getMdts';
 import { DecisionType, ClinicalRequestRequestInput, ClinicalRequestState } from '../../__generated__/globalTypes';
 
 // LOCAL COMPONENTS
@@ -31,7 +32,6 @@ import ConfirmNoClinicalRequests from './components/ConfirmNoClinicalRequests';
 import PreviousTestResultsElement from './components/PreviousTestResultsElement';
 
 import './decisionpoint.css';
-import { getMdts } from './__generated__/getMdts';
 
 export interface DecisionPointPageProps {
   hospitalNumber: string;
@@ -182,7 +182,7 @@ const DecisionPointPage = (
   const user = contextUser as User; // context can be undefined
   const [showServerConfirmation, setShowServerConfirmation] = useState<boolean>(false);
   // GET PATIENT DATA QUERY
-  const { loading, data, error } = useQuery<GetPatient>(
+  const { loading, data, error } = useQuery<GetPatient, GetPatientVariables>(
     GET_PATIENT_QUERY, {
       variables: {
         hospitalNumber: hospitalNumber,
@@ -193,10 +193,12 @@ const DecisionPointPage = (
   );
 
   // GET MDTS QUERY
-  const { loading: mdtLoading, data: mdtData, error: mdtError } = useQuery<getMdts>(
+  const {
+    loading: mdtLoading, data: mdtData, error: mdtError,
+  } = useQuery<getMdts, getMdtsVariables>(
     GET_MDTS, {
       variables: {
-        pathwayId: currentPathwayId,
+        pathwayId: currentPathwayId || '',
       },
     },
   );
