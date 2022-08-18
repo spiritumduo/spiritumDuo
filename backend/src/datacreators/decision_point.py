@@ -25,7 +25,6 @@ from dependency_injector.wiring import Provide, inject
 from common import (
     DecisionPointPayload,
     MutationUserErrorHandler,
-    ReferencedItemDoesNotExistError,
     UserDoesNotHavePathwayPermission
 )
 
@@ -191,9 +190,10 @@ async def CreateDecisionPoint(
             )
 
         if mdt_clinical_request is None:
-            raise ReferencedItemDoesNotExistError(
-                f"ClinicalRequest does not exist; MDT: {from_mdt_id}; "
-                "Patient: {on_pathway.patient_id}"
+            raise TypeError(
+                "ClinicalRequest cannot be None type (not found); "
+                f"MDT: {from_mdt_id}; "
+                f"Patient: {on_pathway.patient_id}"
             )
 
         if mdt_clinical_request.fwd_decision_point_id is None:

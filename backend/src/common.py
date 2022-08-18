@@ -3,14 +3,6 @@ from typing import List, Optional, Union
 from models import DecisionPoint, MDT, Pathway, Patient, Role, OnMdt, OnPathway
 
 
-# TODO: remove this
-class ReferencedItemDoesNotExistError(Exception):
-    """
-    This occurs when a referenced item does not
-    exist and cannot be found when it should
-    """
-
-
 class PatientNotInIntegrationEngineError(Exception):
     """
     This is raised when a patient cannot be found
@@ -60,12 +52,19 @@ class SafeUser:
 
 @dataclass
 class MutationUserError:
+    """
+    Class to represent a single UserError
+    """
     field: str
     message: str
 
 
 @dataclass
 class BaseMutationPayload:
+    """
+    Base class for mutation payloads
+    :param: user_errors (List[MutationUserError])
+    """
     user_errors: Optional[List[MutationUserError]] = None
 
 
