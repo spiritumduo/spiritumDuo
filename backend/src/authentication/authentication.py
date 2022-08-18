@@ -34,14 +34,6 @@ class AuthenticationError(HTTPException):
             detail=detail, status_code=401)
 
 
-class SessionAlreadyExists(Exception):
-    """
-    Raised when a user attempts to login
-    despite already having an active
-    session
-    """
-
-
 class SDUser(BaseUser):
     def __init__(
         self,

@@ -22,7 +22,6 @@ async def resolve_update_on_mdt_list(
                     context=info.context,
                     id=i['id'],
                     reason=i['reason'] if 'reason' in i else None,
-                    actioned=i['actioned'] if 'actioned' in i else None,
                     outcome=i['outcome'] if 'outcome' in i else None,
                     order=i['order'] if 'order' in i else None,
                     conn=conn,
