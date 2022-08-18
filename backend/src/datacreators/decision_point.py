@@ -70,28 +70,32 @@ async def CreateDecisionPoint(
     """
     Creates a decision point object in local and external databases
 
-    Keyword arguments:
-        context (dict): the current request context
-        on_pathway_id (int): the ID of the `OnPathway` instance the newly
-            created DecisionPoint is to be linked to
-        clinician_id (int): the ID of the `User` object the newly created
-            DecisionPoint is to be linked to
-        decision_type (DecisionTypes): the type of the decision point
-        clinic_history (str): the clinical history to be linked to the
-            decision point
-        comorbidities (str): the comorbidities to be linked to the decision
-            point
-        clinical_request_resolutions (List[int]): a list of previous
-            clinical_requests this decision point will acknowledge
-        clinical_request_requests (List[Dict[str, int]]): a list of
-            clinical_requests this decision point will request
-        mdt (Dict[str, str]): a list of data pertaining to the MDT the
-            pt should be added to
-        from_mdt_id (int): the ID of the MDT this decision point is
-            created from
-    Returns:
-        DecisionPointPayload: payload containing the
-        DecisionPoint object and/or UserErrors object
+    :param context: the current request context
+    :param on_pathway_id: the ID of the `OnPathway` instance the newly created
+        DecisionPoint is to be linked to
+    :param clinician_id: the ID of the `User` object the newly created
+        DecisionPoint is to be linked to
+    :param decision_type: the type of the decision point
+    :param clinic_history: the clinical history to be linked to the decision
+        point
+    :param comorbidities: the comorbidities to be linked to the decision point
+    :param clinical_request_resolutions: a list of previous clinical_requests
+        this decision point will acknowledge
+    :param clinical_request_requests: a list of clinical_requests this
+        decision point will request
+    :param mdt a list of data pertaining to the MDT the pt should be added to
+    :param from_mdt_id: the ID of the MDT this decision point is created from
+
+    :return: DecisionPointPayload object
+
+    :raise TypeError: invalid arguments
+    :raise UserDoesNotHavePathwayPermission: user does not have pathway
+        permission
+    :raise UserDoesNotOwnLock: user does not own lock on DecisionPoint object
+    :raise DecisionPointMdtMismatchException: MDT and DecisionPoint not on
+        same Pathway
+    :raise ClinicalRequestTypeIdNotOnPathway: ClinicalRequestType and
+        DecisionPoint not on same Pathway
     """
 
     if context is None:

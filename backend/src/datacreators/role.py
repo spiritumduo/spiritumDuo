@@ -4,13 +4,15 @@ from models import Role
 async def create_role(name: str):
     """
     Creates a role in the local database.
-    This is designed for the RESTful API.
 
-    Keyword arguments:
-        name (str): name of role to be created
+    :param name: name of role to be created
 
-    Returns:
-        Role: new Role object
+    :return: Role
 
+    :raise TypeError: argument invalid type
     """
+
+    if name is None:
+        raise TypeError("Argument name cannot be None type")
+
     return await Role.create(name=name)

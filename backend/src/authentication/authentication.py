@@ -27,7 +27,7 @@ class PermissionsError(HTTPException):
 
 class AuthenticationError(HTTPException):
     """
-    Raised when a user is lacking a valid login
+    Raised when a user is not authenticated (not logged in)
     """
     def __init__(self, detail: str):
         super(AuthenticationError, self).__init__(
@@ -68,6 +68,13 @@ class SDAuthentication(AuthenticationBackend):
     """
 
     async def authenticate(self, request: HTTPConnection):
+        """
+        Authenticate a user
+
+        :param request: any web request
+
+        :return: AuthCredentials, SdUser
+        """
         if "Authorization" not in request.headers:
             if request['session']:
                 async with db.acquire(reuse=False) as conn:

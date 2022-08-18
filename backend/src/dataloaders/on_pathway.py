@@ -46,11 +46,12 @@ class OnPathwayByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                OnPathway/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: OnPathway/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -70,11 +71,12 @@ class OnPathwayByIdLoader(DataLoader):
         """
             Loads many entries from their record ID
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): IDs to find
-            Returns:
-                List[OnPathway]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[OnPathway]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -104,16 +106,16 @@ class OnPathwaysByPatient:
         """
             Loads OnPathway records by their Patient ID
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): ID to find
-                pathwayId (int): filter by OnPathway ID
-                includeDischarged (bool): filter to include discharged patients
-                awaitingDecisionType (DecisionTypes): filter by
-                    awaiting_decision_types
-                limit (int): number of records to return
-            Returns:
-                List[OnPathway]/None
+            :param context: request context
+            :param ids: ID to find
+            :param pathwayId: filter by OnPathway ID
+            :param includeDischarged: filter to include discharged patients
+            :param awaitingDecisionType: filter by awaiting_decision_types
+            :param limit: number of records to return
+
+            :return: List[OnPathway]
+
+            :raise TypeError:
         """
 
         if context is None:

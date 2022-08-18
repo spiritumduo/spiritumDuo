@@ -14,27 +14,41 @@ async def CreateUser(
 ):
     """
     Creates a user object.
-    This is designed for the RESTful API.
 
-    Keyword arguments:
-        username (str): User's username
-        password (str): User's plaintext password
-        email (str): User's email address
-        first_name (str): User's first name
-        last_name (str): User's last name
-        department (str): User's department
-        is_active (bool): active status of user
-    Returns:
-        SafeUser: contains data from new User
-            object without password
+    :param username: User's username
+    :param password: User's plaintext password
+    :param email: User's email address
+    :param first_name: User's first name
+    :param last_name: User's last name
+    :param department: User's department
+    :param is_active: active status of user
+
+    :return: SafeUser
+
+    :raise TypeError: invalid parameter type
     """
 
-    hashedPassword = hashpw(password.encode('utf-8'), gensalt())
-    hashedPassword = hashedPassword.decode('utf-8')
+    if username is None:
+        raise TypeError("parameters username cannot be None type")
+    if password is None:
+        raise TypeError("parameters password cannot be None type")
+    if email is None:
+        raise TypeError("parameters email cannot be None type")
+    if first_name is None:
+        raise TypeError("parameters first_name cannot be None type")
+    if last_name is None:
+        raise TypeError("parameters last_name cannot be None type")
+    if department is None:
+        raise TypeError("parameters department cannot be None type")
+    if is_active is None:
+        raise TypeError("parameters is_active cannot be None type")
+
+    hashed_password = hashpw(password.encode('utf-8'), gensalt())
+    hashed_password = hashed_password.decode('utf-8')
 
     user: User = await User.create(
         username=username.lower(),
-        password=hashedPassword,
+        password=hashed_password,
         email=email,
         first_name=first_name,
         last_name=last_name,

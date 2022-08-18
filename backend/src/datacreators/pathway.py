@@ -13,20 +13,23 @@ async def CreatePathway(
     clinical_request_types: List[Dict[str, int]] = None,
 ):
     """
-    Creates a decision point object in the local database
+    Creates a pathway object in the local database
 
-    Keyword arguments:
-        context (dict): the current request context
-        name (string): the name of the pathway
-        clinicalRequestTypes (list[dict<str, int>]): list of clinical_request
-            type IDs
-    Returns:
-        PathwayPayload: contains Pathway object and/or UserErrors object
+    :param context: the current request context
+    :param name: the name of the pathway
+    :param clinical_request_types: list of clinical request type IDs
+
+    :return: PathwayPayload object
+
+    :raise TypeError: invalid parameters
     """
+
     if context is None:
-        raise TypeError("Context cannot be None type.")
+        raise TypeError("Context cannot be None type")
     if name is None:
-        raise TypeError("Name cannot be None type.")
+        raise TypeError("Name cannot be None type")
+    if clinical_request_types is None:
+        raise TypeError("clinical_request_types cannot be None type")
 
     errors = MutationUserErrorHandler()
 

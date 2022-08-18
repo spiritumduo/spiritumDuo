@@ -1,6 +1,5 @@
 import logging
 from typing import Optional, List, Any, Union
-from exchangelib import Message
 
 from trustadapter import TrustAdapter
 from sdpubsub import SdPubSub
@@ -8,7 +7,7 @@ from trustadapter.trustadapter import (
     Patient_IE, TestResult_IE, TestResultRequest_IE
 )
 from email_adapter import EmailAdapter
-from exchangelib import FileAttachment, Message, HTMLBody
+from exchangelib import FileAttachment, HTMLBody
 
 
 class BaseService:

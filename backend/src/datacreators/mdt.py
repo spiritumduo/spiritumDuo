@@ -12,20 +12,21 @@ async def CreateMDT(
     plannedAt: date = None,
     pathwayId: int = None,
     location: str = None,
-    errors: MutationUserErrorHandler = None
 ):
-    errors = MutationUserErrorHandler()
     """
     Creates an MDT object in the local database
 
-    Keyword arguments:
-        context (dict): the current request context
-        plannedAt (date): date of MDT
-        pathwayId (int): ID of pathway the MDT is on
-        location (str): Display value of location of event
-    Returns:
-        MDTPayload: contains new MDT object and/or UserErrors
+    :param context: the current request context
+    :param plannedAt: date of MDT
+    :param pathwayId: ID of pathway the MDT is on
+    :param location: Display value of location of event
+
+    :return: MdtPayload object
+
+    :raise TypeError: invalid arguments
     """
+    errors = MutationUserErrorHandler()
+
     if context is None:
         raise TypeError("context cannot be None type")
     if plannedAt is None:

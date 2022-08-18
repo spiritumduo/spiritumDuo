@@ -43,11 +43,11 @@ class UserByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                User/None
+            :param context: request context
+            :param id: ID to find
+            :return: User/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -81,11 +81,12 @@ class UserByIdLoader(DataLoader):
         """
             Loads many entires from their record ID
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): ID to find
-            Returns:
-                List[User]/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: List[User]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -152,11 +153,12 @@ class UserByUsernameLoader(DataLoader):
         """
             Load a single entry from its username
 
-            Parameters:
-                context (dict): request context
-                id (str): username to find
-            Returns:
-                User/None
+            :param context: request context
+            :param id: username to find
+
+            :return: User/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -185,11 +187,12 @@ class UserByUsernameLoader(DataLoader):
         """
             Loads many entries from their usernames
 
-            Parameters:
-                context (dict): request context
-                ids (List[str]): username to find
-            Returns:
-                List[User]/None
+            :param context: request context
+            :param ids: username to find
+
+            :return: List[User]
+
+            :raise TypeError:
         """
 
         if context is None:

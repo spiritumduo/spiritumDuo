@@ -17,10 +17,23 @@ async def UpdateOnMDT(
     id: int = None,
     reason: str = None,
     outcome: str = None,
-    actioned: bool = None,
     order: int = None,
     conn: GinoConnection = None,
 ):
+    """
+    Updates a given OnMDT object
+    
+    :param context: request context
+    :param id: id of OnMDT object
+    :param reason: reason pt added to MDT
+    :param outcome: outcome of MDT
+    :param order: order of MDT on list
+    :param conn: database connection/Gino object
+
+    :return OnMdtPayload:
+
+    :raise TypeError:
+    """
     errors = MutationUserErrorHandler()
 
     if id is None:
@@ -48,7 +61,7 @@ async def UpdateOnMDT(
         raise PermissionError()
 
     if on_mdt.lock_user_id != context["request"].user.id\
-            and (reason is not None or outcome is not None or actioned is not None):
+            and (reason is not None or outcome is not None):
         errors.addError(
             'lock_user_id',
             'This is locked by another user'
@@ -60,8 +73,6 @@ async def UpdateOnMDT(
         update_values['reason'] = reason
     if outcome is not None:
         update_values['outcome'] = outcome
-    if actioned is not None:
-        update_values['actioned'] = actioned
     if order is not None:
         update_values['order'] = order
 

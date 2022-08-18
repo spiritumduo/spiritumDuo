@@ -11,7 +11,7 @@ from typing import Union
 
 class ClinicalRequestByDecisionPointLoader(DataLoader):
     """
-        This is class for loading clinical_requests using IDs from
+        This is class for loading ClinicalRequest objects using IDs from
         DecisionPoint and caching the result in the request context
 
         Attributes:
@@ -59,13 +59,14 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
         cls, context=None, id=None
     ) -> Optional[ClinicalRequest]:
         """
-            Load a single entry from its DecisionPoint ID
+            Load clinical requests from a single DecisionPoint ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                ClinicalRequest/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: ClinicalRequest/None
+
+            :raise TypeError: invalid argument type
         """
 
         if context is None:
@@ -81,13 +82,14 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
         cls, context=None, ids=None
     ) -> List[Union[ClinicalRequest, None]]:
         """
-            Loads multiple entries from their DecisionPoint IDs
+            Loads clinical requests from multiple DecisionPoint IDs
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs to find
-            Returns:
-                List[ClinicalRequest/None]
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[ClinicalRequest/None]
+
+            :raise TypeError: invalid argument type
         """
 
         if context is None:
@@ -102,10 +104,22 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
     def prime_with_context(
         cls, context=None, id=None, value=None
     ) -> "ClinicalRequestByDecisionPointLoader":
+        """
+            Adds a key value pair into the dataloader's cache
+
+            :param context: request context
+            :param id: ID of object
+            :param value: value to update value of kvp
+            
+            :raise TypeError: invalid argument type
+        """
+
         if context is None:
             raise TypeError("context cannot be None type")
         if id is None:
             raise TypeError("id cannot be None type")
+        if value is None:
+            raise TypeError("value cannot be None type")
 
         return cls._get_loader_from_context(context).prime(id, value)
 
@@ -140,6 +154,7 @@ class SdDataLoader(DataLoader):
             :param loader_name: name of loader
             :returns Any
 
+            :raise TypeError: invalid argument type
         """
         if loader_name is None:
             raise TypeError("loader_name cannot be None type")
@@ -163,8 +178,10 @@ class SdDataLoader(DataLoader):
             :param loader_name: Name of loader
             :param context: request context
             :param ids: IDs to find
-            :return List of items found
 
+            :return: List of items found
+
+            :raise TypeError: invalid argument type
         """
         if loader_name is None:
             raise TypeError("loader_name cannot be None type")
@@ -234,11 +251,12 @@ class ClinicalRequestByOnPathwayIdLoader(SdDataLoader):
         """
             Load a multiple entries from their record ID
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs to find
-            Returns:
-                List[ClinicalRequest]
+            :param context:: request context
+            :param id: IDs to find
+
+            :return: List[ClinicalRequest]
+
+            :raise TypeError: invalid argument type
         """
 
         if context is None:
@@ -290,11 +308,12 @@ class ClinicalRequestByIdLoader(SdDataLoader):
         """
             Load an entry from their record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): IDs to find
-            Returns:
-                ClinicalRequest/None
+            :param context: request context
+            :param id: IDs to find
+
+            :return: ClinicalRequest/None
+
+            :raise TypeError: invalid argument type
         """
 
         if context is None:

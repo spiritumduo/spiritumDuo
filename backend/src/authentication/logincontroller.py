@@ -42,11 +42,9 @@ class LoginController:
         This collects user information from the request and
         attempts to authenticate the user
 
-        Parameters:
-            request (Request): request information
+        :param request: request information
 
-        Returns:
-            JSONResponse
+        :return: JSONResponse
         """
         if request['session']:
             request.scope['session'] = None
@@ -183,11 +181,9 @@ class LoginController:
         attempts to logout the user, destroying the session
         key
 
-        Parameters:
-            request (Request): request information
+        :param request: request information
 
-        Returns:
-            JSONResponse
+        :return: JSONResponse
         """
 
         if request['session']:

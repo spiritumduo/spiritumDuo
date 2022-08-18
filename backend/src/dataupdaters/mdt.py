@@ -11,9 +11,21 @@ async def UpdateMDT(
     plannedAt: date = None,
     location: str = None,
     users: List[str] = None,
-    userErrors: MutationUserErrorHandler = None
 ):
-    userErrors = MutationUserErrorHandler()
+    """
+    Updates a given MDT object
+
+    :param context: request context 
+    :param id: id of MDT object
+    :param plannedAt: datetime of MDT
+    :param location: location of MDT
+    :param users: user accounts of clinicians present
+
+    :return MdtPayload:
+
+    :raise TypeError:
+    """
+
     if id is None:
         raise TypeError("id cannot be none type")
     elif plannedAt is None:
@@ -24,6 +36,8 @@ async def UpdateMDT(
         raise TypeError("context cannot be none type")
     elif users is None:
         raise TypeError("users cannot be none type")
+
+    userErrors = MutationUserErrorHandler()
 
     mdt: MDT = await MDT.get(int(id))
 

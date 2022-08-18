@@ -47,11 +47,12 @@ class PatientByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                Patient/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: Patient/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -79,11 +80,12 @@ class PatientByIdLoader(DataLoader):
         """
             Load a multiple entries from their record ID
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs to find
-            Returns:
-                List[Patient]/None
+            :param context: request context
+            :param id: IDs to find
+
+            :return: List[Patient]
+
+            :raise TypeError:
         """
         if context is None:
             raise TypeError("context cannot be None type")
@@ -149,11 +151,12 @@ class PatientByHospitalNumberLoader(DataLoader):
         """
             Load a single entry from its hospital number
 
-            Parameters:
-                context (dict): request context
-                id (str): ID to find
-            Returns:
-                Patient/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: Patient/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -178,11 +181,12 @@ class PatientByHospitalNumberLoader(DataLoader):
         """
             Loads many entries from their hospital numbers
 
-            Parameters:
-                context (dict): request context
-                ids (List[str]): IDs to find
-            Returns:
-                List[Patient]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[Patient]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -197,6 +201,16 @@ class PatientByHospitalNumberLoader(DataLoader):
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        """
+            Primes the dataloader with new data using kvp
+
+            :param context: request context
+            :param key: ID of object
+            :param value: object
+
+            :raise TypeError:
+        """
+
         if context is None:
             raise TypeError("context cannot be None type")
 
@@ -276,11 +290,12 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
         """
             Load a single entry from its hospital number from the TrustAdapter
 
-            Parameters:
-                context (dict): request context
-                id (str): ID to find
-            Returns:
-                ReferencePatient/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: ReferencePatient/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -301,11 +316,12 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
             Loads multiple entries from their hospital number
             from the TrustAdapter
 
-            Parameters:
-                context (dict): request context
-                ids (List[str]): ID to find
-            Returns:
-                List[ReferencePatient]/None
+            :param context: request context
+            :param ids: ID to find
+
+            :return: List[ReferencePatient]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -318,6 +334,15 @@ class PatientByHospitalNumberFromIELoader(DataLoader):
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        """
+            Primes the dataloader with new data using kvp
+
+            :param context: request context
+            :param key: ID of object
+            :param value: object
+
+            :raise TypeError:
+        """
         if key is None:
             raise TypeError("key cannot be None type")
         if context is None:

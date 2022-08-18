@@ -61,11 +61,12 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
         """
             Load a single entry from its reference ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                TestResult_IE/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: TestResult_IE/None
+
+            raise :TypeError:
         """
 
         if context is None:
@@ -85,11 +86,12 @@ class TestResultByReferenceIdFromIELoader(DataLoader):
         """
             Loads many entries from their reference ID
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs to find
-            Returns:
-                List[TestResult_IE]/None
+            :param context: request context
+            :param id: IDs to find
+
+            :return: List[TestResult_IE]
+
+            raise :TypeError:
         """
         if context is None:
             raise TypeError("context cannot be None type")

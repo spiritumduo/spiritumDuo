@@ -43,11 +43,12 @@ class PathwayByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                Pathway/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: Pathway/None
+
+            :raise TypeError:
         """
         if context is None:
             raise TypeError("context cannot be None type")
@@ -78,11 +79,12 @@ class PathwayByIdLoader(DataLoader):
         """
             Loads many entries from their record IDs
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): IDs to find
-            Returns:
-                List[Pathway]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[Pathway]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -100,10 +102,7 @@ class PathwayByIdLoader(DataLoader):
         """
             Loads all Pathway records
 
-            Parameters:
-                None
-            Returns:
-                List[Pathway]/None
+            return: List[Pathway]
         """
 
         if context is None:
@@ -159,11 +158,12 @@ class PathwayByNameLoader(DataLoader):
         """
             Load a single entry from its name
 
-            Parameters:
-                context (dict): request context
-                id (str): name to find
-            Returns:
-                Pathway/None
+            :param context: request context
+            :param id: name to find
+            
+            :return: Pathway/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -192,11 +192,12 @@ class PathwayByNameLoader(DataLoader):
         """
             Loads many entries from their names
 
-            Parameters:
-                context (dict): request context
-                ids (List[str]): names to find
-            Returns:
-                List[Pathway]/None
+            :param context: request context
+            :param ids: names to find
+
+            :return: List[Pathway]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -229,11 +230,12 @@ class PathwayLoaderByClinicalRequestType(DataLoader):
             pathway ID from the PathwayClinicalRequestType link
             table
 
-            Parameters:
-                context (dict): request context
-                id (int): ID of pathway ID to find
-            Returns:
-                [Pathway]/None
+            :param context: request context
+            :param id: ID of pathway ID to find
+
+            :return: [Pathway]
+
+            :raise TypeError:
         """
 
         if context is None:

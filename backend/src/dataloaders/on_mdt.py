@@ -46,11 +46,12 @@ class OnMdtByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                OnMdt/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: OnMdt/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -70,11 +71,13 @@ class OnMdtByIdLoader(DataLoader):
         """
             Loads many entries from their record ID
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): IDs to find
-            Returns:
-                List[OnPathway]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[OnPathway]
+
+            :raise TypeError:
+
         """
 
         if context is None:
@@ -88,6 +91,15 @@ class OnMdtByIdLoader(DataLoader):
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        """
+            Primes the dataloader with new data using kvp
+
+            :param context: request context
+            :param key: ID of object
+            :param value: object
+
+            :raise TypeError:
+        """
         if context is None:
             raise TypeError("context cannot be None type")
 

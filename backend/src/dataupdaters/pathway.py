@@ -10,8 +10,18 @@ async def UpdatePathway(
     id: int = None,
     name: str = None,
     clinical_request_types: List[Dict[str, int]] = None,
-    userErrors: MutationUserErrorHandler = None
 ):
+    """
+    Updates given pathway
+    :param context: request context
+    :param id: id of Pathway object
+    :param name: name of pathway
+    :param clinical_request_types: request types allowed on Pathway
+
+    :return PathwayPayload:
+
+    :raise TypeError:
+    """
     userErrors = MutationUserErrorHandler()
     if id is None:
         raise TypeError("id cannot be none type")

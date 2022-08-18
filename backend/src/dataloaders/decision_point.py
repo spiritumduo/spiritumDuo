@@ -46,11 +46,12 @@ class DecisionPointLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                DecisionPoint/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: DecisionPoint/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -72,11 +73,12 @@ class DecisionPointLoader(DataLoader):
         """
             Load a multiple entries from their record IDs
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs to find
-            Returns:
-                List[DecisionPoint/None]
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[DecisionPoint]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -108,14 +110,15 @@ class DecisionPointsByPatient:
             Load all decision points by a patient's record ID
             and where filters match
 
-            Parameters:
-                context (dict): request context
-                id (int): ID of patient's record
-                pathwayId (int): ID of pathway to filter by
-                decisionType (DecisionTypes): decision type to filter by
-                limit (int): number of records to return
-            Returns:
-                List[DecisionPoint]/None
+            :param context: request context
+            :param id: ID of patient's record
+            :param pathwayId: ID of pathway to filter by
+            :param decisionType: decision type to filter by
+            :param limit: number of records to return
+
+            :return: List[DecisionPoint]
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -170,11 +173,12 @@ class DecisionPointsByOnPathway:
         """
             Load all decision points by an OnPathway id
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs of OnPathway records
-            Returns:
-                List[DecisionPoint/None]
+            :param context: request context
+            :param id: IDs of OnPathway records
+
+            :return: List[DecisionPoint]
+
+            :raise TypeError:
         """
 
         if context is None:

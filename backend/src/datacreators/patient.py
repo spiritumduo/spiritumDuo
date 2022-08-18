@@ -41,24 +41,26 @@ async def CreatePatient(
     """
     Creates a patient object in local and external databases
 
-    Keyword arguments:
-        context (dict): the current request context
-        first_name (str): Patient's first name
-        last_name (str): Patient's last name
-        hospital_number (str): hospital number of patient
-        national_number (str): national number of patient
-        date_of_birth (date): date of birth of patient
-        communication_method (str): optimal communication method for patient
-        pathwayId (int): ID of pathway the patient is to be added to
-        referred_at (datetime): time of the patient's referral (used for
-            importing patients)
-        awaiting_decision_type (DecisionType): next decision type (used for
-            importing patients)
-        clinical_requests (List[ClinicalRequest]): list of clinical_requests
-            to import when a patient enters the pathway (referral letter, ex)
-    Returns:
-        PatientPayload: contains Patient object and/or UserErrors object
+    :param context: the current request context
+    :param first_name: Patient's first name
+    :param last_name: Patient's last name
+    :param hospital_number: hospital number of patient
+    :param national_number: national number of patient
+    :param date_of_birth: date of birth of patient
+    :param pathwayId: ID of pathway the patient is to be added to
+    :param clinical_requests: list of clinical_requests to import when
+        a patient enters the pathway (referral letter, ex)
+    :param communication_method: primary communication method for patient
+    :param referred_at: time of the patient's referral (used for importing
+        patients)
+    :param awaiting_decision_type: next decision type (used for importing
+        patients)
+
+    :return: PatientPayload object
+
+    :raise TypeError: invalid parameter types, object is incorrect type
     """
+
     # TODO: make `pathwayId` snake case
     if context is None:
         raise TypeError("context cannot be None type.")
@@ -93,7 +95,7 @@ async def CreatePatient(
         )
 
     if None in clinicalRequestTypesFromClinicalRequests:
-        raise ValueError("ClinicalRequest cannot contain None type")
+        raise TypeError("ClinicalRequest cannot contain None type")
 
     pathway: Pathway = await PathwayByIdLoader.load_from_id(
         context=context,

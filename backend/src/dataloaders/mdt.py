@@ -43,11 +43,12 @@ class MdtByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                MDT/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: MDT/None
+
+            :raise TypeError:
         """
 
         if context is None:
@@ -68,11 +69,12 @@ class MdtByIdLoader(DataLoader):
         """
             Loads many entires from their record ID
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): IDs to find
-            Returns:
-                List[User]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[User]
+
+            :raise TypeError:
         """
         if context is None:
             raise TypeError("context cannot be None type")
@@ -86,6 +88,15 @@ class MdtByIdLoader(DataLoader):
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        """
+            Primes the dataloader with new data using kvp
+
+            :param context: request context
+            :param key: ID of object
+            :param value: object
+
+            :raise TypeError:
+        """
         if context is None:
             raise TypeError("context cannot be None type")
 
