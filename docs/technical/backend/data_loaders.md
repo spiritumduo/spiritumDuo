@@ -7,4 +7,4 @@ The dataloader works by caching results of queries. This is useful where the sam
   
 The dataloaders are designed so each method call is a class method that will instanciate the class in the request context. This is done effectively as a wrapper around the internal dataloader methods, `load` and `load_many`.
   
-This can somewhat help with scalability by reducing the load on backend/database services.
+This reduces the load on backend/database services and it can make reoccuring queries faster.
