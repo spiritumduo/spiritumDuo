@@ -5,6 +5,8 @@ from pytest_bdd import scenario, given, when, then
 from time import sleep
 from conftest import ServerEndpoints
 from conftest import change_url
+from selenium.webdriver.support.ui import WebDriverWait
+
 
 @scenario("login.feature", "Logging the user in with valid credentials")
 def test_login_correct_creds():
@@ -32,8 +34,9 @@ def insert_correct_credentials(driver: webdriver.Remote):
 
 @then("the user should be assigned a session cookie")
 def check_cookie_present(driver: webdriver.Remote):
-    # we wait what we think is a timely amount of time
-    sleep(1)
+    WebDriverWait(driver, 10).until(
+        lambda d: d.get_cookie("SDSESSION") is not None
+    )
 
     # check session cookie has been set
     assert_that(
