@@ -12,7 +12,6 @@ import edgesToNodes from 'app/pagination';
 import PatientList, { PatientListProps } from 'components/PatientList';
 import { useAppDispatch } from 'app/hooks';
 import { setModalPatientHospitalNumber } from 'pages/HomePage.slice';
-import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
 
 // GENERATED TYPES
 import { onPathwayUpdated } from 'components/__generated__/onPathwayUpdated';
@@ -196,7 +195,6 @@ const WrappedPatientList = ({
 
   const onClickCallback = (hospitalNumber: string) => {
     dispatch(setModalPatientHospitalNumber(hospitalNumber));
-    dispatch(setOnMdtWorkflow(undefined));
   };
 
   return (

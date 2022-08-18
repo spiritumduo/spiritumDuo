@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useState } from 'react';
 
 // LIBRARIES
 import { Modal, Container, Col, Row } from 'react-bootstrap';
@@ -23,10 +23,18 @@ import PatientMdtTab from 'features/PatientMdtTab/PatientMdtTab';
 import { lockOnPathway } from './__generated__/lockOnPathway';
 import { getPatientOnCurrentPathway } from './__generated__/getPatientOnCurrentPathway';
 
+export enum ModalPatientTab {
+  NEW_DECISION = 0,
+  PAST_DECISION = 1,
+  MDT = 2,
+}
+
 interface ModalPatientProps {
   hospitalNumber: string;
   lock?: boolean;
   closeCallback: () => void;
+  mdtId?: string;
+  defaultTab?: ModalPatientTab;
 }
 
 export const LOCK_ON_PATHWAY_MUTATION = gql`
@@ -66,10 +74,12 @@ export const GET_PATIENT_CURRENT_PATHWAY_QUERY = gql`
   }
 `;
 
-const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps) => {
+const ModalPatient = (
+  { hospitalNumber, closeCallback, lock, mdtId, defaultTab }: ModalPatientProps,
+) => {
   // START HOOKS
   const tabState = useAppSelector((state: RootState) => state.modalPatient.isTabDisabled);
-  const onMdtWorkflow = useAppSelector((state: RootState) => state.onMdtWorkflow.onMdtWorkflow);
+  // const onMdtWorkflow = useAppSelector((state: RootState) => state.onMdtWorkflow.onMdtWorkflow);
   const { currentPathwayId } = useContext(PathwayContext);
   const { user } = useContext(AuthContext);
   const [currentTab, setCurrentTab] = useState<number>(0);
@@ -101,11 +111,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
     && (data?.lockOnPathway.onPathway?.lockEndTime > Date.now())
   );
 
-  useEffect(() => {
-    if (onMdtWorkflow) {
-      setCurrentTab(2);
-    }
-  }, [setCurrentTab, onMdtWorkflow]);
+  useLayoutEffect(() => setCurrentTab(defaultTab || 0), [defaultTab]);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -182,25 +188,6 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {
-          onMdtWorkflow
-            ? (
-              <nav className="nhsuk-breadcrumb" aria-label="Breadcrumb">
-                <ol className="nhsuk-breadcrumb__list">
-                  <li className="nhsuk-breadcrumb__item">
-                    <a className="nhsuk-breadcrumb__link" href="/app/mdt">MDTs</a>
-                  </li>
-                  <li className="nhsuk-breadcrumb__item">
-                    <a className="nhsuk-breadcrumb__link" href="/app/mdt/1">Patient list</a>
-                  </li>
-                  <li className="nhsuk-breadcrumb__item">
-                    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                    <a className="nhsuk-breadcrumb__link" href="#">Patient</a>
-                  </li>
-                </ol>
-              </nav>
-            ) : ''
-        }
         <Tabs onSelect={ (index) => setCurrentTab(index) } selectedIndex={ currentTab }>
           <TabList>
             <Tab disabled={ tabState }>New Decision</Tab>
@@ -215,7 +202,7 @@ const ModalPatient = ({ hospitalNumber, closeCallback, lock }: ModalPatientProps
               decisionType={ DecisionPointType.CLINIC }
               onPathwayLock={ hasLock ? undefined : onPathwayLock }
               closeCallback={ () => closeCallback() }
-              fromMdtId={ onMdtWorkflow }
+              fromMdtId={ mdtId }
             />
           </TabPanel>
           <TabPanel>

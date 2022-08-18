@@ -36,12 +36,17 @@ const LoggedInRoutes = () => (
           path="/patients/all"
           element={ <HomePage patientsPerPage={ 20 } allPatients /> }
         />
+        {/* MDT ROUTES */}
         <Route
           path="/mdt"
           element={ <MDTListPage /> }
         />
         <Route
           path="/mdt/:mdtId"
+          element={ <MDTPage /> }
+        />
+        <Route
+          path="/mdt/:mdtId/patient/:hospitalNumber"
           element={ <MDTPage /> }
         />
       </Routes>

@@ -9,13 +9,12 @@ import { gql, useMutation, useQuery } from '@apollo/client';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 
 // APP
-import { useAppDispatch } from 'app/hooks';
 import edgesToNodes from 'app/pagination';
 
 // COMPONENTS
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
+import ModalPatient, { ModalPatientTab } from 'components/ModalPatient';
 import PatientOnMdtManagement from 'features/PatientOnMdtManagement/PatientOnMdtManagement';
-import { setOnMdtWorkflow } from 'features/DecisionPoint/DecisionPoint.slice';
 import { useHospitalNumberFormat, useNationalNumberFormat } from 'app/hooks/format-identifier';
 
 // LOCAL IMPORTS
@@ -132,18 +131,21 @@ const reorder = (list: OnMdtElement[], startIndex: number, endIndex: number) => 
   return result;
 };
 
+type MdtRouteParams = {
+  mdtId?: string;
+  hospitalNumber?: string;
+};
+
 const MDTPage = (): JSX.Element => {
   const [maxFetchedPage, setMaxFetchedPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const { mdtId } = useParams();
+  const { mdtId, hospitalNumber } = useParams<MdtRouteParams>();
   const [tableElements, setTableElements] = useState<OnMdtElement[]>([]);
   const [selectedOnMdt, setSelectedOnMdt] = useState<OnMdtElement | null>(null);
   const [hasLock, setHasLock] = useState<string | null>(null);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const hospitalNumberFormat = useHospitalNumberFormat();
   const nationalNumberFormat = useNationalNumberFormat();
-  dispatch(setOnMdtWorkflow( mdtId ));
   if (!mdtId) {
     navigate('/mdt');
   }
@@ -235,8 +237,25 @@ const MDTPage = (): JSX.Element => {
     reorderMutation({ variables: newOrder });
   };
 
+  const modalCloseCallback = () => {
+    navigate(`/mdt/${mdtId}`);
+  };
+
   return (
     <Container>
+      {
+        hospitalNumber
+          ? (
+            <ModalPatient
+              hospitalNumber={ hospitalNumber }
+              closeCallback={ modalCloseCallback }
+              defaultTab={ ModalPatientTab.MDT }
+              mdtId={ mdtId }
+              lock
+            />
+          )
+          : undefined
+      }
       <Breadcrumb style={ { backgroundColor: 'transparent' } }>
         <Breadcrumb.Item href="../mdt">MDTs</Breadcrumb.Item>
         <Breadcrumb.Item href="">Patient list</Breadcrumb.Item>
@@ -293,7 +312,7 @@ const MDTPage = (): JSX.Element => {
                           { ...draggableProvided.draggableProps }
                           { ...draggableProvided.dragHandleProps }
                           className="active nhsuk-table__row"
-                          onClick={ () => navigate(`/patient/${element.hospitalNumber}`) }
+                          onClick={ () => navigate(`/mdt/${mdtId}/patient/${element.hospitalNumber}`) }
                           ref={ draggableProvided.innerRef }
                         >
                           <td>

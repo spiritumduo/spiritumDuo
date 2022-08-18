@@ -90,17 +90,12 @@ const HomePage = ({ patientsPerPage, modalPatient, allPatients }: HomePageProps)
   const modalPatientNumber = useAppSelector(
     (state: RootState) => state.homePage.modalPatientHospitalNumber,
   );
-  const onMdtWorkflow = useAppSelector((state: RootState) => state.onMdtWorkflow.onMdtWorkflow);
 
   if (modalPatient) dispatch(setModalPatientHospitalNumber(hospitalNumber));
 
   const modalCloseCallback = () => {
     dispatch(setModalPatientHospitalNumber(undefined));
-    if (onMdtWorkflow) {
-      navigate(`/mdt/${onMdtWorkflow}`);
-    } else {
-      navigate('/');
-    }
+    navigate('/');
   };
 
   const onSelect = useCallback((index: number) => {
