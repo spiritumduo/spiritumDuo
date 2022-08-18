@@ -9,6 +9,13 @@ function runWithMaybe<T>(input: Maybe<T>, fn: (input: T) => Maybe<T>): Maybe<T> 
   return fn(input);
 }
 
+/**
+ * Format identifer according to format string.
+ *
+ * @param identifier Identifier to format
+ * @param format Format string - @ indicates mandatory substition, + indicates optional
+ * @returns {string}
+ */
 export const formatIdentifier = (identifier: string, format: string): string => {
   let identifierIndex = 0;
   let optionalStarted = false;
