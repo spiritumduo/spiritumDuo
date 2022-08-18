@@ -7,7 +7,6 @@
 GraphQL APIs are better because
 
 - we can reuse queries
-- the queries don't need to be changed when the client's requirements change
 - queries are more optimised because [under/overfetching](https://stackoverflow.com/questions/44564905/what-is-over-fetching-or-under-fetching) is not a problem
   
 RESTful APIs are better because
@@ -21,26 +20,27 @@ The GraphQL implementation is organised as such that it's not closely tied to St
 ## Authorization
 
 Authorization is handled in-detail in the project docs [here](./authentication.md).  
-GraphQL queries and mutations have a wrapper `needsAuthorization()` that ensures the logged in user has the correct permission assigned to their user account.
+GraphQL queries and mutations have a wrapper `needsAuthorization()` that ensures the logged in user has the correct permissions assigned to their account to access an object.
 
 ```py
-    @query.field("getRoles")
-    @needsAuthorization([Permissions.ROLE_READ])
-    async def resolve_get_role(
-        obj=None,
-        info: GraphQLResolveInfo = None
-    ):
-        async with db.acquire(reuse=False) as conn:
-            roles_query = db.select([Role])
-            roles = await conn.all(roles_query)
-        return roles
+@query.field("getRoles")
+@needsAuthorization([Permissions.ROLE_READ])
+async def resolve_get_role(
+    obj=None,
+    info: GraphQLResolveInfo = None
+):
+    async with db.acquire(reuse=False) as conn:
+        roles_query = db.select([Role])
+        roles = await conn.all(roles_query)
+    return roles
 ```
 
-If the logged in user authorized to view roles (has ROLE_READ permission), it will return a list of roles. If the user does not have the required scope, it will raise a `GraphQLError` exception.
+If the logged in user is authorized to view roles (has ROLE_READ permission), it will return a list of roles. If the user does not have the required scope, it will raise a `GraphQLError` exception.
 
 ## Index
 
 [Queries](gql/queries.md)  
+[Mutations](gql/mutations.md)  
 [Subscriptions](gql/subscriptions.md)  
-[Types](gql/types.md)
+[Types](gql/types.md)  
 [Scalars](gql/scalars.md)

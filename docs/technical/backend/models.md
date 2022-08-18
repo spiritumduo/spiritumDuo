@@ -24,7 +24,7 @@ Because Gino handles the models, we can run queries using the classes directly.
     ).gino.one()
 ```
 
-This is great because we don't need to run raw SQL queries, however the syntax and ordering can take getting used to. For much more complex queries, it's sometimes easier to write the raw SQL query and convert that into Gino's syntax.
+This is great because we don't need to run raw SQL queries, however the syntax can take getting used to. For much more complex queries, it's sometimes easier to write the raw SQL query and convert that into Gino's syntax.
 
 One issue with Gino is the maintenance of the database pool. We may have to reaquire a database connection as it may attempt to run a query on a connection that is no longer available.
 

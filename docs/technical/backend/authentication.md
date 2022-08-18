@@ -10,4 +10,4 @@ This function is only called on login via a RESTful API. When the user is authen
 
 Session tokens are issued on login and are encrypted using `itsdangerous` (key specified in backend .env). They're randomly generated strings issued on logon. On each request, the session token's expiry is reset.
   
-This is great because it's simple, however ideally we should be looking into using [JWTs](https://jwt.io/introduction/) (SDB-135). Support for JWTs means that we should be able to use an OAuth2 provider ([LDAP](https://ldap.com/)/[ADFS](https://docs.microsoft.com/en-us/windows-server/identity/ad-fs/ad-fs-overview)). Note, JWTs are not officially a part of the OAuth2 spec, but most identity providers support them.
+This is great because it's simple, however ideally we should be looking into using [JWTs](https://jwt.io/introduction/) (SDB-135). Support for JWTs means that we should be able to use an OAuth2 provider in future ([LDAP](https://ldap.com/)/[ADFS](https://docs.microsoft.com/en-us/windows-server/identity/ad-fs/ad-fs-overview)). Note, JWTs are not officially a part of the OAuth2 spec, but most identity providers support them.
