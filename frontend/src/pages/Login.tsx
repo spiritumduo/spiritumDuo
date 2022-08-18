@@ -4,7 +4,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import User from 'types/Users';
-import PathwayOption from 'types/PathwayOption';
 import { AuthContext, PathwayContext } from 'app/context';
 import { Button, ErrorMessage, Fieldset, Form, Footer, Details } from 'nhsuk-react-components';
 import { Container } from 'react-bootstrap';
