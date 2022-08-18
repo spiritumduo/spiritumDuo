@@ -1,4 +1,4 @@
-import PatientLink from './Link/PatientLink';
 import LogoutLink from './Link/LogoutLink';
 
-export { PatientLink, LogoutLink };
+// eslint-disable-next-line import/prefer-default-export
+export { LogoutLink };
