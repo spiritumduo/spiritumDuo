@@ -14,13 +14,6 @@ from .authentication import SDUser
 import itsdangerous
 
 
-class ContextNotDefined(Exception):
-    """
-    Raised when the context variable has
-    not been specified when requried
-    """
-
-
 class LoginController:
     """
     A class to handle authentication methods
@@ -32,8 +25,9 @@ class LoginController:
     """
 
     def __init__(self, context=None):
-        if not context:
-            raise ContextNotDefined()
+        if context is None:
+            raise TypeError("context cannot be None type")
+
         self._context = context
         self._db: Gino = context['db']
 
