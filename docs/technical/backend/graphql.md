@@ -19,7 +19,6 @@ The GraphQL implementation is organised as such that it's not closely tied to St
 
 ## Authorization
 
-Authorization is handled in-detail in the project docs [here](./authentication.md).  
 GraphQL queries and mutations have a wrapper `needsAuthorization()` that ensures the logged in user has the correct permissions assigned to their account to access an object.
 
 ```py

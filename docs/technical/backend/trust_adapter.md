@@ -8,6 +8,6 @@ A TIE (trust integration engine) is a software that the majority of trusts use a
 
 The trust adapter is an [adapter design](https://refactoring.guru/design-patterns/adapter) that interfaces Spiritum Duo's backend and any prospective trust's backend systems. In this project, the trust adapter is interfacing SD and pseudotie (fake/mock TIE).  
   
-The trust adaper provides SD with the same set of functions (loading patients + test results, requesting test results, etc) and parses the inputs in a way that a TIE could handle them, returning the resulting data in a way that SD can parse.  
+The trust adapter provides SD with the same set of functions (loading patients + test results, requesting test results, etc) and parses the inputs in a way that a TIE could handle them, returning the resulting data in a way that SD can parse.  
   
 The benefits of using this design is that SD's backend and frontend can stay the same, even in multiple installations. The only layer that must be altered is the trust adapter, making the deployment into different trusts more straight forward. This design also means that the backend isn't tightly coupled to a speciifc trust's TIE software.

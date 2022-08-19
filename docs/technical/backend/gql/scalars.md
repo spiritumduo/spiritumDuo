@@ -2,7 +2,7 @@
 
 ## Scalars
 
-Scalars are value types that are not objects. The scalar defintions define how a type should be parsed and serialized, including datetime and date.
+Scalars are value types. The scalar defintions define how a type should be parsed and serialized, including datetime and date.
 
 ```py
 datetime_scalar = ScalarType("DateTime")
