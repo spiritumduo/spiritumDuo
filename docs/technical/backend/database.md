@@ -1,7 +1,0 @@
-# Database
-
-## Gino
-
-Gino
-
-## Issues
