@@ -61,7 +61,7 @@ const SearchResults = ({ query, patientsPerPage }: SearchResultsProps) => {
   } });
 
   const onClickCallback = useCallback((hospitalNumber: string) => {
-    navigate(`/patients/${hospitalNumber}`);
+    navigate(`/patient/${hospitalNumber}`);
   }, [navigate]);
 
   const updateDataCallback: PatientListUpdateDataFn = useCallback(

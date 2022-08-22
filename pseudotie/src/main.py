@@ -1,3 +1,4 @@
+from ast import Add
 import asyncio
 import os
 import logging
@@ -49,7 +50,11 @@ async def say_hello(name: str = None):
 @app.get("/patientsearch/{query}")
 async def patient_search(query: str = None):
     tokens = query.split()
-    patients = await Patient.query.where(
+
+    patients: List[Union[Patient, Address]] = await Patient.join(
+        Address,
+        Patient.address_id == Address.id
+    ).select().where(
         or_(
             or_(
                 Patient.hospital_number.in_(tokens),
@@ -61,10 +66,28 @@ async def patient_search(query: str = None):
             )
         )
     ).gino.all()
+
     logging.warning(patients)
     results = []
     for p in patients:
-        results.append(p.to_dict())
+        results.append({
+            'first_name': p.first_name,
+            'last_name': p.last_name,
+            'hospital_number': p.hospital_number,
+            'national_number': p.national_number,
+            'communication_method': p.communication_method,
+            'date_of_birth': p.date_of_birth,
+            'sex': p.sex,
+            'occupation': p.occupation,
+            'telephone_number': p.telephone_number,
+            'address': {
+                'line': p.line,
+                'city': p.city,
+                'district': p.district,
+                'postal_code': p.postal_code,
+                'country': p.country,
+            }
+        })
     return results
 
 
