@@ -225,9 +225,8 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
             </Col>
             <Col>
               <Input
-                label="Username"
-                autoCapitalize="off"
-                autoCorrect="username"
+                label={ editUser ? 'Update Password' : 'Password' }
+                type="password"
                 error={ errors.username?.message }
                 { ...register('username') }
               />
@@ -235,8 +234,6 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
             <Col>
               <Input
                 label={ editUser ? 'Update Password' : 'Password' }
-                autoCapitalize="off"
-                autoCorrect="password"
                 type="password"
                 error={ errors.password?.message }
                 { ...register('password') }
