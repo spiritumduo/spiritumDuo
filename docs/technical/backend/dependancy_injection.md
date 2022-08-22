@@ -2,7 +2,16 @@
 
 The [trust adapter](./trust_adapter.md), email adapter, and pubsub mechanism are dependency injection design patterns. This is useful for testing, as it allows us to mock the trust adapter and test the backend without having to install another backend-dependant service.
   
-Where functions requre these dependencies, we use the `inject` wrapper and add a reference to the function in `src/containers.py`.
+Where functions require these dependencies, we use the `inject` wrapper and add a reference to the function in `src/containers.py`.
+
+```python
+class SDContainer(containers.DeclarativeContainer):
+    wiring_config = containers.WiringConfiguration(
+        modules=[
+            "gql.mutation.create_decision_point",
+        ]
+    )
+```
 
 ```python
 @inject

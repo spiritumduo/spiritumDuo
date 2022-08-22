@@ -1,6 +1,6 @@
 # Models
 
-The models are the objects that are stored in the database. [Gino](https://github.com/python-gino/gino) is an ORM built on SQLAlchemy core. Using Gino we can create database models.
+Models are schemas for objects that are stored in the database. [Gino](https://github.com/python-gino/gino) is an ORM built on SQLAlchemy core. Using Gino we can create database models and easily access them.
 
 ```py
 class Patient(Gino.model):
@@ -14,14 +14,14 @@ class Patient(Gino.model):
 Because Gino handles the models, we can run queries using the classes directly.
 
 ```py
-    pathway: Pathway = await Pathway.get(int(id))
-    await pathway.delete()
+    patient: Patient = await Patient.get(int(id))
+    await patient.delete()
 ```
 
 ```py
-    onPathway: OnPathway = await OnPathway.query.where(
-        OnPathway.id == onPathwayId
-    ).gino.one()
+    patient: Patient = await Patient.query.where(
+        Patient.id == patient_id_to_find
+    ).gino.one_or_none()
 ```
 
 This is great because we don't need to run raw SQL queries, however the syntax can take getting used to. For much more complex queries, it's sometimes easier to write the raw SQL query and convert that into Gino's syntax.

@@ -7,7 +7,7 @@ It migrates a database to contain fields from the most recent [database models](
 ## Automatically generating migrations
 
 Alembic has the ability to automatically generate migrations. This is ideal in a development environment where models change frequently.  
-Provided the database has no records, we can generate migrations using this command
+Provided the database has no records, we can generate and run migrations using this command
 
 ```shell
 alembic revision --autogenerate -m 'MIGRATION_COMMENT_OR_REASON_HERE' && alembic upgrade head

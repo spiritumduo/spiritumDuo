@@ -2,7 +2,7 @@
 
 The RESTful endpoints are using FastAPI. The FastAPI documentation can be found [here](https://fastapi.tiangolo.com/). These endpoints provide authentication and user specific operations, such as roles and user management. This is done so we can wrap the entirety of GraphQL in an authentication wrapper.
 
-The REST API is also used or communication between the pseudotie (fake trust backend) and the project's backend. Ideally this should be moved into the [trust adapter](./trust_adapter.md). 
+The REST API is also used for communication between the pseudotie (fake trust backend) and the project's backend. Ideally this should be moved into the [trust adapter](./trust_adapter.md).
 
 ## Authorization
 

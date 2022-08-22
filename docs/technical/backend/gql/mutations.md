@@ -4,22 +4,39 @@
 
 Mutations typically return payload objects. This is an object that will include the new/updated object and a `UserErrors` object.
 
-### User errors
+```gql
+type UserError {
+    message: String!
+    field: String!
+}
 
-`UserErrors` is a field that holds a list of errors derived from user inputs. For example, an input not meeting a regex spec, or creating a pathway with the name of a pathway that already exists.
+type AddPatientPayload {
+    patient: Patient
+    userErrors: [UserError!]
+}
+```
+
+```py
+@dataclass
+class BaseMutationPayload:
+    user_errors: Optional[List[MutationUserError]] = None
+
+
+@dataclass
+class PatientPayload(BaseMutationPayload):
+    patient: Union[Patient, None] = None
+```
 
 Mutations should take an input type that contains all of the fields required.
 
 For example:
 
 ```gql
-updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
+createPathway(input: PathwayInput!): AddPathwayPayload!
 
-input UpdateOnMdtInput{
-    id: ID!
-    reason: String
-    outcome: String
-    order: Int
+input PathwayInput{
+    name: String!
+    clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 ```
 
@@ -34,6 +51,39 @@ createPathway(input: {name: 'test pathway'}){
     userErrors{
         field
         message
+    }
+}
+```
+
+### User errors
+
+`UserErrors` is a field that holds a list of errors derived from user inputs. For example, an input not meeting a regex spec, or creating a pathway with the name of a pathway that already exists.
+
+```gql
+type UserError {
+    message: String!
+    field: String!
+}
+
+type AddPathwayPayload {
+    pathway: Pathway
+    userErrors: [UserError!]
+}
+```
+
+Using the query
+
+```gql
+{
+    createPathway(input: {id: '1', name: 'test pathway'}){
+        pathway{
+            id
+            name
+        }
+        userErrors{
+            field
+            message
+        }
     }
 }
 ```

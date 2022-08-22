@@ -2,7 +2,7 @@
 
 ## Overview
 
-[GraphQL](https://graphql.org/) is a query language for APIs. Clients can select the data they need based on their requirements and permissions. GraphQL modelling uses [graph theory](https://www.tutorialspoint.com/graph_theory/graph_theory_fundamentals.htm). In this project, this means that from a `Patient` object, you can get their pathways, test requests, etc, all in one query.
+[GraphQL](https://graphql.org/) is a query language for APIs. Clients can select the data they need based on their requirements and permissions. GraphQL modelling uses [graph theory](https://www.tutorialspoint.com/graph_theory/graph_theory_fundamentals.htm). In this project, this means that from a `Patient` object, you can get their pathways, test requests, etc, all in one `getPatient` query.
   
 GraphQL APIs are better because
 
@@ -12,7 +12,7 @@ GraphQL APIs are better because
 RESTful APIs are better because
 
 - the server has more control over the data given to the client
-- REST uses HTTP caching automatically
+- they use HTTP caching automatically
 - supports API versioning
 
 The GraphQL implementation is organised as such that it's not closely tied to Starlette, meaning that if the need arose to use another framework, it could be easily re-implemented.
