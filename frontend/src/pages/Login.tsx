@@ -11,6 +11,8 @@ import { Input } from 'components/nhs-style';
 import './login.css';
 import useRESTSubmit from 'app/hooks/rest-submit';
 import { ConfigInterface, useConfig } from 'components/ConfigContext';
+import sdInvertedImage from 'static/i/sd_inverted.png';
+import sdImage from 'static/i/sd.svg';
 
 export interface LoginData {
   user?: User;
@@ -60,7 +62,10 @@ const LoginPage = (): JSX.Element => {
         } ) }
         >
           <Fieldset disabled={ loading }>
-            <Fieldset.Legend isPageHeading>Enter credentials here</Fieldset.Legend>
+            <div className="d-inline-block mb-4">
+              <img alt="Logo" src={ sdImage } height="50px" className="me-4 d-inline align-middle" />
+              <h1 className="d-inline align-middle p-0 m-0 pb-2">Spiritum Duo</h1>
+            </div>
             <Input className="login-input" id="username" type="text" label="Username" autoCapitalize="off" autoCorrect="username" error={ errors.username?.message } { ...register('username', { required: true }) } />
             <Input className="login-input" id="password" type="password" label="Password" autoCapitalize="off" autoCorrect="password" error={ errors.password?.message } { ...register('password', { required: true }) } />
             {error?.message ? <ErrorMessage>{error?.message}</ErrorMessage> : ''}
