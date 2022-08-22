@@ -421,13 +421,13 @@ async def insert_demo_data():
         for i in range(1, NUMBER_OF_PATIENTS_PER_PATHWAY+1):
 
             for pathway in pathways:
-                hospital_number_prefix = "fMRN"
+                hospital_number_prefix = "MRN"
                 hospital_number = f"{pathway.id}{i}"
                 while len(hospital_number) != 6:
                     hospital_number = str(randint(1, 9)) + hospital_number
                 hospital_number = hospital_number_prefix + hospital_number
 
-                national_number_prefix = "fNHS"
+                national_number_prefix = "NHS"
                 national_number = f"{pathway.id}{i}"
                 while len(national_number) != 9:
                     national_number = str(randint(1, 9)) + national_number
