@@ -8,10 +8,10 @@ schema {
 }
 
 type Query {
-    getPatient(id:ID, hospitalNumber:String): Patient
-    getPathway(id:ID!): Pathway
+    getPatient(id: ID, hospitalNumber: String): Patient
+    getPathway(id: ID!): Pathway
     getPathways: [Pathway!]!
-    getUser(id:ID, username:String): User
+    getUser(id: ID, username: String): User
     getUsers(pathwayId: ID): [User]!
     getClinicalRequestTypes(pathwayId: ID): [ClinicalRequestType!]
     getRolePermissions: [RolePermission!]
@@ -19,7 +19,7 @@ type Query {
     getMdts(pathwayId: ID!, includePast: Boolean = False): [MDT]!
 
     """
-    getPatentOnPathwayConnection:
+    getPatientOnPathwayConnection:
     This query takes either before or after arguments, but never both.
     If neither before or after is present, it requires a first argument to
     limit the number of results returned
@@ -68,20 +68,20 @@ type Query {
 }
 
 type Mutation {
-    createPatient(input:PatientInput!): AddPatientPayload!
-    createPathway(input:PathwayInput!): AddPathwayPayload!
-    updatePathway(input:UpdatePathwayInput!): AddPathwayPayload!
+    createPatient(input: PatientInput!): AddPatientPayload!
+    createPathway(input: PathwayInput!): AddPathwayPayload!
+    updatePathway(input: UpdatePathwayInput!): AddPathwayPayload!
     deletePathway(id: ID!): DeletePayload!
-    createDecisionPoint(input:DecisionPointInput!): AddDecisionPointPayload!
-    lockOnPathway(input:LockOnPathwayInput!): LockOnPathwayPayload!
+    createDecisionPoint(input: DecisionPointInput!): AddDecisionPointPayload!
+    lockOnPathway(input: LockOnPathwayInput!): LockOnPathwayPayload!
     submitFeedback(input: FeedbackInput!): SubmitFeedbackPayload!
-    createMdt(input:MdtInput!): MdtPayload!
-    updateMdt(input:UpdateMdtInput!): MdtPayload!
+    createMdt(input: MdtInput!): MdtPayload!
+    updateMdt(input: UpdateMdtInput!): MdtPayload!
     deleteMdt(input: DeleteMdtInput!): DeletePayload!
     updateOnMdt(input: UpdateOnMdtInput!): OnMdtPayload!
     updateOnMdtList(input: UpdateOnMdtListInput!): OnMdtListPayload!
     deleteOnMdt(id: ID!): DeletePayload!
-    lockOnMdt(input:LockOnMdtInput!): LockOnMdtPayload!
+    lockOnMdt(input: LockOnMdtInput!): LockOnMdtPayload!
 }
 
 type Subscription {
@@ -99,7 +99,7 @@ enum PatientCommunicationMethods {
     MOBILE
 }
 
-enum DecisionType{
+enum DecisionType {
     TRIAGE
     CLINIC
     MDT
@@ -109,17 +109,17 @@ enum DecisionType{
 }
 
 #### RETURN TYPES
-type MdtPayload{
+type MdtPayload {
     mdt: MDT
     userErrors: [UserError!]
 }
 
-type OnMdtPayload{
+type OnMdtPayload {
     onMdt: OnMdt
     userErrors: [UserError!]
 }
 
-type OnMdtListPayload{
+type OnMdtListPayload {
     onMdtList: [OnMdt!]
     userErrors: [UserError!]
 }
@@ -182,8 +182,8 @@ type RolePermission {
 }
 
 type UserError {
-    message:String!
-    field:String!
+    message: String!
+    field: String!
 }
 
 type Pathway {
@@ -284,7 +284,7 @@ type Group {
     permissions: [String]
 }
 
-type OnMdt{
+type OnMdt {
     id: ID!
     patient: Patient!
     mdt: MDT!
@@ -365,7 +365,6 @@ type ClinicalRequestType {
     pathways: [Pathway!]
 }
 
-
 type ClinicalRequest {
     id: ID!
     clinicalRequestType: ClinicalRequestType!
@@ -394,32 +393,36 @@ enum Sex {
 }
 
 #### INPUT TYPES
-input UpdateOnMdtInput{
+input UpdateOnMdtInput {
     id: ID!
     reason: String
     outcome: String
     order: Int
 }
-input UpdateOnMdtListInput{
+
+input UpdateOnMdtListInput {
     onMdtList: [UpdateOnMdtInput!]
 }
-input MdtInput{
+
+input MdtInput {
     pathwayId: ID!
     plannedAt: Date!
     location: String!
 }
-input UpdateMdtInput{
+
+input UpdateMdtInput {
     id: ID!
     plannedAt: Date!
     location: String!
     users: [ID]!
 }
-input DeleteMdtInput{
+
+input DeleteMdtInput {
     id: ID!
     movePatientsToMdtId: ID
 }
 
-input TestResultInput{
+input TestResultInput {
     clinicalRequestId: ID!
     description: String!
 }
@@ -429,7 +432,7 @@ input FeedbackInput {
     feedback: String!
 }
 
-input AddUserToGroupInput{
+input AddUserToGroupInput {
     user: Int!
     groupName: String!
 }
@@ -439,16 +442,16 @@ input ClinicalRequestRequestInput {
     currentState: ClinicalRequestState
 }
 
-input ClinicalRequestTypeInput{
+input ClinicalRequestTypeInput {
     id: ID!
 }
 
-input AddPatientToMdtInput{
+input AddPatientToMdtInput {
     id: ID!
     reason: String!
 }
 
-input DecisionPointInput{
+input DecisionPointInput {
     onPathwayId: ID!
     decisionType: DecisionType!
     clinicHistory: String!
@@ -459,32 +462,32 @@ input DecisionPointInput{
     fromMdtId: ID
 }
 
-input LockOnPathwayInput{
+input LockOnPathwayInput {
     onPathwayId: ID!
     unlock: Boolean
 }
 
-input LockOnMdtInput{
+input LockOnMdtInput {
     id: ID!
     unlock: Boolean
 }
 
-input PathwayInput{
+input PathwayInput {
     name: String!
     clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 
-input UpdatePathwayInput{
+input UpdatePathwayInput {
     id: ID!
     name: String!
     clinicalRequestTypes: [ClinicalRequestTypeInput!]
 }
 
-input GroupInput{
-    name:String!
+input GroupInput {
+    name: String!
 }
 
-input PatientInput{
+input PatientInput {
     firstName: String!
     lastName: String!
     communicationMethod: PatientCommunicationMethods
@@ -492,10 +495,8 @@ input PatientInput{
     nationalNumber: String!
     dateOfBirth: Date!
     sex: Sex!
-
     pathwayId: ID!
     awaitingDecisionType: DecisionType
     referredAt: DateTime
-
     clinicalRequests: [ClinicalRequestRequestInput]
 }
