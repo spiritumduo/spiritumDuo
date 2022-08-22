@@ -7,6 +7,7 @@ from hamcrest import (
     contains_inanyorder, contains_string,
     not_none
 )
+from bcrypt import checkpw
 
 
 @pytest.fixture
@@ -36,6 +37,7 @@ def user_update_details(test_user: UserFixture):
         "username": "new-username",
         "firstName": "new-firstName",
         "lastName": "new-lastName",
+        "password": "new-password",
         "email": "new@email.com",
         "roles": [],
         "pathways": [],
@@ -75,10 +77,17 @@ async def test_valid_user_update_with_roles(
     assert_that(res.status_code, equal_to(200))
     decoded = res.json()
 
-    user = await User.query.where(
+    user: User = await User.query.where(
         User.id == test_user.user.id).gino.one_or_none()
     assert_that(user, not_none())
     assert_that(user.first_name, equal_to(decoded['user']['firstName']))
+    assert_that(
+        checkpw(
+            user_update_details["password"].encode('utf-8'),
+            user.password.encode('utf-8'),
+        ),
+        equal_to(True)
+    )
 
     user_roles = await UserRole.query.where(
         UserRole.user_id == test_user.user.id).gino.all()

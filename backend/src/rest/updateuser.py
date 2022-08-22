@@ -15,6 +15,7 @@ from .restexceptions import (
     UnprocessableHTTPException
 )
 from asyncpg.exceptions import UniqueViolationError
+from bcrypt import hashpw, gensalt
 
 
 class UpdateUserInput(BaseModel):
@@ -23,6 +24,7 @@ class UpdateUserInput(BaseModel):
     lastName: str
     department: str
     username: str
+    password: str
     email: str
     isActive: bool
     roles: List[int]
@@ -40,6 +42,8 @@ async def update_user(request: Request, input: UpdateUserInput):
     if user is None:
         raise NotFoundHTTPException("User does not exist")
 
+    updated_password = hashpw(input.password.encode('utf-8'), gensalt()).decode('utf-8')
+
     try:
         async with db.acquire() as conn:
             async with conn.transaction():
@@ -47,6 +51,7 @@ async def update_user(request: Request, input: UpdateUserInput):
                     first_name=input.firstName,
                     last_name=input.lastName,
                     username=input.username,
+                    password=updated_password,
                     department=input.department,
                     email=input.email,
                     is_active=input.isActive,
