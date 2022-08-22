@@ -47,8 +47,9 @@ const PatientListTab = (
               <PatientPathwayList
                 pathwayId={ pathwayId }
                 patientsToDisplay={ patientsPerPage }
-                outstanding={ outstanding }
                 underCareOf={ underCareOf }
+                outstanding={ !!outstanding }
+                includeDischarged={ outstanding }
               />
             </div>
           )
