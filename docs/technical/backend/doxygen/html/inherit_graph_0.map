@@ -1,0 +1,8 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,107,125,133"/>
+<area shape="rect" id="node2" href="$classauthentication_1_1authentication_1_1AuthenticationError.html" title=" " alt="" coords="207,5,355,32"/>
+<area shape="rect" id="node3" href="$classauthentication_1_1authentication_1_1PermissionsError.html" title=" " alt="" coords="215,56,347,83"/>
+<area shape="rect" id="node4" href="$classrestexceptions_1_1ConflictHTTPException.html" title=" " alt="" coords="197,107,366,133"/>
+<area shape="rect" id="node5" href="$classrestexceptions_1_1NotFoundHTTPException.html" title=" " alt="" coords="190,157,373,184"/>
+<area shape="rect" id="node6" href="$classrestexceptions_1_1UnprocessableHTTPException.html" title=" " alt="" coords="173,208,389,235"/>
+</map>

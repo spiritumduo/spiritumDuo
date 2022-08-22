@@ -41,13 +41,15 @@ async def resolve_create_decision(
 
     on_pathway: OnPathway = await OnPathway.get(int(input['onPathwayId']))
 
-    decision_point: DecisionPoint = await CreateDecisionPoint(
+    create_payload = await CreateDecisionPoint(
         **decision_point_details
     )
 
+    # this is the pubsub arrangement, it will update any
+    # listener on the `on-pathway-updated` subscription
     await pub.publish(
         'on-pathway-updated',
         on_pathway
     )
 
-    return decision_point
+    return create_payload

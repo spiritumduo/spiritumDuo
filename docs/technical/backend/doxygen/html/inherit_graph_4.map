@@ -1,0 +1,22 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,442,103,469"/>
+<area shape="rect" id="node2" href="$classdataloaders_1_1clinical__request_1_1ClinicalRequestByDecisionPointLoader.html" title=" " alt="" coords="187,5,383,47"/>
+<area shape="rect" id="node3" href="$classdataloaders_1_1clinical__request_1_1SdDataLoader.html" title=" " alt="" coords="229,71,342,98"/>
+<area shape="rect" id="node6" href="$classdataloaders_1_1clinical__request__type_1_1ClinicalRequestTypeLoader.html" title=" " alt="" coords="187,122,384,149"/>
+<area shape="rect" id="node7" href="$classdataloaders_1_1clinical__request__type_1_1ClinicalRequestTypeLoaderByPathwayId.html" title=" " alt="" coords="187,173,384,215"/>
+<area shape="rect" id="node8" href="$classdataloaders_1_1decision__point_1_1DecisionPointLoader.html" title=" " alt="" coords="208,239,363,266"/>
+<area shape="rect" id="node9" href="$classdataloaders_1_1mdt_1_1MdtByIdLoader.html" title=" " alt="" coords="225,290,345,317"/>
+<area shape="rect" id="node10" href="$classdataloaders_1_1on__mdt_1_1OnMdtByIdLoader.html" title=" " alt="" coords="216,341,355,367"/>
+<area shape="rect" id="node11" href="$classdataloaders_1_1on__pathway_1_1OnPathwayByIdLoader.html" title=" " alt="" coords="201,391,369,418"/>
+<area shape="rect" id="node12" href="$classdataloaders_1_1pathway_1_1PathwayByIdLoader.html" title=" " alt="" coords="210,442,361,469"/>
+<area shape="rect" id="node13" href="$classdataloaders_1_1pathway_1_1PathwayByNameLoader.html" title=" " alt="" coords="197,493,374,519"/>
+<area shape="rect" id="node14" href="$classdataloaders_1_1pathway_1_1PathwayLoaderByClinicalRequestType.html" title=" " alt="" coords="151,543,420,570"/>
+<area shape="rect" id="node15" href="$classdataloaders_1_1patient_1_1PatientByHospitalNumberFromIELoader.html" title=" " alt="" coords="174,595,397,636"/>
+<area shape="rect" id="node16" href="$classdataloaders_1_1patient_1_1PatientByHospitalNumberLoader.html" title=" " alt="" coords="168,661,403,687"/>
+<area shape="rect" id="node17" href="$classdataloaders_1_1patient_1_1PatientByIdLoader.html" title=" " alt="" coords="215,711,355,738"/>
+<area shape="rect" id="node18" href="$classdataloaders_1_1test__result_1_1TestResultByReferenceIdFromIELoader.html" title=" " alt="" coords="177,763,394,804"/>
+<area shape="rect" id="node19" href="$classdataloaders_1_1user_1_1UserByIdLoader.html" title=" " alt="" coords="223,829,348,855"/>
+<area shape="rect" id="node20" href="$classdataloaders_1_1user_1_1UserByUsernameLoader.html" title=" " alt="" coords="195,879,375,906"/>
+<area shape="rect" id="node4" href="$classdataloaders_1_1clinical__request_1_1ClinicalRequestByIdLoader.html" title=" " alt="" coords="477,42,673,69"/>
+<area shape="rect" id="node5" href="$classdataloaders_1_1clinical__request_1_1ClinicalRequestByOnPathwayIdLoader.html" title=" " alt="" coords="468,93,681,135"/>
+</map>

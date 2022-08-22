@@ -11,10 +11,9 @@ from SdTypes import Permissions
 async def resolve_create_decision(
     obj=None, info: GraphQLResolveInfo = None, input: dict = None
 ) -> MDT:
-    mdt = await CreateMDT(
+    return await CreateMDT(
         context=info.context,
         plannedAt=input['plannedAt'],
         pathwayId=input['pathwayId'],
         location=input['location']
     )
-    return mdt

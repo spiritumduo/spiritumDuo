@@ -1,0 +1,6 @@
+<map id="BaseService" name="BaseService">
+<area shape="rect" id="node1" title=" " alt="" coords="145,5,247,32"/>
+<area shape="rect" id="node2" href="$classservices_1_1EmailService.html" title=" " alt="" coords="5,80,112,107"/>
+<area shape="rect" id="node3" href="$classservices_1_1PubSubService.html" title=" " alt="" coords="137,80,255,107"/>
+<area shape="rect" id="node4" href="$classservices_1_1TrustAdapterService.html" title=" " alt="" coords="280,80,432,107"/>
+</map>

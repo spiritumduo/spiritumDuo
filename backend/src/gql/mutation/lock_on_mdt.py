@@ -5,7 +5,7 @@ from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from datetime import datetime, timedelta
 from config import config
-from common import DataCreatorInputErrors
+from common import MutationUserErrorHandler, OnMdtPayload
 from SdTypes import Permissions
 
 
@@ -16,8 +16,8 @@ async def resolve_lock_on_mdt(
     obj: OnMdt = None,
     info: GraphQLResolveInfo = None,
     input: dict = None,
-) -> Union[OnMdt, DataCreatorInputErrors]:
-    errors: DataCreatorInputErrors = DataCreatorInputErrors()
+) -> Union[OnMdt, MutationUserErrorHandler]:
+    errors: MutationUserErrorHandler = MutationUserErrorHandler()
     userId: int = int(info.context['request'].user.id)
     unlock: bool = ('unlock' in input and input['unlock']) or False
 
@@ -68,7 +68,8 @@ async def resolve_lock_on_mdt(
                     )
                 )
             ).apply()
-    return {
-        "on_mdt": on_mdt,
-        "user_errors": errors.errorList if len(errors.errorList) > 0 else None
-    }
+
+    return OnMdtPayload(
+        on_mdt=on_mdt,
+        user_errors=errors.errorList if len(errors.errorList) > 0 else None
+    )

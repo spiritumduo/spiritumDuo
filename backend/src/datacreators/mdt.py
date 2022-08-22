@@ -1,7 +1,10 @@
 from datetime import date
 from asyncpg import UniqueViolationError
 from models import MDT
-from common import DataCreatorInputErrors, ReferencedItemDoesNotExistError
+from common import (
+    MutationUserErrorHandler,
+    MdtPayload
+)
 
 
 async def CreateMDT(
@@ -9,27 +12,32 @@ async def CreateMDT(
     plannedAt: date = None,
     pathwayId: int = None,
     location: str = None,
-    errors: DataCreatorInputErrors = None
 ):
-    errors = DataCreatorInputErrors()
     """
     Creates an MDT object in the local database
 
-    Keyword arguments:
-        context (dict): the current request context
-        plannedAt (date): date of MDT
-    Returns:
-        MDT/DataCreatorInputErrors: newly created MDT object/errors
-            object
+    :param context: the current request context
+    :param plannedAt: date of MDT
+    :param pathwayId: ID of pathway the MDT is on
+    :param location: Display value of location of event
+
+    :return: MdtPayload object
+
+    :raise TypeError: invalid arguments
     """
-    if not context:
-        raise ReferencedItemDoesNotExistError("Context is not provided.")
-    if not plannedAt:
-        raise ReferencedItemDoesNotExistError("plannedAt is not provided.")
-    if not pathwayId:
-        raise ReferencedItemDoesNotExistError("pathwayId is not provided.")
+    errors = MutationUserErrorHandler()
+
+    if context is None:
+        raise TypeError("context cannot be None type")
+    if plannedAt is None:
+        raise TypeError("plannedAt cannot be None type")
+    if pathwayId is None:
+        raise TypeError("pathwayId cannot be None type")
+    if location is None:
+        raise TypeError("pathwayId cannot be None type")
+
     try:
-        newMDT: MDT = await MDT.create(
+        mdt: MDT = await MDT.create(
             planned_at=plannedAt,
             pathway_id=int(pathwayId),
             creator_user_id=context['request'].user.id,
@@ -40,6 +48,6 @@ async def CreateMDT(
             "plannedAt, pathwayId",
             "An MDT already exists on this date for this pathway"
         )
-        return errors
+        return MdtPayload(user_errors=errors.errorList)
 
-    return newMDT
+    return MdtPayload(mdt=mdt)

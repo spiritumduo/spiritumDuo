@@ -4,7 +4,7 @@ from models import Pathway, db, PathwayClinicalRequestType
 from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
-from common import DataCreatorInputErrors
+from common import MutationUserErrorHandler, DeletePayload
 
 
 @mutation.field("deletePathway")
@@ -13,23 +13,19 @@ async def resolve_delete_pathway(
     obj=None,
     info: GraphQLResolveInfo = None,
     id: int = None,
-    userErrors: DataCreatorInputErrors = None,
+    userErrors: MutationUserErrorHandler = None,
 ) -> Pathway:
-    userErrors = DataCreatorInputErrors()
+    userErrors = MutationUserErrorHandler()
 
-    async with db.transaction() as tx:
+    async with db.transaction():
         try:
             await PathwayClinicalRequestType.delete.where(
                 PathwayClinicalRequestType.pathway_id == int(id)
             ).gino.status()
             pathway: Pathway = await Pathway.get(int(id))
-            if not pathway:
-                userErrors.addError(
-                    "id", "A pathway with this ID does not exist")
-                return userErrors
             await pathway.delete()
-            return True
+            return DeletePayload(success=True)
         except ForeignKeyViolationError:
             userErrors.addError(
                 "id", "You cannot remove a pathway with a relation")
-            return userErrors
+            return DeletePayload(user_errors=userErrors.errorList)

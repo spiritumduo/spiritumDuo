@@ -1,6 +1,6 @@
 from typing import List, Set
 from models import MDT, UserMDT, User
-from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
+from common import MutationUserErrorHandler, MdtPayload
 from asyncpg.exceptions import UniqueViolationError
 from datetime import date
 
@@ -11,19 +11,33 @@ async def UpdateMDT(
     plannedAt: date = None,
     location: str = None,
     users: List[str] = None,
-    userErrors: DataCreatorInputErrors = None
 ):
-    userErrors = DataCreatorInputErrors()
+    """
+    Updates a given MDT object
+
+    :param context: request context 
+    :param id: id of MDT object
+    :param plannedAt: datetime of MDT
+    :param location: location of MDT
+    :param users: user accounts of clinicians present
+
+    :return MdtPayload:
+
+    :raise TypeError:
+    """
+
     if id is None:
-        raise ReferencedItemDoesNotExistError("ID not provided")
+        raise TypeError("id cannot be none type")
     elif plannedAt is None:
-        raise ReferencedItemDoesNotExistError("plannedAt not provided")
+        raise TypeError("plannedAt cannot be none type")
     elif location is None:
-        raise ReferencedItemDoesNotExistError("location not provided")
+        raise TypeError("location cannot be none type")
     elif context is None:
-        raise ReferencedItemDoesNotExistError("Context not provided")
+        raise TypeError("context cannot be none type")
     elif users is None:
-        raise ReferencedItemDoesNotExistError("Users list not provided")
+        raise TypeError("users cannot be none type")
+
+    userErrors = MutationUserErrorHandler()
 
     mdt: MDT = await MDT.get(int(id))
 
@@ -50,6 +64,6 @@ async def UpdateMDT(
             .update(location=location).apply()
     except UniqueViolationError:
         userErrors.addError("Name", "An MDT exists for this date already")
-        return userErrors
+        return MdtPayload(user_errors=userErrors.errorList)
 
-    return mdt
+    return MdtPayload(mdt=mdt)

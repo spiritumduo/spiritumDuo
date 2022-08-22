@@ -1,4 +1,3 @@
-from typing import List
 from .query_type import query
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo

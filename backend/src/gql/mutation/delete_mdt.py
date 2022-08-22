@@ -18,6 +18,10 @@ async def resolve_delete_mdt(
         int(input['movePatientsToMdtId'])
         if 'movePatientsToMdtId' in input else None
     )
+    # if `migrating_mdt_id` is provided, it'll move all the patients
+    # on the mdt to the specified mdt. it's done in a transaction so if
+    # something fails everything's reversed.
+
     async with db.transaction():
         if migrating_mdt_id is not None:
             await OnMdt.update.values(mdt_id=migrating_mdt_id).where(
@@ -26,4 +30,6 @@ async def resolve_delete_mdt(
         await UserMDT.delete.where(UserMDT.mdt_id == mdt_id).gino.status()
         await MDT.delete.where(MDT.id == mdt_id).gino.status()
 
-    return True
+    return {
+        "success": True
+    }

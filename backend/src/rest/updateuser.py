@@ -42,7 +42,7 @@ async def update_user(request: Request, input: UpdateUserInput):
 
     try:
         async with db.acquire() as conn:
-            async with conn.transaction() as tx:
+            async with conn.transaction():
                 await user.update(
                     first_name=input.firstName,
                     last_name=input.lastName,

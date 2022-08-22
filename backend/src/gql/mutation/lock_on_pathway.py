@@ -7,7 +7,10 @@ from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from datetime import datetime, timedelta
 from config import config
-from common import DataCreatorInputErrors, UserDoesNotHavePathwayPermission
+from common import (
+    MutationUserErrorHandler, OnPathwayPayload,
+    UserDoesNotHavePathwayPermission
+)
 from SdTypes import Permissions
 
 
@@ -21,7 +24,7 @@ async def resolve_lock_on_pathway(
     input: dict = None,
     pub=Provide[SDContainer.pubsub_service]
 ) -> OnPathway:
-    errors: DataCreatorInputErrors = DataCreatorInputErrors()
+    errors: MutationUserErrorHandler = MutationUserErrorHandler()
     userId = int(info.context['request'].user.id)
     onPathwayId = int(input['onPathwayId'])
     unlock = ('unlock' in input and input['unlock']) or False
@@ -73,16 +76,12 @@ async def resolve_lock_on_pathway(
                 )
             ).apply()
 
-    returnErrors = None
-    if errors.hasErrors():
-        returnErrors = errors.errorList
-
     await pub.publish(
         'on-pathway-updated',
         await OnPathway.get(int(input["onPathwayId"]))
     )
 
-    return {
-        "onPathway": onPathway,
-        "userErrors": returnErrors
-    }
+    return OnPathwayPayload(
+        on_pathway=onPathway,
+        user_errors=errors.errorList if len(errors.errorList) > 0 else None
+    )

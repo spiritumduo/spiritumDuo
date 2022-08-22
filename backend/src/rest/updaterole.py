@@ -22,7 +22,7 @@ class UpdateRoleInput(BaseModel):
 @needsAuthorization([Permissions.ROLE_UPDATE])
 async def update_role(request: Request, input: UpdateRoleInput):
     try:
-        async with db.transaction() as tx:
+        async with db.transaction():
             role = await Role.query.where(Role.id == input.id).gino.one_or_none()
             if role is None:
                 raise NotFoundHTTPException("Role with that ID not found")

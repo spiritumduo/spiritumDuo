@@ -1,0 +1,19 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,385,68,412"/>
+<area shape="rect" id="node2" href="$classmodels_1_1ClinicalRequest_1_1ClinicalRequest.html" title=" " alt="" coords="159,5,281,32"/>
+<area shape="rect" id="node3" href="$classmodels_1_1ClinicalRequestType_1_1ClinicalRequestType.html" title=" " alt="" coords="143,56,297,83"/>
+<area shape="rect" id="node4" href="$classmodels_1_1DecisionPoint_1_1DecisionPoint.html" title=" " alt="" coords="165,107,275,133"/>
+<area shape="rect" id="node5" href="$classmodels_1_1MDT_1_1MDT.html" title=" " alt="" coords="194,157,246,184"/>
+<area shape="rect" id="node6" href="$classmodels_1_1OnMdt_1_1OnMdt.html" title=" " alt="" coords="187,208,253,235"/>
+<area shape="rect" id="node7" href="$classmodels_1_1OnPathway_1_1OnPathway.html" title=" " alt="" coords="173,259,267,285"/>
+<area shape="rect" id="node8" href="$classmodels_1_1Pathway_1_1Pathway.html" title=" " alt="" coords="181,309,259,336"/>
+<area shape="rect" id="node9" href="$classmodels_1_1PathwayClinicalRequestType_1_1PathwayClinicalRequestType.html" title=" " alt="" coords="116,360,324,387"/>
+<area shape="rect" id="node10" href="$classmodels_1_1Patient_1_1Patient.html" title=" " alt="" coords="187,411,253,437"/>
+<area shape="rect" id="node11" href="$classmodels_1_1Role_1_1Role.html" title=" " alt="" coords="195,461,245,488"/>
+<area shape="rect" id="node12" href="$classmodels_1_1RolePermission_1_1RolePermission.html" title=" " alt="" coords="159,512,281,539"/>
+<area shape="rect" id="node13" href="$classmodels_1_1Session_1_1Session.html" title=" " alt="" coords="184,563,256,589"/>
+<area shape="rect" id="node14" href="$classmodels_1_1User_1_1User.html" title=" " alt="" coords="194,613,246,640"/>
+<area shape="rect" id="node15" href="$classmodels_1_1UserMDT_1_1UserMDT.html" title=" " alt="" coords="179,664,261,691"/>
+<area shape="rect" id="node16" href="$classmodels_1_1UserPathway_1_1UserPathway.html" title=" " alt="" coords="167,715,273,741"/>
+<area shape="rect" id="node17" href="$classmodels_1_1UserRole_1_1UserRole.html" title=" " alt="" coords="179,765,261,792"/>
+</map>

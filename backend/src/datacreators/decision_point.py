@@ -1,7 +1,4 @@
-from ctypes import Union
-from asyncpg import UniqueViolationError
 from sqlalchemy import desc
-
 from dataloaders import (
     OnPathwayByIdLoader,
     PatientByIdLoader,
@@ -21,22 +18,22 @@ from models import (
     db
 )
 from SdTypes import ClinicalRequestState, DecisionTypes
-from typing import List, Dict
+from typing import List, Dict, Union
 from containers import SDContainer
 from trustadapter.trustadapter import TestResultRequest_IE, TrustAdapter
 from dependency_injector.wiring import Provide, inject
 from common import (
-    DataCreatorInputErrors,
-    ReferencedItemDoesNotExistError,
+    DecisionPointPayload,
+    MutationUserErrorHandler,
     UserDoesNotHavePathwayPermission
 )
 
 
 class UserDoesNotOwnLock(Exception):
     """
-    This is raised when the user attempts to
-    submit a decision point whilst not owning
-    the OnPathway lock
+    This is raised when the user attempts an
+    operation whilst not owning the appropriate
+    OnPathway lock
     """
 
 
@@ -52,8 +49,7 @@ class DecisionPointMdtMismatchException(Exception):
     """
     This is raised when an MDT is added using the `createDecisionPoint`
     mutation, however the MDT specified is not on the same pathway
-    as the decision point's OnPathway object. If this is triggered, it
-    could indicate tampering.
+    as the decision point's OnPathway object.
     """
 
 
@@ -70,41 +66,57 @@ async def CreateDecisionPoint(
     mdt: Dict[str, str] = None,
     from_mdt_id: int = None,
     trust_adapter: TrustAdapter = Provide[SDContainer.trust_adapter_service]
-):
+) -> DecisionPointPayload:
     """
     Creates a decision point object in local and external databases
 
-    Keyword arguments:
-        context (dict): the current request context
-        on_pathway_id (int): the ID of the `OnPathway` instance the newly
-            created DecisionPoint is to be linked to
-        clinician_id (int): the ID of the `User` object the newly created
-            DecisionPoint is to be linked to
-        decision_type (DecisionTypes): the type of the decision point
-        clinic_history (str): the clinical history to be linked to the
-            decision point
-        comorbidities (str): the comorbidities to be linked to the decision
-            point
-        clinical_request_resolutions (List[int]): a list of previous
-            clinical_requests this decision point will acknowledge
-        clinical_request_requests (List[Dict[str, int]]): a list of
-            clinical_requests this decision point will request
-        mdt (Dict[str, str]): a list of data pertaining to the MDT the
-            pt should be added to
-        from_mdt_id (int): the ID of the MDT this decision point is
-            created from
-    Returns:
-        DecisionPoint: newly created decision point object
+    :param context: the current request context
+    :param on_pathway_id: the ID of the `OnPathway` instance the newly created
+        DecisionPoint is to be linked to
+    :param clinician_id: the ID of the `User` object the newly created
+        DecisionPoint is to be linked to
+    :param decision_type: the type of the decision point
+    :param clinic_history: the clinical history to be linked to the decision
+        point
+    :param comorbidities: the comorbidities to be linked to the decision point
+    :param clinical_request_resolutions: a list of previous clinical_requests
+        this decision point will acknowledge
+    :param clinical_request_requests: a list of clinical_requests this
+        decision point will request
+    :param mdt a list of data pertaining to the MDT the pt should be added to
+    :param from_mdt_id: the ID of the MDT this decision point is created from
+
+    :return: DecisionPointPayload object
+
+    :raise TypeError: invalid arguments
+    :raise UserDoesNotHavePathwayPermission: user does not have pathway
+        permission
+    :raise UserDoesNotOwnLock: user does not own lock on DecisionPoint object
+    :raise DecisionPointMdtMismatchException: MDT and DecisionPoint not on
+        same Pathway
+    :raise ClinicalRequestTypeIdNotOnPathway: ClinicalRequestType and
+        DecisionPoint not on same Pathway
     """
 
-    errors = DataCreatorInputErrors()
+    if context is None:
+        raise TypeError("context cannot be None type")
+    if on_pathway_id is None:
+        raise TypeError("on_pathway_id cannot be None type")
+    if clinician_id is None:
+        raise TypeError("clinician_id cannot be None type")
+    if decision_type is None:
+        raise TypeError("decision_type cannot be None type")
+    if clinic_history is None:
+        raise TypeError("clinic_history cannot be None type")
+    if comorbidities is None:
+        raise TypeError("comorbidities cannot be None type")
+
+    errors = MutationUserErrorHandler()
 
     await trust_adapter.test_connection(
         auth_token=context['request'].cookies['SDSESSION']
     )
 
-    if context is None:
-        raise TypeError("Context provided is None")
     on_pathway_id = int(on_pathway_id)
     clinician_id = int(clinician_id)
 
@@ -117,11 +129,12 @@ async def CreateDecisionPoint(
         context, on_pathway.pathway_id)
 
     async with db.acquire(reuse=False) as conn:
-        user_has_pathway_permission = await conn.one_or_none(
-            UserPathway
-            .query.where(UserPathway.user_id == clinician_id)
-            .where(UserPathway.pathway_id == on_pathway.pathway_id)
-        )
+        user_has_pathway_permission: Union[UserPathway, None] = await conn.\
+            one_or_none(
+                UserPathway
+                .query.where(UserPathway.user_id == clinician_id)
+                .where(UserPathway.pathway_id == on_pathway.pathway_id)
+            )
 
     if user_has_pathway_permission is None:
         raise UserDoesNotHavePathwayPermission(
@@ -132,7 +145,7 @@ async def CreateDecisionPoint(
     if on_pathway.lock_user_id != clinician_id:
         raise UserDoesNotOwnLock()
 
-    if mdt:
+    if mdt is not None:
         mdt_obj: MDT = await MDT.get(int(mdt['id']))
 
         if mdt_obj.pathway_id != on_pathway.pathway_id:
@@ -145,12 +158,14 @@ async def CreateDecisionPoint(
                 .where(MDT.pathway_id == on_pathway.pathway_id)
                 .where(MDT.id == mdt_obj.id))
 
-        if patient_has_on_mdt:
+        if patient_has_on_mdt is not None:
             errors.addError(
                 'mdt',
                 'This patient is already on the MDT specified'
             )
-            return errors
+            return DecisionPointPayload(
+                user_errors=errors.errorList,
+            )
 
     decision_point_details = {
         "on_pathway_id": on_pathway_id,
@@ -179,9 +194,10 @@ async def CreateDecisionPoint(
             )
 
         if mdt_clinical_request is None:
-            raise ReferencedItemDoesNotExistError(
-                f"ClinicalRequest does not exist; MDT: {from_mdt_id}; "
-                "Patient: {on_pathway.patient_id}"
+            raise TypeError(
+                "ClinicalRequest cannot be None type (not found); "
+                f"MDT: {from_mdt_id}; "
+                f"Patient: {on_pathway.patient_id}"
             )
 
         if mdt_clinical_request.fwd_decision_point_id is None:
@@ -248,8 +264,7 @@ async def CreateDecisionPoint(
                 highest_order_on_mdt = await OnMdt.query \
                     .where(OnMdt.mdt_id == mdt_obj.id) \
                     .order_by(desc(OnMdt.order)) \
-                    .gino \
-                    .first()
+                    .gino.first()
 
                 if highest_order_on_mdt is not None:
                     new_order = highest_order_on_mdt.order + 1
@@ -288,4 +303,6 @@ async def CreateDecisionPoint(
         .values(under_care_of_id=context['request']['user'].id)\
         .gino.scalar()
 
-    return decision_point
+    return DecisionPointPayload(
+        decision_point=decision_point,
+    )

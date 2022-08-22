@@ -1,6 +1,9 @@
 from typing import Dict, List
 from models import Pathway, PathwayClinicalRequestType
-from common import ReferencedItemDoesNotExistError, DataCreatorInputErrors
+from common import (
+    MutationUserErrorHandler,
+    PathwayPayload
+)
 from asyncpg.exceptions import UniqueViolationError
 
 
@@ -10,35 +13,42 @@ async def CreatePathway(
     clinical_request_types: List[Dict[str, int]] = None,
 ):
     """
-    Creates a decision point object in the local database
+    Creates a pathway object in the local database
 
-    Keyword arguments:
-        context (dict): the current request context
-        name (string): the name of the pathway
-        clinicalRequestTypes (list): list of clinical_request type IDs
-    Returns:
-        Pathway/DataCreatorInputErrors: newly created pathway object/errors
-            object
+    :param context: the current request context
+    :param name: the name of the pathway
+    :param clinical_request_types: list of clinical request type IDs
+
+    :return: PathwayPayload object
+
+    :raise TypeError: invalid parameters
     """
-    if not context:
-        raise ReferencedItemDoesNotExistError("Context is not provided.")
-    if not name:
-        raise ReferencedItemDoesNotExistError("Name is not provided.")
+
+    if context is None:
+        raise TypeError("Context cannot be None type")
+    if name is None:
+        raise TypeError("Name cannot be None type")
+    if clinical_request_types is None:
+        raise TypeError("clinical_request_types cannot be None type")
+
+    errors = MutationUserErrorHandler()
 
     try:
-        newPathway: Pathway = await Pathway.create(
+        pathway: Pathway = await Pathway.create(
             name=name
         )
 
         for clinicalRequestType in clinical_request_types:
             await PathwayClinicalRequestType.create(
-                pathway_id=int(newPathway.id),
+                pathway_id=int(pathway.id),
                 clinical_request_type_id=int(clinicalRequestType['id'])
             )
 
-        return newPathway
+        return PathwayPayload(pathway=pathway)
+
     except UniqueViolationError:
-        return DataCreatorInputErrors().addError(
+        errors.addError(
             field="name",
             message="A pathway with this name already exists"
         )
+        return PathwayPayload(user_errors=errors.errorList)

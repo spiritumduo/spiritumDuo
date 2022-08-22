@@ -22,16 +22,18 @@ class EmailAdapterDoesNotExistException(Exception):
     viable email adapter found
     """
 
+
 @dataclass
 class EmailAttachment:
     name: str = None
     data: str = None
     is_inline: bool = False
 
+
 class EmailAdapter:
     def send_email(
         self,
-        recipients: Union[List[str], None]= None,
+        recipients: Union[List[str], None] = None,
         subject: str = None,
         body: str = None,
         attachments: List[EmailAttachment] = None,
@@ -43,9 +45,9 @@ class EmailAdapter:
 
         if recipients is None:
             if config['EMAIL_ADAPTER'].lower() == 'smtp':
-                recipients=[config['SMTP_USER_EMAIL']]
+                recipients = [config['SMTP_USER_EMAIL']]
             elif config['EMAIL_ADAPTER'].lower() == 'exchange':
-                recipients=[config['EXCHANGE_USER_EMAIL']]
+                recipients = [config['EXCHANGE_USER_EMAIL']]
 
         if config['EMAIL_ADAPTER'].lower() == 'smtp':
             _send_smtp(
@@ -101,7 +103,7 @@ def _send_exchange(
         body=html_body
     )
     # formats the message + data
-    
+
     for attachment in attachments:
         message.attach(
             FileAttachment(
@@ -113,8 +115,8 @@ def _send_exchange(
         )
     # even if it's not necessarily going to show as a typical attachment,
     # images still need to be attached to the message even if they're displayed
-    # in the message. CID/content ID lets us embed images inline in the message.
-    # This is an email thing, not limited to just Exchange.
+    # in the message. CID/content ID lets us embed images inline in the
+    # message. This is an email thing, not limited to just Exchange.
 
     message.send()
     # fire the message off into the great abyss
@@ -124,6 +126,7 @@ def _send_exchange(
     # throw an exception. Since this isn't necessarly handling any input
     # from the user in ideal scenarios, it's ok to leave this unhandled as
     # there shouldn't be any errors if configured properly via envvars
+
 
 def _send_smtp(
     recipients: List[str],
@@ -142,13 +145,13 @@ def _send_smtp(
             image = MIMEImage(attachment.data)
             image.add_header("Content-ID", "<{}>".format(attachment.name))
             message.attach(image)
-    
+
     sender = smtplib.SMTP(config['SMTP_SERVER_ADDRESS'], config['SMTP_PORT'])
-    # creates an SMTP session 
+    # creates an SMTP session
 
     sender.ehlo()
     # the EHLO command is an extended Hello (HELO) command as part
-    # of enhanced SMTP (ESMTP). This starts the negotiation between the 
+    # of enhanced SMTP (ESMTP). This starts the negotiation between the
     # SMTP client and server wrt encryption, etc
 
     sender.starttls()

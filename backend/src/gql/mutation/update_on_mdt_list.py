@@ -1,10 +1,6 @@
-import asyncio
-from typing import List
-
 from SdTypes import Permissions
-from common import DataCreatorInputErrors
-from dataupdaters.on_mdt import OnMdtLockedByOtherUser
-from models import OnMdt, db
+from common import MutationUserErrorHandler, BaseMutationPayload
+from models import db
 from dataupdaters import UpdateOnMDT
 from .mutation_type import mutation
 from authentication.authentication import needsAuthorization
@@ -18,21 +14,22 @@ async def resolve_update_on_mdt_list(
     info: GraphQLResolveInfo = None,
     input: dict = None,
 ):
-    errors: DataCreatorInputErrors = DataCreatorInputErrors()
     async with db.acquire(reuse=False) as conn:
         async with conn.transaction():
             results = []
             for i in input['onMdtList']:
-                res = await UpdateOnMDT(
+                payload = await UpdateOnMDT(
                     context=info.context,
                     id=i['id'],
                     reason=i['reason'] if 'reason' in i else None,
-                    actioned=i['actioned'] if 'actioned' in i else None,
                     outcome=i['outcome'] if 'outcome' in i else None,
                     order=i['order'] if 'order' in i else None,
                     conn=conn,
                 )
-                results.append(res)
+                if payload.user_errors:
+                    await conn.rollback()
+                    return BaseMutationPayload(user_errors=payload.user_errors)
+                results.append(payload.on_mdt)
 
             return {
                 "on_mdt_list": results,

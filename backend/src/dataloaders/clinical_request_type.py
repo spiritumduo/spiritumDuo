@@ -1,7 +1,6 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from aiodataloader import DataLoader
 from models import ClinicalRequestType, PathwayClinicalRequestType
-import logging
 
 
 class ClinicalRequestTypeLoader(DataLoader):
@@ -28,9 +27,9 @@ class ClinicalRequestTypeLoader(DataLoader):
 
     async def fetch(self, keys) -> Dict[int, ClinicalRequestType]:
         async with self._db.acquire(reuse=False) as conn:
-            query = ClinicalRequestType.query.where(ClinicalRequestType.id.in_(keys))
-            result = await conn.all(query)
-            logging.info(result)
+            query = ClinicalRequestType.query.where(
+                ClinicalRequestType.id.in_(keys))
+            result: List[ClinicalRequestType] = await conn.all(query)
 
             returnData = {}
             for clinical_request in result:
@@ -47,53 +46,65 @@ class ClinicalRequestTypeLoader(DataLoader):
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id=None
+        cls, context=None, id=None
     ) -> Optional[ClinicalRequestType]:
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                ClinicalRequestType/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: ClinicalRequestType/None
+
+            :raise TypeError: invalid argument type
         """
-        if not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         return await cls._get_loader_from_context(context).load(id)
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
-    ) -> Optional[List[ClinicalRequestType]]:
+        cls, context=None, ids=None
+    ) -> List[Union[ClinicalRequestType, None]]:
         """
-            Load a multiple entries from their record IDs
+            Load multiple entries from their record IDs
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): IDs to find
-            Returns:
-                List[ClinicalRequestType]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[ClinicalRequestType]
+
+            :raise TypeError: invalid argument type
         """
-        if not ids:
-            return None
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
+
         return await cls._get_loader_from_context(context).load_many(ids)
 
     @classmethod
-    async def load_all(cls, context=None):
+    async def load_all(cls, context=None) -> List[ClinicalRequestType]:
         """
             Loads all ClinicalRequestType records
 
-            Parameters:
-                context (dict): request context
-            Returns:
-            List[ClinicalRequestType]/None
+            :param context: request context
+
+            :return: List[ClinicalRequestType]
+
+            :raise TypeError: invalid argument type
         """
-        clinical_request_types = await ClinicalRequestType.query.gino.all()
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        clinical_request_types: List[ClinicalRequestType] = \
+            await ClinicalRequestType.query.gino.all()
         for t in clinical_request_types:
             cls._get_loader_from_context(context).prime(t.id, t)
         return clinical_request_types
@@ -111,23 +122,26 @@ class ClinicalRequestTypeLoaderByPathwayId(DataLoader):
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id=None
+        cls, context=None, id=None
     ) -> Optional[ClinicalRequestType]:
         """
             Loads ClinicalRequestTypes from their associated
             pathway ID from the PathwayClinicalRequestType link
             table
 
-            Parameters:
-                context (dict): request context
-                id (int): ID of pathway ID to find
-            Returns:
-                [ClinicalRequestType]/None
+            :param context: request context
+            :param id: ID of pathway ID to find related ClinicalRequestTypes
+                from
+            
+            :return: List[ClinicalRequestType]
+
+            :raise TypeError: invalid argument type
         """
-        if not id or not context:
-            return None
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+        if id is None:
+            return []
 
         _gino = context['db']
 
@@ -137,19 +151,19 @@ class ClinicalRequestTypeLoaderByPathwayId(DataLoader):
                     _gino.join(
                         ClinicalRequestType,
                         PathwayClinicalRequestType,
-                        ClinicalRequestType.id == PathwayClinicalRequestType.clinical_request_type_id
+                        ClinicalRequestType.id == PathwayClinicalRequestType.
+                        clinical_request_type_id
                     )
                 )\
                 .where(PathwayClinicalRequestType.pathway_id == int(id))
 
-            result = await conn.all(query)
+            result: List[ClinicalRequestType] = await conn.all(query)
 
             if ClinicalRequestTypeLoader.loader_name not in context:
-                context[ClinicalRequestTypeLoader.loader_name] = ClinicalRequestTypeLoader(
-                    db=context['db']
-                )
-            for mT in result:
-                context[ClinicalRequestTypeLoader.loader_name].prime(mT.id, mT)
+                context[ClinicalRequestTypeLoader.loader_name] = \
+                    ClinicalRequestTypeLoader(db=context['db'])
+            for clinical_request_Type in result:
+                context[ClinicalRequestTypeLoader.loader_name].prime(
+                    clinical_request_Type.id, clinical_request_Type)
 
             return result
-

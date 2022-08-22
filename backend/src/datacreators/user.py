@@ -1,18 +1,6 @@
 from models import User
 from bcrypt import hashpw, gensalt
-from dataclasses import dataclass
-
-
-@dataclass
-class userOutput:
-    id: int = None,
-    username: str = None,
-    email: str = None,
-    first_name: str = None,
-    last_name: str = None,
-    department: str = None,
-    default_pathway_id: int = None,
-    is_active: bool = None,
+from common import SafeUser
 
 
 async def CreateUser(
@@ -25,26 +13,42 @@ async def CreateUser(
     is_active: bool = None
 ):
     """
-    Creates a patient object in local and external databases
+    Creates a user object.
 
-    Keyword arguments:
-        username (str): User's username
-        password (str): User's plaintext password
-        email (str): User's email address
-        first_name (str): User's first name
-        last_name (str): User's last name
-        department (str): User's department
-        is_active (bool): active status of user
-    Returns:
-        User: newly created user object (without password)
+    :param username: User's username
+    :param password: User's plaintext password
+    :param email: User's email address
+    :param first_name: User's first name
+    :param last_name: User's last name
+    :param department: User's department
+    :param is_active: active status of user
+
+    :return: SafeUser
+
+    :raise TypeError: invalid parameter type
     """
 
-    hashedPassword = hashpw(password.encode('utf-8'), gensalt())
-    hashedPassword = hashedPassword.decode('utf-8')
+    if username is None:
+        raise TypeError("parameters username cannot be None type")
+    if password is None:
+        raise TypeError("parameters password cannot be None type")
+    if email is None:
+        raise TypeError("parameters email cannot be None type")
+    if first_name is None:
+        raise TypeError("parameters first_name cannot be None type")
+    if last_name is None:
+        raise TypeError("parameters last_name cannot be None type")
+    if department is None:
+        raise TypeError("parameters department cannot be None type")
+    if is_active is None:
+        raise TypeError("parameters is_active cannot be None type")
 
-    newUser = await User.create(
+    hashed_password = hashpw(password.encode('utf-8'), gensalt())
+    hashed_password = hashed_password.decode('utf-8')
+
+    user: User = await User.create(
         username=username.lower(),
-        password=hashedPassword,
+        password=hashed_password,
         email=email,
         first_name=first_name,
         last_name=last_name,
@@ -52,13 +56,14 @@ async def CreateUser(
         is_active=is_active
     )
 
-    return userOutput(
-        id=newUser.id,
-        username=newUser.username,
-        email=newUser.email,
-        first_name=newUser.first_name,
-        last_name=newUser.last_name,
-        department=newUser.department,
-        default_pathway_id=newUser.default_pathway_id,
-        is_active=newUser.is_active
+    # returns SafeUser as it doesn't contain password
+    return SafeUser(
+        id=user.id,
+        username=user.username,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        department=user.department,
+        default_pathway_id=user.default_pathway_id,
+        is_active=user.is_active
     )

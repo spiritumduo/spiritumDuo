@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import sys
-from common import DataCreatorInputErrors
+from common import MutationUserErrorHandler
 from models import (
     Pathway,
     Patient,
@@ -448,7 +448,7 @@ async def insert_demo_data():
                     national_number=national_number
                 )
 
-                if isinstance(sd_patient, DataCreatorInputErrors):
+                if isinstance(sd_patient, MutationUserErrorHandler):
                     raise Exception(sd_patient.errorList)
 
                 sex = Sex.MALE if randint(0, 1) == 0 else Sex.FEMALE

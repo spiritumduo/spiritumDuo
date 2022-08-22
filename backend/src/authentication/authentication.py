@@ -27,19 +27,11 @@ class PermissionsError(HTTPException):
 
 class AuthenticationError(HTTPException):
     """
-    Raised when a user is lacking a valid login
+    Raised when a user is not authenticated (not logged in)
     """
     def __init__(self, detail: str):
         super(AuthenticationError, self).__init__(
             detail=detail, status_code=401)
-
-
-class SessionAlreadyExists(Exception):
-    """
-    Raised when a user attempts to login
-    despite already having an active
-    session
-    """
 
 
 class SDUser(BaseUser):
@@ -47,38 +39,19 @@ class SDUser(BaseUser):
         self,
         id: int = None,
         username: str = None,
-        firstName: str = None,
-        lastName: str = None,
+        first_name: str = None,
+        last_name: str = None,
         department: str = None,
         default_pathway_id: int = None,
         email: str = None,
-        isAdmin: bool = None
-        # TODO: make all either camelcase or snakecase
     ) -> None:
         self.id = id
         self.username = username
-        self.firstName = firstName
-        self.lastName = lastName
+        self.first_name = first_name
+        self.last_name = last_name
         self.department = department
         self.default_pathway_id = default_pathway_id
-        self.isAdmin = isAdmin
         self.email = email
-
-    @property
-    def is_authenticated(self) -> bool:
-        return True
-
-    @property
-    def get_display_name(self) -> str:
-        return self.username
-
-    @property
-    def get_formatted_name(self) -> str:
-        return self.firstName+" "+self.lastName
-
-    @property
-    def get_department(self) -> str:
-        return self.department
 
 
 class SDAuthentication(AuthenticationBackend):
@@ -87,6 +60,13 @@ class SDAuthentication(AuthenticationBackend):
     """
 
     async def authenticate(self, request: HTTPConnection):
+        """
+        Authenticate a user
+
+        :param request: any web request
+
+        :return: AuthCredentials, SdUser
+        """
         if "Authorization" not in request.headers:
             if request['session']:
                 async with db.acquire(reuse=False) as conn:
@@ -99,19 +79,21 @@ class SDAuthentication(AuthenticationBackend):
                     ).where(
                         User.is_active == True
                     )
-                    user = await conn.one_or_none(user_query)
+                    user: User = await conn.one_or_none(user_query)
                     if user:
-                        session_query = Session.query.where(Session.session_key == str(request['session']))
-                        session = await conn.one_or_none(session_query)
+                        session_query = Session.query.where(
+                            Session.session_key == str(request['session']))
+                        session: Session = await conn.one_or_none(
+                            session_query)
                         sessionExpiry = datetime.now() + timedelta(
                             seconds=int(config['SESSION_EXPIRY_LENGTH'])
                         )
-                        update_request = await session.update(expiry=sessionExpiry).apply()
+                        await session.update(expiry=sessionExpiry).apply()
                         sdUser = SDUser(
                             id=user.id,
                             username=user.username,
-                            firstName=user.first_name,
-                            lastName=user.last_name,
+                            first_name=user.first_name,
+                            last_name=user.last_name,
                             department=user.department,
                             default_pathway_id=user.default_pathway_id,
                             email=user.email,
@@ -161,7 +143,9 @@ def needsAuthorization(
             if has_required_scope(request, required_scopes):
                 return func(*args, **kwargs)
             else:
-                raise GraphQLError(f"Missing one or many permissions: {required_scopes}")
+                raise GraphQLError(
+                    f"Missing one or many permissions: {required_scopes}"
+                )
 
         @wraps(func)
         async def fastapi_wrapper(*args, **kwargs):

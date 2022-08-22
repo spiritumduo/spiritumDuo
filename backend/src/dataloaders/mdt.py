@@ -22,7 +22,7 @@ class MdtByIdLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = MDT.query.where(MDT.id.in_(keys))
-            result = await conn.all(query)
+            result: List[MDT] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -43,40 +43,66 @@ class MdtByIdLoader(DataLoader):
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                MDT/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: MDT/None
+
+            :raise TypeError:
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
         if not id:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
-        mdt = await context[cls.loader_name].load(id)
-        return mdt
+
+        return await context[cls.loader_name].load(id)
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
+        cls, context=None, ids=None
     ) -> Union[List[MDT], None]:
         """
             Loads many entires from their record ID
 
-            Parameters:
-                context (dict): request context
-                id (List[int]): ID to find
-            Returns:
-                List[User]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[User]
+
+            :raise TypeError:
         """
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load_many(ids)
 
     @classmethod
     def prime(cls, key=None, value=None, context=None):
+        """
+            Primes the dataloader with new data using kvp
+
+            :param context: request context
+            :param key: ID of object
+            :param value: object
+
+            :raise TypeError:
+        """
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if key is None:
+            raise TypeError("key cannot be None value")
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return super(cls, context[cls.loader_name]).prime(key=key, value=value)

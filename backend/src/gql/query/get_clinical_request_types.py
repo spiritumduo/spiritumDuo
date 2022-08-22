@@ -1,5 +1,8 @@
 from .query_type import query
-from dataloaders import ClinicalRequestTypeLoader, ClinicalRequestTypeLoaderByPathwayId
+from dataloaders import (
+    ClinicalRequestTypeLoader,
+    ClinicalRequestTypeLoaderByPathwayId
+)
 from authentication.authentication import needsAuthorization
 from graphql.type import GraphQLResolveInfo
 from SdTypes import Permissions

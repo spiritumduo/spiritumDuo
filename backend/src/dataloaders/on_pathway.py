@@ -23,7 +23,7 @@ class OnPathwayByIdLoader(DataLoader):
         result = None
         async with self._db.acquire(reuse=False) as conn:
             query = OnPathway.query.where(OnPathway.id.in_(keys))
-            result = await conn.all(query)
+            result: List[OnPathway] = await conn.all(query)
         returnData = {}
         for key in keys:
             returnData[key] = None
@@ -41,41 +41,49 @@ class OnPathwayByIdLoader(DataLoader):
 
     @classmethod
     async def load_from_id(
-        cls,
-        context=None,
-        id=None
+        cls, context=None, id=None
     ) -> Union[OnPathway, None]:
         """
             Load a single entry from its record ID
 
-            Parameters:
-                context (dict): request context
-                id (int): ID to find
-            Returns:
-                OnPathway/None
+            :param context: request context
+            :param id: ID to find
+
+            :return: OnPathway/None
+
+            :raise TypeError:
         """
 
-        if not id:
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if id is None:
             return None
+
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
         return await context[cls.loader_name].load(id)
 
     @classmethod
     async def load_many_from_id(
-        cls,
-        context=None,
-        ids=None
+        cls, context=None, ids=None
     ) -> Union[List[OnPathway], None]:
         """
             Loads many entries from their record ID
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): IDs to find
-            Returns:
-                List[OnPathway]/None
+            :param context: request context
+            :param ids: IDs to find
+
+            :return: List[OnPathway]
+
+            :raise TypeError:
         """
+
+        if context is None:
+            raise TypeError("context cannot be None type")
+
+        if ids is None:
+            return []
 
         if cls.loader_name not in context:
             context[cls.loader_name] = cls(db=context['db'])
@@ -92,30 +100,29 @@ class OnPathwaysByPatient:
     """
     @staticmethod
     async def load_from_id(
-        context=None,
-        id=None,
-        pathwayId=None,
-        includeDischarged=None,
-        awaitingDecisionType=None,
-        limit=None
-    ) -> Union[List[OnPathway], None]:
+        context=None, id=None, pathwayId=None, includeDischarged=None,
+        awaitingDecisionType=None, limit=None
+    ) -> List[OnPathway]:
         """
             Loads OnPathway records by their Patient ID
 
-            Parameters:
-                context (dict): request context
-                ids (List[int]): ID to find
-                pathwayId (int): filter by OnPathway ID
-                includeDischarged (bool): filter to include discharged patients
-                awaitingDecisionType (DecisionTypes): filter by
-                    awaiting_decision_types
-                limit (int): number of records to return
-            Returns:
-                List[OnPathway]/None
+            :param context: request context
+            :param ids: ID to find
+            :param pathwayId: filter by OnPathway ID
+            :param includeDischarged: filter to include discharged patients
+            :param awaitingDecisionType: filter by awaiting_decision_types
+            :param limit: number of records to return
+
+            :return: List[OnPathway]
+
+            :raise TypeError:
         """
 
-        if not context or not id:
-            return None
+        if context is None:
+            return TypeError("context cannot be None type")
+
+        if id is None:
+            return []
 
         _gino = context['db']
         query = OnPathway.query.where(
@@ -135,7 +142,7 @@ class OnPathwaysByPatient:
             query = query.limit(int(limit))
 
         async with _gino.acquire(reuse=False) as conn:
-            onPathways = await query.gino.all()
+            onPathways: List[OnPathway] = await query.gino.all()
 
         if OnPathwayByIdLoader.loader_name not in context:
             context[OnPathwayByIdLoader.loader_name] = OnPathwayByIdLoader(

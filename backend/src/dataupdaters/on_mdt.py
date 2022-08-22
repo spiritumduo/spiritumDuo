@@ -1,3 +1,4 @@
+from common import MutationUserErrorHandler, OnMdtPayload
 from models import MDT, OnMdt, UserPathway
 from models.db import db
 from gino.engine import GinoConnection
@@ -16,10 +17,25 @@ async def UpdateOnMDT(
     id: int = None,
     reason: str = None,
     outcome: str = None,
-    actioned: bool = None,
     order: int = None,
     conn: GinoConnection = None,
 ):
+    """
+    Updates a given OnMDT object
+    
+    :param context: request context
+    :param id: id of OnMDT object
+    :param reason: reason pt added to MDT
+    :param outcome: outcome of MDT
+    :param order: order of MDT on list
+    :param conn: database connection/Gino object
+
+    :return OnMdtPayload:
+
+    :raise TypeError:
+    """
+    errors = MutationUserErrorHandler()
+
     if id is None:
         raise TypeError("ID is None")
     elif context is None:
@@ -45,20 +61,22 @@ async def UpdateOnMDT(
         raise PermissionError()
 
     if on_mdt.lock_user_id != context["request"].user.id\
-            and (reason is not None or outcome is not None or actioned is not None):
-        raise OnMdtLockedByOtherUser()
+            and (reason is not None or outcome is not None):
+        errors.addError(
+            'lock_user_id',
+            'This is locked by another user'
+        )
+        return OnMdtPayload(user_errors=errors.errorList)
 
     update_values = {}
     if reason is not None:
         update_values['reason'] = reason
     if outcome is not None:
         update_values['outcome'] = outcome
-    if actioned is not None:
-        update_values['actioned'] = actioned
     if order is not None:
         update_values['order'] = order
 
     if len(update_values.keys()) > 0:
         await on_mdt.update(**update_values).apply()
 
-    return on_mdt
+    return OnMdtPayload(on_mdt=on_mdt)
