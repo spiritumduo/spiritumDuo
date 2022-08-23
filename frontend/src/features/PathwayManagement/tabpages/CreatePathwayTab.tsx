@@ -109,6 +109,7 @@ const CreatePathwayTab = (
     formState: { errors: formErrors },
     getValues,
     control,
+    setValue,
   } = useForm<CreatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
 
   const {
@@ -118,6 +119,10 @@ const CreatePathwayTab = (
     name: 'clinicalRequestTypes',
     control: control,
   });
+
+  useEffect(() => {
+    setValue('clinicalRequestTypes', []);
+  }, [setValue]);
 
   useEffect(() => {
     if (!checkboxesOrganised && clinicalRequestTypes) {
@@ -137,6 +142,7 @@ const CreatePathwayTab = (
     appendClinicalRequestTypeFields,
     checkboxesOrganised,
     setCheckboxesOrganised,
+    setValue,
   ]);
 
   return (

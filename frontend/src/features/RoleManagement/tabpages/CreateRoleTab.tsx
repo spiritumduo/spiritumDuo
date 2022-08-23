@@ -141,6 +141,7 @@ const CreateRoleTab = (
     formState: { errors: formErrors },
     getValues,
     control,
+    setValue,
   } = useForm<CreateRoleForm>({ resolver: yupResolver(newRoleSchema) });
 
   const {
@@ -150,6 +151,10 @@ const CreateRoleTab = (
     name: 'permissions',
     control: control,
   });
+
+  useEffect(() => {
+    setValue('permissions', []);
+  }, [setValue]);
 
   useEffect(() => {
     if (!permissionCheckboxesOrganised && rolePermissions) {
@@ -169,6 +174,7 @@ const CreateRoleTab = (
     appendPermissionFields,
     permissionCheckboxesOrganised,
     setPermissionCheckboxesOrganised,
+    setValue,
   ]);
 
   return (
