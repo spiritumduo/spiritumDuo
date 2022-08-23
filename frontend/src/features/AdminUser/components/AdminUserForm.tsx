@@ -225,8 +225,8 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
             </Col>
             <Col>
               <Input
-                label={ editUser ? 'Update Password' : 'Password' }
-                type="password"
+                role="textbox"
+                label="Username"
                 error={ errors.username?.message }
                 { ...register('username') }
               />
