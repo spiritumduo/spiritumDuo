@@ -32,7 +32,7 @@ async def CreatePatient(
     national_number: str = None,
     date_of_birth: date = None,
     communication_method: Optional[str] = "LETTER",
-    pathwayId: int = None,
+    pathway_id: int = None,
     referred_at: datetime = None,
     awaiting_decision_type: Optional[str] = "TRIAGE",
     clinical_requests: List[ClinicalRequest] = None,
@@ -47,7 +47,7 @@ async def CreatePatient(
     :param hospital_number: hospital number of patient
     :param national_number: national number of patient
     :param date_of_birth: date of birth of patient
-    :param pathwayId: ID of pathway the patient is to be added to
+    :param pathway_id: ID of pathway the patient is to be added to
     :param clinical_requests: list of clinical_requests to import when
         a patient enters the pathway (referral letter, ex)
     :param communication_method: primary communication method for patient
@@ -61,11 +61,10 @@ async def CreatePatient(
     :raise TypeError: invalid parameter types, object is incorrect type
     """
 
-    # TODO: make `pathwayId` snake case
     if context is None:
         raise TypeError("context cannot be None type.")
-    if pathwayId is None:
-        raise TypeError("pathwayId cannot be None type.")
+    if pathway_id is None:
+        raise TypeError("pathway_id cannot be None type.")
     if first_name is None:
         raise TypeError("first_name cannot be None type")
     if last_name is None:
@@ -76,8 +75,6 @@ async def CreatePatient(
         raise TypeError("national_number cannot be None type")
     if date_of_birth is None:
         raise TypeError("date_of_birth cannot be None type")
-    if pathwayId is None:
-        raise TypeError("pathwayId cannot be None type")
 
     await trust_adapter.test_connection(
         auth_token=context['request'].cookies['SDSESSION']
@@ -99,7 +96,7 @@ async def CreatePatient(
 
     pathway: Pathway = await PathwayByIdLoader.load_from_id(
         context=context,
-        id=pathwayId
+        id=int(pathway_id)
     )
 
     if pathway is None:

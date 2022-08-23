@@ -42,7 +42,10 @@ async def update_user(request: Request, input: UpdateUserInput):
     if user is None:
         raise NotFoundHTTPException("User does not exist")
 
-    updated_password = hashpw(input.password.encode('utf-8'), gensalt()).decode('utf-8')
+    updated_password = hashpw(
+        input.password.encode('utf-8'),
+        gensalt()
+    ).decode('utf-8')
 
     try:
         async with db.acquire() as conn:

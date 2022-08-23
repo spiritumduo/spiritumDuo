@@ -24,7 +24,7 @@ async def get_patient_connection(
 
     if includeDischarged is False:
         db_query = db_query.where(
-            OnPathway.is_discharged == False
+            OnPathway.is_discharged.is_(False)
         )
 
     if outstanding:

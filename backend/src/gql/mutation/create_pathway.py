@@ -16,5 +16,6 @@ async def resolve_create_pathway(
     return await CreatePathway(
         context=info.context,
         name=input['name'],
-        clinical_request_types=input['clinicalRequestTypes'] if 'clinicalRequestTypes' in input else None
+        clinical_request_types=input['clinicalRequestTypes']
+        if 'clinicalRequestTypes' in input else None
     )

@@ -132,7 +132,7 @@ class ClinicalRequestTypeLoaderByPathwayId(DataLoader):
             :param context: request context
             :param id: ID of pathway ID to find related ClinicalRequestTypes
                 from
-            
+
             :return: List[ClinicalRequestType]
 
             :raise TypeError: invalid argument type

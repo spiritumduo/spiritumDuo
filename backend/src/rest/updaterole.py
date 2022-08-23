@@ -23,7 +23,8 @@ class UpdateRoleInput(BaseModel):
 async def update_role(request: Request, input: UpdateRoleInput):
     try:
         async with db.transaction():
-            role = await Role.query.where(Role.id == input.id).gino.one_or_none()
+            role = await Role.query.where(
+                Role.id == input.id).gino.one_or_none()
             if role is None:
                 raise NotFoundHTTPException("Role with that ID not found")
             await role.update(name=input.name).apply()
@@ -34,7 +35,8 @@ async def update_role(request: Request, input: UpdateRoleInput):
             input_perm_set = set(input.permissions)
             to_remove = current_perm_set - input_perm_set
             to_add = input_perm_set - current_perm_set
-            # using asyncio.gather causes connection conflicts, and might also break transactions
+            # using asyncio.gather causes connection conflicts,
+            # and might also break transactions
             for perm in to_remove:
                 await RolePermission.delete.where(
                     and_(
@@ -48,8 +50,8 @@ async def update_role(request: Request, input: UpdateRoleInput):
                     permission=perm
                 ).create()
 
-            updated_permissions: List[RolePermission] = await RolePermission.query\
-                .where(RolePermission.role_id == role.id).gino.all()
+            updated_permissions: List[RolePermission] = await RolePermission.\
+                query.where(RolePermission.role_id == role.id).gino.all()
             return JSONResponse({
                 "id": role.id,
                 "name": role.name,

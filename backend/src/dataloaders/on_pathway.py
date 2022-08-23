@@ -132,7 +132,7 @@ class OnPathwaysByPatient:
             query = query.where(OnPathway.pathway_id == int(pathwayId))
 
         if includeDischarged is None or includeDischarged is False:
-            query = query.where(OnPathway.is_discharged == False)
+            query = query.where(OnPathway.is_discharged.is_(False))
 
         if awaitingDecisionType is not None:
             query = query.where(
@@ -142,7 +142,7 @@ class OnPathwaysByPatient:
             query = query.limit(int(limit))
 
         async with _gino.acquire(reuse=False) as conn:
-            onPathways: List[OnPathway] = await query.gino.all()
+            onPathways: List[OnPathway] = await conn.all(query)
 
         if OnPathwayByIdLoader.loader_name not in context:
             context[OnPathwayByIdLoader.loader_name] = OnPathwayByIdLoader(

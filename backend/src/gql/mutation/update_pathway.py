@@ -17,5 +17,6 @@ async def resolve_update_pathway(
         context=info.context,
         id=input['id'],
         name=input['name'],
-        clinical_request_types=input['clinicalRequestTypes'] if 'clinicalRequestTypes' in input else None
+        clinical_request_types=input['clinicalRequestTypes']
+        if 'clinicalRequestTypes' in input else None
     )

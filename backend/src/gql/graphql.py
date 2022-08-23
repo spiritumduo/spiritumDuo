@@ -9,7 +9,7 @@ from datetime import datetime
 from starlette.requests import Request
 from starlette.websockets import HTTPConnection, WebSocket
 
-from typing import Any, List
+from typing import List
 from ariadne.asgi import WebSocketConnectionError
 from pydantic import BaseModel
 
@@ -38,7 +38,7 @@ async def ws_on_connect(
         ).where(
             Session.expiry > datetime.now()
         ).where(
-            User.is_active == True
+            User.is_active.is_(True)
         )
         user = await conn.one_or_none(session)
 

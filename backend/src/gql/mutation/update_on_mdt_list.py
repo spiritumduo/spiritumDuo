@@ -1,5 +1,5 @@
 from SdTypes import Permissions
-from common import MutationUserErrorHandler, BaseMutationPayload
+from common import BaseMutationPayload
 from models import db
 from dataupdaters import UpdateOnMDT
 from .mutation_type import mutation

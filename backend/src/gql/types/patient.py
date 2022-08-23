@@ -37,8 +37,9 @@ async def resolve_patient_pathways(
 async def resolve_first_name(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.first_name
 
 
@@ -46,8 +47,9 @@ async def resolve_first_name(
 async def resolve_last_name(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.last_name
 
 
@@ -55,8 +57,9 @@ async def resolve_last_name(
 async def resolve_communication_method(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.communication_method
 
 
@@ -64,8 +67,9 @@ async def resolve_communication_method(
 async def resolve_date_of_birth(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.date_of_birth
 
 
@@ -73,8 +77,9 @@ async def resolve_date_of_birth(
 async def resolve_sex(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.sex
 
 
@@ -82,8 +87,9 @@ async def resolve_sex(
 async def resolve_occupation(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.occupation
 
 
@@ -91,8 +97,9 @@ async def resolve_occupation(
 async def resolve_telephone_number(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.telephone_number
 
 
@@ -100,8 +107,9 @@ async def resolve_telephone_number(
 async def resolve_address(
     obj: Patient = None, info: GraphQLResolveInfo = None, *_
 ):
-    record: Patient_IE = await PatientByHospitalNumberFromIELoader.load_from_id(
-        context=info.context, id=obj.hospital_number)
+    record: Patient_IE = await PatientByHospitalNumberFromIELoader.\
+        load_from_id(
+            context=info.context, id=obj.hospital_number)
     return record.address
 
 
@@ -115,7 +123,7 @@ async def resolve_mdt_clinicians(
         query: str = OnMdt.query.where(OnMdt.patient_id == obj.id)
         if id is not None:
             query = query.where(OnMdt.mdt_id == int(id))
-        on_mdt_list: List[OnMdt] = await query.gino.all()
+        on_mdt_list: List[OnMdt] = await conn.all(query)
         for on_mdt in on_mdt_list:
             OnMdtByIdLoader.prime(
                 context=info.context, key=on_mdt.id, value=on_mdt

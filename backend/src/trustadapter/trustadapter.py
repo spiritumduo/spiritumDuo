@@ -282,7 +282,10 @@ class PseudoTrustAdapter(TrustAdapter):
     ) -> Optional[Patient_IE]:
         patientRecord = await httpRequest(
             HTTPRequestType.GET,
-            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient/hospital/{hospitalNumber}',
+            (
+                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/patient'
+                f'/hospital/{hospitalNumber}'
+            ),
             cookies={"SDSESSION": auth_token}
             )
         if not patientRecord:
@@ -353,9 +356,8 @@ class PseudoTrustAdapter(TrustAdapter):
         self, testResult: TestResultRequest_IE = None, auth_token: str = None
     ) -> TestResult_IE:
         params = {}
-        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.get(
-            int(testResult.type_id)
-        )
+        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.\
+            get(int(testResult.type_id))
         params['typeReferenceName'] = clinicalRequestType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name
@@ -388,7 +390,10 @@ class PseudoTrustAdapter(TrustAdapter):
     ) -> Optional[TestResult_IE]:
         testResultRecord = await httpRequest(
             HTTPRequestType.GET,
-            f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}/testresult/{str(recordId)}',
+            (
+                f'{self.TRUST_INTEGRATION_ENGINE_ENDPOINT}'
+                f'/testresult/{str(recordId)}'
+            ),
             cookies={"SDSESSION": auth_token}
         )
         if testResultRecord is None:
@@ -459,9 +464,8 @@ class PseudoTrustAdapter(TrustAdapter):
         auth_token: str = None
     ) -> TestResult_IE:
         params = {}
-        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType.get(
-            int(testResult.type_id)
-        )
+        clinicalRequestType: ClinicalRequestType = await ClinicalRequestType\
+            .get(int(testResult.type_id))
         params['typeReferenceName'] = clinicalRequestType.ref_name
         params['hospitalNumber'] = testResult.hospital_number
         params['pathwayName'] = testResult.pathway_name

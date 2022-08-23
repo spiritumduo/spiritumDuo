@@ -77,7 +77,7 @@ class SDAuthentication(AuthenticationBackend):
                     ).where(
                         Session.expiry > datetime.now()
                     ).where(
-                        User.is_active == True
+                        User.is_active.is_(True)
                     )
                     user: User = await conn.one_or_none(user_query)
                     if user:

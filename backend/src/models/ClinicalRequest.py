@@ -24,7 +24,8 @@ class ClinicalRequest(db.Model):
         server_default=ClinicalRequestState.INIT.value, nullable=False
     )
     clinical_request_type_id = db.Column(
-        db.Integer(), db.ForeignKey('tbl_clinical_request_type.id'), nullable=False)
+        db.Integer(), db.ForeignKey('tbl_clinical_request_type.id'),
+        nullable=False)
     added_at = db.Column(
         db.DateTime(), server_default=func.now(), nullable=False)
     updated_at = db.Column(

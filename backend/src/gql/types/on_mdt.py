@@ -1,4 +1,3 @@
-import re
 from ariadne.objects import ObjectType
 from models import OnMdt
 from dataloaders import (
@@ -42,6 +41,7 @@ async def resolve_on_mdt_lock_user(
 ):
     return await UserByIdLoader.load_from_id(
         context=info.context, id=obj.lock_user_id)
+
 
 @OnMdtObjectType.field("clinicalRequest")
 async def resolve_clinical_request(

@@ -1,6 +1,4 @@
 from SdTypes import Permissions
-from common import MutationUserErrorHandler
-from dataupdaters.on_mdt import OnMdtLockedByOtherUser
 from models import OnMdt
 from dataupdaters import UpdateOnMDT
 from .mutation_type import mutation

@@ -22,7 +22,7 @@ async def UpdateOnMDT(
 ):
     """
     Updates a given OnMDT object
-    
+
     :param context: request context
     :param id: id of OnMDT object
     :param reason: reason pt added to MDT

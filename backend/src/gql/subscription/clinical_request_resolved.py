@@ -25,7 +25,9 @@ async def clinical_request_resolved_generator(
     log.debug(f"TOPIC: {topic}")
     async with topic as subscriber:
         async for clinical_request in subscriber:
-            log.info(f"MILESTONE_RESOLVED SUBSCRIPTION RESOLVER: {clinical_request}")
+            log.info(
+                f"MILESTONE_RESOLVED SUBSCRIPTION RESOLVER: {clinical_request}"
+            )
             yield clinical_request
 
 

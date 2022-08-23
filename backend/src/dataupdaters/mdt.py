@@ -15,7 +15,7 @@ async def UpdateMDT(
     """
     Updates a given MDT object
 
-    :param context: request context 
+    :param context: request context
     :param id: id of MDT object
     :param plannedAt: datetime of MDT
     :param location: location of MDT

@@ -160,7 +160,7 @@ class PathwayByNameLoader(DataLoader):
 
             :param context: request context
             :param id: name to find
-            
+
             :return: Pathway/None
 
             :raise TypeError:

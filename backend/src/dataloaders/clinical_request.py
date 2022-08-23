@@ -110,7 +110,7 @@ class ClinicalRequestByDecisionPointLoader(DataLoader):
             :param context: request context
             :param id: ID of object
             :param value: value to update value of kvp
-            
+
             :raise TypeError: invalid argument type
         """
 

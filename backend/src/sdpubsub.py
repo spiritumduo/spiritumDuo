@@ -2,7 +2,7 @@ import asyncio
 import dataclasses
 import logging
 from contextlib import asynccontextmanager
-from typing import Any, Dict, AsyncIterator, Optional, AsyncGenerator, List, Set
+from typing import Any, Dict, AsyncIterator, Optional, AsyncGenerator, Set
 
 
 class Unsubscribed(Exception):
@@ -43,19 +43,20 @@ class SdPubSub:
         while True:
             event: SdPubSubEvent = await self._publish_queue.get()
             if event.topic in self._topics.keys():
-                queue_coroutines = []
                 for queue in self._topics[event.topic]:
                     await queue.put(event.message)
 
     async def publish(self, topic: str, message: Any):
-        await self._publish_queue.put(SdPubSubEvent(topic=topic, message=message))
+        await self._publish_queue.put(SdPubSubEvent(
+            topic=topic, message=message))
 
     @asynccontextmanager
     async def subscribe(self, topic: str) -> AsyncIterator["Subscriber"]:
         queue: asyncio.Queue = asyncio.Queue()
         try:
             logging.info(f'subscribed to {topic}')
-            self._publish_listener_task = asyncio.create_task(self._publish_listener())
+            self._publish_listener_task = asyncio.create_task(
+                self._publish_listener())
 
             if not self._topics.get(topic):
                 self._topics[topic] = {queue}

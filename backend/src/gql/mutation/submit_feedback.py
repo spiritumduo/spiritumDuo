@@ -5,7 +5,7 @@ from containers import SDContainer
 from email_adapter import EmailAdapter, EmailAttachment
 from .mutation_type import mutation
 from config import config
-import base64    
+import base64
 import re
 from dependency_injector.wiring import Provide, inject
 
@@ -34,15 +34,22 @@ async def resolve_submit_feedback(
         <html>
             <body>
                 <b>User information</b><br />
-                <b>Username:</b>{info.context['request']['user'].username}<br />
-                <b>Name:</b> {info.context['request']['user'].first_name}&nbsp{info.context['request']['user'].last_name}<br />
-                <b>Email address:</b> {info.context['request']['user'].email}<br />
-                <b>Department:</b> {info.context['request']['user'].department}<br />
+                <b>Username:</b>{info.context['request']['user'].username}
+                <br />
+                <b>Name:</b> {info.context['request']['user'].first_name}
+                &nbsp{info.context['request']['user'].last_name}<br />
+                <b>Email address:</b> {info.context['request']['user'].email}
+                <br />
+                <b>Department:</b> {info.context['request']['user'].department}
+                <br />
                 <hr />
                 <b>Written feedback:</b> {input['feedback']}<br />
                 <hr />
                 <b>Screenshot</b><br /><br/ >
-                <img data-imagetype="AttachmentByCid" src="cid:feedback_image.png">
+                <img
+                    data-imagetype="AttachmentByCid"
+                    src="cid:feedback_image.png"
+                />
             </body>
         </html>
         """

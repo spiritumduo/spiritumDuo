@@ -1,10 +1,5 @@
 from ariadne.objects import ObjectType
-from operator import and_
-
-from sqlalchemy import desc
-
-from SdTypes import ClinicalRequestState
-from models import OnPathway, ClinicalRequest
+from models import OnPathway
 from dataloaders import (
     PatientByIdLoader,
     PathwayByIdLoader,

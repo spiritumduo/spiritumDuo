@@ -37,15 +37,23 @@ async def UpdatePathway(
         userErrors.addError("Name", "A pathway with this name already exists")
         return PathwayPayload(user_errors=userErrors.errorList)
 
-    current_clinical_request_types = await PathwayClinicalRequestType.query.where(
-        PathwayClinicalRequestType.pathway_id == int(id)).gino.all()
+    current_clinical_request_types = await PathwayClinicalRequestType.query\
+        .where(PathwayClinicalRequestType.pathway_id == int(id)).gino.all()
 
-    current_clinical_request_type_ids: Set[int] = set([int(mT.clinical_request_type_id) for mT in current_clinical_request_types])
+    current_clinical_request_type_ids: Set[int] = set(
+        [int(
+            mT.clinical_request_type_id
+        ) for mT in current_clinical_request_types]
+    )
 
-    input_clinical_request_type_ids: Set[int] = set([int(mT['id']) for mT in clinical_request_types]) if clinical_request_types else set()
+    input_clinical_request_type_ids: Set[int] = set(
+        [int(mT['id']) for mT in clinical_request_types]
+    ) if clinical_request_types else set()
 
-    toRemove = current_clinical_request_type_ids - input_clinical_request_type_ids
-    toAdd = input_clinical_request_type_ids - current_clinical_request_type_ids
+    toRemove = current_clinical_request_type_ids - \
+        input_clinical_request_type_ids
+    toAdd = input_clinical_request_type_ids - \
+        current_clinical_request_type_ids
 
     await PathwayClinicalRequestType.delete.where(
         and_(
