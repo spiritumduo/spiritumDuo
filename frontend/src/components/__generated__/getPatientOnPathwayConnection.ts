@@ -81,7 +81,7 @@ export interface getPatientOnPathwayConnection_getPatientOnPathwayConnection {
 
 export interface getPatientOnPathwayConnection {
   /**
-   * getPatentOnPathwayConnection:
+   * getPatientOnPathwayConnection:
    * This query takes either before or after arguments, but never both.
    * If neither before or after is present, it requires a first argument to
    * limit the number of results returned

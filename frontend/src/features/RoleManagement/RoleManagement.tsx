@@ -8,9 +8,9 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import { getRoles } from './__generated__/getRoles';
 import { getRolePermissions } from './__generated__/getRolePermissions';
 
-import CreateRoleTab from './tabpages/CreateRoleTab';
-import UpdateRoleTab from './tabpages/UpdateRoleTab';
-import DeleteRoleTab from './tabpages/DeleteRoleTab';
+import CreateRoleForm from './components/CreateRoleForm';
+import UpdateRoleForm from './components/UpdateRoleForm';
+import DeleteRoleForm from './components/DeleteRoleForm';
 
 export const GET_ROLES = gql`
   query getRoles{
@@ -61,7 +61,7 @@ const RoleManagementTabSet = (): JSX.Element => {
       }
       <LoadingSpinner loading={ loadingRoles || loadingRolePermissions }>
         <TabPanel>
-          <CreateRoleTab
+          <CreateRoleForm
             disableForm={ loadingRoles || loadingRolePermissions }
             refetchRoles={ refetchRoles }
             rolePermissions={
@@ -74,7 +74,7 @@ const RoleManagementTabSet = (): JSX.Element => {
           />
         </TabPanel>
         <TabPanel>
-          <UpdateRoleTab
+          <UpdateRoleForm
             disableForm={ loadingRoles || loadingRolePermissions }
             refetchRoles={ refetchRoles }
             roles={
@@ -100,7 +100,7 @@ const RoleManagementTabSet = (): JSX.Element => {
           />
         </TabPanel>
         <TabPanel>
-          <DeleteRoleTab
+          <DeleteRoleForm
             disableForm={ loadingRoles || loadingRolePermissions }
             refetchRoles={ refetchRoles }
             roles={

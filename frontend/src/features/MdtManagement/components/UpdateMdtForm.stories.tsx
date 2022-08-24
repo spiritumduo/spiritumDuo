@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import UpdateMdtTab, { UPDATE_MDT_MUTATION, GET_USERS } from './UpdateMdtTab';
+import UpdateMdtTab, { UPDATE_MDT_MUTATION, GET_USERS } from './UpdateMdtForm';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const mdt = {

@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
 import { cache } from 'app/cache';
-import UpdateRoleTab, { UpdateRoleReturnData } from './UpdateRoleTab';
+import UpdateRoleForm, { UpdateRoleReturnData } from './UpdateRoleForm';
 
 const roles = [
   {
@@ -29,20 +29,20 @@ const rolePermissions = [
 
 export default {
   title: 'Tab Pages/Role Management/Update Role Tab',
-  component: UpdateRoleTab,
+  component: UpdateRoleForm,
   decorators: [
-    (UpdateRoleTabStory) => {
+    (UpdateRoleFormStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
-            <UpdateRoleTabStory />
+            <UpdateRoleFormStory />
           </MockAuthProvider>
         </MemoryRouter>
       );
     },
   ],
-} as ComponentMeta<typeof UpdateRoleTab>;
+} as ComponentMeta<typeof UpdateRoleForm>;
 
 const successfulRoleUpdateMock: UpdateRoleReturnData = {
   id: 1,
@@ -54,10 +54,10 @@ const conflictingRoleUpdateMock = {
   error: 'error message from server',
 };
 
-export const Default: ComponentStory<typeof UpdateRoleTab> = () => {
+export const Default: ComponentStory<typeof UpdateRoleForm> = () => {
   fetchMock.restore().mock('end:/rest/updaterole/', successfulRoleUpdateMock);
   return (
-    <UpdateRoleTab
+    <UpdateRoleForm
       roles={ roles }
       rolePermissions={ rolePermissions }
     />
@@ -70,10 +70,10 @@ Default.parameters = {
   successfulRoleUpdateMock: successfulRoleUpdateMock,
 };
 
-export const ConflictError: ComponentStory<typeof UpdateRoleTab> = () => {
+export const ConflictError: ComponentStory<typeof UpdateRoleForm> = () => {
   fetchMock.restore().mock('end:/rest/updaterole/', { body: conflictingRoleUpdateMock, status: 409 });
   return (
-    <UpdateRoleTab
+    <UpdateRoleForm
       roles={ roles }
       rolePermissions={ rolePermissions }
     />

@@ -99,7 +99,7 @@ export function useUpdateRoleSubmit(
   return [loading, error, data, updateRole];
 }
 
-export interface UpdateRoleTabProps {
+export interface UpdateRoleFormProps {
   disableForm?: boolean | undefined,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
@@ -112,8 +112,8 @@ export interface UpdateRoleTabProps {
   rolePermissions?: {name: string}[],
 }
 
-const UpdateRoleTab = (
-  { disableForm, refetchRoles, roles, rolePermissions }: UpdateRoleTabProps,
+const UpdateRoleForm = (
+  { disableForm, refetchRoles, roles, rolePermissions }: UpdateRoleFormProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [permissionFields, setPermissionFields] = useState<{label: string, value: string}[]>();
@@ -280,4 +280,4 @@ const UpdateRoleTab = (
     </>
   );
 };
-export default UpdateRoleTab;
+export default UpdateRoleForm;

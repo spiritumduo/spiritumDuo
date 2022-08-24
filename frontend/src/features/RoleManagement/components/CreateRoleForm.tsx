@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { useFieldArray, useForm, Controller, FieldValues } from 'react-hook-form';
+import { useFieldArray, useForm, Controller } from 'react-hook-form';
 import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
@@ -9,7 +9,7 @@ import Select from 'react-select';
 import { Input } from 'components/nhs-style';
 import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
-type CreateRoleForm = {
+type CreateRoleFormType = {
   name: string;
   permissions: {
     label: string;
@@ -108,7 +108,7 @@ export function useCreateRoleSubmit(
   return [loading, error, data, createRole];
 }
 
-export interface CreateRoleTabProps {
+export interface CreateRoleFormProps {
   disableForm?: boolean | undefined,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
@@ -116,8 +116,8 @@ export interface CreateRoleTabProps {
   rolePermissions: {name: string}[] | undefined,
 }
 
-const CreateRoleTab = (
-  { disableForm, refetchRoles, rolePermissions }: CreateRoleTabProps,
+const CreateRoleForm = (
+  { disableForm, refetchRoles, rolePermissions }: CreateRoleFormProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [
@@ -142,7 +142,7 @@ const CreateRoleTab = (
     getValues,
     control,
     setValue,
-  } = useForm<CreateRoleForm>({ resolver: yupResolver(newRoleSchema) });
+  } = useForm<CreateRoleFormType>({ resolver: yupResolver(newRoleSchema) });
 
   const {
     fields: permissionFields,
@@ -158,7 +158,7 @@ const CreateRoleTab = (
 
   useEffect(() => {
     if (!permissionCheckboxesOrganised && rolePermissions) {
-      const fieldProps: CreateRoleForm['permissions'] = rolePermissions
+      const fieldProps: CreateRoleFormType['permissions'] = rolePermissions
         ? rolePermissions.flatMap((rolePermission) => (
           {
             label: rolePermission.name,
@@ -243,4 +243,4 @@ const CreateRoleTab = (
     </>
   );
 };
-export default CreateRoleTab;
+export default CreateRoleForm;

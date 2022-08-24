@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import UpdatePathwayTab, { UPDATE_PATHWAY_MUTATION } from './UpdatePathwayTab';
+import UpdatePathwayForm, { UPDATE_PATHWAY_MUTATION } from './UpdatePathwayForm';
 
 const clinicalRequestTypes = [
   {
@@ -65,24 +65,24 @@ const errorPathwayUpdateResult = {
 
 export default {
   title: 'Tab Pages/Pathway Management/Update Pathway Tab',
-  component: UpdatePathwayTab,
+  component: UpdatePathwayForm,
   decorators: [
-    (UpdatePathwayTabStory) => {
+    (UpdatePathwayFormStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
             <MockPathwayProvider>
-              <UpdatePathwayTabStory />
+              <UpdatePathwayFormStory />
             </MockPathwayProvider>
           </MockAuthProvider>
         </MemoryRouter>
       );
     },
   ],
-} as ComponentMeta<typeof UpdatePathwayTab>;
+} as ComponentMeta<typeof UpdatePathwayForm>;
 
-export const Default: ComponentStory<typeof UpdatePathwayTab> = () => (
+export const Default: ComponentStory<typeof UpdatePathwayForm> = () => (
   <NewMockSdApolloProvider
     mocks={
       [
@@ -97,14 +97,14 @@ export const Default: ComponentStory<typeof UpdatePathwayTab> = () => (
       ]
     }
   >
-    <UpdatePathwayTab
+    <UpdatePathwayForm
       clinicalRequestTypes={ clinicalRequestTypes }
       pathways={ pathways }
     />
   </NewMockSdApolloProvider>
 );
 
-export const PathwayExistsError: ComponentStory<typeof UpdatePathwayTab> = () => (
+export const PathwayExistsError: ComponentStory<typeof UpdatePathwayForm> = () => (
   <NewMockSdApolloProvider
     mocks={
       [
@@ -119,7 +119,7 @@ export const PathwayExistsError: ComponentStory<typeof UpdatePathwayTab> = () =>
       ]
     }
   >
-    <UpdatePathwayTab
+    <UpdatePathwayForm
       clinicalRequestTypes={ clinicalRequestTypes }
       pathways={ pathways }
     />

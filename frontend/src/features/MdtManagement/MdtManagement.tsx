@@ -8,8 +8,8 @@ import { ErrorMessage } from 'nhsuk-react-components';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import { PathwayContext } from 'app/context';
 
-import UpdateMdtTab from './tabpages/UpdateMdtTab';
-import DeleteMdtTab from './tabpages/DeleteMdtTab';
+import UpdateMdtTab from './components/UpdateMdtForm';
+import DeleteMdtTab from './components/DeleteMdtForm';
 
 import { getMdtsOnThisPathway } from './__generated__/getMdtsOnThisPathway';
 

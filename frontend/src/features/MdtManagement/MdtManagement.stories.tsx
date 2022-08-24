@@ -5,9 +5,9 @@ import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import MdtManagement, { GET_MDTS_QUERY } from './MdtManagement';
-import { UPDATE_MDT_MUTATION, GET_USERS } from './tabpages/UpdateMdtTab';
+import { UPDATE_MDT_MUTATION, GET_USERS } from './components/UpdateMdtForm';
 import 'react-datepicker/dist/react-datepicker.css';
-import { DELETE_MDT_MUTATION } from './tabpages/DeleteMdtTab';
+import { DELETE_MDT_MUTATION } from './components/DeleteMdtForm';
 
 const listOfMdts = [
   {

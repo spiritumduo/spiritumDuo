@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { composeStories } from '@storybook/testing-react';
 import MockSdApolloProvider from 'test/mocks/mockApolloProvider';
-import * as stories from './CreatePathwayTab.stories';
+import * as stories from './CreatePathwayForm.stories';
 
 const { Default, PathwayExistsError } = composeStories(stories);
 

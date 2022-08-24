@@ -5,9 +5,9 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { ErrorMessage } from 'nhsuk-react-components';
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 
-import CreatePathwayTab from './tabpages/CreatePathwayTab';
-import UpdatePathwayTab from './tabpages/UpdatePathwayTab';
-import DeletePathwayTab from './tabpages/DeletePathwayTab';
+import CreatePathwayForm from './components/CreatePathwayForm';
+import UpdatePathwayForm from './components/UpdatePathwayForm';
+import DeletePathwayTab from './components/DeletePathwayForm';
 
 import { getClinicalRequestTypes } from './__generated__/getClinicalRequestTypes';
 import { getPathways } from './__generated__/getPathways';
@@ -69,7 +69,7 @@ const PathwayManagementTabSet = (): JSX.Element => {
       }
       <LoadingSpinner loading={ loadingClinicalRequestTypes || loadingPathways }>
         <TabPanel>
-          <CreatePathwayTab
+          <CreatePathwayForm
             disableForm={ loadingClinicalRequestTypes }
             refetchPathways={ refetchPathways }
             clinicalRequestTypes={ dataClinicalRequestTypes?.getClinicalRequestTypes?.map((mT) => (
@@ -82,7 +82,7 @@ const PathwayManagementTabSet = (): JSX.Element => {
           />
         </TabPanel>
         <TabPanel>
-          <UpdatePathwayTab
+          <UpdatePathwayForm
             disableForm={ loadingClinicalRequestTypes || loadingPathways }
             refetchPathways={ refetchPathways }
             clinicalRequestTypes={ dataClinicalRequestTypes?.getClinicalRequestTypes?.map((mT) => (

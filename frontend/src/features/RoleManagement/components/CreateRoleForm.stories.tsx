@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
 import { cache } from 'app/cache';
-import CreateRoleTab, { CreateRoleReturnData } from './CreateRoleTab';
+import CreateRoleForm, { CreateRoleReturnData } from './CreateRoleForm';
 
 const rolePermissions = [
   {
@@ -25,22 +25,22 @@ const rolePermissions = [
 
 export default {
   title: 'Tab Pages/Role Management/Create Role Tab',
-  component: CreateRoleTab,
+  component: CreateRoleForm,
   decorators: [
-    (CreateRoleTabStory) => {
+    (CreateRoleFormStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
             <MockPathwayProvider>
-              <CreateRoleTabStory />
+              <CreateRoleFormStory />
             </MockPathwayProvider>
           </MockAuthProvider>
         </MemoryRouter>
       );
     },
   ],
-} as ComponentMeta<typeof CreateRoleTab>;
+} as ComponentMeta<typeof CreateRoleForm>;
 
 const successfulRoleCreationMock: CreateRoleReturnData = {
   id: 1,
@@ -54,10 +54,10 @@ const successfulRoleUpdateMock: CreateRoleReturnData = {
   permissions: ['permission 1 from server', 'permission 2 from server'],
 };
 
-export const Default: ComponentStory<typeof CreateRoleTab> = () => {
+export const Default: ComponentStory<typeof CreateRoleForm> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', successfulRoleCreationMock, { delay: 1 });
   fetchMock.mock('end:/rest/updaterole/', successfulRoleUpdateMock);
-  return <CreateRoleTab rolePermissions={ rolePermissions } />;
+  return <CreateRoleForm rolePermissions={ rolePermissions } />;
 };
 
 Default.parameters = {
@@ -65,7 +65,7 @@ Default.parameters = {
   successfulRoleCreationMock: successfulRoleCreationMock,
 };
 
-export const RoleExistsError: ComponentStory<typeof CreateRoleTab> = () => {
+export const RoleExistsError: ComponentStory<typeof CreateRoleForm> = () => {
   fetchMock.restore().mock('end:/rest/createrole/', { status: 409 });
-  return <CreateRoleTab rolePermissions={ rolePermissions } />;
+  return <CreateRoleForm rolePermissions={ rolePermissions } />;
 };

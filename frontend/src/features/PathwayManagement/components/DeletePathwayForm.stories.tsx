@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import DeletePathwayTab, { DELETE_PATHWAY_MUTATION } from './DeletePathwayTab';
+import DeletePathwayTab, { DELETE_PATHWAY_MUTATION } from './DeletePathwayForm';
 
 const clinicalRequestTypes = [
   {

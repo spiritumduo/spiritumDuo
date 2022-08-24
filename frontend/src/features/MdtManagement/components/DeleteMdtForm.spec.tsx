@@ -3,7 +3,7 @@ import { waitFor, render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { composeStories } from '@storybook/testing-react';
 import MDT from 'types/MDT';
-import * as stories from './DeleteMdtTab.stories';
+import * as stories from './DeleteMdtForm.stories';
 
 const { MdtWithNoPatients, MdtWithPatients, MdtHasUserErrors } = composeStories(stories);
 

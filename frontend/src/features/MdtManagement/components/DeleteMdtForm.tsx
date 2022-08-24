@@ -22,7 +22,7 @@ export const DELETE_MDT_MUTATION = gql`
   }
 `;
 
-type DeleteMdtForm = {
+type DeleteMdtFormType = {
   id: string;
   movePatientsRequired: boolean;
   movePatientsToMdtId?: string;
@@ -48,7 +48,7 @@ interface DeleteMdtTabProps {
   successCallback: () => void;
 }
 
-const DeleteMdtTabPage = ({ mdt, successCallback, allMdts }: DeleteMdtTabProps): JSX.Element => {
+const DeleteMdtForm = ({ mdt, successCallback, allMdts }: DeleteMdtTabProps): JSX.Element => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const {
     register,
@@ -56,7 +56,7 @@ const DeleteMdtTabPage = ({ mdt, successCallback, allMdts }: DeleteMdtTabProps):
     formState,
     getValues,
     setValue,
-  } = useForm<DeleteMdtForm>({ resolver: yupResolver(updateMdtFormSchema) });
+  } = useForm<DeleteMdtFormType>({ resolver: yupResolver(updateMdtFormSchema) });
 
   const [
     deleteMdtMutation, { data: deleteData, error: deleteError, loading: deleteLoading },
@@ -150,4 +150,4 @@ const DeleteMdtTabPage = ({ mdt, successCallback, allMdts }: DeleteMdtTabProps):
   );
 };
 
-export default DeleteMdtTabPage;
+export default DeleteMdtForm;

@@ -396,9 +396,6 @@ const DecisionPointPage = (
     }
   }
 
-  console.log('mutateData?.createDecisionPoint?.userErrors', mutateData?.createDecisionPoint?.userErrors);
-  console.log('mutateData?.createDecisionPoint.decisionPoint', mutateData?.createDecisionPoint.decisionPoint);
-
   if (
     // && !mutateData?.createDecisionPoint?.userErrors
     !mutateData?.createDecisionPoint?.userErrors

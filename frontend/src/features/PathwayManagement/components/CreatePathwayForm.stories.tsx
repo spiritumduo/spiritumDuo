@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import CreatePathwayTab, { CREATE_PATHWAY_MUTATION } from './CreatePathwayTab';
+import CreatePathwayForm, { CREATE_PATHWAY_MUTATION } from './CreatePathwayForm';
 
 const clinicalRequestTypes = [
   {
@@ -49,24 +49,24 @@ const errorPathwayCreationResult = {
 
 export default {
   title: 'Tab Pages/Pathway Management/Create Pathway Tab',
-  component: CreatePathwayTab,
+  component: CreatePathwayForm,
   decorators: [
-    (CreatePathwayTabStory) => {
+    (CreatePathwayFormStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
             <MockPathwayProvider>
-              <CreatePathwayTabStory />
+              <CreatePathwayFormStory />
             </MockPathwayProvider>
           </MockAuthProvider>
         </MemoryRouter>
       );
     },
   ],
-} as ComponentMeta<typeof CreatePathwayTab>;
+} as ComponentMeta<typeof CreatePathwayForm>;
 
-export const Default: ComponentStory<typeof CreatePathwayTab> = () => (
+export const Default: ComponentStory<typeof CreatePathwayForm> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
@@ -79,14 +79,14 @@ export const Default: ComponentStory<typeof CreatePathwayTab> = () => (
       }]
     }
   >
-    <CreatePathwayTab
+    <CreatePathwayForm
       disableForm={ false }
       clinicalRequestTypes={ clinicalRequestTypes }
     />
   </NewMockSdApolloProvider>
 );
 
-export const PathwayExistsError: ComponentStory<typeof CreatePathwayTab> = () => (
+export const PathwayExistsError: ComponentStory<typeof CreatePathwayForm> = () => (
   <NewMockSdApolloProvider
     mocks={
       [{
@@ -99,7 +99,7 @@ export const PathwayExistsError: ComponentStory<typeof CreatePathwayTab> = () =>
       }]
     }
   >
-    <CreatePathwayTab
+    <CreatePathwayForm
       clinicalRequestTypes={ clinicalRequestTypes }
     />
   </NewMockSdApolloProvider>

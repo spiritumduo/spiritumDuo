@@ -26,9 +26,11 @@ export interface getMdtsOnThisPathway_getMdts_patients {
 export interface getMdtsOnThisPathway_getMdts {
   __typename: "MDT";
   id: string;
-  plannedAt: any;
   clinicians: (getMdtsOnThisPathway_getMdts_clinicians | null)[];
   patients: (getMdtsOnThisPathway_getMdts_patients | null)[];
+  createdAt: any;
+  plannedAt: any;
+  updatedAt: any;
   location: string;
 }
 

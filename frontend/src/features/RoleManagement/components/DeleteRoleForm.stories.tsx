@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider } from 'test/mocks/mockContext';
 import fetchMock from 'fetch-mock';
 import { cache } from 'app/cache';
-import DeleteRoleTab from './DeleteRoleTab';
+import DeleteRoleForm from './DeleteRoleForm';
 
 const roles = [
   {
@@ -34,29 +34,29 @@ const rolePermissions = [
 
 export default {
   title: 'Tab Pages/Role Management/Delete Role Tab',
-  component: DeleteRoleTab,
+  component: DeleteRoleForm,
   decorators: [
-    (DeleteRoleTabStory) => {
+    (DeleteRoleFormStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
-            <DeleteRoleTabStory />
+            <DeleteRoleFormStory />
           </MockAuthProvider>
         </MemoryRouter>
       );
     },
   ],
-} as ComponentMeta<typeof DeleteRoleTab>;
+} as ComponentMeta<typeof DeleteRoleForm>;
 
 const successfulRoleDeleteMock = {
   success: true,
 };
 
-export const Default: ComponentStory<typeof DeleteRoleTab> = () => {
+export const Default: ComponentStory<typeof DeleteRoleForm> = () => {
   fetchMock.restore().mock('end:/rest/deleterole/', successfulRoleDeleteMock);
   return (
-    <DeleteRoleTab
+    <DeleteRoleForm
       roles={ roles }
       rolePermissions={ rolePermissions }
     />
@@ -73,10 +73,10 @@ const conflictingRoleDeleteMock = {
   error: 'error message from server',
 };
 
-export const Error: ComponentStory<typeof DeleteRoleTab> = () => {
+export const Error: ComponentStory<typeof DeleteRoleForm> = () => {
   fetchMock.restore().mock('end:/rest/deleterole/', { body: conflictingRoleDeleteMock, status: 409});
   return (
-    <DeleteRoleTab
+    <DeleteRoleForm
       roles={ roles }
       rolePermissions={ rolePermissions }
     />

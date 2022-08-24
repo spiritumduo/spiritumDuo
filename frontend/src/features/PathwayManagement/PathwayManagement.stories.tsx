@@ -6,9 +6,9 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import { CREATE_PATHWAY_MUTATION } from './tabpages/CreatePathwayTab';
-import { UPDATE_PATHWAY_MUTATION } from './tabpages/UpdatePathwayTab';
-import { DELETE_PATHWAY_MUTATION } from './tabpages/DeletePathwayTab';
+import { CREATE_PATHWAY_MUTATION } from './components/CreatePathwayForm';
+import { UPDATE_PATHWAY_MUTATION } from './components/UpdatePathwayForm';
+import { DELETE_PATHWAY_MUTATION } from './components/DeletePathwayForm';
 import PathwayManagementTabSet, { GET_CLINICALREQUEST_TYPES, GET_PATHWAYS } from './PathwayManagement';
 
 const clinicalRequestTypes = [
@@ -92,13 +92,13 @@ export default {
   title: 'Tab Pages/Pathway Management',
   component: PathwayManagementTabSet,
   decorators: [
-    (CreatePathwayTabStory) => {
+    (CreatePathwayFormStory) => {
       cache.reset();
       return (
         <MemoryRouter>
           <MockAuthProvider>
             <MockPathwayProvider>
-              <CreatePathwayTabStory />
+              <CreatePathwayFormStory />
             </MockPathwayProvider>
           </MockAuthProvider>
         </MemoryRouter>

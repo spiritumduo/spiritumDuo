@@ -51,7 +51,7 @@ export const GET_USERS = gql`
   }
 `;
 
-type UpdateMdtForm = {
+type UpdateMdtFormType = {
   plannedAt: Date;
   id: string;
   location: string;
@@ -83,7 +83,7 @@ interface UpdateMdtTabProps{
   successCallback: () => void;
 }
 
-const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Element => {
+const UpdateMdtForm = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Element => {
   const [newDate, setNewDate] = useState<Date>();
   const [userFields, setUserFields] = useState<
     { label: string, value: string }[]
@@ -98,7 +98,7 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
     getValues,
     setValue,
     control,
-  } = useForm<UpdateMdtForm>({ resolver: yupResolver(updateMdtFormSchema) });
+  } = useForm<UpdateMdtFormType>({ resolver: yupResolver(updateMdtFormSchema) });
 
   const { loading, data, error } = useQuery<getUsersOnPathway>(GET_USERS, { variables: {
     pathwayId: currentPathwayId,
@@ -276,4 +276,4 @@ const UpdateMdtTabPage = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Elem
   );
 };
 
-export default UpdateMdtTabPage;
+export default UpdateMdtForm;

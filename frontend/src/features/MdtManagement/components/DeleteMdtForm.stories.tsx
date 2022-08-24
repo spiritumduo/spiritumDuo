@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import DeleteMdtTab, { DELETE_MDT_MUTATION } from './DeleteMdtTab';
+import DeleteMdtTab, { DELETE_MDT_MUTATION } from './DeleteMdtForm';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const listOfMdts = [

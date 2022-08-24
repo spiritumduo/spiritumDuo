@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 import { Input } from 'components/nhs-style';
-import { createPathway } from 'features/PathwayManagement/tabpages/__generated__/createPathway';
+import { createPathway } from 'features/PathwayManagement/components/__generated__/createPathway';
 import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
 
 import Select from 'react-select';
@@ -31,7 +31,7 @@ mutation createPathway($input: PathwayInput!){
 }
 `;
 
-type CreatePathwayForm = {
+type CreatePathwayFormType = {
   name: string;
   clinicalRequestTypes: {
     label: string;
@@ -47,7 +47,7 @@ export interface CreatePathwayInputs {
   }[];
 }
 
-export interface CreatePathwayTabProps {
+export interface CreatePathwayFormProps {
   disableForm?: boolean | undefined,
   refetchPathways?: (
     variables?: Partial<OperationVariables> | undefined
@@ -55,12 +55,12 @@ export interface CreatePathwayTabProps {
   clinicalRequestTypes: {id: string, name: string, refName: string}[] | undefined,
 }
 
-const CreatePathwayTab = (
+const CreatePathwayForm = (
   {
     disableForm,
     clinicalRequestTypes,
     refetchPathways,
-  }: CreatePathwayTabProps,
+  }: CreatePathwayFormProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -69,7 +69,7 @@ const CreatePathwayTab = (
   }] = useMutation<createPathway>(CREATE_PATHWAY_MUTATION);
 
   const onSubmit = (
-    mutation: typeof createPathwayFunc, values: CreatePathwayForm,
+    mutation: typeof createPathwayFunc, values: CreatePathwayFormType,
   ) => {
     const selectedClinicalRequestTypes: Array<{id: string}> = [];
     values.clinicalRequestTypes.forEach((mT) => {
@@ -110,7 +110,7 @@ const CreatePathwayTab = (
     getValues,
     control,
     setValue,
-  } = useForm<CreatePathwayForm>({ resolver: yupResolver(newPathwaySchema) });
+  } = useForm<CreatePathwayFormType>({ resolver: yupResolver(newPathwaySchema) });
 
   const {
     fields: clinicalRequestTypeFields,
@@ -126,7 +126,7 @@ const CreatePathwayTab = (
 
   useEffect(() => {
     if (!checkboxesOrganised && clinicalRequestTypes) {
-      const fieldProps: CreatePathwayForm['clinicalRequestTypes'] = clinicalRequestTypes
+      const fieldProps: CreatePathwayFormType['clinicalRequestTypes'] = clinicalRequestTypes
         ? clinicalRequestTypes.flatMap((mT) => (
           {
             label: `${mT.name} (${mT.refName})`,
@@ -219,4 +219,4 @@ const CreatePathwayTab = (
     </>
   );
 };
-export default CreatePathwayTab;
+export default CreatePathwayForm;

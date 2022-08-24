@@ -94,7 +94,7 @@ export function useDeleteRoleSubmit(
   return [loading, error, data, deleteRole];
 }
 
-export interface DeleteRoleTabProps {
+export interface DeleteRoleFormProps {
   disableForm?: boolean | undefined,
   refetchRoles?: (
     variables?: Partial<OperationVariables> | undefined
@@ -107,8 +107,8 @@ export interface DeleteRoleTabProps {
   rolePermissions?: {name: string}[],
 }
 
-const DeleteRoleTab = (
-  { disableForm, refetchRoles, roles, rolePermissions }: DeleteRoleTabProps,
+const DeleteRoleForm = (
+  { disableForm, refetchRoles, roles, rolePermissions }: DeleteRoleFormProps,
 ): JSX.Element => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [permissionFields, setPermissionFields] = useState<{label: string, value: string}[]>();
@@ -249,4 +249,4 @@ const DeleteRoleTab = (
     </>
   );
 };
-export default DeleteRoleTab;
+export default DeleteRoleForm;
