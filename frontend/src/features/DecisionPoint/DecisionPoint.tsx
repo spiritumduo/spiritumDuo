@@ -180,7 +180,6 @@ const DecisionPointPage = (
   const { user: contextUser } = useContext(AuthContext);
   const [showMdtDetails, setShowMdtDetails] = useState<boolean>(true);
   const user = contextUser as User; // context can be undefined
-  const [showServerConfirmation, setShowServerConfirmation] = useState<boolean>(false);
   // GET PATIENT DATA QUERY
   const { loading, data, error } = useQuery<GetPatient, GetPatientVariables>(
     GET_PATIENT_QUERY, {
@@ -372,7 +371,6 @@ const DecisionPointPage = (
           submitFn={ () => {
             onSubmitFn(createDecision, getValues(), true);
             setRequestConfirmation(false);
-            setShowServerConfirmation(true);
           } }
           clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
         />
@@ -390,7 +388,6 @@ const DecisionPointPage = (
           okCallback={ () => {
             onSubmitFn(createDecision, getValues(), true);
             setRequestConfirmation(false);
-            setShowServerConfirmation(true);
           } }
           clinicalRequests={ clinicalRequests }
           clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
@@ -398,7 +395,15 @@ const DecisionPointPage = (
       );
     }
   }
-  if (showServerConfirmation && !mutateData?.createDecisionPoint?.userErrors) {
+
+  console.log('mutateData?.createDecisionPoint?.userErrors', mutateData?.createDecisionPoint?.userErrors);
+  console.log('mutateData?.createDecisionPoint.decisionPoint', mutateData?.createDecisionPoint.decisionPoint);
+
+  if (
+    // && !mutateData?.createDecisionPoint?.userErrors
+    !mutateData?.createDecisionPoint?.userErrors
+    && mutateData?.createDecisionPoint.decisionPoint
+  ) {
     const _clinicalRequests = mutateData?.createDecisionPoint?.decisionPoint?.clinicalRequests?.map(
       (ms) => ({
         id: ms.id,
@@ -413,12 +418,11 @@ const DecisionPointPage = (
           clinicalRequests={ _clinicalRequests }
           clinicalRequestResolutions={ hiddenConfirmationFields.map((field) => field.name) }
           onClose={ () => {
-            setShowServerConfirmation(false);
             if (closeCallback) closeCallback();
           } }
         />
       );
-  } if (showServerConfirmation) setShowServerConfirmation(false);
+  }
 
   // IF PATIENT HAS PRIOR DECISION
   const previousDecisionPoint = data?.getPatient?.onPathways?.[0]?.decisionPoints
@@ -472,6 +476,7 @@ const DecisionPointPage = (
             )
             : ''
         }
+        { mutateError ? <ErrorMessage> {mutateError?.message} </ErrorMessage> : false }
         <form className="card px-4" onSubmit={ handleSubmit(() => { onSubmitFn(createDecision, getValues()); }) }>
           <input type="hidden" value={ data?.getPatient?.id } { ...register('patientId', { required: true }) } />
           <input type="hidden" value={ user.id } { ...register('clinicianId', { required: true }) } />
@@ -576,7 +581,6 @@ const DecisionPointPage = (
             </Row>
           </Fieldset>
           <p>{ mutateLoading ? 'Submitting...' : '' }</p>
-          { mutateError ? <ErrorMessage> {mutateError?.message} </ErrorMessage> : false }
           {
             showMdtDetails
               ? (
