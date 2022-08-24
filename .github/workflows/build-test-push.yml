@@ -206,7 +206,7 @@ jobs:
         run: ssh staging 'cd spiritumDuo && docker-compose restart'
       -
         name: Add demo data
-        run: ssh staging 'docker exec sd-backend python manage-demo.py'
+        run: ssh staging 'docker exec sd-backend python manage.py --data demo'
 
   selenium_linux:
     defaults:
