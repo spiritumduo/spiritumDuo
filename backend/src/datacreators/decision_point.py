@@ -130,8 +130,8 @@ async def CreateDecisionPoint(
 
     async with db.acquire(reuse=False) as conn:
         async with db.transaction():
-            user_has_pathway_permission: Union[UserPathway, None] = await conn.\
-                one_or_none(
+            user_has_pathway_permission: Union[UserPathway, None] = await conn\
+                .one_or_none(
                     UserPathway
                     .query.where(UserPathway.user_id == clinician_id)
                     .where(UserPathway.pathway_id == on_pathway.pathway_id)
@@ -226,12 +226,14 @@ async def CreateDecisionPoint(
                         context, str(request_input['clinicalRequestTypeId'])
                     )
 
-                if str(milestone_type.id) not in valid_clinical_request_type_ids:
+                if str(milestone_type.id) not in \
+                        valid_clinical_request_type_ids:
                     raise ClinicalRequestTypeIdNotOnPathway(milestone_type.id)
 
                 clinical_request_request = TestResultRequest_IE()
                 clinical_request_request.type_id = milestone_type.id
-                clinical_request_request.hospital_number = patient.hospital_number
+                clinical_request_request.hospital_number = \
+                    patient.hospital_number
                 clinical_request_request.pathway_name = pathway.name
 
                 test_result = None
@@ -250,7 +252,8 @@ async def CreateDecisionPoint(
                 clinical_request: ClinicalRequest = await ClinicalRequest(
                     on_pathway_id=int(decision_point.on_pathway_id),
                     decision_point_id=int(decision_point.id),
-                    clinical_request_type_id=int(clinical_request_request.type_id),
+                    clinical_request_type_id=int(
+                        clinical_request_request.type_id),
                     **kwargs_clinical_request
                 ).create()
 
