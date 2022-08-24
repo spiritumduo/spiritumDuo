@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
 import { Input, Select as NHSSelect } from 'components/nhs-style';
-import Select from 'react-select';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
@@ -219,13 +219,13 @@ const UpdateRoleForm = (
             name="permissions"
             control={ control }
             render={ ({ field }) => (
-              <Select
+              <ReactSelectWrapper
                 className="mb-4"
                 isMulti
                 isClearable
                 onBlur={ field.onBlur }
                 onChange={ field.onChange }
-                ref={ field.ref }
+                forwardRef={ field.ref }
                 value={ field.value }
                 options={ permissionFields?.map((permission) => (
                   { label: permission.label, value: permission.label, checked: false }

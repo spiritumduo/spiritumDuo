@@ -8,7 +8,6 @@ import { Button, ErrorMessage, Fieldset, SummaryList, Form } from 'nhsuk-react-c
 import { Row, Col, Modal } from 'react-bootstrap';
 import { Input, CheckboxBox } from 'components/nhs-style';
 import { gql } from '@apollo/client';
-import Select from 'react-select';
 
 // APP
 import useRESTSubmit from 'app/hooks/rest-submit';
@@ -17,6 +16,7 @@ import Role from 'types/Role';
 
 import './adminuserform.css';
 import PathwayOption from 'types/PathwayOption';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 export type CreateUserReturnUser = {
   username: string;
@@ -262,14 +262,14 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
                 name="roles"
                 control={ control }
                 render={ ({ field }) => (
-                  <Select
+                  <ReactSelectWrapper
                     aria-label="roles"
                     className="mb-4"
                     isMulti
                     isClearable
                     onBlur={ field.onBlur }
                     onChange={ field.onChange }
-                    ref={ field.ref }
+                    forwardRef={ field.ref }
                     value={ field.value }
                     options={ roles?.map((r) => (
                       { label: r.name, value: r.id }
@@ -286,14 +286,14 @@ const AdminUserForm = ({ editUser, roles, pathways }: AdminUserFormProps) => {
                 name="pathways"
                 control={ control }
                 render={ ({ field }) => (
-                  <Select
+                  <ReactSelectWrapper
                     aria-label="pathways"
                     className="mb-4"
                     isMulti
                     isClearable
                     onBlur={ field.onBlur }
                     onChange={ field.onChange }
-                    ref={ field.ref }
+                    forwardRef={ field.ref }
                     value={ field.value }
                     options={ pathways?.map((pW) => (
                       { label: pW.name, value: pW.id }

@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 
 import { Button, ErrorMessage, Form, Label, SummaryList } from 'nhsuk-react-components';
-import { Controller, useForm, useFieldArray } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import * as yup from 'yup';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/nhs-style';
 import MDT from 'types/MDT';
-import Select from 'react-select';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 import { PathwayContext } from 'app/context';
 
 import { updateMdt } from './__generated__/updateMdt';
@@ -254,12 +254,12 @@ const UpdateMdtForm = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Element
               name="users"
               control={ control }
               render={ ({ field }) => (
-                <Select
+                <ReactSelectWrapper
                   className="mb-4"
                   isMulti
                   onBlur={ field.onBlur }
                   onChange={ field.onChange }
-                  ref={ field.ref }
+                  forwardRef={ field.ref }
                   value={ field.value }
                   options={ userFields?.map((user) => (
                     { label: user.label, value: user.value }

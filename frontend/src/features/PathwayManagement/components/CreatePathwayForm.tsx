@@ -8,8 +8,7 @@ import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-c
 import { Input } from 'components/nhs-style';
 import { createPathway } from 'features/PathwayManagement/components/__generated__/createPathway';
 import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
-
-import Select from 'react-select';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 export const CREATE_PATHWAY_MUTATION = gql`
 mutation createPathway($input: PathwayInput!){
@@ -170,13 +169,13 @@ const CreatePathwayForm = (
             name="clinicalRequestTypes"
             control={ control }
             render={ ({ field }) => (
-              <Select
+              <ReactSelectWrapper
                 className="mb-4"
                 isMulti
                 isClearable
                 onBlur={ field.onBlur }
                 onChange={ field.onChange }
-                ref={ field.ref }
+                forwardRef={ field.ref }
                 options={ clinicalRequestTypeFields?.map((mT) => (
                   { label: mT.label, value: mT.value }
                 )) }

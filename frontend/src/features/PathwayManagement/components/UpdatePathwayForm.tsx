@@ -9,8 +9,7 @@ import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-c
 import { Input, Select as NHSSelect } from 'components/nhs-style';
 import { updatePathway } from 'features/PathwayManagement/components/__generated__/updatePathway';
 import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
-
-import Select from 'react-select';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 export const UPDATE_PATHWAY_MUTATION = gql`
 mutation updatePathway($input: UpdatePathwayInput!){
@@ -219,13 +218,13 @@ const UpdatePathwayForm = (
             name="clinicalRequestTypes"
             control={ control }
             render={ ({ field }) => (
-              <Select
+              <ReactSelectWrapper
                 className="mb-4"
                 isMulti
                 isClearable
                 onBlur={ field.onBlur }
                 onChange={ field.onChange }
-                ref={ field.ref }
+                forwardRef={ field.ref }
                 value={ field.value }
                 options={ clinicalRequestTypeFields?.map((mT) => (
                   { label: mT.label, value: mT.value }

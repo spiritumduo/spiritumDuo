@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { ApolloQueryResult, gql, OperationVariables } from '@apollo/client';
+import { Controller, useForm } from 'react-hook-form';
+import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
 import { Select as NHSSelect } from 'components/nhs-style';
-import Select from 'react-select';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
 
@@ -209,12 +209,12 @@ const DeleteRoleForm = (
             name="permissions"
             control={ control }
             render={ ({ field }) => (
-              <Select
+              <ReactSelectWrapper
                 className="mb-4"
                 isMulti
                 onBlur={ field.onBlur }
                 onChange={ field.onChange }
-                ref={ field.ref }
+                forwardRef={ field.ref }
                 value={ field.value }
                 options={ permissionFields?.map((permission) => (
                   { label: permission.label, value: permission.label }

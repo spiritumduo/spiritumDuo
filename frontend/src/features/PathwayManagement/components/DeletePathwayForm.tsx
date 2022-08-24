@@ -8,8 +8,7 @@ import { Button, ErrorMessage, Fieldset, Form } from 'nhsuk-react-components';
 import { Select as NHSSelect } from 'components/nhs-style';
 import { getPathways } from 'features/PathwayManagement/__generated__/getPathways';
 import { deletePathway } from 'features/PathwayManagement/components/__generated__/deletePathway';
-
-import Select from 'react-select';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 export const DELETE_PATHWAY_MUTATION = gql`
 mutation deletePathway($pathwayId: ID!){
@@ -200,12 +199,12 @@ const DeletePathwayForm = ({
             name="clinicalRequestTypes"
             control={ control }
             render={ ({ field }) => (
-              <Select
+              <ReactSelectWrapper
                 className="mb-4"
                 isMulti
                 onBlur={ field.onBlur }
                 onChange={ field.onChange }
-                ref={ field.ref }
+                forwardRef={ field.ref }
                 value={ field.value }
                 options={ clinicalRequestTypeFields?.map((mT) => (
                   { label: mT.label, value: mT.value }

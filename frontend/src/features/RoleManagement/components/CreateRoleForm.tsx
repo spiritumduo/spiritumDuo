@@ -5,9 +5,9 @@ import { ApolloQueryResult, OperationVariables } from '@apollo/client';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Modal } from 'react-bootstrap';
 import { Button, ErrorMessage, Fieldset, Form, SummaryList } from 'nhsuk-react-components';
-import Select from 'react-select';
 import { Input } from 'components/nhs-style';
 import { getRoles } from 'features/RoleManagement/__generated__/getRoles';
+import ReactSelectWrapper from 'components/ReactSelectWrapper/ReactSelectWrapper';
 
 type CreateRoleFormType = {
   name: string;
@@ -194,13 +194,13 @@ const CreateRoleForm = (
             name="permissions"
             control={ control }
             render={ ({ field }) => (
-              <Select
+              <ReactSelectWrapper
                 className="mb-4"
                 isMulti
                 isClearable
                 onBlur={ field.onBlur }
                 onChange={ field.onChange }
-                ref={ field.ref }
+                forwardRef={ field.ref }
                 options={ permissionFields?.map((permission) => (
                   { label: permission.label, value: permission.label }
                 )) }
