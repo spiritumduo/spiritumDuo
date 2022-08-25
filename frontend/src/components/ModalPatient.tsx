@@ -160,7 +160,7 @@ const ModalPatient = (
         <Modal.Title className="w-100">
           <Container>
             <Row>
-              <Col xs="11">
+              <Col md="11" xs="10">
                 <div className="visually-hidden">
                   {`${currentPatient?.firstName} ${currentPatient?.lastName},    ${formatHospitalNumber(currentPatient?.hospitalNumber)},    ${formatNationalNumber(currentPatient?.nationalNumber)},    ${currentPatient?.dateOfBirth.toLocaleDateString()}`}
                 </div>
@@ -171,7 +171,7 @@ const ModalPatient = (
                   showNationalNumber
                 />
               </Col>
-              <Col xs="1">
+              <Col md="1" xs="1">
                 <button
                   type="button"
                   className="bg-transparent"
