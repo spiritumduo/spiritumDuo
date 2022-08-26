@@ -15,6 +15,7 @@ import PatientList, { PatientListProps } from 'components/PatientList';
 import { onPathwayUpdated } from 'components/__generated__/onPathwayUpdated';
 import { getPatientOnPathwayConnection } from 'components/__generated__/getPatientOnPathwayConnection';
 import { useNavigate } from 'react-router';
+import { ErrorMessage } from 'nhsuk-react-components';
 
 export const GET_PATIENT_ON_PATHWAY_CONNECTION_QUERY = gql`
   query getPatientOnPathwayConnection(
@@ -200,7 +201,7 @@ const WrappedPatientList = ({
 
   return (
     <>
-      <div>{ error?.message }</div>
+      { error ? <ErrorMessage>{error.message}</ErrorMessage> : null}
       <PatientList
         data={ listElements }
         onClickCallback={ onClickCallback }

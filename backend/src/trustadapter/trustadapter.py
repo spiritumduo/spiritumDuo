@@ -1,3 +1,4 @@
+import logging
 import httpx
 from models import ClinicalRequestType
 from abc import ABC, abstractmethod
@@ -190,17 +191,21 @@ async def httpRequest(
             response.raise_for_status()
             return response
 
-    except httpx.HTTPStatusError:
+    except httpx.HTTPStatusError as e:
+        logging.error(e)
         raise TrustIntegrationCommunicationError(
-            f"Connection to TIE gave HTTP error: {response.status_code}"
+            "Connection to trust system gave HTTP error: "
+            f"{response.status_code}. Please try again later."
         )
     except httpx.TimeoutException as e:
+        logging.error(e)
         raise TrustIntegrationCommunicationError(
-            f"Connection to TIE timed out ({e})"
+            "Connection to trust system timed out. Please try again later."
         )
     except httpx.NetworkError as e:
+        logging.error(e)
         raise TrustIntegrationCommunicationError(
-            f"Connection to TIE failed ({e})"
+            "Connection to trust system failed. Please try again later."
         )
 
 
