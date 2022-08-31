@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { BsX } from 'react-icons/bs';
@@ -7,9 +7,10 @@ import { ErrorMessage } from 'nhsuk-react-components';
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
 import { PathwayContext } from 'app/context';
+import MDT from 'types/MDT';
 
-import UpdateMdtTab from './components/UpdateMdtForm';
-import DeleteMdtTab from './components/DeleteMdtForm';
+import UpdateMdtTab from '../UpdateMdtForm/UpdateMdtForm';
+import DeleteMdtTab from '../DeleteMdtForm/DeleteMdtForm';
 
 import { getMdtsOnThisPathway } from './__generated__/getMdtsOnThisPathway';
 
@@ -37,20 +38,19 @@ export const GET_MDTS_QUERY = gql`
   }
 `;
 
-interface MDTListPageProps{
-  showModal: boolean
-  setShowModal: ((arg0: boolean) => void)
-  mdtId: string
-  refetch?: () => void
+interface MDTManagementModalProps{
+  mdt: MDT;
+  closeCallback: (() => void)
+  onSuccess?: () => void
 }
 
-const MDTManagementPage = (
-  { showModal, setShowModal, mdtId, refetch }: MDTListPageProps,
+const MDTManagementModal = (
+  { mdt, closeCallback, onSuccess }: MDTManagementModalProps,
 ): JSX.Element => {
   const { currentPathwayId } = useContext(PathwayContext);
 
   const {
-    data: mdtData, error: mdtError, loading: mdtLoading, refetch: mdtRefetch,
+    data: mdtData, error: mdtError, loading: mdtLoading,
   } = useQuery<getMdtsOnThisPathway>(
     GET_MDTS_QUERY, {
       variables: {
@@ -59,14 +59,8 @@ const MDTManagementPage = (
     },
   );
 
-  useEffect(() => {
-    mdtRefetch();
-  }, [mdtId, mdtRefetch]);
-
-  const mdt = mdtData?.getMdts.find((_mdt) => _mdt?.id.toString() === mdtId.toString());
-
   return (
-    <Modal size="lg" show={ !!(showModal && mdt) } onHide={ () => setShowModal(false) }>
+    <Modal size="lg" show onHide={ () => closeCallback() }>
       <Modal.Header>
         <Modal.Title>MDT Management</Modal.Title>
         <button
@@ -74,7 +68,7 @@ const MDTManagementPage = (
           className="bg-transparent"
           name="Close"
           style={ { border: 'none' } }
-          onClick={ () => setShowModal(false) }
+          onClick={ () => closeCallback() }
         >
           <p className="nhsuk-u-visually-hidden">Close</p>
           <BsX size="2rem" />
@@ -98,7 +92,7 @@ const MDTManagementPage = (
                   ? (
                     <UpdateMdtTab
                       mdt={ mdt }
-                      successCallback={ () => { setShowModal(false); if (refetch) refetch(); } }
+                      successCallback={ () => { if (onSuccess) onSuccess(); closeCallback(); } }
                     />
                   )
                   : ''
@@ -111,7 +105,7 @@ const MDTManagementPage = (
                     <DeleteMdtTab
                       mdt={ mdt }
                       allMdts={ mdtData.getMdts }
-                      successCallback={ () => { setShowModal(false); if (refetch) refetch(); } }
+                      successCallback={ () => { if (onSuccess) onSuccess(); closeCallback(); } }
                     />
                   )
                   : ''
@@ -124,4 +118,4 @@ const MDTManagementPage = (
   );
 };
 
-export default MDTManagementPage;
+export default MDTManagementModal;

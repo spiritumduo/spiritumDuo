@@ -168,6 +168,33 @@ export const Default: ComponentStory<typeof PatientMdtTab> = () => (
   </NewMockSdApolloProvider>
 );
 
+Default.parameters = {
+  getPatientMock: {
+    query: GET_PATIENT_ON_MDT_CONNECTION_QUERY,
+    mockFn: () => Promise.resolve({
+      data: {
+        getOnMdtConnection: getPatientOnMdtResult,
+      },
+    }),
+  },
+  lockOnMdt: {
+    query: LOCK_ON_MDT_MUTATION,
+    mockFn: () => Promise.resolve({
+      data: {
+        lockOnMdt: lockOnMdtSuccessResult,
+      },
+    }),
+  },
+  updateOnMdt: {
+    query: UPDATE_ON_MDT_MUTATION,
+    mockFn: () => Promise.resolve({
+      data: {
+        updateOnMdt: updateOnMdtErrorResult,
+      },
+    }),
+  },
+};
+
 export const RecordLocked: ComponentStory<typeof PatientMdtTab> = () => (
   <NewMockSdApolloProvider
     mocks={ errorMocks }

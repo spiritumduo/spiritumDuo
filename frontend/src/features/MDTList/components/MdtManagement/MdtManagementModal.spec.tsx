@@ -3,7 +3,7 @@ import { waitFor, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { composeStories } from '@storybook/testing-react';
-import * as stories from './MdtManagement.stories';
+import * as stories from './MdtManagementModal.stories';
 
 const { Default } = composeStories(stories);
 

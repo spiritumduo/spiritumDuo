@@ -4,10 +4,10 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import MdtManagement, { GET_MDTS_QUERY } from './MdtManagement';
-import { UPDATE_MDT_MUTATION, GET_USERS } from './components/UpdateMdtForm';
+import MDTManagementModal, { GET_MDTS_QUERY } from './MdtManagementModal';
+import { UPDATE_MDT_MUTATION, GET_USERS } from '../UpdateMdtForm/UpdateMdtForm';
 import 'react-datepicker/dist/react-datepicker.css';
-import { DELETE_MDT_MUTATION } from './components/DeleteMdtForm';
+import { DELETE_MDT_MUTATION } from '../DeleteMdtForm/DeleteMdtForm';
 
 const listOfMdts = [
   {
@@ -22,9 +22,9 @@ const listOfMdts = [
       firstName: 'test',
       lastName: 'user',
     },
-    createdAt: '2000-01-01T00:00:00',
-    plannedAt: '2022-01-01T00:00:00',
-    updatedAt: '2000-01-01T00:00:00',
+    createdAt: new Date('2000-01-01T00:00:00'),
+    plannedAt: new Date('2022-01-01T00:00:00'),
+    updatedAt: new Date('2000-01-01T00:00:00'),
     location: 'test location',
     clinicians: [{
       id: '1',
@@ -99,9 +99,9 @@ const successfulUpdateMutation = {
       id: '1',
       username: 'test username',
     },
-    createdAt: '3000-01-01T00:00:00',
-    plannedAt: '3000-01-01T00:00:00',
-    updatedAt: '3000-01-01T00:00:00',
+    createdAt: new Date('3000-01-01T00:00:00'),
+    plannedAt: new Date('3000-01-01T00:00:00'),
+    updatedAt: new Date('3000-01-01T00:00:00'),
     location: 'test location',
     clinicians: [],
   },
@@ -153,9 +153,34 @@ const mocks = [
   },
 ];
 
+const mdt = {
+  id: '1000',
+  pathway: {
+    id: '1',
+    name: 'test pathway',
+  },
+  creator: {
+    id: '1',
+    username: 'test username',
+    firstName: 'test',
+    lastName: 'user',
+  },
+  createdAt: new Date('2000-01-01T00:00:00'),
+  plannedAt: new Date('2022-01-01T00:00:00'),
+  updatedAt: new Date('2000-01-01T00:00:00'),
+  location: 'test location',
+  clinicians: [{
+    id: '1',
+    firstName: 'Test',
+    lastName: 'Dummy',
+    username: 'tdummy',
+  }],
+  patients: [],
+};
+
 export default {
   title: 'Tab Pages/MDT Management/Default',
-  component: MdtManagement,
+  component: MDTManagementModal,
   decorators: [
     (Story) => {
       cache.reset();
@@ -170,16 +195,15 @@ export default {
       );
     },
   ],
-} as ComponentMeta<typeof MdtManagement>;
+} as ComponentMeta<typeof MDTManagementModal>;
 
-export const Default: ComponentStory<typeof MdtManagement> = () => (
+export const Default: ComponentStory<typeof MDTManagementModal> = () => (
   <NewMockSdApolloProvider
     mocks={ mocks }
   >
-    <MdtManagement
-      showModal
-      setShowModal={ () => ({}) }
-      mdtId="1"
+    <MDTManagementModal
+      mdt={ mdt }
+      closeCallback={ () => ({}) }
     />
   </NewMockSdApolloProvider>
 );

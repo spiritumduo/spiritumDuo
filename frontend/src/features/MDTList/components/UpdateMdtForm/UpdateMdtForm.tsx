@@ -27,6 +27,12 @@ export const UPDATE_MDT_MUTATION = gql`
           id
           username
         }
+        clinicians{
+          id
+          firstName
+          lastName
+          username
+        }
         createdAt
         plannedAt
         updatedAt
@@ -178,12 +184,24 @@ const UpdateMdtForm = ({ mdt, successCallback }: UpdateMdtTabProps): JSX.Element
           <SummaryList.Row>
             <SummaryList.Key>Date Planned</SummaryList.Key>
             <SummaryList.Value>
-              { new Date(updateData?.updateMdt?.mdt?.plannedAt).toLocaleDateString() }
+              { updateData?.updateMdt?.mdt?.plannedAt.toLocaleDateString() }
             </SummaryList.Value>
           </SummaryList.Row>
           <SummaryList.Row>
             <SummaryList.Key>Location</SummaryList.Key>
             <SummaryList.Value>{ updateData?.updateMdt?.mdt?.location }</SummaryList.Value>
+          </SummaryList.Row>
+          <SummaryList.Row>
+            <SummaryList.Key>Clinicians attending</SummaryList.Key>
+            <SummaryList.Value>
+              <ul>
+                {
+                  updateData?.updateMdt?.mdt?.clinicians?.map((user) => (
+                    <li key={ user?.id }>{user?.firstName} {user?.lastName} ({user?.username})</li>
+                  ))
+                }
+              </ul>
+            </SummaryList.Value>
           </SummaryList.Row>
         </SummaryList>
         <Button className="mt-0 mb-0 float-end" onClick={ () => { successCallback(); setShowConfirmation(false); } }>Close</Button>

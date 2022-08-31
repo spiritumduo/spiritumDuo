@@ -63,10 +63,12 @@ export interface CreateMdtInputs {
 interface CreateMdtModalProps{
   showModal: boolean
   setShowModal: (arg0: boolean) => void
-  refetch?: () => void
+  onSuccess?: () => void
 }
 
-const CreateMdtModal = ({ showModal, setShowModal, refetch }: CreateMdtModalProps): JSX.Element => {
+const CreateMdtModal = (
+  { showModal, setShowModal }: CreateMdtModalProps,
+): JSX.Element => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const { currentPathwayId } = useContext(PathwayContext);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);

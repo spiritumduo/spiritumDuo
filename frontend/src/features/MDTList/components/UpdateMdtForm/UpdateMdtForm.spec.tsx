@@ -27,6 +27,9 @@ test('valid inputs should show success page', async () => {
     expect((screen.getByLabelText(/date/i) as HTMLInputElement).value).toMatch('01/01/2022');
   });
 
+  await click(screen.getByLabelText(/Staff present/i));
+  await click(screen.getByRole('combobox', { name: /john doe \(jdoe\)/i }));
+
   await type(screen.getByLabelText(/location/i), 'new test location');
   await click(screen.getByRole('button', { name: /update/i }));
 
@@ -35,6 +38,8 @@ test('valid inputs should show success page', async () => {
     expect(screen.getByText(/test pathway/i));
     expect(screen.getByText(new Date('01/01/3000').toLocaleDateString()));
     expect(screen.getByText(/test location/i));
+
+    expect(screen.getByText(/test dummy \(tdummy\)/i)).toBeInTheDocument();
   });
 });
 

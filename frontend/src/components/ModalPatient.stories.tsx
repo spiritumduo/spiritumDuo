@@ -6,7 +6,6 @@ import { Default as PreviousDecisionPointsStory } from 'pages/PreviousDecisionPo
 import { Default as DecisionPointsStory } from 'features/DecisionPoint/DecisionPoint.stories';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { Default as PatientPathwayDefault } from 'features/PatientPathway/PatientPathway.stories';
-import { useAppDispatch } from 'app/hooks';
 
 const patient = {
   id: '1',
@@ -128,11 +127,13 @@ export const LockedByOtherUser: ComponentStory<typeof ModalPatient> = () => (
   <NewMockSdApolloProvider
     mocks={
       [
-        userDoesNotHaveLockMocks,
         patientMock,
+        userDoesNotHaveLockMocks,
+        ...PatientPathwayDefault.parameters?.mocks,
+        DecisionPointsStory.parameters?.createDecisionMock,
         DecisionPointsStory.parameters?.getPatientMock,
-        PreviousDecisionPointsStory.parameters?.getPatientMock,
         DecisionPointsStory.parameters?.getMdtsMock,
+        PreviousDecisionPointsStory.parameters?.getPatientMock,
       ]
     }
   >

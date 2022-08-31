@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { cache } from 'app/cache';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
-import PatientOnMdtManagement, { UPDATE_ON_MDT_MUTATION, DELETE_ON_MDT_MUTATION } from './PatientOnMdtManagement';
+import OnMdtManagement, { UPDATE_ON_MDT_MUTATION, DELETE_ON_MDT_MUTATION } from './OnMdtManagement';
 
 const onMdt = {
   id: '1',
@@ -76,7 +76,7 @@ const errorMocks = [{
 
 export default {
   title: 'Tab Pages/Patient on MDT management/Default',
-  component: PatientOnMdtManagement,
+  component: OnMdtManagement,
   decorators: [
     (Story) => {
       cache.reset();
@@ -91,24 +91,24 @@ export default {
       );
     },
   ],
-} as ComponentMeta<typeof PatientOnMdtManagement>;
+} as ComponentMeta<typeof OnMdtManagement>;
 
-export const Default: ComponentStory<typeof PatientOnMdtManagement> = () => (
+export const Default: ComponentStory<typeof OnMdtManagement> = () => (
   <NewMockSdApolloProvider
     mocks={ mocks }
   >
-    <PatientOnMdtManagement
+    <OnMdtManagement
       onMdt={ onMdt }
       closeCallback={ () => ({}) }
     />
   </NewMockSdApolloProvider>
 );
 
-export const ErrorStates: ComponentStory<typeof PatientOnMdtManagement> = () => (
+export const ErrorStates: ComponentStory<typeof OnMdtManagement> = () => (
   <NewMockSdApolloProvider
     mocks={ errorMocks }
   >
-    <PatientOnMdtManagement
+    <OnMdtManagement
       onMdt={ onMdt }
       closeCallback={ () => ({}) }
     />

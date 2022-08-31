@@ -43,9 +43,17 @@ const successfulMutation = {
       id: '1',
       username: 'test username',
     },
-    createdAt: '3000-01-01T00:00:00',
-    plannedAt: '3000-01-01T00:00:00',
-    updatedAt: '3000-01-01T00:00:00',
+    clinicians: [
+      {
+        id: '1',
+        firstName: 'Test',
+        lastName: 'Dummy',
+        username: 'tdummy',
+      },
+    ],
+    createdAt: new Date('3000-01-01T00:00:00'),
+    plannedAt: new Date('3000-01-01T00:00:00'),
+    updatedAt: new Date('3000-01-01T00:00:00'),
     location: 'new test location',
   },
   userErrors: null,
@@ -72,12 +80,20 @@ const getUsersMock = {
   query: GET_USERS,
   mockFn: () => Promise.resolve({
     data: {
-      getUsers: [{
-        id: '1',
-        firstName: 'Test',
-        lastName: 'Dummy',
-        username: 'tdummy',
-      }],
+      getUsers: [
+        {
+          id: '1',
+          firstName: 'Test',
+          lastName: 'Dummy',
+          username: 'tdummy',
+        },
+        {
+          id: '2',
+          firstName: 'John',
+          lastName: 'Doe',
+          username: 'jdoe',
+        },
+      ],
     },
   }),
 };

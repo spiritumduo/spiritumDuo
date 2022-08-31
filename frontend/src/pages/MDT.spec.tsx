@@ -9,7 +9,21 @@ import userEvent from '@testing-library/user-event';
 // LOCAL IMPORTS
 import * as stories from './MDT.stories';
 
-const { Default, Locked } = composeStories(stories);
+const { Default } = composeStories(stories);
+
+async function renderDefault() {
+  jest.useFakeTimers();
+  render(
+    <Default />,
+  );
+  expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+
+  await act(async () => {
+    jest.setSystemTime(Date.now() + 10000);
+    jest.advanceTimersByTime(1000);
+  });
+  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+}
 
 describe('When the page loads', () => {
   it('Should display the loading spinner and then disappear', async () => {
@@ -25,91 +39,62 @@ describe('When the page loads', () => {
     });
     expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
   });
-
-  it('Should show patient demographics and reason for mdt referral', async () => {
-    jest.useFakeTimers();
-    render(
-      <Default />,
-    );
-    expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
-
-    await act(async () => {
-      jest.setSystemTime(Date.now() + 10000);
-      jest.advanceTimersByTime(1000);
-    });
-    expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByText('First Last (1)')).toBeInTheDocument();
-      expect(screen.getByText('fMRN: 0000001L')).toBeInTheDocument();
-      expect(screen.getByText('fNHS: 000-000-1L')).toBeInTheDocument();
-      expect(screen.getByText(new Date('01/01/2000').toLocaleDateString())).toBeInTheDocument();
-      expect(screen.getByText('reason goes here (1)')).toBeInTheDocument();
-    });
-  });
 });
 
-const renderEdit = (async () => {
-  const { click } = userEvent.setup();
-  jest.useFakeTimers();
-  render(
-    <Default />,
-  );
-  expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+test('it should display the first breadcrumb', async () => {
+  await renderDefault();
 
-  await act(async () => {
-    jest.setSystemTime(Date.now() + 10000);
-    jest.advanceTimersByTime(1000);
-  });
-  expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
-
-  click(screen.getAllByText(/edit/i)[0]);
   await waitFor(() => {
-    expect(screen.getByText(/mdt management/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /mdt list/i }),
+    ).toBeInTheDocument();
   });
 });
 
-describe('Clicking edit on a patient row', () => {
-  it('Should show the edit modal', async () => {
-    const { click } = userEvent.setup();
-    jest.useFakeTimers();
-    render(
-      <Default />,
-    );
-    expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+test('when an MDT is selected it should display the first and second breadcrumb', async () => {
+  await renderDefault();
 
-    await act(async () => {
-      jest.setSystemTime(Date.now() + 10000);
-      jest.advanceTimersByTime(1000);
-    });
-    expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+  const { click } = userEvent.setup();
 
-    click(screen.getAllByText(/edit/i)[0]);
-    await waitFor(() => {
-      expect(screen.getByText(/mdt management/i)).toBeInTheDocument();
-    });
+  await waitFor(() => {
+    expect(
+      screen.getByRole('link', { name: /mdt list/i }),
+    ).toBeInTheDocument();
   });
-  it('it should autocomplete with data from query', async () => {
-    await renderEdit();
-    expect((screen.getByLabelText(/reason added to mdt/i) as HTMLInputElement)).toHaveValue('reason goes here (1)');
+
+  click(screen.getByRole('link', { name: new Date('2025-01-02').toLocaleDateString() }));
+
+  await waitFor(() => {
+    expect(
+      screen.getByRole('link', { name: /patient list/i }),
+    ).toBeInTheDocument();
   });
-  it('Should show an error if already locked', async () => {
-    const { click } = userEvent.setup();
-    jest.useFakeTimers();
-    render(
-      <Locked />,
-    );
-    expect(screen.getByText(/loading.svg/i)).toBeInTheDocument();
+});
 
-    await act(async () => {
-      jest.setSystemTime(Date.now() + 10000);
-      jest.advanceTimersByTime(1000);
-    });
-    expect(screen.queryByText(/loading.svg/i)).not.toBeInTheDocument();
+test('when an MDT is selected, clicking the first breadcrumb will return the user to the MDT list', async () => {
+  await renderDefault();
 
-    click(screen.getAllByText(/edit/i)[0]);
-    await waitFor(() => {
-      expect(screen.getByText(/locked by someone else/i)).toBeInTheDocument();
-    });
+  const { click } = userEvent.setup();
+
+  await waitFor(() => {
+    expect(
+      screen.getByRole('link', { name: /mdt list/i }),
+    ).toBeInTheDocument();
+  });
+
+  click(screen.getByRole('link', { name: new Date('2025-01-02').toLocaleDateString() }));
+
+  await waitFor(() => {
+    expect(
+      screen.getByRole('link', { name: /patient list/i }),
+    ).toBeInTheDocument();
+  });
+
+  click(screen.getByRole('link', { name: /mdt list/i }));
+
+  await waitFor(() => {
+    expect(
+      screen.queryByRole('link', { name: /patient list/i }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -105,9 +105,9 @@ test('Edit MDT: details should be autofilled when pressing edit', async () => {
   await renderEditModalUpdateTab();
 
   await waitFor(() => {
-    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
-    expect((screen.getByLabelText(/Date/) as HTMLInputElement).value).toMatch('01/01/2022');
-    expect(screen.getByText(/test dummy \(tdummy\)/i)).toBeInTheDocument();
+    expect((screen.getByRole('textbox', { name: /location/i }) as HTMLInputElement).value).toMatch(/test location/i);
+    expect((screen.getByRole('textbox', { name: /date/i }) as HTMLInputElement).value).toMatch('02/01/2025');
+    expect(screen.getByText(/john1 doe1 \(john.doe1\)/i)).toBeInTheDocument();
   });
 });
 
@@ -117,9 +117,9 @@ test('Edit MDT: valid inputs should show success page', async () => {
   await renderEditModalUpdateTab();
 
   await waitFor(() => {
-    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toMatch(/test location/i);
-    expect((screen.getByLabelText(/Date/) as HTMLInputElement).value).toMatch('01/01/2022');
-    expect(screen.getByText(/test dummy \(tdummy\)/i)).toBeInTheDocument();
+    expect((screen.getByRole('textbox', { name: /location/i }) as HTMLInputElement).value).toMatch(/test location/i);
+    expect((screen.getByRole('textbox', { name: /date/i }) as HTMLInputElement).value).toMatch('02/01/2025');
+    expect(screen.getByText(/john1 doe1 \(john.doe1\)/i)).toBeInTheDocument();
   });
 
   expect(screen.getByLabelText(/Location/)).toBeInTheDocument();
@@ -135,8 +135,10 @@ test('Edit MDT: valid inputs should show success page', async () => {
 
 test('Delete MDT: valid inputs should show success page', async () => {
   // setup
-  const { click } = userEvent.setup();
+  const { click, selectOptions } = userEvent.setup();
   await renderEditModalDeleteTab();
+
+  await waitFor(() => selectOptions(screen.getByLabelText(/select mdt to move patients to/i), ['1']));
 
   click(screen.getByRole('button', { name: /delete mdt/i }));
 

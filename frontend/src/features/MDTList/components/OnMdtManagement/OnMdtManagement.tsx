@@ -78,7 +78,7 @@ interface PatientOnMdtProps{
   refetch?: () => void;
 }
 
-const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtProps) => {
+const OnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtProps) => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const formatHospitalNumber = useHospitalNumberFormat();
   const formatNationalNumber = useNationalNumberFormat();
@@ -233,4 +233,4 @@ const PatientOnMdtManagement = ({ onMdt, closeCallback, refetch }: PatientOnMdtP
   );
 };
 
-export default PatientOnMdtManagement;
+export default OnMdtManagement;
