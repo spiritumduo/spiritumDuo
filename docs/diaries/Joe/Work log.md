@@ -182,4 +182,4 @@ This week I was picking through the backlog to find bugs, errors and little feat
 
 ## 29th August - 2nd September 2022
 
-This is my final week. As a continuation of last week I re-organised the MDT feature work I did a few weeks ago. I'm also looking at our Selenium implementation. We think our issues around flaky tests derive from the GitHub actions runners latency (network + CPU bottlenecks). I'm going to setup a reverse shell so I can monitor the blade as it runs the tets. 
+This is my final week. As a continuation of last week I re-organised the MDT feature work I did a few weeks ago. I'm also looking at our Selenium implementation. We think our issues around flaky tests derive from the GitHub actions runners latency (network + CPU bottlenecks). I'm going to setup a reverse shell so I can monitor the blade as it runs the tets so we can diagnose and resolve the issue.
