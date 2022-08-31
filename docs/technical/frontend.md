@@ -213,7 +213,7 @@ All three selectors will get the button from `MyComponent`for us to click on, ho
 
 # Components
 
-We split our components into three types - components, features, and pages. 
+We split our components into three types - components, features, and pages. We settled on this approach midway through development, so there are legacy components that don’t neatly fit into this pattern and should be refactored. An example would be `PatientList` and `WrappedPatientList` - this could be refactored into a `PatientList` feature, with a cleaner API for how to wrap it with a provider component to support all the use cases where we display a list of patients.
 
 ## Components
 
@@ -445,51 +445,125 @@ This should be refactored into a local context. Its sole use is so that `Decisio
 
 ### searchBar
 
-This is used to communicate the value of the search input to the “All Patients” tab. 
+```tsx
+interface SearchBarState {
+  query?: string;
+}
+```
+
+This is populated by `SearchBar`, and if this value exists then `AllPatients` will instead show the results of this query.
 
 ## Global Context
 
 ### AuthContext
 
+```tsx
+// /src/app/context.tsx
+
+interface AuthContextInterface {
+    user?: User;
+    updateUser: (user: User | undefined) => void;
+}
+```
+
+This is populated by `LoginPage`. It provides the currently logged in user.
+
 ### PathwayContext
+
+```tsx
+// /src/app/context.tsx
+
+interface PathwayContextInterface {
+    currentPathwayId?: string;
+    updateCurrentPathwayId: (id: string) => void;
+}
+```
+
+This is populated by `LoginPage`. It is used anywhere the currently selected pathway is required, e.g. submitting decisions or retrieving lists of patients.
 
 ### ConfigContext
 
-# Dependencies
+```tsx
+// /src/components/ConfigContext/ConfigContext.tsx
 
-## React 18
+interface ConfigInterface {
+  hospitalNumberFormat: string;
+  nationalNumberFormat: string;
+}
+```
 
-## Peer Dependencies
+This is populated by `LoginPage`. It is for system configuration. It currently just contains the format strings for rendering patient identifiers.
 
 # Improvements
 
+Here are suggestions /  notes for future improvement. 
+
+## Dependencies
+
+### React 18
+
+We use React 18, however we haven’t moved the project over to the new `createRoot` API. As such, it will still behaves like React 17.
+
+In order to migrate to `createRoot`all dependancies need to be compatible with React 18. The most notable blocking dependancy was `react-beautitful-dnd` which we use for our drag and drop lists, however that now supports v18 as of `v13.1.1`.
+
+So, it would be worthwhile experimenting with `createRoot` to see if anything else is blocking the migration to full React 18.
+
+### Peer Dependencies
+
+We have quite a few Yarn warnings around incorrect peer dependancies, however these are mostly for dev dependancies and don’t actually cause any issues. However it would be good to go over these and see if the warnings can be removed by upgrading dependancies. 
+
 ## Separating provider / presentation
+
+Currently our components are built with the queries that provide data written inside them. This means that all tests and stories for our presentational components also have to mock out the GraphQL queries.
+
+So, it might be worth pulling all the provider logic out of components and having all visual components be purely presentational and only take data as props. Then we can have tests of our visual components just provide data, and then test the providers separately with our GQL mocks.
+
+In most cases, a provider will still be coupled to a presentational component. Therefore it would make sense to locate them together and export the combination so consumers don’t have to worry about integrating them.
 
 ### Break test mocks out
 
-## Remix
+Currently our test mocks are inside our components `stories` files. This means we end up attaching them to a story to export them when other stories or tests need them - e.g. `Default.paramaters.mocks`. It would be better to have a `mocks` file for components that require them, then all stories and tests can just import from there.
+
+## Remix Router
+
+[Remix](https://remix.run/) is a framework for making modern React applications. We don’t use it, however we do use React Router v6 and it turns out most of the data and async UI management from Remix is [coming to React Router](https://remix.run/blog/remixing-react-router).
+
+This ties into the suggestion above for separating out provider and presentation components. This new design for React Router would allow us to attach data providers to routes with `<Route loader />`, thereby permitting async loading of nested routes. This will greatly improve page load times.
+
+This is still pre-release, however it seems to be something worth keeping an eye on.
 
 ## Localisation
 
+Currently, we don’t localise the frontend. All our strings are English, and for dates we just depend on the current browser locale setting.
+
 ### Language
+
+For language localisation, we should probably be using [react-i18next](https://react.i18next.com/). This would permit us to store all our localised strings separately from our application, update strings as required, etc. This should be pretty straightforward to integrate.
 
 ### Dates
 
+Currently we depend on the browser locale to correctly render dates. However, this causes problems when the browser locale is incorrectly configured. So, this would require two modifications. Firstly, the backend would need to be updated to send the correct locale on login. This could be stored in `ConfigContext`. Secondly, we require a system to ensure that the correct localisation is always used throughout the frontend. For that, [date-fns](https://date-fns.org/) looks to be a promising candidate. It’s based on native JS Date objects. There are alternatives such as [moment.js](https://momentjs.com/), however that is [no longer recommended](https://momentjs.com/docs/#/-project-status/) for new projects.
+
 ## DecisionPoint
+
+`DecisionPoint` is quite a large component, and will likely be a focus for future feature work and refactoring. It has already been split into some sub-components, however it could probably be pared down some more into more testable units.
 
 ### Generic request type handling
 
-- Be able to show dynamic input boxes based on `ClinicalRequest`
-- type metadata from backend
+One big feature we’re missing is per-request metadata for request types. For example, an x-ray might want specific information regarding the patient so we would have to show input boxes for that particular request type when it’s selected.
+
+As we use [react-hook-form](https://react-hook-form.com/), we would have to build a new `[fieldArray](https://react-hook-form.com/api/usefieldarray)`for each request type. This would have to be based on per request type metadata being served from the backend, e.g. the x-ray might require a text field, a checkbox, a set of radio options, etc. So, a generic system for building and rendering the required inputs based on that metadata would have to be designed and implemented.
 
 ## Polyfills
 
-- [https://create-react-app.dev/docs/supported-browsers-features](https://create-react-app.dev/docs/supported-browsers-features)
-
-## Switch to createRoot
+SD is based on create-react-app, and so supports all modern browsers. If we wish to support older browsers, then [polyfills are required](https://create-react-app.dev/docs/supported-browsers-features/). The most straightforward way to achieve this would be to include [react-app-polyfill](https://github.com/facebook/create-react-app/blob/main/packages/react-app-polyfill/README.md).
 
 ## Migrate away from Apollo MockedProvider
 
+Initially we used Apollo’s `MockedProvider` for our GQL mocks. However this proved to be limited, as `MockedProvider` only allows mocks using arrays of statically defined returned values. This makes it hard to test subscriptions, or assert that queries were called with expected variables. So, we now use [mock-apollo-client](https://github.com/mike-gibson/mock-apollo-client) for our GQL mocks. We have a `NewMockSdApolloProvider` component that we can use in tests. This allows us to provide a function that will be called to return the data for our queries / mutations, and so permits us to use a standard `jest.fn()` mock.
+
+Any work that is done on older stories or tests that uses the old `MockedProvider` should be used as an opportunity to refactor away and use `NewMockSdApolloProvider`.
+
 ## Global Storybook Decorators
 
-- Refactor global decorators out of `preview.js` and into `src/test` so they can be more easily reused in jest tests.
+Currently we have global decorators for our Storybook stories in `preview.js`. Unfortunately, `composeStories` does not include global decorators in the same way that it includes decorators defined in story files, so we end up having to include them manually when a Jest test requires them. Ideally the decorators would be pulled out of `preview.js`and instead put somewhere in `/src/tests` so they can just be imported into `preview.js` and any Jest tests that require them.
