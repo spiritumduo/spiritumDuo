@@ -3,6 +3,7 @@ import asyncio
 import os
 import logging
 from random import randint
+import re
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from starlette.background import BackgroundTasks
@@ -19,6 +20,7 @@ from typing import Dict, List, Optional, Union
 from RecordTypes import TestResultState
 from placeholder_data import getTestResultFromCharacteristics
 import httpx
+from sqlalchemy import func
 
 log = logging.getLogger("uvicorn")
 log.setLevel(logging.DEBUG)
@@ -49,7 +51,7 @@ async def say_hello(name: str = None):
 
 @app.get("/patientsearch/{query}")
 async def patient_search(query: str = None):
-    tokens = query.split()
+    tokens = re.sub('[^A-z0-9 ]+', '', query).upper().split()
 
     patients: List[Union[Patient, Address]] = await Patient.join(
         Address,
@@ -57,12 +59,12 @@ async def patient_search(query: str = None):
     ).select().where(
         or_(
             or_(
-                Patient.hospital_number.in_(tokens),
-                Patient.national_number.in_(tokens),
+                func.upper(Patient.hospital_number).in_(tokens),
+                func.upper(Patient.national_number).in_(tokens),
             ),
             or_(
-                Patient.first_name.in_(tokens),
-                Patient.last_name.in_(tokens)
+                func.upper(Patient.first_name).in_(tokens),
+                func.upper(Patient.last_name).in_(tokens)
             )
         )
     ).gino.all()
