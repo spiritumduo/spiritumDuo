@@ -7,8 +7,8 @@ import { MemoryRouter } from 'react-router';
 import { MockAuthProvider, MockPathwayProvider } from 'test/mocks/mockContext';
 import { NewMockSdApolloProvider } from 'test/mocks/mockApolloProvider';
 import { cache } from 'app/cache';
-import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, GET_MDTS } from './DecisionPoint';
 import { ClinicalRequestState } from '__generated__/globalTypes';
+import DecisionPointPage, { CREATE_DECISION_POINT_MUTATION, GET_PATIENT_QUERY, GET_MDTS } from './DecisionPoint';
 
 const mdts = [
   {
