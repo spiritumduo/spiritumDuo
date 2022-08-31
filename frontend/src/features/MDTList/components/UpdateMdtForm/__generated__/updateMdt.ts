@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { UpdateMdtInput } from "./../../../../__generated__/globalTypes";
+import { UpdateMdtInput } from "./../../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: updateMdt
@@ -21,11 +21,20 @@ export interface updateMdt_updateMdt_mdt_creator {
   username: string;
 }
 
+export interface updateMdt_updateMdt_mdt_clinicians {
+  __typename: "User";
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+}
+
 export interface updateMdt_updateMdt_mdt {
   __typename: "MDT";
   id: string;
   pathway: updateMdt_updateMdt_mdt_pathway;
   creator: updateMdt_updateMdt_mdt_creator;
+  clinicians: (updateMdt_updateMdt_mdt_clinicians | null)[];
   createdAt: any;
   plannedAt: any;
   updatedAt: any;

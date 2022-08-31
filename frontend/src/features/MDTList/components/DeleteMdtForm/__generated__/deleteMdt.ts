@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { DeleteMdtInput } from "./../../../../__generated__/globalTypes";
+import { DeleteMdtInput } from "./../../../../../__generated__/globalTypes";
 
 // ====================================================
 // GraphQL mutation operation: deleteMdt
