@@ -94,7 +94,7 @@ def submit_create_form(driver: webdriver.Remote):
 def check_create_modal_present(
     driver: webdriver.Remote, create_role_details: RoleDetails
 ):
-    WebDriverWait(driver, 4).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             driver.find_element(By.CSS_SELECTOR, '.modal-body')
         )
@@ -182,7 +182,7 @@ def check_create_modal_present(
 #     driver: webdriver.Remote,
 #     test_roles: List[RoleDetails],
 # ):
-#     role_index = WebDriverWait(driver, 10).until(
+#     role_index = WebDriverWait(driver, 30).until(
 #         lambda d: d.find_element(
 #             By.NAME, "roleIndex"
 #         )
@@ -277,7 +277,7 @@ def check_create_modal_present(
 #     driver: webdriver.Remote,
 #     test_role: RoleDetails,
 # ):
-#     role_index = WebDriverWait(driver, 10).until(
+#     role_index = WebDriverWait(driver, 30).until(
 #         lambda d: d.find_element(
 #             By.NAME, "roleIndex"
 #         )

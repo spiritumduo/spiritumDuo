@@ -34,7 +34,7 @@ def insert_correct_credentials(driver: webdriver.Remote):
 
 @then("the user should be assigned a session cookie")
 def check_cookie_present(driver: webdriver.Remote):
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         lambda d: d.get_cookie("SDSESSION") is not None
     )
 

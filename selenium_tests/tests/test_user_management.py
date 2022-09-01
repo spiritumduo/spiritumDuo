@@ -133,7 +133,7 @@ def submit_form(driver: webdriver.Remote):
 def check_modal_present(
     driver: webdriver.Remote, create_user_details: UserDetails
 ):
-    WebDriverWait(driver, 4).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             driver.find_element(By.CSS_SELECTOR, '.modal-body')
         )
@@ -245,7 +245,7 @@ def check_edit_modal(driver: webdriver.Remote):
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             modal
         )
@@ -288,7 +288,7 @@ def clear_and_populate_form(
 
 @when("the user submits the edit form")
 def submit_edit_form(driver: webdriver.Remote):
-    submit = WebDriverWait(driver, 10).until(
+    submit = WebDriverWait(driver, 30).until(
         lambda d: d.find_element(
             By.XPATH, "//button[contains(text(), 'Update User')]"
         )
@@ -300,7 +300,7 @@ def submit_edit_form(driver: webdriver.Remote):
 def check_edit_confirmation(
     driver: webdriver.Remote, update_user_details: UserDetails
 ):
-    WebDriverWait(driver, 4).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             driver.find_element(By.CSS_SELECTOR, '.modal-body')
         )

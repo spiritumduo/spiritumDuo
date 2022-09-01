@@ -22,7 +22,7 @@ def set_user_logged_in(
     driver: webdriver.Remote,
     endpoints: ServerEndpoints
 ):
-    WebDriverWait(driver, 2).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.url_to_be(
             endpoints.app
         )
@@ -50,7 +50,7 @@ def press_logout_btn(driver: webdriver.Remote):
 @then("the user should remain on the login page")
 def check_url_is_login(driver: webdriver.Remote, endpoints: ServerEndpoints):
     # check URL is /app/login
-    WebDriverWait(driver, 2).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.url_to_be(
             f"{endpoints.app}login"
         )

@@ -75,18 +75,18 @@ def pytest_addoption(parser):
 def change_url(driver: webdriver.Remote, url):
     driver.get(url)
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         lambda driver: driver.execute_script(
             'return document.readyState'
         ) == 'complete'
     )
 
     # root = driver.find_element(By.ID, "root")
-    root = WebDriverWait(driver, 10).until(
+    root = WebDriverWait(driver, 30).until(
         lambda d: d.find_element(By.ID, 'root')
     )
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(root)
     )
 
@@ -252,7 +252,7 @@ def login_user(
     # submit button
     driver.find_element(By.ID, "submit").send_keys(Keys.ENTER)
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.url_to_be(
             endpoints.app
         )

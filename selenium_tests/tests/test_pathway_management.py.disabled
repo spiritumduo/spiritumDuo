@@ -103,7 +103,7 @@ def check_create_pathway_modal_present(
         "//div[contains(@class, 'modal-body')]"
     )
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             modal
         )
@@ -184,7 +184,7 @@ def check_create_pathway_modal_present(
 #     driver: webdriver.Remote,
 #     test_pathways: List[PathwayDetails]
 # ):
-#     selector = WebDriverWait(driver, 10).until(
+#     selector = WebDriverWait(driver, 30).until(
 #         lambda d: d.find_element(
 #             By.NAME, "pathwayIndex"
 #         )
@@ -222,7 +222,7 @@ def check_create_pathway_modal_present(
 #         By.XPATH, "//div[contains(text(), 'Pathway Updated')]"
 #     )
 
-#     WebDriverWait(driver, 10).until(
+#     WebDriverWait(driver, 30).until(
 #         lambda d: success_text.is_displayed()
 #     )
 
@@ -292,7 +292,7 @@ def check_create_pathway_modal_present(
 #     driver: webdriver.Remote,
 #     test_pathways: List[PathwayDetails]
 # ):
-#     selector = WebDriverWait(driver, 10).until(
+#     selector = WebDriverWait(driver, 30).until(
 #         lambda d: d.find_element(
 #             By.NAME, "pathwayIndex"
 #         )
@@ -325,7 +325,7 @@ def check_create_pathway_modal_present(
 #         By.XPATH, "//div[contains(text(), 'Pathway deleted')]"
 #     )
 
-#     WebDriverWait(driver, 10).until(
+#     WebDriverWait(driver, 30).until(
 #         lambda d: d.find_element(
 #             By.XPATH, "//div[contains(text(), 'Pathway deleted')]"
 #         ).is_displayed()
@@ -471,7 +471,7 @@ def check_error_present(
 #     driver: webdriver.Remote,
 #     test_pathways: List[PathwayDetails]
 # ):
-#     selector = WebDriverWait(driver, 10).until(
+#     selector = WebDriverWait(driver, 30).until(
 #         lambda d: d.find_element(
 #             By.NAME, "pathwayIndex"
 #         )

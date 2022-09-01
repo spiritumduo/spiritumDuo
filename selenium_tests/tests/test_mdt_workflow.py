@@ -60,7 +60,7 @@ def check_modal_present(driver: webdriver.Remote):
         By.XPATH,
         "//div[contains(@class, 'modal-body')]"
     )
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             modal
         )
@@ -73,13 +73,13 @@ def check_modal_present(driver: webdriver.Remote):
 
 @given("the user fills the text boxes")
 def populate_text_boxes(driver: webdriver.Remote):
-    clinical_history: WebElement = WebDriverWait(driver, 10).until(
+    clinical_history: WebElement = WebDriverWait(driver, 30).until(
         lambda d: d.find_element(By.NAME, "clinicHistory")
     )
     clinical_history.clear()
     clinical_history.send_keys("clinical_history")
 
-    comorbidities: WebElement = WebDriverWait(driver, 10).until(
+    comorbidities: WebElement = WebDriverWait(driver, 30).until(
         lambda d: d.find_element(By.NAME, "comorbidities")
     )
     comorbidities.clear()
@@ -111,7 +111,7 @@ def populate_and_submit_form(driver: webdriver.Remote):
 
     global SELECTED_MDT_DATE
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.element_to_be_clickable(
             driver.find_element(By.NAME, 'mdtReason')
         )
@@ -121,7 +121,7 @@ def populate_and_submit_form(driver: webdriver.Remote):
 
     mdtSelection = Select(driver.find_element(By.NAME, 'mdtSessionId'))
 
-    Select(WebDriverWait(driver, 10).until(
+    Select(WebDriverWait(driver, 30).until(
         ExpectedConditions.element_to_be_clickable(
             driver.find_element(By.NAME, 'mdtSessionId')
         )
@@ -226,7 +226,7 @@ def select_mdt(
     driver: webdriver.Remote,
 ):
     print(SELECTED_MDT_DATE)
-    row: WebElement = WebDriverWait(driver, 10).until(
+    row: WebElement = WebDriverWait(driver, 30).until(
         ExpectedConditions.element_to_be_clickable(
             driver.find_element(
                 By.XPATH,

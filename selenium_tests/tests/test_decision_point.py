@@ -42,7 +42,7 @@ def insert_correct_credentials(driver: webdriver.Remote):
 
 @then("the user should see the decision point modal")
 def check_modal_present(driver: webdriver.Remote):
-    WebDriverWait(driver, 4).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.visibility_of(
             driver.find_element(By.CSS_SELECTOR, '.modal-body')
         )
@@ -55,13 +55,13 @@ def check_modal_present(driver: webdriver.Remote):
 
 @given("the user fills the text boxes")
 def complete_form(driver: webdriver.Remote):
-    clinical_history: WebElement = WebDriverWait(driver, 10).until(
+    clinical_history: WebElement = WebDriverWait(driver, 30).until(
         lambda d: d.find_element(By.NAME, "clinicHistory")
     )
     clinical_history.clear()
     clinical_history.send_keys("clinical_history")
 
-    comorbidities: WebElement = WebDriverWait(driver, 10).until(
+    comorbidities: WebElement = WebDriverWait(driver, 30).until(
         lambda d: d.find_element(By.NAME, "comorbidities")
     )
     comorbidities.clear()
@@ -94,7 +94,7 @@ def select_requests(driver: webdriver.Remote):
 
     checkbox = driver.find_elements(By.XPATH, "//input[@type='checkbox']")[0]
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         ExpectedConditions.element_to_be_clickable(
             checkbox
         )
