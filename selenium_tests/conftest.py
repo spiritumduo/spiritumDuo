@@ -219,7 +219,7 @@ def driver(browser_name: str):
 
     # driver.maximize_window()
     driver.set_window_size(1920, 1080)
-    driver.implicitly_wait(10)
+    driver.implicitly_wait(60)
     yield driver
     driver.close()
 
