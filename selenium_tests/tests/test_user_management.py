@@ -310,6 +310,15 @@ def check_edit_confirmation(
         is_(True)
     )
 
+    WebDriverWait(driver, 30).until(
+        ExpectedConditions.visibility_of(
+            driver.find_element(
+                By.XPATH,
+                f"//*[contains(text(), '{update_user_details.firstName}')]"
+            )
+        )
+    )
+
     assert_that(
         driver.find_element(
             By.XPATH,
