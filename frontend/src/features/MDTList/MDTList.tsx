@@ -125,6 +125,7 @@ const MDTList = ({ pathwayId, selectedMdt, setSelectedMdt }: MDTListProps) => {
       <CreateMdtModal
         showModal={ showCreateMdtModal }
         setShowModal={ setShowCreateMdtModal }
+        onSuccess={ () => refetch() }
       />
       {
         selectedMdtToManage ? (

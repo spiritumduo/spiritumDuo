@@ -67,7 +67,7 @@ interface CreateMdtModalProps{
 }
 
 const CreateMdtModal = (
-  { showModal, setShowModal }: CreateMdtModalProps,
+  { showModal, setShowModal, onSuccess }: CreateMdtModalProps,
 ): JSX.Element => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const { currentPathwayId } = useContext(PathwayContext);
@@ -109,6 +109,7 @@ const CreateMdtModal = (
   const datePickerFormControl = register('plannedAt');
 
   function onModalClose() {
+    if (onSuccess) onSuccess();
     setShowConfirmation(false); setShowModal(false);
     reset({ location: '', plannedAt: undefined }); setSelectedDate(undefined);
   }
